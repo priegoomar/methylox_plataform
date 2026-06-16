@@ -32,11 +32,13 @@ st.markdown(
     /* Banner panorámico micro-compacto */
     [data-testid="stImage"] img {
         width: 100% !important;
-        max-height: 110px !important;
-        object-fit: cover !important;
+        height: auto !important;
+        max-height: 200px !important;
+        object-fit: contain !important;
         border-radius: 10px !important;
         border-bottom: 3px solid #2563EB !important;
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1) !important;
+    }
     }
     /* Barra lateral */
     [data-testid="stSidebar"] {
