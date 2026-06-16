@@ -6,26 +6,11 @@ import sqlite3
 # 1. CONFIGURACION DE PAGINA MAESTRA
 st.set_page_config(page_title="MethylOx AI", layout="wide", initial_sidebar_state="expanded")
 
-# 2. MOTOR DE ANIMACIÓN FLUIDA E ILUMINACIÓN DE NEÓN PARA TU IMAGEN REAL
+# 2. ESTILOS CORPORATIVOS PREMIUM
 st.markdown("""<style>
     .stApp { background-color: #FAFCFF; color: #1E293B; }
     [data-testid="stSidebar"] { background-color: #0A1128 !important; }
     [data-testid="stSidebar"] * { color: #E2E8F0 !important; }
-    
-    /* Contenedor del Banner Premium que anima tu imagen real */
-    div[data-testid="stImage"] img {
-        border-radius: 16px;
-        border: 1px solid #D2E4FF;
-        box-shadow: 0 10px 30px rgba(37,99,235,0.06);
-        animation: premium3DAnimation 6s ease-in-out infinite;
-    }
-    
-    /* Efecto Tecnológico: Respiración, destellos variables y pulso de profundidad */
-    @keyframes premium3DAnimation {
-        0% { transform: scale(1); filter: brightness(1) drop-shadow(0 4px 6px rgba(0,0,0,0.02)); }
-        50% { transform: scale(1.006) translateY(-3px); filter: brightness(1.04) saturate(1.08) drop-shadow(0 20px 40px rgba(37,99,235,0.18)); }
-        100% { transform: scale(1); filter: brightness(1) drop-shadow(0 4px 6px rgba(0,0,0,0.02)); }
-    }
     
     .essential-card { 
         background-color: #FFFFFF !important; 
@@ -53,7 +38,7 @@ with st.sidebar:
 tab_clinico, tab_ingenieria = st.tabs(["📋 Panel Clinico", "⚙️ Consola Ingenieria"])
 
 with tab_clinico:
-    # EL COMANDO NATIVO PROYECTA LA IMAGEN Y LOS ESTILOS DE ARRIBA LE DAN EL MOVIMIENTO
+    # EL COMANDO NATIVO DESPLIEGA TU IMAGEN PREMIUM EN FORMATO COMPLETO DE LADO A LADO
     st.image("banner_real.png", use_column_width=True)
 
     with st.form("f_paciente", clear_on_submit=True):
@@ -73,14 +58,6 @@ with tab_clinico:
     st.dataframe(df_p, use_container_width=True, hide_index=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    k1, k2, k3, k4 = st.columns(4)
-    with k1: st.markdown('<div class="essential-card"><span>SENSITIVITY</span><h2>96.4%</h2></div>', unsafe_allow_html=True)
-    with k2: st.markdown('<div class="essential-card"><span>SPECIFICITY</span><h2>94.1%</h2></div>', unsafe_allow_html=True)
-    with k3: st.markdown('<div class="essential-card"><span>AUC (ROC)</span><h2>0.983</h2></div>', unsafe_allow_html=True)
-    with k4: st.markdown('<div class="essential-card"><span>CRITICAL LIMIT</span><h2>0.5910</h2></div>', unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
     k1, k2, k3, k4 = st.columns(4)
     with k1: st.markdown('<div class="essential-card"><span>SENSITIVITY</span><h2>96.4%</h2></div>', unsafe_allow_html=True)
     with k2: st.markdown('<div class="essential-card"><span>SPECIFICITY</span><h2>94.1%</h2></div>', unsafe_allow_html=True)
