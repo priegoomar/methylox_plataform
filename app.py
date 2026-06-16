@@ -227,7 +227,7 @@ elif st.session_state["menu_activo"] == "👤 Patient Profiles":
                         conn.close()
                         st.success(f"Expediente {id_busqueda} actualizado correctamente.")
                 with col_op2:
-                    if st.button("❌ Eliminar Registro Permanentemente", use_container_width=True):
+    if st.button("❌ Eliminar Registro Permanentemente", use_container_width=True):
         conn = sqlite3.connect("methyl_clinic.db")
         cursor = conn.cursor()
         cursor.execute("DELETE FROM pacientes WHERE id=?", (id_busqueda,))
