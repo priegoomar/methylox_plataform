@@ -226,16 +226,25 @@ elif st.session_state["menu_activo"] == "👤 Patient Profiles":
                         conn.commit()
                         conn.close()
                         st.success(f"Expediente {id_busqueda} actualizado correctamente.")
-with g1:  
-    if st.button("🗑️ Eliminar Registro Permanentemente", use_container_width=True):
-        conn = sqlite3.connect("methyl_clinic.db")
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM pacientes WHERE id=?", (id_busqueda,))
-        conn.commit()
-        conn.close()
-        st.error(f"Expediente del paciente {id_busqueda} eliminado de SQLite3.")
+ if id_busqueda in df_pacientes["id"].tolist():
+            with g1: # Línea 229
+                if st.button("🗑️ Eliminar Registro Permanentemente", use_container_width=True):
+                    conn = sqlite3.connect("methyl_clinic.db")
+                    cursor = conn.cursor()
+                    cursor.execute("DELETE FROM pacientes WHERE id=?", (id_busqueda,))
+                    conn.commit()
+                    conn.close()
+                    st.error(f"Expediente del paciente {id_busqueda} eliminado de SQLite3.")
+            # Este else cierra el 'if id_busqueda in...'
+            else:
+                st.warning("El ID ingresado no coincide con ningún expediente activo.")
+            
+            st.markdown("", unsafe_allow_html=True)
+            
+    # Línea 243: Este else ahora cierra limpiamente el 'if not df_pacientes.empty:' de arriba
     else:
-        st.warning("El ID ingresado no coincide con ningún expediente activo.")
+        st.info("No hay registros almacenados actualmente.")
+
 
 st.markdown("", unsafe_allow_html=True)
 
