@@ -1,4 +1,3 @@
-# app.py - FRONTEND: PORTAL INTERACTIVO RESPONSIVO
 import sqlite3
 import streamlit as st
 import numpy as np
