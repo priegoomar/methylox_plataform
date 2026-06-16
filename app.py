@@ -14,7 +14,7 @@ st.markdown("""<style>
     
     /* Contenedor del Banner con tu Imagen Corporativa Real */
     .enterprise-card-banner {
-        background-image: url("https://githubusercontent.com");
+        background-image: url("https://ibb.co");
         background-size: 100% 100%;
         background-repeat: no-repeat;
         background-position: center;
