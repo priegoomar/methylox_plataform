@@ -6,11 +6,26 @@ import sqlite3
 # 1. CONFIGURACION DE PAGINA MAESTRA
 st.set_page_config(page_title="MethylOx AI", layout="wide", initial_sidebar_state="expanded")
 
-# 2. ESTILOS BASE DE ALTA COMPATIBILIDAD
+# 2. MOTOR DE ANIMACIÓN FLUIDA E ILUMINACIÓN DE NEÓN PARA TU IMAGEN REAL
 st.markdown("""<style>
     .stApp { background-color: #FAFCFF; color: #1E293B; }
     [data-testid="stSidebar"] { background-color: #0A1128 !important; }
     [data-testid="stSidebar"] * { color: #E2E8F0 !important; }
+    
+    /* Contenedor del Banner Premium que anima tu imagen real */
+    div[data-testid="stImage"] img {
+        border-radius: 16px;
+        border: 1px solid #D2E4FF;
+        box-shadow: 0 10px 30px rgba(37,99,235,0.06);
+        animation: premium3DAnimation 6s ease-in-out infinite;
+    }
+    
+    /* Efecto Tecnológico: Respiración, destellos variables y pulso de profundidad */
+    @keyframes premium3DAnimation {
+        0% { transform: scale(1); filter: brightness(1) drop-shadow(0 4px 6px rgba(0,0,0,0.02)); }
+        50% { transform: scale(1.006) translateY(-3px); filter: brightness(1.04) saturate(1.08) drop-shadow(0 20px 40px rgba(37,99,235,0.18)); }
+        100% { transform: scale(1); filter: brightness(1) drop-shadow(0 4px 6px rgba(0,0,0,0.02)); }
+    }
     
     .essential-card { 
         background-color: #FFFFFF !important; 
@@ -38,7 +53,7 @@ with st.sidebar:
 tab_clinico, tab_ingenieria = st.tabs(["📋 Panel Clinico", "⚙️ Consola Ingenieria"])
 
 with tab_clinico:
-    # EL COMANDO NATIVO QUE ABRE TU IMAGEN PREMIUM SIN BLOQUEOS
+    # EL COMANDO NATIVO PROYECTA LA IMAGEN Y LOS ESTILOS DE ARRIBA LE DAN EL MOVIMIENTO
     st.image("banner_real.png", use_column_width=True)
 
     with st.form("f_paciente", clear_on_submit=True):
