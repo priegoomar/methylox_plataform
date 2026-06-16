@@ -174,4 +174,4 @@ with tab_ingenieria:
     df_doe['Enzima'] = f_enz
     df_doe['Tiempo'] = f_tie
     df_doe['Codigo'] = f_cod
-    st.dataframe(df_doe, use_container_width=True, hide_index=True
+    st.dataframe(df_doe, use_container_width=True, hide_index=True)
