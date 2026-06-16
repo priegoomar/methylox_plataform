@@ -162,3 +162,75 @@ with tab_ingenieria:
     df_doe['Tiempo'] = f_tie
     df_doe['Codigo'] = f_cod
     st.dataframe(df_doe, use_container_width=True, hide_index=True)
+
+mport sqlite3
+import streamlit as st
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 1. Configuración de página e inyección de estilos (Azul noche #0A1128)
+# 2. Inicialización de la base de datos SQLite3
+# 3. Renderizado del banner superior (banner_real.png)
+# 4. Creación de las pestañas unificadas (tab1, tab2)
+
+# --- PESTAÑA 1: CLÍNICA Y CRIBADO ---
+with tab1:
+    # (Aquí va el formulario de pacientes, KPIs y los 3 gráficos estadísticos)
+    pass
+
+
+# --- PESTAÑA 2: CONSOLA DE INGENIERÍA (AQUÍ LO PEGAS) ---
+with tab2:
+    st.header("Configuración de Laboratorio Húmedo y Ensayos")
+    
+    # [Tus tablas de hiperparámetros y matriz DoE 2³ que ya tenías]
+    st.subheader("Hiperparámetros Base del Algoritmo")
+    # ... (código existente de la tabla de hiperparámetros) ...
+    
+    st.subheader("Matriz de Diseño de Experimentos (DoE) Factorial 2³")
+    # ... (código existente de las 8 corridas del DoE) ...
+    
+    
+    # 🎯 ¡PEGA AQUÍ EL NUEVO MÓDULO CRISPR-CAS12 CALIBRADO! 🎯
+    st.markdown("---")
+    st.subheader("🧬 Escáner Calibrado de Guías CRISPR-Cas12")
+    st.caption("Filtros unificados post-calibración para detección de biomarcadores CPEB4+")
+    
+    # Botón para que subas la nueva base de datos masiva desde tu computadora
+    uploaded_file = st.file_uploader(
+        "Subir base de datos de secuencias masivas (.csv)", 
+        type=["csv"]
+    )
+    
+    if uploaded_file is not None:
+        # El backend procesa el archivo en tiempo real
+        df_secuencias = pd.read_csv(uploaded_file)
+        
+        # --- MOTOR 1: Filtro Epigenético (Umbral Fijo Fase 4) ---
+        UMBRAL_CALIBRADO = 0.5910
+        condicion_metilacion = df_secuencias["ctdna_score"] >= UMBRAL_CALIBRADO
+        df_f1 = df_secuencias[condicion_metilacion]
+        
+        # --- MOTOR 2: Filtro CRISPR (PAM TTTV y Contenido GC 40-60%) ---
+        condicion_pam = df_f1["secuencia_pam"].str.contains("TTT[ACG]", na=False)
+        condicion_gc = (df_f1["porcentaje_gc"] >= 40) & (df_f1["porcentaje_gc"] <= 60)
+        df_f2 = df_f1[condicion_pam & condicion_gc]
+        
+        # --- Filtro de Eficiencia de Corte ---
+        SCORE_MINIMO = 0.82
+        condicion_exito = df_f2["score_predicho_cas12"] >= SCORE_MINIMO
+        df_guias_nuevas = df_f2[condicion_exito]
+        
+        # Métricas dinámicas en pantalla
+        c_ctrl, c_nuevas = st.columns(2)
+        with c_ctrl:
+            st.metric(label="Guías Control Activas (Base)", value="2")
+        with c_nuevas:
+            st.metric(label="Nuevas Guías Potenciales Halladas", value=str(len(df_guias_nuevas)))
+            
+        # Despliegue de la tabla con los nuevos targets descubiertos
+        st.write("**Lista de Nuevos Objetivos Calibrados:**")
+        st.dataframe(df_guias_nuevas[["id_guia", "secuencia_target", "porcentaje_gc", "score_predicho_cas12"]])
+    else:
+        st.info("💡 Consejo: Sube un archivo CSV con las columnas 'ctdna_score', 'secuencia_pam', 'porcentaje_gc' y 'score_predicho_cas12' para ejecutar el escáner.")
