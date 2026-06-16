@@ -235,7 +235,7 @@ with col_op2:
             conn.close()
             st.error(f"Expediente del paciente {id_busqueda} eliminado de SQLite3.")
         else:
-        st.warning("El ID ingresado no coincide con ningún expediente activo.")
+            st.warning("El ID ingresado no coincide con ningún expediente activo.")
     st.markdown("", unsafe_allow_html=True)
 else:
     st.info("No hay registros almacenados actualmente.")
