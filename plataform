@@ -74,7 +74,7 @@ with st.sidebar:
 tab_clinico, tab_ingenieria = st.tabs(["📋 Clinical Dashboard", "⚙️ Engineering Console"])
 
 with tab_clinico:
-    st.markdown(f"""
+    st.markdown("""
         <div class="enterprise-card-banner">
             <div class="molecular-render-3d-premium"></div>
             <h1 style="margin:0; font-size: 38px; color: #0A1128 !important;">MethylOx Labs</h1>
@@ -131,6 +131,24 @@ with tab_clinico:
 
     with c3:
         st.markdown('<div class="essential-card"><h5>📊 Distribución de Riesgo Clínico</h5>', unsafe_allow_html=True)
+        
+        # Solución definitiva al renglón largo: Datos separados línea por línea de forma limpia
+        r_low = np.random.normal(0.30, 0.08, 100)
+        r_sus = np.random.normal(0.52, 0.05, 100)
+        r_high = np.random.normal(0.75, 0.10, 100)
+        
         df_dist = pd.DataFrame({
-            'Low Risk': np.random.normal(0.3, 0.08, 100),
-'Suspicious': np.random.normal(0.52, 0.05, 100),'High Risk': np.random.normal(0.75, 0.1, 100)})st.line_chart(df_dist, color=["#3B82F6", "#A855F7", "#EF4444"], height=200, use_container_width=True)st.markdown('', unsafe_allow_html=True)with tab_ingenieria:st.title("⚙️ Engineering Console")df_b = pd.DataFrame({"Hyperparameter": ["UMBRAL_CRITICO_DB", "BACKGROUND_NOISE_PURGE", "DATA_PERSISTENCE"],"Value": ["0.5910 ng/mL", "BCAS3 Excluded", "SQLite3 Relational"]})st.dataframe(df_b, use_container_width=True, hide_index=True)
+            'Low Risk': r_low,
+            'Suspicious': r_sus,
+            'High Risk': r_high
+        })
+        st.line_chart(df_dist, color=["#3B82F6", "#A855F7", "#EF4444"], height=200, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+with tab_ingenieria:
+    st.title("⚙️ Engineering Console")
+    df_b = pd.DataFrame({
+        "Hyperparameter": ["UMBRAL_CRITICO_DB", "BACKGROUND_NOISE_PURGE", "DATA_PERSISTENCE"], 
+        "Value": ["0.5910 ng/mL", "BCAS3 Excluded", "SQLite3 Relational"]
+    })
+    st.dataframe(df_b, use_container_width=True, hide_index=True)
