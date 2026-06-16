@@ -6,26 +6,27 @@ import sqlite3
 # Configuración del lienzo digital al formato de pantalla completa sin desbordes
 st.set_page_config(page_title="MethylOx AI", layout="wide", initial_sidebar_state="expanded")
 
-# Inyección del Banner Real Corporativo e iluminación sólida de tarjetas
+# Inyección de estilos de alta gama y contenedores dinámicos
 st.markdown("""<style>
     .stApp { background-color: #FAFCFF; color: #1E293B; }
     [data-testid="stSidebar"] { background-color: #0A1128 !important; }
     [data-testid="stSidebar"] * { color: #E2E8F0 !important; }
     
-    /* Contenedor Maestro que incrusta tu imagen premium de fondo sin pixelar */
+    /* Contenedor del Banner Premium Blanco */
     .enterprise-card-banner {
-        background-image: url("https://ibb.co");
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        background-position: center;
-        border-radius: 16px;
-        border: 1px solid #D2E4FF;
-        margin-bottom: 30px;
-        min-height: 250px; /* Altura ideal para desplegar el render 3D completo */
-        width: 100%;
+        background: linear-gradient(135deg, #FFFFFF 0%, #F4F8FF 100%);
+        padding: 30px; 
+        border-radius: 16px; 
+        border: 1px solid #D2E4FF; 
+        margin-bottom: 25px;
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        min-height: 200px;
+        position: relative;
+        overflow: hidden;
     }
     
-    /* Tarjetas blancas ejecutivas alineadas */
     .essential-card { 
         background-color: #FFFFFF !important; 
         padding: 20px; 
@@ -55,8 +56,100 @@ with st.sidebar:
 tab_clinico, tab_ingenieria = st.tabs(["📋 Panel de control clínico", "⚙️ Consola de ingeniería"])
 
 with tab_clinico:
-    # EL LIENZO DESPLIEGA TU IMAGEN REAL EN ALTA DEFINICIÓN
-    st.markdown('<div class="enterprise-card-banner"></div>', unsafe_allow_html=True)
+    # EL BANNER DIGITAL INTEGRANDO EL MOTOR GRÁFICO 3D ROTATIVO EN TIEMPO REAL
+    st.markdown("""
+        <div class="enterprise-card-banner">
+            <div style="font-family: sans-serif; z-index: 2; position: relative;">
+                <h1 style="margin:0; font-size: 44px; color: #0A1128; font-weight: 800; letter-spacing: -1.5px;">MethylOx<span style="color:#2563EB; font-weight:300;">™</span></h1>
+                <p style="color:#475569; margin:6px 0 0 0; font-size:16px; font-weight:500;">Early Detection Through Epigenetic AI</p>
+                <div style="display: flex; gap: 20px; margin-top: 35px; font-size: 13px; color: #1E3A8A; font-weight: 700; letter-spacing: 0.5px;">
+                    <span>🧬 DNA Methylation</span><span>🧠 AI Engine</span><span>🧪 Liquid Biopsy</span>
+                </div>
+            </div>
+            
+            <!-- Lienzo tecnológico WebGL de rotación molecular continua -->
+            <div style="position: absolute; right: 0; top: 0; width: 550px; height: 100%; z-index: 1;">
+                <canvas id="molecular3dCanvas" width="550" height="200"></canvas>
+                <script>
+                    (function() {
+                        var canvas = document.getElementById('molecular3dCanvas');
+                        if (!canvas) return;
+                        var ctx = canvas.getContext('2d');
+                        var angle = 0;
+                        var numNodes = 16;
+                        var radiusX = 140; // Amplitud del volteo horizontal
+                        var radiusY = 35; // Profundidad de la perspectiva vertical
+                        var centerX = 240;
+                        var centerY = 100;
+
+                        function draw3DMolecule() {
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            angle += 0.015; // Velocidad exacta del volteo en 3D
+
+                            // Dibujar las conexiones de los nucleótidos de fondo primero
+                            for (var i = 0; i < numNodes; i++) {
+                                var t = (i / numNodes) * Math.PI * 2.5 + angle;
+                                var x1 = centerX + Math.cos(t) * radiusX - (i * 10 - 80);
+                                var y1 = centerY + Math.sin(t) * radiusY;
+                                var x2 = centerX + Math.cos(t + Math.PI) * radiusX - (i * 10 - 80);
+                                var y2 = centerY + Math.sin(t + Math.PI) * radiusY;
+
+                                ctx.beginPath();
+                                ctx.moveTo(x1, y1);
+                                ctx.lineTo(x2, y2);
+                                ctx.strokeStyle = 'rgba(203, 213, 225, 0.4)';
+                                ctx.lineWidth = 1.5;
+                                ctx.stroke();
+                            }
+
+                            // Dibujar las hebras de la doble hélice y los nodos CpG
+                            for (var i = 0; i < numNodes; i++) {
+                                var t = (i / numNodes) * Math.PI * 2.5 + angle;
+                                
+                                // Coordenadas Hebra 1
+                                var x1 = centerX + Math.cos(t) * radiusX - (i * 10 - 80);
+                                var y1 = centerY + Math.sin(t) * radiusY;
+                                var size1 = 5 + (Math.sin(t) + 1) * 3; // Tamaño dinámico por perspectiva 3D
+
+                                // Coordenadas Hebra 2 (Volteada 180 grados en desfase)
+                                var x2 = centerX + Math.cos(t + Math.PI) * radiusX - (i * 10 - 80);
+                                var y2 = centerY + Math.sin(t + Math.PI) * radiusY;
+                                var size2 = 5 + (Math.sin(t + Math.PI) + 1) * 3;
+
+                                // Dibujar puntos de la Hebra 1 (Azul Real Premium)
+                                ctx.beginPath();
+                                ctx.arc(x1, y1, size1, 0, Math.PI * 2);
+                                ctx.fillStyle = size1 > 6 ? '#2563EB' : '#1E3A8A';
+                                ctx.shadowColor = '#2563EB';
+                                ctx.shadowBlur = size1 > 6 ? 12 : 0;
+                                ctx.fill();
+
+                                // Dibujar puntos de la Hebra 2 (Cian Eléctrico de Neón)
+                                ctx.beginPath();
+                                ctx.arc(x2, y2, size2, 0, Math.PI * 2);
+                                ctx.fillStyle = size2 > 6 ? '#67E8F9' : '#0EA5E9';
+                                ctx.shadowColor = '#67E8F9';
+                                ctx.shadowBlur = size2 > 6 ? 15 : 0;
+                                ctx.fill();
+                                
+                                // Resaltar de forma especial el nodo molecular de metilación CpG central
+                                if(i == 7) {
+                                    ctx.beginPath();
+                                    ctx.arc(x1, y1, size1 + 4, 0, Math.PI * 2);
+                                    ctx.strokeStyle = '#22D3EE';
+                                    ctx.lineWidth = 2;
+                                    ctx.stroke();
+                                }
+                            }
+                            ctx.shadowBlur = 0; // Resetear filtros para optimización
+                            requestAnimationFrame(draw3DMolecule);
+                        }
+                        draw3DMolecule();
+                    })();
+                </script>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
     with st.form("f_paciente", clear_on_submit=True):
         f1, f2, f3 = st.columns(3)
@@ -86,36 +179,52 @@ with tab_clinico:
     st.markdown("<br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     
-    with c1:
-        st.markdown('<div class="essential-card" style="text-align:left;"><h5>🧬 Mapa de Metilación CpG</h5>', unsafe_allow_html=True)
-        size_samples = len(df_p) * 2 if not df_p.empty else 10
-        df_cpg = pd.DataFrame({
-            'Posición Genómica': np.random.randint(100, 5000, size=size_samples),
-            'Metilación': np.random.uniform(0.1, 0.9, size=size_samples)
-        })
-        st.scatter_chart(df_cpg, x='Posición Genómica', y='Metilación', color='#2563EB', height=180, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-        
+        with c1:
+        st.markdown('🧬 Mapa CpG')
+        p_gen = np.random.randint(100, 5000, size=15)
+        m_val = np.random.uniform(0.1, 0.9, size=15)
+        df1 = pd.DataFrame()
+        df1['Posicion'] = p_gen
+        df1['Metilacion'] = m_val
+        st.scatter_chart(df1, x='Posicion', y='Metilacion', height=180)
+
     with c2:
-        st.markdown('<div class="essential-card" style="text-align:left;"><h5>📈 Curva ROC Performance</h5>', unsafe_allow_html=True)
-        fpr = np.linspace(0, 1, 20)
-        df_roc = pd.DataFrame({'False Positive': fpr, 'True Positive': 1 - np.exp(-4.5 * fpr)})
-        st.line_chart(df_roc, x='False Positive', y='True Positive', color='#10B981', height=180, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('📈 Curva ROC')
+        f_val = np.linspace(0, 1, 20)
+        t_val = 1 - np.exp(-4.5 * f_val)
+        df2 = pd.DataFrame()
+        df2['False Positive'] = f_val
+        df2['True Positive'] = t_val
+        st.line_chart(df2, x='False Positive', y='True Positive', height=180)
 
     with c3:
-        st.markdown('<div class="essential-card" style="text-align:left;"><h5>📊 Distribución de Riesgo</h5>', unsafe_allow_html=True)
-        df_dist = pd.DataFrame({
-            'Low Risk': np.random.normal(0.3, 0.08, 80),
-            'High Risk': np.random.normal(0.75, 0.1, 80)
-        })
-        st.line_chart(df_dist, color=["#3B82F6", "#EF4444"], height=180, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('📊 Distribucion')
+        d_bajos = np.random.normal(0.3, 0.08, 80)
+        d_altos = np.random.normal(0.75, 0.1, 80)
+        df3 = pd.DataFrame()
+        df3['Low Risk'] = d_bajos
+        df3['High Risk'] = d_altos
+        st.line_chart(df3, height=180)
 
 with tab_ingenieria:
-    st.title("⚙️ Engineering Console")
-    df_b = pd.DataFrame({
-        "Hyperparameter": ["UMBRAL_CRITICO_DB", "BACKGROUND_NOISE_PURGE", "DATA_PERSISTENCE"], 
-        "Value": ["0.5910 ng/mL", "BCAS3 Excluded", "SQLite3 Relational"]
-    })
+    st.markdown('⚙️ Consola Ingenieria')
+    h_param = ["UMBRAL_CRITICO_DB", "BACKGROUND_NOISE_PURGE", "DATA_PERSISTENCE"]
+    h_val = ["0.5910 ng/mL", "BCAS3 Excluded", "SQLite3 Relational"]
+    df_b = pd.DataFrame()
+    df_b['Hyperparameter'] = h_param
+    df_b['Value'] = h_val
     st.dataframe(df_b, use_container_width=True, hide_index=True)
+    
+    st.markdown('### 🧪 Matriz Analitica DoE')
+    corridas = [1, 2, 3, 4, 5, 6, 7, 8]
+    f_temp = ["55C", "62C", "55C", "62C", "55C", "62C", "55C", "62C"]
+    f_enz = ["0.5", "0.5", "2.0", "2.0", "0.5", "0.5", "2.0", "2.0"]
+    f_tie = ["60m", "60m", "60m", "60m", "180", "180", "180", "180"]
+    f_cod = ["(1)", "a", "b", "ab", "c", "ac", "bc", "abc"]
+    df_doe = pd.DataFrame()
+    df_doe['Corrida'] = corridas
+    df_doe['Temp'] = f_temp
+    df_doe['Enzima'] = f_enz
+    df_doe['Tiempo'] = f_tie
+    df_doe['Codigo'] = f_cod
+    st.dataframe(df_doe, use_container_width=True, hide_index=True)
