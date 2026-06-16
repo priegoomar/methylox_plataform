@@ -163,7 +163,7 @@ with tab_ingenieria:
     df_doe['Codigo'] = f_cod
     st.dataframe(df_doe, use_container_width=True, hide_index=True)
 
-mport sqlite3
+import sqlite3
 import streamlit as st
 import numpy as np
 import pandas as pd
