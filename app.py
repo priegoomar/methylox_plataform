@@ -43,8 +43,8 @@ st.markdown(
         background-color: #FFFFFF !important;
         border-right: 2px solid #E2E8F0 !important;
     }
-    [data-testid="stSidebar"] .stMarkdown, 
-    [data-testid="stSidebar"] p, 
+    [data-testid="stSidebar"] .stMarkdown,
+    [data-testid="stSidebar"] p,
     [data-testid="stSidebar"] h2 {
         color: #0F172A !important;
     }
@@ -228,17 +228,17 @@ elif st.session_state["menu_activo"] == "👤 Patient Profiles":
                         st.success(f"Expediente {id_busqueda} actualizado correctamente.")
                 with col_op2:
                     if st.button("❌ Eliminar Registro Permanentemente", use_container_width=True):
-        conn = sqlite3.connect("methyl_clinic.db")
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM pacientes WHERE id=?", (id_busqueda,))
-        conn.commit()
-        conn.close()
-        st.error(f"Expediente del paciente {id_busqueda} eliminado de SQLite3.")
+                        conn = sqlite3.connect("methyl_clinic.db")
+                        cursor = conn.cursor()
+                        cursor.execute("DELETE FROM pacientes WHERE id=?", (id_busqueda,))
+                        conn.commit()
+                        conn.close()
+                        st.error(f"Expediente del paciente {id_busqueda} eliminado de SQLite3.")
+            else:
+                st.warning("El ID ingresado no coincide con ningún expediente activo.")
+        st.markdown("", unsafe_allow_html=True)
     else:
-        st.warning("El ID ingresado no coincide con ningún expediente activo.")
-    st.markdown("", unsafe_allow_html=True)
-else:
-    st.info("No hay registros almacenados actualmente.")
+        st.info("No hay registros almacenados actualmente.")
 
 # PANTALLA 5: SIMULACIÓN DE GEL RE-ACTIVA CON DATOS CLÍNICOS REALES
 elif st.session_state["menu_activo"] == "🧪 Gel Analysis" and rol_usuario == "⚙️ Ingeniero / Científico BIOTECH":
