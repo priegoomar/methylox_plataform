@@ -227,8 +227,6 @@ elif st.session_state["menu_activo"] == "👤 Patient Profiles":
                         conn.close()
                         st.success(f"Expediente {id_busqueda} actualizado correctamente.")
 with g1:  
-    
-    # Línea 230: Ahora alineado correctamente dentro del 'with'
     if st.button("🗑️ Eliminar Registro Permanentemente", use_container_width=True):
         conn = sqlite3.connect("methyl_clinic.db")
         cursor = conn.cursor()
@@ -236,12 +234,12 @@ with g1:
         conn.commit()
         conn.close()
         st.error(f"Expediente del paciente {id_busqueda} eliminado de SQLite3.")
-        
-    # Línea 237: Corregido y perfectamente alineado con el 'if' de arriba
     else:
         st.warning("El ID ingresado no coincide con ningún expediente activo.")
 
 st.markdown("", unsafe_allow_html=True)
+
+# Línea 245: Este else debe estar alineado al borde con el 'if' principal de la pantalla
 else:
     st.info("No hay registros almacenados actualmente.")
 
