@@ -116,7 +116,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
     # Banner en formato compacto y controlado
     st.image(
         "banner_real.png", 
-      width=600
+      width=850
 )   
     st.title("Molecular Methylation Analysis Hub")
     st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
