@@ -6,24 +6,11 @@ import sqlite3
 # 1. CONFIGURACION DE PAGINA MAESTRA
 st.set_page_config(page_title="MethylOx AI", layout="wide", initial_sidebar_state="expanded")
 
-# 2. MOTOR DE ANIMACIÓN CORPORATIVA
+# 2. ESTILOS BASE DE ALTA COMPATIBILIDAD
 st.markdown("""<style>
     .stApp { background-color: #FAFCFF; color: #1E293B; }
     [data-testid="stSidebar"] { background-color: #0A1128 !important; }
     [data-testid="stSidebar"] * { color: #E2E8F0 !important; }
-    
-    /* Contenedor del Banner con tu Imagen Corporativa Real */
-    .enterprise-card-banner {
-        background-image: url("https://ibb.co");
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        background-position: center;
-        border-radius: 16px;
-        border: 1px solid #D2E4FF;
-        margin-bottom: 25px;
-        min-height: 250px;
-        width: 100%;
-    }
     
     .essential-card { 
         background-color: #FFFFFF !important; 
@@ -51,8 +38,8 @@ with st.sidebar:
 tab_clinico, tab_ingenieria = st.tabs(["📋 Panel Clinico", "⚙️ Consola Ingenieria"])
 
 with tab_clinico:
-    # EL LIENZO DESPLIEGA TU IMAGEN REAL INYECTADA SIN TEXTOS DE ERROR
-    st.markdown('<div class="enterprise-card-banner"></div>', unsafe_allow_html=True)
+    # EL COMANDO NATIVO QUE ABRE TU IMAGEN PREMIUM SIN BLOQUEOS
+    st.image("banner_real.png", use_column_width=True)
 
     with st.form("f_paciente", clear_on_submit=True):
         f1, f2, f3 = st.columns(3)
