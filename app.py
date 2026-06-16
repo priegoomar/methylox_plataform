@@ -118,7 +118,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         "banner_real.png", 
       width=450
 )
-        st.image("banner_real.png", use_container_width=True)
+    st.image("banner_real.png", use_container_width=True)
         
     st.title("Molecular Methylation Analysis Hub")
     st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
