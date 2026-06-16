@@ -179,7 +179,7 @@ with tab_clinico:
     st.markdown("<br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     
-        with c1:
+    with c1:
         st.markdown('🧬 Mapa CpG')
         p_gen = np.random.randint(100, 5000, size=15)
         m_val = np.random.uniform(0.1, 0.9, size=15)
