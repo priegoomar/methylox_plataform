@@ -6,25 +6,23 @@ import sqlite3
 # 1. CONFIGURACION DE PAGINA MAESTRA
 st.set_page_config(page_title="MethylOx AI", layout="wide", initial_sidebar_state="expanded")
 
-# 2. MOTOR DE ANIMACIÓN 3D ROTATIVA MAESTRA
+# 2. MOTOR DE ANIMACIÓN CORPORATIVA
 st.markdown("""<style>
     .stApp { background-color: #FAFCFF; color: #1E293B; }
     [data-testid="stSidebar"] { background-color: #0A1128 !important; }
     [data-testid="stSidebar"] * { color: #E2E8F0 !important; }
     
-    /* Contenedor del Banner */
+    /* Contenedor del Banner con tu Imagen Corporativa Real */
     .enterprise-card-banner {
-        background: linear-gradient(135deg, #FFFFFF 0%, #F4F8FF 100%);
-        padding: 30px; 
-        border-radius: 16px; 
-        border: 1px solid #D2E4FF; 
+        background-image: url("https://ibb.co");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        border-radius: 16px;
+        border: 1px solid #D2E4FF;
         margin-bottom: 25px;
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        min-height: 200px;
-        position: relative;
-        overflow: hidden;
+        min-height: 250px;
+        width: 100%;
     }
     
     .essential-card { 
@@ -53,78 +51,8 @@ with st.sidebar:
 tab_clinico, tab_ingenieria = st.tabs(["📋 Panel Clinico", "⚙️ Consola Ingenieria"])
 
 with tab_clinico:
-    # EL BANNER DIGITAL INTEGRANDO EL MOTOR GRÁFICO 3D ROTATIVO EN TIEMPO REAL
-    st.markdown("""
-        <div class="enterprise-card-banner">
-            <div style="font-family: sans-serif; z-index: 2; position: relative;">
-                <h1 style="margin:0; font-size: 44px; color: #0A1128; font-weight: 800; letter-spacing: -1.5px;">MethylOx<span style="color:#2563EB; font-weight:300;">™</span></h1>
-                <p style="color:#475569; margin:6px 0 0 0; font-size:16px; font-weight:500;">Early Detection Through Epigenetic AI</p>
-                <div style="display: flex; gap: 20px; margin-top: 35px; font-size: 13px; color: #1E3A8A; font-weight: 700; letter-spacing: 0.5px;">
-                    <span>🧬 DNA Methylation</span><span>🧠 AI Engine</span><span>🧪 Liquid Biopsy</span>
-                </div>
-            </div>
-            
-            <div style="position: absolute; right: 0; top: 0; width: 550px; height: 100%; z-index: 1;">
-                <canvas id="molecular3dCanvas" width="550" height="200"></canvas>
-                <script>
-                    (function() {
-                        var canvas = document.getElementById('molecular3dCanvas');
-                        if (!canvas) return;
-                        var ctx = canvas.getContext('2d');
-                        var angle = 0;
-                        var numNodes = 16;
-                        var radiusX = 140;
-                        var radiusY = 35;
-                        var centerX = 240;
-                        var centerY = 100;
-
-                        function draw3DMolecule() {
-                            ctx.clearRect(0, 0, canvas.width, canvas.height);
-                            angle += 0.015;
-
-                            for (var i = 0; i < numNodes; i++) {
-                                var t = (i / numNodes) * Math.PI * 2.5 + angle;
-                                var x1 = centerX + Math.cos(t) * radiusX - (i * 10 - 80);
-                                var y1 = centerY + Math.sin(t) * radiusY;
-                                var x2 = centerX + Math.cos(t + Math.PI) * radiusX - (i * 10 - 80);
-                                var y2 = centerY + Math.sin(t + Math.PI) * radiusY;
-
-                                ctx.beginPath();
-                                ctx.moveTo(x1, y1);
-                                ctx.lineTo(x2, y2);
-                                ctx.strokeStyle = 'rgba(203, 213, 225, 0.4)';
-                                ctx.lineWidth = 1.5;
-                                ctx.stroke();
-                            }
-
-                            for (var i = 0; i < numNodes; i++) {
-                                var t = (i / numNodes) * Math.PI * 2.5 + angle;
-                                var x1 = centerX + Math.cos(t) * radiusX - (i * 10 - 80);
-                                var y1 = centerY + Math.sin(t) * radiusY;
-                                var size1 = 5 + (Math.sin(t) + 1) * 3;
-
-                                var x2 = centerX + Math.cos(t + Math.PI) * radiusX - (i * 10 - 80);
-                                var y2 = centerY + Math.sin(t + Math.PI) * radiusY;
-                                var size2 = 5 + (Math.sin(t + Math.PI) + 1) * 3;
-
-                                ctx.beginPath();
-                                ctx.arc(x1, y1, size1, 0, Math.PI * 2);
-                                ctx.fillStyle = size1 > 6 ? '#2563EB' : '#1E3A8A';
-                                ctx.fill();
-
-                                ctx.beginPath();
-                                ctx.arc(x2, y2, size2, 0, Math.PI * 2);
-                                ctx.fillStyle = size2 > 6 ? '#67E8F9' : '#0EA5E9';
-                                ctx.fill();
-                            }
-                            requestAnimationFrame(draw3DMolecule);
-                        }
-                        draw3DMolecule();
-                    })();
-                </script>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
+    # EL LIENZO DESPLIEGA TU IMAGEN REAL INYECTADA SIN TEXTOS DE ERROR
+    st.markdown('<div class="enterprise-card-banner"></div>', unsafe_allow_html=True)
 
     with st.form("f_paciente", clear_on_submit=True):
         f1, f2, f3 = st.columns(3)
@@ -192,7 +120,7 @@ with tab_ingenieria:
     df_b = pd.DataFrame()
     df_b['Hyperparameter'] = h_param
     df_b['Value'] = h_val
-    st.dataframe(df_b)
+    st.dataframe(df_b, use_container_width=True, hide_index=True)
     
     st.markdown('### 🧪 Matriz Analitica DoE')
     corridas = []
@@ -246,4 +174,4 @@ with tab_ingenieria:
     df_doe['Enzima'] = f_enz
     df_doe['Tiempo'] = f_tie
     df_doe['Codigo'] = f_cod
-    st.dataframe(df_doe)
+    st.dataframe(df_doe, use_container_width=True, hide_index=True
