@@ -262,7 +262,7 @@ elif st.session_state["menu_activo"] == "🧪 Gel Analysis" and rol_usuario == "
     st.markdown("", unsafe_allow_html=True)
     st.slider("Ajustar concentración de matriz de agarosa (%)", 0.5, 2.5, 1.2)
     fig_gel, ax_gel = plt.subplots(figsize=(6, 3))
-    ax_gel.fill_between(,,, color="#111827")
+    ax_gel.fill_between("color="#111827")
     ax_gel.hlines(y=, xmin=2, xmax=8, color="#10B981", lw=6, alpha=0.8)
     ax_gel.set_title("Bandas de ctDNA fragmentado detectadas por Cas12a", color="white")
     ax_gel.set_facecolor("#111827")
