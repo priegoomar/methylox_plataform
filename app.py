@@ -194,3 +194,26 @@ elif st.session_state["menu_activo"] == "🧬 CRISPR Guide Library":
             st.dataframe(df_guias_nuevas, use_container_width=True)
         except Exception:
             st.error("Execution error: Invalid matrix mapping structure.")
+
+# ---------------------------------------------------------
+# BOTÓN 7: CONFIGURACIÓN / INGENIERÍA
+# ---------------------------------------------------------
+elif st.session_state["menu_activo"] == "⚙️ Settings":
+    st.title("⚙️ Engineering Core & Backend Diagnostics")
+    st.caption("Inspección en vivo del código analítico puro alojado en motores.py")
+    st.markdown("---")
+    
+    st.markdown("### 🖥️ Código de los Motores Unificados en Ejecución")
+    
+    try:
+        with open("motores.py", "r", encoding="utf-8") as file:
+            codigo_backend = file.read()
+        
+        st.code(
+            codigo_backend, 
+            language="python"
+        )
+        st.success("✅ Conexión e integridad del archivo motores.py verificada con éxito.")
+    except Exception as e:
+        st.error("❌ No se pudo enlazar el visor con el archivo de backend motores.py")
+
