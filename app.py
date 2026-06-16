@@ -29,14 +29,6 @@ st.markdown(
         background-color: #F8FAFC !important;
         font-family: 'Inter', -apple-system, sans-serif !important;
     }
-     /* 1. Elimina los márgenes del contenedor de Streamlit para que todo use el 100% */
-    .block-container {
-        padding-left: 0rem !important;
-        padding-right: 0rem !important;
-        max-width: 100% !important;
-    }
-
-    /* Banner panorámico micro-compacto */
     [data-testid="stImage"] img {
         width: 100% !important;
         height: auto !important;
@@ -45,6 +37,7 @@ st.markdown(
         border-radius: 10px !important;
         border-bottom: 3px solid #2563EB !important;
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1) !important;
+    }
     }
     /* Barra lateral */
     [data-testid="stSidebar"] {
