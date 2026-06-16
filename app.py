@@ -1,4 +1,4 @@
-# app.py - FRONTEND PRESET: THEME BIOTECH CLEANROOM
+# app.py - FRONTEND PRESET: THEME BIOTECH HYBRID CLEANROOM
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -20,27 +20,33 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. INYECCIÓN CSS: TEMÁTICA PRESET PREMIUM (Blanco & Azul Eléctrico)
+# 2. INYECCIÓN CSS AVANZADA: BLOQUES EN CONTRASTE Y BANNER COMPACTO
 st.markdown(
     """
     <style>
-    /* Fondo maestro blanco y tipografía de laboratorio */
+    /* Fondo maestro y tipografía de laboratorio */
     .stApp {
         background-color: #FFFFFF !important;
         font-family: 'Inter', -apple-system, sans-serif !important;
     }
-    /* Barra lateral limpia color blanco/gris clínico */
+    /* Forzar que el banner sea micro-compacto, panorámico y de baja altura */
+    [data-testid="stImage"] img {
+        max-height: 120px !important;
+        object-fit: cover !important;
+        border-radius: 8px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+    }
+    /* Barra lateral limpia color gris clínico */
     [data-testid="stSidebar"] {
         background-color: #F8FAFC !important;
         border-right: 1px solid #E2E8F0 !important;
     }
-    /* Estilización de textos en la barra lateral */
     [data-testid="stSidebar"] .stMarkdown, 
     [data-testid="stSidebar"] p, 
     [data-testid="stSidebar"] h2 {
         color: #0F172A !important;
     }
-    /* Botones de navegación integrados estilo menú clínico */
+    /* Botones de navegación estilo menú clínico */
     [data-testid="stSidebar"] .stButton>button {
         background-color: #FFFFFF !important;
         color: #2563EB !important;
@@ -52,19 +58,30 @@ st.markdown(
         margin-bottom: 6px !important;
         box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
     }
-    /* Efecto hover interactivo */
     [data-testid="stSidebar"] .stButton>button:hover {
         background-color: #2563EB !important;
         color: #FFFFFF !important;
         border-color: #2563EB !important;
     }
-    /* Tarjetas modulares de datos tipo dashboard de la imagen */
-    .metric-card {
-        background-color: #F8FAFC;
-        border: 1px solid #F1F5F9;
-        border-radius: 12px;
-        padding: 16px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+    /* 🧬 TARJETAS Y BLOQUES CONTRASTANTES (Inspirado en tu referencia) */
+    .biotech-panel {
+        background-color: #F1F5F9 !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 12px !important;
+        padding: 24px !important;
+        margin-bottom: 20px !important;
+        box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05) !important;
+    }
+    /* Efecto de pulso neón para la conexión activa */
+    @keyframes heartbeat {
+        0% { opacity: 0.4; }
+        50% { opacity: 1; }
+        100% { opacity: 0.4; }
+    }
+    .pulse-glow {
+        color: #10B981 !important;
+        font-weight: bold !important;
+        animation: heartbeat 2s infinite ease-in-out;
     }
     </style>
     """,
@@ -90,18 +107,30 @@ if st.sidebar.button("🧪 Gel Analysis", use_container_width=True): st.session_
 if st.sidebar.button("📄 Reports", use_container_width=True): st.session_state["menu_activo"] = "📄 Reports"
 if st.sidebar.button("⚙️ Settings", use_container_width=True): st.session_state["menu_activo"] = "⚙️ Settings"
 st.sidebar.markdown("---")
-if st.sidebar.button("🟢 Platform Status\n● Active Connection", use_container_width=True):
-    st.sidebar.toast("Enlace de datos en línea.")
 
-# --- 4. CONTROL DE PANTALLAS (FRONTEND LIMPIO) ---
+# Botón 8 Dinámico: Animación de Conexión y Procesamiento Activo
+status_label = "📡 Platform: ONLINE"
+if st.sidebar.button(status_label, use_container_width=True):
+    st.sidebar.toast("Backend verificado: Motores unificados calibrados.")
+st.sidebar.markdown("Estatus: <span class='pulse-glow'>● Processing Core Active</span>", unsafe_allow_html=True)
+
+st.sidebar.caption("Sesión: Médico Oncólogo")
+
+
+# --- 4. CONTROL DE PANTALLAS (FRONTEND LIMPIO Y PANELES EN CONTRASTE) ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-    st.image("banner_real.png", width=420)
+    # Renderizado micro-compacto (Ancho controlado y CSS se encarga de recortar la altura)
+    st.image("banner_real.png", width=380)
+    
     st.title("Molecular Methylation Analysis Hub")
     st.caption("Early Detection Through Epigenetic AI | Automated Screening Platform")
     st.markdown("---")
     
-    st.markdown("#### 📥 Patient Enrollment Matrix")
+    # Abrimos el contenedor del bloque con contraste azul/gris para los datos
+    st.markdown("<div class='biotech-panel'>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color:#1E3A8A; margin-top:0;'>📥 Patient Enrollment Matrix</h4>", unsafe_allow_html=True)
+    
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1: patient_id = st.text_input("🆔 Patient Identifier", placeholder="Ej. METH-2026-0X")
     with col_f2: patient_age = st.number_input("🎂 Chronological Age", min_value=18, max_value=100, value=45)
@@ -121,13 +150,20 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
     with col_btn2:
         reporte_txt = f"METHYLOX CLINICAL EXCERPT\nID: {patient_id}\nAge: {patient_age}\nScore: {ctdna_score:.4f}\nVerdict: {resultado}"
         st.download_button("📥 Export Prognostic Report (.TXT)", data=reporte_txt, file_name=f"Report_{patient_id}.txt", use_container_width=True)
+    
+    # Cerramos el panel contrastante del formulario
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("---")
-    st.markdown("#### 📊 Real-Time Analytics Overview")
+    
+    # Bloque de métricas en un segundo panel diferenciado
+    st.markdown("<div class='biotech-panel'>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color:#1E3A8A; margin-top:0;'>📊 Real-Time Analytics Overview</h4>", unsafe_allow_html=True)
     c_tar1, c_tar2, c_tar3 = st.columns(3)
     with c_tar1: st.metric(label="Clinical Cohort Status", value="Stage I Breast Cancer" if patient_id else "Awaiting Input")
     with c_tar2: st.metric(label="Global Methylation Value", value=f"{ctdna_score:.4f} ng/mL")
     with c_tar3: st.metric(label="Diagnostic Verdict", value=resultado)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 elif st.session_state["menu_activo"] == "👤 Patient Profiles":
     st.title("👤 Patient Profiles & Clinical Records")
@@ -136,13 +172,19 @@ elif st.session_state["menu_activo"] == "👤 Patient Profiles":
     conn = sqlite3.connect("methyl_clinic.db")
     df_pacientes = pd.read_sql_query("SELECT * FROM pacientes", conn)
     conn.close()
-    if not df_pacientes.empty: st.dataframe(df_pacientes, use_container_width=True)
-    else: st.info("No active logs stored in SQLite3.")
+    if not df_pacientes.empty: 
+        st.markdown("<div class='biotech-panel'>", unsafe_allow_html=True)
+        st.dataframe(df_pacientes, use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+    else: 
+        st.info("No active logs stored in SQLite3.")
 
 elif st.session_state["menu_activo"] == "🧬 CRISPR Guide Library":
     st.title("🧬 CRISPR Guide Library & Screening")
     st.markdown("---")
+    st.markdown("<div class='biotech-panel'>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload core genomic logs / raw database files")
+    st.markdown("</div>", unsafe_allow_html=True)
     if uploaded_file is not None:
         try:
             nombre = uploaded_file.name
