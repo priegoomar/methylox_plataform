@@ -114,9 +114,9 @@ st.sidebar.caption("Sesión: Médico Oncólogo")
 # ---------------------------------------------------------
 if st.session_state["menu_activo"] == "🏠 Dashboard":
     # Banner en formato compacto y controlado
-st.image(
-    "banner_real.png", 
-    width=450
+    st.image(
+        "banner_real.png", 
+      width=450
 )
         st.image("banner_real.png", use_container_width=True)
         
