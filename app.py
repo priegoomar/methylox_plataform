@@ -242,8 +242,8 @@ with tab_ingenieria:
     f_cod.append("abc")
     df_doe = pd.DataFrame()
     df_doe['Corrida'] = corridas
-df_doe['Temp'] = f_tempd
-f_doe['Enzima'] = f_enzd
-f_doe['Tiempo'] = f_tied
-f_doe['Codigo'] = f_cod
-st.dataframe(df_doe)
+    df_doe['Temp'] = f_tempd
+    f_doe['Enzima'] = f_enzd
+    f_doe['Tiempo'] = f_tied
+    f_doe['Codigo'] = f_cod
+    st.dataframe(df_doe)
