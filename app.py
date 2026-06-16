@@ -113,8 +113,11 @@ st.sidebar.caption("Sesión: Médico Oncólogo")
 # BOTÓN 1: DASHBOARD CLINICO PRINCIPAL (CON BOTÓN DE DESCARGA)
 # ---------------------------------------------------------
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-    col_b1, col_b2, col_b3 = st.columns()
-    with col_b2:
+    # Banner en formato compacto y controlado
+st.image(
+    "banner_real.png", 
+    width=450
+)
         st.image("banner_real.png", use_container_width=True)
         
     st.title("Molecular Methylation Analysis Hub")
