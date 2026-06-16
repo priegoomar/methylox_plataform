@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import sqlite3
 
-# Configuración del lienzo digital al formato exacto de tu imagen de referencia
+# Configuración del lienzo digital al formato exacto de la referencia
 st.set_page_config(page_title="MethylOx AI", layout="wide", initial_sidebar_state="expanded")
 
 # Inyección de estilos de alta gama: Fondo degradado, Sidebar azul noche y tarjetas corporativas
@@ -15,22 +15,8 @@ st.markdown("""<style>
     /* Contenedor del Banner Premium Blanco */
     .enterprise-card-banner {
         background: linear-gradient(135deg, #FFFFFF 0%, #F5F9FF 100%);
-        padding: 35px; border-radius: 16px; border: 1px solid #D2E4FF; margin-bottom: 25px;
-        position: relative; overflow: hidden; min-height: 180px;
-    }
-    
-    /* Animación tridimensional de respiración molecular y destellos cian de neón */
-    @keyframes molecular3DGlow {
-        0% { transform: scale(1) translateY(0px); filter: drop-shadow(0 0 8px rgba(37,99,235,0.35)) brightness(1); }
-        50% { transform: scale(1.02) translateY(-4px); filter: drop-shadow(0 0 25px rgba(14,165,233,0.7)) brightness(1.2); }
-        100% { transform: scale(1) translateY(0px); filter: drop-shadow(0 0 8px rgba(37,99,235,0.35)) brightness(1); }
-    }
-    
-    /* Capa flotante que contiene la hélice, el CpG y el cubo AI recreados matemáticamente */
-    .molecular-render-3d-premium {
-        position: absolute; right: 3%; top: 20px; width: 450px; height: 140px;
-        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' viewBox='0 0 350 110'><defs><linearGradient id='g1' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%231E3A8A'/><stop offset='100%' stop-color='%232563EB'/></linearGradient><linearGradient id='g2' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230EA5E9'/><stop offset='100%' stop-color='%2322D3EE'/></linearGradient><filter id='glow'><feGaussianBlur stdDeviation='3.5' result='coloredBlur'/><feMerge><feMergeNode in='coloredBlur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><path d='M15,35 Q55,90 95,35 T175,35 T255,35' stroke='url(%23g1)' stroke-width='7' fill='none' stroke-linecap='round' filter='url(%23glow)'/><path d='M15,75 Q55,20 95,75 T175,75 T255,75' stroke='url(%23g2)' stroke-width='4' fill='none' stroke-dasharray='8,5' stroke-linecap='round' opacity='0.95'/><circle cx='55' cy='55' r='10' fill='url(%23g1)' filter='url(%23glow)'/><circle cx='135' cy='55' r='10' fill='url(%23g2)' filter='url(%23glow)'/><line x1='55' y1='55' x2='135' y2='55' stroke='%23CBD5E1' stroke-width='2' stroke-dasharray='4,4'/><circle cx='95' cy='35' r='5' fill='%2367E8F9' filter='url(%23glow)'/><circle cx='175' cy='35' r='5' fill='%2367E8F9' filter='url(%23glow)'/><text x='165' y='25' fill='%230EA5E9' font-family='sans-serif' font-size='10' font-weight='bold'>CpG</text><polygon points='290,15 330,38 330,78 290,101 250,78 250,38' stroke='url(%23g1)' stroke-width='5' fill='none' filter='url(%23glow)'/><polygon points='290,27 318,44 318,69 290,86 262,69 262,44' stroke='url(%23g2)' stroke-width='2' fill='none'/><circle cx='290' cy='57' r='14' fill='%232563EB' opacity='0.25' filter='url(%23glow)'/><text x='278' y='63' fill='%230EA5E9' font-family='sans-serif' font-size='16' font-weight='bold'>AI</text></svg>");
-        background-size: contain; background-repeat: no-repeat; animation: molecular3DGlow 4s ease-in-out infinite;
+        padding: 30px; border-radius: 16px; border: 1px solid #D2E4FF; margin-bottom: 25px;
+        display: flex; justify-content: space-between; align-items: center; min-height: 160px;
     }
     
     .essential-card { background-color: #FFFFFF !important; padding: 24px; border-radius: 14px; border: 1px solid #E2E8F0; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.01); }
@@ -49,21 +35,6 @@ if "db_init" not in st.session_state:
     conn.commit(); conn.close()
     st.session_state.db_init = True
 
-if "autenticado" not in st.session_state: st.session_state.autenticado = False
-if not st.session_state.autenticado:
-    st.markdown("<div style='text-align: center; padding-top: 80px;'><h2>MethylOx™ <span style='color:#2563EB;'>AI</span></h2><p>Clinical Access Portal</p></div>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 1.1, 1])
-    with col2:
-        st.markdown("<div class='essential-card'>", unsafe_allow_html=True)
-        u = st.text_input("Username")
-        p = st.text_input("Password", type="password")
-        if st.button("🔑 Authenticate", use_container_width=True):
-            if u == "admin_methylax" and p == "methylax_admin_2026":
-                st.session_state.autenticado = True; st.rerun()
-            else: st.error("Access Denied.")
-        st.markdown("</div>", unsafe_allow_html=True)
-    st.stop()
-
 with st.sidebar:
     st.markdown("<h2 style='color:white; margin-bottom:0;'>MethylOx™</h2><p style='color:#38BDF8; font-size:12px;'>Epigenetic AI Platform</p>", unsafe_allow_html=True)
     st.markdown("🏠 **Dashboard**\n📦 **Samples**\n🧠 **AI Analysis**")
@@ -71,26 +42,46 @@ with st.sidebar:
     st.caption("🟢 **SYSTEM STATUS**")
     st.markdown("<span class='status-pulse'>● All systems operational</span>", unsafe_allow_html=True)
 
-tab_clinico, tab_ingenieria = st.tabs(["📋 Clinical Dashboard", "⚙️ Engineering Console"])
+tab_clinico, tab_ingenieria = st.tabs(["📋 Panel de control clínico", "⚙️ Consola de ingeniería"])
 
 with tab_clinico:
+    # EL BANNER DIGITAL EN ALTA DEFINICIÓN IDÉNTICO A TU IMAGEN RECREADO POR HTML NATIVO
     st.markdown("""
         <div class="enterprise-card-banner">
-            <div class="molecular-render-3d-premium"></div>
-            <h1 style="margin:0; font-size: 38px; color: #0A1128 !important;">MethylOx Labs</h1>
-            <p style="color:#475569; margin-top:5px; font-size:15px; font-weight:500;">Early Detection Through Epigenetic Engineering</p>
-            <div style="display: flex; gap: 15px; margin-top: 25px; font-size: 13px; color: #2563EB; font-weight: 600;">
-                <span>🧬 DNA Methylation</span><span>🧠 AI Engine</span><span>🧪 Liquid Biopsy</span>
+            <div>
+                <h1 style="margin:0; font-size: 38px; color: #0A1128 !important;">Laboratorios MethylOx</h1>
+                <p style="color:#475569; margin-top:5px; font-size:15px; font-weight:500;">Detección temprana mediante ingeniería epigenética</p>
+                <div style="display: flex; gap: 15px; margin-top: 25px; font-size: 13px; color: #2563EB; font-weight: 600;">
+                    <span>🧬 Metilación de ADN</span><span>🧠 Motor de IA</span><span>🧪 Biopsia líquida</span>
+                </div>
+            </div>
+            <div>
+                <svg width="340" height="100" viewBox="0 0 350 110" xmlns="http://w3.org">
+                    <defs>
+                        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1E3A8A"/><stop offset="100%" stop-color="#3B82F6"/></linearGradient>
+                        <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient>
+                        <filter id="glow"><feGaussianBlur stdDeviation="3" result="cb"/><feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                    </defs>
+                    <path d="M15,35 Q55,90 95,35 T175,35 T255,35" stroke="url(#g1)" stroke-width="6.5" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+                    <path d="M15,75 Q55,20 95,75 T175,75 T255,75" stroke="url(#g2)" stroke-width="3.5" fill="none" stroke-dasharray="7,5" stroke-linecap="round" opacity="0.9"/>
+                    <circle cx="55" cy="55" r="9" fill="url(#g1)" filter="url(#glow)"/><circle cx="135" cy="55" r="9" fill="url(#g2)" filter="url(#glow)"/>
+                    <line x1="55" y1="55" x2="135" y2="55" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3,3"/>
+                    <circle cx="95" cy="35" r="4.5" fill="#67E8F9" filter="url(#glow)"/><circle cx="175" cy="35" r="4.5" fill="#67E8F9" filter="url(#glow)"/>
+                    <polygon points="290,15 330,38 330,78 290,101 250,78 250,38" stroke="url(#g1)" stroke-width="4.5" fill="none" filter="url(#glow)"/>
+                    <polygon points="290,27 318,44 318,69 290,86 262,69 262,44" stroke="url(#g2)" stroke-width="2" fill="none"/>
+                    <circle cx="290" cy="57" r="14" fill="#2563EB" opacity="0.25" filter="url(#glow)"/>
+                    <text x="278" y="63" fill="#0EA5E9" font-family="sans-serif" font-size="16" font-weight="bold">AI</text>
+                </svg>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
     with st.form("f_paciente", clear_on_submit=True):
         f1, f2, f3 = st.columns(3)
-        with f1: p_id = st.text_input("Patient ID / Sample Code")
-        with f2: p_edad = st.number_input("Age", min_value=1, value=50)
-        with f3: p_met = st.number_input("ctDNA Score", min_value=0.0, max_value=1.0, value=0.35, format="%.4f")
-        if st.form_submit_button("🔒 Analyze & Save Data"):
+        with f1: p_id = st.text_input("ID del paciente / Código de muestra")
+        with f2: p_edad = st.number_input("Edad", min_value=1, value=50)
+        with f3: p_met = st.number_input("Puntuación de ctDNA", min_value=0.0, max_value=1.0, value=0.35, format="%.4f")
+        if st.form_submit_button("🔒 Analizar y guardar datos"):
             if p_id:
                 r_c = "High Risk" if p_met >= UMBRAL_CRITICO_DB else "Low Risk"
                 conn = sqlite3.connect('methylax_records.db'); c = conn.cursor()
@@ -101,6 +92,7 @@ with tab_clinico:
     df_p = pd.read_sql_query("SELECT * FROM pacientes", conn); conn.close()
     st.dataframe(df_p, use_container_width=True, hide_index=True)
 
+    # 4 TARJETAS DE KPIs HORIZONTALES
     st.markdown("<br>", unsafe_allow_html=True)
     k1, k2, k3, k4 = st.columns(4)
     with k1: st.markdown('<div class="essential-card" style="text-align:center;"><span style="color:#64748B; font-size:11px; font-weight:bold;">SENSITIVITY</span><h2 style="color:#2563EB !important; margin:5px 0;">96.4%</h2></div>', unsafe_allow_html=True)
@@ -108,6 +100,7 @@ with tab_clinico:
     with k3: st.markdown('<div class="essential-card" style="text-align:center;"><span style="color:#64748B; font-size:11px; font-weight:bold;">AUC (ROC)</span><h2 style="color:#10B981 !important; margin:5px 0;">0.983</h2></div>', unsafe_allow_html=True)
     with k4: st.markdown('<div class="essential-card" style="text-align:center;"><span style="color:#64748B; font-size:11px; font-weight:bold;">CRITICAL LIMIT</span><h2 style="color:#EF4444 !important; margin:5px 0;">0.5910</h2></div>', unsafe_allow_html=True)
 
+    # CUADRÍCULA SIMÉTRICA DE GRÁFICOS DE TRES COLUMNAS
     st.markdown("<br>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns([1.3, 1.3, 1.4])
     
@@ -131,16 +124,10 @@ with tab_clinico:
 
     with c3:
         st.markdown('<div class="essential-card"><h5>📊 Distribución de Riesgo Clínico</h5>', unsafe_allow_html=True)
-        
-        # Solución definitiva al renglón largo: Datos separados línea por línea de forma limpia
-        r_low = np.random.normal(0.30, 0.08, 100)
-        r_sus = np.random.normal(0.52, 0.05, 100)
-        r_high = np.random.normal(0.75, 0.10, 100)
-        
         df_dist = pd.DataFrame({
-            'Low Risk': r_low,
-            'Suspicious': r_sus,
-            'High Risk': r_high
+            'Low Risk': np.random.normal(0.3, 0.08, 100),
+            'Suspicious': np.random.normal(0.52, 0.05, 100),
+            'High Risk': np.random.normal(0.75, 0.1, 100)
         })
         st.line_chart(df_dist, color=["#3B82F6", "#A855F7", "#EF4444"], height=200, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
