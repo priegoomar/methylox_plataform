@@ -226,14 +226,14 @@ elif st.session_state["menu_activo"] == "👤 Patient Profiles":
                         conn.commit()
                         conn.close()
                         st.success(f"Expediente {id_busqueda} actualizado correctamente.")
-                with col_op2:
-    if st.button("❌ Eliminar Registro Permanentemente", use_container_width=True):
-        conn = sqlite3.connect("methyl_clinic.db")
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM pacientes WHERE id=?", (id_busqueda,))
-        conn.commit()
-        conn.close()
-        st.error(f"Expediente del paciente {id_busqueda} eliminado de SQLite3.")
+with col_op2:
+        if st.button("❌ Eliminar Registro Permanentemente", use_container_width=True):
+            conn = sqlite3.connect("methyl_clinic.db")
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM pacientes WHERE id=?", (id_busqueda,))
+            conn.commit()
+            conn.close()
+            st.error(f"Expediente del paciente {id_busqueda} eliminado de SQLite3.")
     else:
         st.warning("El ID ingresado no coincide con ningún expediente activo.")
     st.markdown("", unsafe_allow_html=True)
