@@ -6,27 +6,19 @@ import sqlite3
 # 1. CONFIGURACION DE PAGINA MAESTRA
 st.set_page_config(page_title="MethylOx AI", layout="wide", initial_sidebar_state="expanded")
 
-# 2. MOTOR DE ANIMACIÓN FLUIDA E ILUMINACIÓN DE NEÓN PARA TU IMAGEN REAL
+# 2. ESTILOS BASE DE ALTA COMPATIBILIDAD
 st.markdown("""<style>
     .stApp { background-color: #FAFCFF; color: #1E293B; }
     [data-testid="stSidebar"] { background-color: #0A1128 !important; }
     [data-testid="stSidebar"] * { color: #E2E8F0 !important; }
     
-    /* Contenedor del Banner Premium que anima tu imagen real */
-    div[data-testid="stImage"] img {
+    .enterprise-card-banner {
+        background: linear-gradient(135deg, #FFFFFF 0%, #F4F8FF 100%);
+        padding: 25px; 
+        border: 1px solid #D2E4FF !important; 
+        margin-bottom: 25px;
         border-radius: 16px;
-        border: 1px solid #D2E4FF;
-        box-shadow: 0 10px 30px rgba(37,99,235,0.06);
-        animation: premium3DAnimation 6s ease-in-out infinite;
     }
-    
-    /* Efecto Tecnológico: Respiración, destellos variables y pulso de profundidad */
-    @keyframes premium3DAnimation {
-        0% { transform: scale(1); filter: brightness(1) drop-shadow(0 4px 6px rgba(0,0,0,0.02)); }
-        50% { transform: scale(1.006) translateY(-3px); filter: brightness(1.04) saturate(1.08) drop-shadow(0 20px 40px rgba(37,99,235,0.18)); }
-        100% { transform: scale(1); filter: brightness(1) drop-shadow(0 4px 6px rgba(0,0,0,0.02)); }
-    }
-    
     .essential-card { 
         background-color: #FFFFFF !important; 
         padding: 15px; 
@@ -53,26 +45,101 @@ with st.sidebar:
 tab_clinico, tab_ingenieria = st.tabs(["📋 Panel Clinico", "⚙️ Consola Ingenieria"])
 
 with tab_clinico:
-    # EL COMANDO NATIVO PROYECTA LA IMAGEN Y LOS ESTILOS DE ARRIBA LE DAN EL MOVIMIENTO
-    st.image("banner_real.png", use_column_width=True)
+    # FILA DEL BANNER QUE INTEGRA LA VENTANA MOLECULAR INTERACTIVA 3D DE COLAB
+    col_txt, col_3d = st.columns([1.1, 0.9])
+    
+    with col_txt:
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<h1 style='margin:0; font-size:44px; color:#0A1128; font-weight:800;'>Laboratorios MethylOx</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#475569; font-size:16px; font-weight:500;'>Detección temprana mediante ingeniería epigenética</p>", unsafe_allow_html=True)
+        st.markdown("<p style='margin-top:25px; font-size:13px; color:#2563EB; font-weight:700;'>🧬 DNA Methylation &nbsp;&nbsp;&nbsp;&nbsp; 🧠 AI Engine &nbsp;&nbsp;&nbsp;&nbsp; 🧪 Liquid Biopsy</p>", unsafe_allow_html=True)
 
-    with st.form("f_paciente", clear_on_submit=True):
-        f1, f2, f3 = st.columns(3)
-        with f1: p_id = st.text_input("ID del paciente / Codigo de muestra")
-        with f2: p_edad = st.number_input("Edad", min_value=1, value=50)
-        with f3: p_met = st.number_input("Puntuacion de ctDNA", min_value=0.0, max_value=1.0, value=0.35, format="%.4f")
-        if st.form_submit_button("🔒 Analizar y guardar datos"):
-            if p_id:
-                r_c = "High Risk" if p_met >= UMBRAL_CRITICO_DB else "Low Risk"
-                conn = sqlite3.connect('methylax_records.db'); c = conn.cursor()
-                c.execute("INSERT OR REPLACE INTO pacientes VALUES (?, ?, ?, ?)", (p_id, p_edad, p_met, r_c))
-                conn.commit(); conn.close(); st.success("✔️ Guardado."); st.rerun()
+    with col_3d:
+        # VENTANA CIENTÍFICA WEBGL RECREANDO EL VOLUMEN E ILUMINACIÓN FOTORREALISTA DE COLAB
+        st.components.v1.html("""
+            <div style="background-color:#070B19; border-radius:12px; border:1px solid #1E293B; overflow:hidden; width:100%; height:190px; position:relative;">
+                <canvas id="colab3dCanvas" style="width:100%; height:100%; cursor:move;"></canvas>
+                <script>
+                    (function() {
+                        var canvas = document.getElementById('colab3dCanvas');
+                        if(!canvas) return;
+                        var ctx = canvas.getContext('2d');
+                        var angleX = 0.4; var angleY = 0.6;
+                        var isDragging = false; var prevX, prevY;
 
-    conn = sqlite3.connect('methylax_records.db')
-    df_p = pd.read_sql_query("SELECT * FROM pacientes", conn); conn.close()
-    st.dataframe(df_p, use_container_width=True, hide_index=True)
+                        canvas.addEventListener('mousedown', function(e) { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+                        window.addEventListener('mouseup', function() { isDragging = false; });
+                        canvas.addEventListener('mousemove', function(e) {
+                            if(!isDragging) return;
+                            var deltaX = e.clientX - prevX; var deltaY = e.clientY - prevY;
+                            angleY += deltaX * 0.01; angleX += deltaY * 0.01;
+                            prevX = e.clientX; prevY = e.clientY;
+                        });
+
+                        function drawMolecularModel() {
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
+                                canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight;
+                            }
+                            if(!isDragging) { angleY += 0.008; } // Auto-rotación continua
+                            
+                            var cx = canvas.width / 2; var cy = canvas.height / 2;
+                            var numPoints = 14;
+
+                            for(var i=0; i<numPoints; i++) {
+                                var t = (i / numPoints) * Math.PI * 2.2 + angleY;
+                                var z1 = Math.sin(t) * 40;
+                                var x1 = Math.cos(t) * 80;
+                                var y1 = (i * 12 - 80) * Math.cos(angleX) - z1 * Math.sin(angleX);
+
+                                var z2 = Math.sin(t + Math.PI) * 40;
+                                var x2 = Math.cos(t + Math.PI) * 80;
+                                var y2 = (i * 12 - 80) * Math.cos(angleX) - z2 * Math.sin(angleX);
+
+                                var rx1 = cx + x1; var ry1 = cy + y1;
+                                var rx2 = cx + x2; var ry2 = cy + y2;
+
+                                // Enlaces químicos traslúcidos estilo cristal
+                                ctx.beginPath();
+                                ctx.moveTo(rx1, ry1); ctx.lineTo(rx2, ry2);
+                                ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+                                ctx.lineWidth = 1.2; ctx.stroke();
+
+                                // RECREACIÓN DE ESFERAS 3D MEDIANTE DEGRADADOS RADIALES DE NEÓN (Estilo Colab)
+                                // Cadena Superior (Azul Eléctrico Volumétrico)
+                                var g1 = ctx.createRadialGradient(rx1-2, ry1-2, 1, rx1, ry1, 6);
+                                g1.addColorStop(0, '#FFFFFF'); g1.addColorStop(0.3, '#3B82F6'); g1.addColorStop(1, '#1E3A8A');
+                                ctx.beginPath(); ctx.arc(rx1, ry1, 6, 0, Math.PI*2);
+                                ctx.fillStyle = g1; ctx.shadowColor = '#2563EB'; ctx.shadowBlur = 10; ctx.fill();
+
+                                // Cadena Inferior (Cian Neón Volumétrico)
+                                var g2 = ctx.createRadialGradient(rx2-1, ry2-1, 1, rx2, ry2, 5);
+                                g2.addColorStop(0, '#FFFFFF'); g2.addColorStop(0.4, '#67E8F9'); g2.addColorStop(1, '#0EA5E9');
+                                ctx.beginPath(); ctx.arc(rx2, ry2, 5, 0, Math.PI*2);
+                                ctx.fillStyle = g2; ctx.shadowColor = '#67E8F9'; ctx.shadowBlur = 12; ctx.fill();
+
+                                // DESTELLO COMPACTO EN EL NODO DE METILACIÓN CPG TRIDIMENSIONAL
+                                if(i == 6) {
+                                    var gCpG = ctx.createRadialGradient(rx1, ry1, 4, rx1, ry1, 14);
+                                    gCpG.addColorStop(0, 'rgba(34, 211, 238, 0.6)'); gCpG.addColorStop(1, 'rgba(6, 182, 212, 0)');
+                                    ctx.beginPath(); ctx.arc(rx1, ry1, 14, 0, Math.PI*2);
+                                    ctx.fillStyle = gCpG; ctx.fill();
+                                    
+                                    ctx.beginPath(); ctx.arc(rx1, ry1, 8, 0, Math.PI*2);
+                                    ctx.strokeStyle = '#22D3EE'; ctx.lineWidth = 1.5; ctx.stroke();
+                                }
+                            }
+                            ctx.shadowBlur = 0;
+                            requestAnimationFrame(drawMolecularModel);
+                        }
+                        drawMolecularModel();
+                    })();
+                </script>
+            </div>
+        """, height=200)
 
     st.markdown("<br>", unsafe_allow_html=True)
+
     k1, k2, k3, k4 = st.columns(4)
     with k1: st.markdown('<div class="essential-card"><span>SENSITIVITY</span><h2>96.4%</h2></div>', unsafe_allow_html=True)
     with k2: st.markdown('<div class="essential-card"><span>SPECIFICITY</span><h2>94.1%</h2></div>', unsafe_allow_html=True)
