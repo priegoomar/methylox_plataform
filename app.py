@@ -36,17 +36,15 @@ st.markdown(
         max-width: 100% !important;
     }
 
-    /* 2. Banner panorámico expandido de extremo a extremo */
+    /* Banner panorámico micro-compacto */
     [data-testid="stImage"] img {
         width: 100% !important;
         height: auto !important;
-        max-height: 180px !important; /* Controla qué tan delgado/alto se ve el banner */
-        object-fit: cover !important; /* Si se corta el logo de los lados, cámbialo a 'contain' */
-        border-radius: 0px !important; /* 0px para que se acople perfectamente a los bordes de la pantalla */
-        border-bottom: 4px solid #2563EB !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
-    }
-    }
+        max-height: 200px !important;
+        object-fit: contain !important;
+        border-radius: 10px !important;
+        border-bottom: 3px solid #2563EB !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1) !important;
     }
     /* Barra lateral */
     [data-testid="stSidebar"] {
