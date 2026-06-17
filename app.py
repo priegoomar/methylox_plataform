@@ -117,15 +117,16 @@ st.sidebar.pyplot(fig_pulse)
 st.sidebar.caption("© 2026 MethylOx™")
 
 # --- 4. CONTROL DE PANTALLAS ---
-
-if st.session_state["menu_activo"] == "🏠 Dashboard":
-     import base64
-
-    # 1. Leemos la imagen local en máxima resolución
-     with open("banner_real.png", "rb") as image_file:
+if st.session_state["menu_activo"] == "📊 Dashboard":
+    st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    
+    import base64
+    
+    with open("banner_real.png", "rb") as image_file:
         encoded_banner = base64.b64encode(image_file.read()).decode()
-
-    # 2. La dibujamos en HTML para que no pierda nada de nitidez
+        
+    # LÍNEA 129: Asegúrate de que tenga exactamente 4 espacios al inicio (alineado con import y with)
     st.markdown(
         f"""
         <div style="width: 100%; margin-top: 10px; margin-bottom: 25px; display: block; clear: both;">
