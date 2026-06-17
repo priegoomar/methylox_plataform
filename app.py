@@ -119,17 +119,8 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-    st.markdown(
-            """
-            <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); margin-bottom: 20px; border-bottom: 3px solid #EC4899;">
-                <h1 style="color: #FFFFFF; margin: 0; font-size: 28px; font-family: 'Inter', sans-serif; letter-spacing: 0.5px;">🧬 Molecular Methylation Analysis Hub</h1>
-                <p style="color: #94A3B8; margin: 5px 0 0 0; font-size: 14px;">Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-    st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
-    
+    st.image("banner_real.png", use_container_width=True)
+
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📋 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
