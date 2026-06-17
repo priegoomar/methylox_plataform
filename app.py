@@ -114,29 +114,38 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "📊 Dashboard":
-    # Renderizado HTML limpio usando el archivo de imagen de la raíz
-    banner_html = """
-    <img src="banner_real.png" style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 120px;
-        object-fit: cover;
-        z-index: 999999;
-        border-bottom: 4px solid #2563EB;
-        box-shadow: 0 4px 12px rgba(37,99,235,0.15);
-    ">
-    """
-    st.markdown(banner_html, unsafe_allow_html=True)
+    # 1. Banner corporativo premium de extremo a extremo (Generación líquida por CSS)
+    st.markdown(
+        """
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 90px;
+            background: linear-gradient(90deg, #1E3A8A 0%, #2563EB 100%);
+            z-index: 99999;
+            border-bottom: 4px solid #10B981;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+        ">
+            <h1 style="color: white; font-family: 'Inter', sans-serif; font-size: 22px; margin: 0; font-weight: 700; letter-spacing: 0.5px;">
+                🧬 MethylOx™ <span style="font-weight: 300; font-size: 16px; color: #93C5FD;">| Molecular Methylation Analysis Hub</span>
+            </h1>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
     
-    # Separador dinámico para evitar que el contenido sea tapado
-    st.markdown('<div class="main-content-wrapper" style="margin-top: 100px;">', unsafe_allow_html=True)
+    # 2. Contenedor principal que empuja el contenido hacia abajo de forma limpia
+    st.markdown('<div style="margin-top: 70px;">', unsafe_allow_html=True)
     
-    st.title("Molecular Methylation Analysis Hub")
     st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
     st.markdown("---")
     
+    # Tarjeta 1: Formulario de Pacientes
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">🧬 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
@@ -166,8 +175,9 @@ if st.session_state["menu_activo"] == "📊 Dashboard":
         reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
         st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True)
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 1
 
+    # Tarjeta 2: Métricas en tiempo real
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     
@@ -180,6 +190,9 @@ if st.session_state["menu_activo"] == "📊 Dashboard":
         st.metric(label="AUC (ROC)", value="0.982")
     with k4:
         st.metric(label="VERDICT STATUS", value="Low Risk")
+
+    st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 2
+    st.markdown("</div>", unsafe_allow_html=True) # Cierre del contenedor principal
 elif st.session_state["menu_activo"] == "🧪 Samples":
     st.title("🧪 Sample Records & Permanent Database")
     st.markdown("---")
