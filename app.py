@@ -110,7 +110,7 @@ if st.session_state["menu_activo"] == "Dashboard":
     try:
         st.image("https://githubusercontent.com", use_container_width=True)
     except Exception:
-        st.image("https://unsplash.com' use_container_width=True")
+        st.image("https://unsplash.com' use_container_width=True)
 
     # 2. Inyección de CSS líquido para fijar el logo de lado a lado
     st.markdown(
