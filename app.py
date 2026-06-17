@@ -129,7 +129,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
             box-shadow: 0 4px 12px rgba(37,99,235,0.15);
         ">
         """
-        st.markdown(banner_html, unsafe_allow_html=True)
+        st.markdown(banner_real.png, unsafe_allow_html=True)
         
         # Este contenedor empuja el contenido hacia abajo EXACTAMENTE los píxeles necesarios para que no se tape nada
         st.markdown('<div class="main-content-wrapper" style="margin-top: 100px;">', unsafe_allow_html=True)        
