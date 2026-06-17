@@ -236,7 +236,7 @@ try:
     with open("motores.py", "r", encoding="utf-8") as file:
         codigo_backend = file.read()
     st.code(codigo_backend, language="python")
-        st.success("✅ Conexión e integridad del archivo motores.py verificada.")
-    except Exception:
-        st.error("❌ No se pudo enlazar el visor con motores.py")
+    st.success("✅ Conexión e integridad del archivo motores.py verificada.")
+except Exception:
+    st.error("❌ No se pudo enlazar el visor con motores.py")
     st.markdown("", unsafe_allow_html=True)
