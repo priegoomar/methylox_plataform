@@ -105,32 +105,31 @@ st.sidebar.markdown("---")
 
 
 # --- 4. CONTROL DE PANTALLAS ---
-   # 1. Cargador seguro nativo (Streamlit procesa la imagen sin bloqueos de seguridad)
-    try:
-        st.image("banner_real.png", use_container_width=True)
-    except Exception:
-        st.warning("⚠️ El archivo 'banner_real.png' no se encuentra en la carpeta raíz.")
+try:
+    st.image("banner_real.png", use_container_width=True)
+except Exception:
+    st.warning("⚠️ El archivo 'banner_real.png' no se encuentra en la carpeta raíz.")
 
-    # 2. Inyección de CSS líquido para romper los márgenes y fijar el logo de lado a lado
-    st.markdown(
-        """
-        <style>
-        [data-testid="stImage"] img {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 90px !important;
-            object-fit: cover !important;
-            z-index: 99999 !important;
-            border-bottom: 4px solid #10B981 !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-        }
-        </style>
-        """, 
-        unsafe_allow_html=True
-    )
-    
+# 2. Inyección de CSS líquido para romper los márgenes y fijar el logo de lado a lado
+st.markdown(
+    """
+    <style>
+    [data-testid="stImage"] img {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 90px !important;
+        object-fit: cover !important;
+        z-index: 99999 !important;
+        border-bottom: 4px solid #10B981 !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    }
+    </style>
+    """, 
+    unsafe_allow_html=True
+)
+
     # 3. Margen superior para que el texto no quede tapado por el banner flotante
     st.markdown('<div style="margin-top: 40px;">', unsafe_allow_html=True)
     
