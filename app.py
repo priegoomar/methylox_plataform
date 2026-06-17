@@ -205,11 +205,24 @@ if st.session_state["menu_activo"] == "📊 Dashboard":
         sns.kdeplot(np.random.normal(25, 6, 150), color="#3B82F6", fill=True, alpha=0.2, label="Healthy", ax=ax3)
         sns.kdeplot(np.random.normal(55, 8, 150), color="#8B5CF6", fill=True, alpha=0.2, label="Benign", ax=ax3)
 if st.session_state["menu_activo"] == "🏠 Dashboard": 
-    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3,)
+     # 1. Agrega esta línea para inicializar la figura y el eje (ax3)
+    fig3, ax3 = plt.subplots(figsize=(5, 2.5))
+
+    # 2. Tu función de seaborn se acoplará perfectamente al eje ax3
+    sns.kdeplot(
+        np.random.normal(78, 6, 150), 
+        color="#EC4899", 
+        fill=True, 
+        alpha=0.2, 
+        label="Early Cancer", 
+        ax=ax3
+    )
     ax3.set_xlabel("Risk Score (%)", fontsize=8)
     ax3.legend(fontsize=7)
     sns.despine()
-    st.pyplot(fig3, use_container_width=False)
+    
+    # 3. Renderiza la gráfica en Streamlit
+    st.pyplot(fig3)
 
 # 2. Las siguientes secciones ahora sí se conectarán correctamente
 elif st.session_state["menu_activo"] == "🧪 Samples":
