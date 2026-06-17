@@ -119,7 +119,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         st.markdown('<style>[data-testid="stImage"] img { width: 100vw !important; max-height: 140px !important; object-fit: cover !important; margin-top: -50px; border-bottom: 4px solid #2563EB; }</style>', unsafe_allow_html=True)
         
         # Encapsulamos el resto del contenido para que mantenga sus márgenes elegantes
-        st.markdown('<div class="main-content-wrapper" style=margin-top: 160px;>', unsafe_allow_html=True)
+        st.markdown('<div class="main-content-wrapper" style="margin-top: 160px;>', unsafe_allow_html=True)
     
         st.title("Molecular Methylation Analysis Hub")
         st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
