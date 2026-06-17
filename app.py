@@ -113,8 +113,8 @@ st.sidebar.caption("© 2026 MethylOx™")
 
 # --- 4. CONTROL DE PANTALLAS ---
 
-if st.session_state["menu_activo"] == "🏠 Dashboard":
-        # 1. Inyectamos la imagen con su código de texto embebido de extremo a extremo
+    if st.session_state["menu_activo"] == "📊 Dashboard":
+        # 1. Inyectamos la imagen con su código de texto de extremo a extremo
         banner_html = f"""
         <img src="{src_base64}" style="
             position: fixed;
@@ -129,31 +129,10 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         ">
         """
         st.markdown(banner_html, unsafe_allow_html=True)
-    
-
-        # 2. Inyectamos la imagen con su código de texto embebido
-        banner_html = f"""
-        <img src="{src_base64}" style="
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 120px;
-            object-fit: cover;
-            z-index: 999999;
-            border-bottom: 4px solid #2563EB;
-            box-shadow: 0 4px 12px rgba(37,99,235,0.15);
-        ">
-        """
-        st.markdown(banner_html, unsafe_allow_html=True)
-
         
-        # Este contenedor empuja el contenido hacia abajo EXACTAMENTE los píxeles necesarios para que no se tape nada
-        st.markdown('<div class="main-content-wrapper" style="margin-top: 100px;">', unsafe_allow_html=True)        
+        # 2. Contenedor para empujar el contenido hacia abajo y que no se tape
+        st.markdown('<div class="main-content-wrapper" style="margin-top: 100px;">', unsafe_allow_html=True)
         
-        # Encapsulamos el resto del contenido para que mantenga sus márgenes elegantes
-        st.markdown('<div class="main-content-wrapper" style="margin-top: 160px;>', unsafe_allow_html=True)
-    
         st.title("Molecular Methylation Analysis Hub")
         st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
         st.markdown("---")
