@@ -119,11 +119,22 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-    st.image("banner_real.png", use_container_width=True, output_format="PNG")
-    st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
-    st.write("")
-    st.write("")
-    
+     import base64
+
+    # 1. Leemos la imagen local en máxima resolución
+    with open("banner_real.png", "rb") as image_file:
+        encoded_banner = base64.b64encode(image_file.read()).decode()
+
+    # 2. La dibujamos en HTML para que no pierda nada de nitidez
+    st.markdown(
+        f"""
+        <div style="width: 100%; margin-top: 10px; margin-bottom: 25px; display: block; clear: both;">
+            <img src="data:image/png;base64,{encoded_banner}" 
+                 style="width: 100%; height: auto; display: block; border-radius: 8px; image-rendering: -webkit-optimize-contrast;">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )   
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
         patient_id = st.text_input("🆔 Patient Identifier", placeholder="Ej. METH-2026-0X")
