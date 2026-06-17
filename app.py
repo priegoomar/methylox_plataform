@@ -166,71 +166,27 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         with k2: st.metric(label="SPECIFICITY", value="94.1%")
         with k3: st.metric(label="AUC (ROC)", value="0.983")
         with k4: st.metric(label="VERDICT STATUS", value=resultado)
-    st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("### 📊 Clinical Evidence & Multi-Population Models")
-    g1, g2, g3 = st.columns(3)
-    
-    with g1:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-heading">DNA Methylation: Genomic Position</p>', unsafe_allow_html=True)
-        fig1, ax1 = plt.subplots(figsize=(4.5, 3.2))
-        data_heatmap = np.random.rand(8, 8)
-        sns.heatmap(data_heatmap, cmap="Purples", cbar=True, ax=ax1, xticklabels=False, yticklabels=False)
-        st.pyplot(fig1)
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-    with g2:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-heading">ROC Performance Curve</p>', unsafe_allow_html=True)
-        fig2, ax2 = plt.subplots(figsize=(4.5, 3.2))
-        x_val = np.linspace(0, 1, 100)
-        y_val = 1 - np.exp(-5 * x_val)
-        ax2.plot(x_val, y_val, color="#6366F1", lw=2.5)
-        ax2.plot([0, 1], [0, 1], color="#CBD5E1", linestyle="--")
-        ax2.set_xlabel("1 - Specificity", fontsize=8)
-        ax2.set_ylabel("Sensitivity", fontsize=8)
-        sns.despine()
-        st.pyplot(fig2)
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-    with g3:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-heading">Risk Distribution Model</p>', unsafe_allow_html=True)
-        fig3, ax3 = plt.subplots(figsize=(4.5, 3.2))
-        sns.kdeplot(np.random.normal(25, 6, 150), color="#3B82F6", fill=True, alpha=0.2, label="Healthy", ax=ax3)
-        sns.kdeplot(np.random.normal(55, 8, 150), color="#8B5CF6", fill=True, alpha=0.2, label="Benign", ax=ax3)
-    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
-    ax3.set_xlabel("Risk Score (%)", fontsize=8)
-    ax3.legend(fontsize=7)
-    sns.despine()
-    st.pyplot(fig3)
-    st.markdown("", unsafe_allow_html=True)
-    st.markdown("", unsafe_allow_html=True) # Cierre del content wrapper
+        st.markdown("</div>", unsafe_allow_html=True) # Cierre del content wrapper
 
 elif st.session_state["menu_activo"] == "🧪 Samples":
-    st.markdown('', unsafe_allow_html=True)
     st.title("🧪 Sample Records & Permanent Database")
     st.markdown("---")
-    
+   
     conn = sqlite3.connect("methyl_clinic.db")
     df_pacientes = pd.read_sql_query("SELECT * FROM pacientes", conn)
     conn.close()
-    
+   
     if not df_pacientes.empty:
-        st.markdown('', unsafe_allow_html=True)
         st.dataframe(df_pacientes, use_container_width=True)
-        st.markdown('', unsafe_allow_html=True)
     else:
         st.info("No active patient logs detected inside methyl_clinic.db.")
-        
-    st.markdown("", unsafe_allow_html=True)
 
 elif st.session_state["menu_activo"] == "⚙️ Settings":
-    st.markdown('', unsafe_allow_html=True)
     st.title("⚙️ Engineering Core & Backend Diagnostics")
     st.markdown("---")
-    
+   
     try:
         with open("motores.py", "r", encoding="utf-8") as file:
             codigo_backend = file.read()
@@ -238,5 +194,3 @@ elif st.session_state["menu_activo"] == "⚙️ Settings":
         st.success("✅ Conexión e integridad del archivo motores.py verificada.")
     except Exception:
         st.error("❌ No se pudo enlazar el visor con motores.py")
-        
-    st.markdown("", unsafe_allow_html=True)
