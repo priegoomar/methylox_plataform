@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import motores
 
-# 1. CONFIGURACION DE PAGINA MAESTRA
+# 1. CONFIGURACION DE PAGINA MAESTRA (Layout extendido obligatorio)
 st.set_page_config(page_title="MethylOx Labs", layout="wide", initial_sidebar_state="expanded")
 
 # Configuración estética de gráficos premium
@@ -16,17 +16,38 @@ plt.rcParams["axes.labelcolor"] = "#475569"
 plt.rcParams["xtick.color"] = "#64748B"
 plt.rcParams["ytick.color"] = "#64748B"
 
-# 2. INYECCIÓN CSS SEGURO: TEMÁTICA GRAFITO MATE, RECUADROS Y BANNER PANORÁMICO REAL
+# 2. INYECCIÓN CSS SEGURO: EFECTO PANORÁMICO REAL 100% FLUIDO DE EXTREMO A EXTREMO
 st.markdown(
     """
     <style>
+    /* Fondo general de la plataforma gris clínico satinado */
     .stApp { background-color: #F1F5F9 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
+    
+    /* Forzar que el espacio de contenido de Streamlit no tenga márgenes superiores */
+    .block-container { padding-top: 0rem !important; padding-left: 0rem !important; padding-right: 0rem !important; max-width: 100% !important; }
+    
+    /* BARRA LATERAL GRAFITO MATE (#1E293B) */
     [data-testid="stSidebar"] { background-color: #1E293B !important; border-right: none !important; }
     [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { color: #FFFFFF !important; }
     
-    /* 🖼️ BANNER PANORÁMICO COMPACTO FORZADO A EXPANSIÓN COMPLETA HORIZONTAL */
-    [data-testid="stImage"] { width: 100% !important; text-align: center !important; }
-    [data-testid="stImage"] img { width: 100% !important; max-height: 85px !important; object-fit: fill !important; border-radius: 8px !important; }
+    /* 🔥 CONTENEDOR MAESTRO DEL BANNER: ROMPE CUALQUIER MARGEN Y SE ESTIRA AL 100% REAL */
+    .banner-full {
+        width: 100vw !important;
+        height: 100px !important;
+        background-image: url('app/static/banner_real.png'), url('banner_real.png') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        border-bottom: 3px solid #2563EB !important;
+        margin-bottom: 25px !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+    }
+    
+    /* Espaciador interno para las secciones de contenido de la página principal */
+    .main-content-wrapper {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
     
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important; color: #CBD5E1 !important; border: none !important;
@@ -55,7 +76,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Inicialización segura de BD llamando al backend
+# Inicialización silenciosa de BD llamando al backend
 motores.iniciar_base_datos()
 UMBRAL = motores.UMBRAL_GLOBAL
 
@@ -93,7 +114,15 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-    st.image("banner_real.png", use_container_width=True)
+    # 🖼️ RENDERIZADO HTML LÍQUIDO DEL BANNER (Ocupa el 100% horizontal de la ventana)
+    st.markdown('<div class="banner-full"></div>', unsafe_allow_html=True)
+    
+    # Encapsulamos el resto del contenido para que mantenga sus márgenes elegantes
+    st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
+    
+    st.title("Molecular Methylation Analysis Hub")
+    st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
+    st.markdown("---")
     
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📥 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
@@ -160,29 +189,37 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         fig3, ax3 = plt.subplots(figsize=(4.5, 3.2))
         sns.kdeplot(np.random.normal(25, 6, 150), color="#3B82F6", fill=True, alpha=0.2, label="Healthy", ax=ax3)
         sns.kdeplot(np.random.normal(55, 8, 150), color="#8B5CF6", fill=True, alpha=0.2, label="Benign", ax=ax3)
-        sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
-        ax3.set_xlabel("Risk Score (%)", fontsize=8)
-        ax3.legend(fontsize=7)
-        sns.despine()
-        st.pyplot(fig3)
-        st.markdown("</div>", unsafe_allow_html=True)
+    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
+    ax3.set_xlabel("Risk Score (%)", fontsize=8)
+    ax3.legend(fontsize=7)
+    sns.despine()
+    st.pyplot(fig3)
+    st.markdown("", unsafe_allow_html=True)
+    st.markdown("", unsafe_allow_html=True) # Cierre del content wrapper
 
 elif st.session_state["menu_activo"] == "🧪 Samples":
+    st.markdown('', unsafe_allow_html=True)
     st.title("🧪 Sample Records & Permanent Database")
     st.markdown("---")
+    
     conn = sqlite3.connect("methyl_clinic.db")
     df_pacientes = pd.read_sql_query("SELECT * FROM pacientes", conn)
     conn.close()
+    
     if not df_pacientes.empty:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+        st.markdown('', unsafe_allow_html=True)
         st.dataframe(df_pacientes, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('', unsafe_allow_html=True)
     else:
         st.info("No active patient logs detected inside methyl_clinic.db.")
+        
+    st.markdown("", unsafe_allow_html=True)
 
 elif st.session_state["menu_activo"] == "⚙️ Settings":
+    st.markdown('', unsafe_allow_html=True)
     st.title("⚙️ Engineering Core & Backend Diagnostics")
     st.markdown("---")
+    
     try:
         with open("motores.py", "r", encoding="utf-8") as file:
             codigo_backend = file.read()
@@ -190,3 +227,5 @@ elif st.session_state["menu_activo"] == "⚙️ Settings":
         st.success("✅ Conexión e integridad del archivo motores.py verificada.")
     except Exception:
         st.error("❌ No se pudo enlazar el visor con motores.py")
+        
+    st.markdown("", unsafe_allow_html=True)
