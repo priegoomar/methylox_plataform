@@ -116,8 +116,20 @@ st.sidebar.caption("© 2026 MethylOx™")
 if st.session_state["menu_activo"] == "🏠 Dashboard":
         # Método alternativo nativo para forzar la carga de la imagen
         # BANNER ABSOLUTO: Se monta sobre toda la pantalla ignorando los contenedores de Streamlit
-        banner_html = """
-        <img scr="https://githubusercontent.com" style="
+               import base64
+
+        # 1. Leemos la imagen local y la convertimos en código binario de texto
+        try:
+            with open("banner_real.png", "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read()).decode()
+            src_base64 = f"data:image/png;base64,{encoded_string}"
+        except Exception:
+            # Respaldo si no encuentra el archivo en el servidor
+            src_base64 = ""
+
+        # 2. Inyectamos la imagen con su código de texto embebido
+        banner_html = f"""
+        <img src="{src_base64}" style="
             position: fixed;
             top: 0;
             left: 0;
