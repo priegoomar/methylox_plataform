@@ -166,7 +166,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         with k2: st.metric(label="SPECIFICITY", value="94.1%")
         with k3: st.metric(label="AUC (ROC)", value="0.983")
         with k4: st.metric(label="VERDICT STATUS", value=resultado)
-            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True) # Cierre del content wrapper
 
