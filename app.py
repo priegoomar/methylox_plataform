@@ -134,53 +134,52 @@ if st.session_state["menu_activo"] == "📊 Dashboard":
     st.markdown('<div class="main-content-wrapper" style="margin-top: 100px;">', unsafe_allow_html=True)
     
     st.title("Molecular Methylation Analysis Hub")
-
-        st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
-        st.markdown("---")
+    st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
+    st.markdown("---")
     
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-heading">📥 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">🧬 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
-        col_f1, col_f2, col_f3 = st.columns(3)
-        with col_f1:
-            patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X")
-        with col_f2:
-            patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45)
-        with col_f3:
-            ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f")
+    col_f1, col_f2, col_f3 = st.columns(3)
+    with col_f1:
+        patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X")
+    with col_f2:
+        patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45)
+    with col_f3:
+        ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f")
 
-        resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
+    resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
 
-        col_btn1, col_btn2 = st.columns(2)
-        with col_btn1:
-            if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
-                if patient_id:
-                    estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
-                    if estatus_db == "Éxito":
-                        st.success(f"Record secured in SQLite3 for ID: {patient_id}")
-                    else:
-                        st.error("Database status: Patient Identifier already exists.")
+    col_btn1, col_btn2 = st.columns(2)
+    with col_btn1:
+        if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
+            if patient_id:
+                estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
+                if estatus_db == "Éxito":
+                    st.success(f"Record secured in SQLite3 for ID: {patient_id}")
                 else:
-                    st.warning("Please enter a valid Patient Identifier.")
+                    st.error("Database status: Patient Identifier already exists.")
+            else:
+                st.warning("Please enter a valid Patient Identifier.")
 
-        with col_btn2:
-            reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
-            st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True)
+    with col_btn2:
+        reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
+        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True)
 
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
-        k1, k2, k3, k4 = st.columns(4)
-
-        with k1: st.metric(label="SENSITIVITY", value="96.4%")
-        with k2: st.metric(label="SPECIFICITY", value="94.1%")
-        with k3: st.metric(label="AUC (ROC)", value="0.983")
-        with k4: st.metric(label="VERDICT STATUS", value=resultado)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        st.markdown("</div>", unsafe_allow_html=True) # Cierre del content wrapper
-
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
+    
+    k1, k2, k3, k4 = st.columns(4)
+    with k1:
+        st.metric(label="SENSITIVITY", value="96.4%")
+    with k2:
+        st.metric(label="SPECIFICITY", value="94.1%")
+    with k3:
+        st.metric(label="AUC (ROC)", value="0.982")
+    with k4:
+        st.metric(label="VERDICT STATUS", value="Low Risk")
 elif st.session_state["menu_activo"] == "🧪 Samples":
     st.title("🧪 Sample Records & Permanent Database")
     st.markdown("---")
