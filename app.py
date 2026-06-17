@@ -114,8 +114,9 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-        banner_html = '<img src="banner_real.png" style="width:100vw; max-height:140px; object-fit:cover; margin-top:-50px; border-bottom:4px solid #2563EB; box-shadow: 0 4px 12px rgba(37,99,235,0.15);">'
-        st.markdown(banner_html, unsafe_allow_html=True)
+        # Método alternativo nativo para forzar la carga de la imagen
+        st.image("banner_real.png", use_container_width=True)
+        st.markdown('<style>[data-testid="stImage"] img { width: 100vw !important; max-height: 140px !important; object-fit: cover !important; margin-top: -50px; border-bottom: 4px solid #2563EB; }</style>', unsafe_allow_html=True)
         
         # Encapsulamos el resto del contenido para que mantenga sus márgenes elegantes
         st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
