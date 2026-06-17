@@ -1,4 +1,4 @@
-import sqlite3
+3import sqlite3
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -20,7 +20,7 @@ plt.rcParams["ytick.color"] = "#64748B"
 st.markdown(
     """
     <style>
-    /* Fondo general de la plataforma gris clínico satinado */
+    /* Fondo general de la plataforma blanco clínico satinado */
     .stApp { background-color: #F1F5F9 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
     
     /* Forzar que el espacio de contenido de Streamlit no tenga márgenes superiores */
@@ -84,82 +84,101 @@ UMBRAL = motores.UMBRAL_GLOBAL
 st.sidebar.markdown("## 🔮 MethylOx™")
 st.sidebar.caption("Epigenetic AI Platform")
 st.sidebar.markdown("---")
-
+# --- 3. BARRA LATERAL DE NAVEGACIÓN ---
 if "menu_activo" not in st.session_state:
-    st.session_state["menu_activo"] = "🏠 Dashboard"
+    st.session_state["menu_activo"] = "Dashboard"
 
-if st.sidebar.button("🏠 Dashboard", use_container_width=True): st.session_state["menu_activo"] = "🏠 Dashboard"
-if st.sidebar.button("🧪 Samples", use_container_width=True): st.session_state["menu_activo"] = "🧪 Samples"
-if st.sidebar.button("🧠 AI Analysis", use_container_width=True): st.session_state["menu_activo"] = "🧠 AI Analysis"
-if st.sidebar.button("🧬 Biomarkers", use_container_width=True): st.session_state["menu_activo"] = "🧬 Biomarkers"
-if st.sidebar.button("📄 Reports", use_container_width=True): st.session_state["menu_activo"] = "📄 Reports"
-if st.sidebar.button("⚙️ Settings", use_container_width=True): st.session_state["menu_activo"] = "⚙️ Settings"
+if st.sidebar.button("📊 Dashboard", use_container_width=True):
+    st.session_state["menu_activo"] = "Dashboard"
+if st.sidebar.button("🧪 Samples", use_container_width=True):
+    st.session_state["menu_activo"] = "Samples"
+if st.sidebar.button("🧠 AI Analysis", use_container_width=True):
+    st.session_state["menu_activo"] = "AI Analysis"
+if st.sidebar.button("🧬 Biomarkers", use_container_width=True):
+    st.session_state["menu_activo"] = "Biomarkers"
+if st.sidebar.button("📄 Reports", use_container_width=True):
+    st.session_state["menu_activo"] = "Reports"
+if st.sidebar.button("⚙️ Settings", use_container_width=True):
+    st.session_state["menu_activo"] = "Settings"
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("<p style='font-size:11px; color:#94A3B8; margin-bottom:2px;'>SYSTEM STATUS</p>", unsafe_allow_html=True)
-st.sidebar.markdown("<p style='font-size:13px; color:#FFFFFF; font-weight:600; margin-top:0;'><span class='vital-dot'></span>Core Engine Processing...</p>", unsafe_allow_html=True)
 
-# Gráfica lineal del latido del procesador
-fig_pulse, ax_pulse = plt.subplots(figsize=(2.5, 0.4))
-x_pulse = np.linspace(0, 10, 50)
-y_pulse = np.sin(x_pulse * 2) * np.exp(-0.05 * x_pulse)
-ax_pulse.plot(x_pulse, y_pulse, color="#10B981", lw=1.2)
-ax_pulse.axis("off")
-fig_pulse.patch.set_facecolor("none")
-ax_pulse.set_facecolor("none")
-st.sidebar.pyplot(fig_pulse)
-
-st.sidebar.caption("© 2026 MethylOx™")
 
 # --- 4. CONTROL DE PANTALLAS ---
+if st.session_state["menu_activo"] == "Dashboard":
+    # 1. Cargador seguro en memoria (Lee el archivo local y lo vuelve texto Base64)
+    import base64
+    try:
+        with open("banner_real.png", "rb") as image_file:
+            encoded_banner = base64.b64encode(image_file.read()).decode()
+        src_final = "data:image/png;base64," + encoded_banner
+    except Exception:
+        src_final = ""
 
-if st.session_state["menu_activo"] == "🏠 Dashboard":
-    # 🖼️ RENDERIZADO HTML LÍQUIDO DEL BANNER (Ocupa el 100% horizontal de la ventana)
-    st.markdown('<div class="banner-full"></div>', unsafe_allow_html=True)
+        # 2. Inyección de imagen líquida fija directa sobre todas las capas de Streamlit
+    banner_html = f'<img src="{src_final}" style="position:fixed; top:0; left:0; width:100vw; height:90px; object-fit:cover; z-index:99999999 !important; border-bottom:4px solid #10B981; box-shadow:0 4px 20px rgba(0,0,0,0.15);">'
+    st.markdown(banner_html, unsafe_allow_html=True)
     
-    # Encapsulamos el resto del contenido para que mantenga sus márgenes elegantes
-    st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
-    
+    # 3. Ocultamos el st.image vacío nativo de abajo para que no estorbe
+    st.markdown('<style>[data-testid="stImage"] { display: none !important; }</style>', unsafe_allow_html=True)
+    # 3. Ocultamos el st.image vacío nativo de abajo para que no estorbe
+    st.markdown('<style>[data-testid="stImage"] { display: none !important; }</style>', unsafe_allow_html=True)
+
+    # 4. Interfaz del Hub Molecular
     st.title("Molecular Methylation Analysis Hub")
     st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
     st.markdown("---")
     
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('<p class="card-heading">📥 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">🧬 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
     col_f1, col_f2, col_f3 = st.columns(3)
-    with col_f1: patient_id = st.text_input("🆔 Patient Identifier", placeholder="Ej. METH-2026-0X")
-    with col_f2: patient_age = st.number_input("🎂 Chronological Age", min_value=18, max_value=100, value=45)
-    with col_f3: ctdna_score = st.number_input("🔬 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f", value=0.2500)
-    
+    with col_f1:
+        patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X", key="dash_patient_id")
+    with col_f2:
+        patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45, key="dash_patient_age")
+    with col_f3:
+        ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f", key="dash_ctdna_score")
+
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
-        
+
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
+        if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True, key="btn_commit"):
             if patient_id:
                 estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
-                if estatus_db == "Éxito": st.success(f"Record secured in SQLite3 for ID: {patient_id}")
-                else: st.error("Database status: Patient Identifier already exists.")
-            else: st.warning("Please enter a valid Patient Identifier.")
-                
+                if estatus_db == "Éxito":
+                    st.success(f"Record secured in SQLite3 for ID: {patient_id}")
+                else:
+                    st.error("Database status: Patient Identifier already exists.")
+            else:
+                st.warning("Please enter a valid Patient Identifier.")
+
     with col_btn2:
         reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
-        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_Report_{patient_id if patient_id else 'Draft'}.doc", mime="application/msword", use_container_width=True)
+        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True, key="btn_download")
+
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
+    
     k1, k2, k3, k4 = st.columns(4)
-    with k1: st.metric(label="SENSITIVITY", value="96.4%")
-    with k2: st.metric(label="SPECIFICITY", value="94.1%")
-    with k3: st.metric(label="AUC (ROC)", value="0.983")
-    with k4: st.metric(label="VERDICT STATUS", value=resultado)
+    with k1:
+        st.metric(label="SENSITIVITY", value="96.4%")
+    with k2:
+        st.metric(label="SPECIFICITY", value="94.1%")
+    with k3:
+        st.metric(label="AUC (ROC)", value="0.982")
+    with k4:
+        st.metric(label="VERDICT STATUS", value="Low Risk")
+
     st.markdown("</div>", unsafe_allow_html=True)
 
+    # --- SECCIÓN DE GRÁFICOS ANALÍTICOS Y MULTIPOBLACIONALES ---
     st.markdown("### 📊 Clinical Evidence & Multi-Population Models")
     g1, g2, g3 = st.columns(3)
-    
+   
     with g1:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">DNA Methylation: Genomic Position</p>', unsafe_allow_html=True)
@@ -168,7 +187,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         sns.heatmap(data_heatmap, cmap="Purples", cbar=True, ax=ax1, xticklabels=False, yticklabels=False)
         st.pyplot(fig1)
         st.markdown("</div>", unsafe_allow_html=True)
-        
+       
     with g2:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">ROC Performance Curve</p>', unsafe_allow_html=True)
@@ -182,77 +201,48 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         sns.despine()
         st.pyplot(fig2)
         st.markdown("</div>", unsafe_allow_html=True)
-        
+       
     with g3:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">Risk Distribution Model</p>', unsafe_allow_html=True)
         fig3, ax3 = plt.subplots(figsize=(4.5, 3.2))
         sns.kdeplot(np.random.normal(25, 6, 150), color="#3B82F6", fill=True, alpha=0.2, label="Healthy", ax=ax3)
         sns.kdeplot(np.random.normal(55, 8, 150), color="#8B5CF6", fill=True, alpha=0.2, label="Benign", ax=ax3)
-# --- SECCIÓN DE VISUALIZACIÓN (Gráfico actual) ---
-sns.kdeplot(
-    np.random.normal(78, 6, 150), 
-    color="#EC4899", 
-    fill=True, 
-    alpha=0.2, 
-    label="Early Cancer", 
-    ax=ax3
-)
-ax3.set_xlabel("Risk Score (%)", fontsize=8)
-ax3.legend(fontsize=7)
-sns.despine()
-st.pyplot(fig3)
+        sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
+        ax3.set_xlabel("Risk Score (%)", fontsize=8)
+        ax3.legend(fontsize=7)
+        sns.despine()
+        st.pyplot(fig3)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-# Cierre del content wrapper del módulo anterior
-st.markdown("</div>", unsafe_allow_html=True) 
-
-# --- SECCIÓN ANTERIOR (Ejemplo de cómo debe cerrar tu IF previo) ---
-if st.session_state["menu_activo"] == "📊 Dashboard": # <--- Tu IF original debe ser algo así
-    sns.kdeplot(
-        np.random.normal(78, 6, 150), 
-        color="#EC4899", 
-        fill=True, 
-        alpha=0.2, 
-        label="Early Cancer", 
-        ax=ax3
+# --- 4. CONTROL DE PANTALLAS ---
+if st.session_state["menu_activo"] == "Dashboard":
+    # 1. Banner corporativo premium de extremo a extremo por CSS
+    # 1. Banner corporativo premium de extremo a extremo con tu imagen integrada
+            st.markdown(
+        """
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 90px;
+            background: linear-gradient(90deg, #1E3A8A 0%, #2563EB 100%);
+            z-index: 99999;
+            border-bottom: 4px solid #10B981;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+        ">
+            <img src="app/static/banner_real.png" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            ">
+        </div>
+        """, 
+        unsafe_allow_html=True
     )
-    ax3.set_xlabel("Risk Score (%)", fontsize=8)
-    ax3.legend(fontsize=7)
-    sns.despine()
-    st.pyplot(fig3)
-
-    # CORRECCIÓN: El cierre del div DEBE estar dentro del IF anterior
-    st.markdown("</div>", unsafe_allow_html=True) 
-
-# --- VISTA: SAMPLES (Ahora sí se puede conectar el ELIF) ---
-elif st.session_state["menu_activo"] == "🧪 Samples":
-    st.markdown('<div class="main-content">', unsafe_allow_html=True)
-    st.title("🧪 Sample Records & Permanent Database")
-    st.markdown("---")
     
-    with sqlite3.connect("methyl_clinic.db") as conn:
-        df_pacientes = pd.read_sql_query("SELECT * FROM pacientes", conn)
-    
-    if not df_pacientes.empty:
-        st.dataframe(df_pacientes, use_container_width=True)
-    else:
-        st.info("No active patient logs detected inside methyl_clinic.db.")
-        
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# --- VISTA: SETTINGS ---
-elif st.session_state["menu_activo"] == "⚙️ Settings":
-    st.markdown('<div class="main-content">', unsafe_allow_html=True)
-    st.title("⚙️ Engineering Core & Backend Diagnostics")
-    st.markdown("---")
-    
-    try:
-        with open("motores.py", "r", encoding="utf-8") as file:
-            codigo_backend = file.read()
-        st.code(codigo_backend, language="python")
-        st.success("✅ Conexión e integridad del archivo motores.py verificada.")
-    except Exception:
-        st.error("❌ No se pudo enlazar el visor con motores.py")
-        
-    st.markdown("</div>", unsafe_allow_html=True)
-
+    # 2. Contenedor que empuja el contenido abajo para que el banner no lo tape
+st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
