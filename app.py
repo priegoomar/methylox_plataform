@@ -121,35 +121,30 @@ if st.session_state["menu_activo"] == "📊 Dashboard":
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     
-    import base64
+    # 1. EL BANNER LOCAL QUE SÍ FUNCIONA (CON MÁXIMA CALIDAD PARA LAS LETRAS)
+    st.image("banner_real.png", use_container_width=True, output_format="PNG")
     
-    with open("banner_real.png", "rb") as image_file:
-        encoded_banner = base64.b64encode(image_file.read()).decode()
-        
-    # LÍNEA 129: Asegúrate de que tenga exactamente 4 espacios al inicio (alineado con import y with)
-    st.markdown(
-        f"""
-        <div style="width: 100%; margin-top: 10px; margin-bottom: 25px; display: block; clear: both;">
-            <img src="data:image/png;base64,{encoded_banner}" 
-                 style="width: 100%; height: auto; display: block; border-radius: 8px; image-rendering: -webkit-optimize-contrast;">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )   
+    st.write("")
+    st.write("")
+
+    st.markdown('<p class="card-heading">📋 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
+    
+    # 2. ENTRADA DE DATOS DEL PACIENTE
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
-        patient_id = st.text_input("🆔 Patient Identifier", placeholder="Ej. METH-2026-0X")
+        patient_id = st.text_input("📋 Patient Identifier", placeholder="Ej. METH-2026-0X")
     with col_f2:
         patient_age = st.number_input("📅 Chronological Age", min_value=18, max_value=100, value=45)
     with col_f3:
         ctdna_score = st.number_input("🧪 ctDNA Concentration (ng/mL)", min_value=0.0, max_value=5.0, value=0.25, format="%.4f")
-    resultado = motores.procesar_diagnostico_clinico (patient_id, patient_age, ctdna_score)
-    col_btn1, col_btn2 = st.columns(2)
 
+    # 3. LÓGICA DE PROCESAMIENTO Y BOTONES (SIN MEZCLAS)
+    resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
+
+    col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
             if patient_id:
-                resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
                 estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
                 if estatus_db == "Éxito":
                     st.success(f"Record secured in SQLite3 for ID: {patient_id}")
@@ -157,71 +152,28 @@ if st.session_state["menu_activo"] == "📊 Dashboard":
                     st.error("Database status: Patient Identifier already exists.")
             else:
                 st.warning("Please enter a valid Patient Identifier.")
+
     with col_btn2:
         reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
-        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_Report_{patient_id if patient_id else 'Draft'}.doc", mime="application/msword", use_container_width=True)
+        st.download_button(
+            label="📥 Download Personalized Clinical Report", 
+            data=reporte_pdf_contenido, 
+            file_name=f"Methylox_Report_{patient_id}.pdf", 
+            use_container_width=True
+        )
+        
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
-    k1, k2, k3, k4 = st.columns(4)
-    with k1: st.metric(label="SENSITIVITY", value="96.4%")
-    with k2: st.metric(label="SPECIFICITY", value="94.1%")
-    with k3: st.metric(label="AUC (ROC)", value="0.983")
-    with k4: st.metric(label="VERDICT STATUS", value=resultado)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("### 📊 Clinical Evidence & Multi-Population Models")
-    g1, g2, g3 = st.columns(3)
+    # 4. ANALÍTICAS EN TIEMPO REAL Y GRÁFICO INICIALIZADO CORRECTAMENTE
+    st.markdown('### 📊 REAL-TIME ANALYTICS OVERVIEW')
     
-    with g1:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-heading">DNA Methylation: Genomic Position</p>', unsafe_allow_html=True)
-        fig1, ax1 = plt.subplots(figsize=(4.5, 3.2))
-        data_heatmap = np.random.rand(8, 8)
-        sns.heatmap(data_heatmap, cmap="Purples", cbar=True, ax=ax1, xticklabels=False, yticklabels=False)
-        st.pyplot(fig1)
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-    with g2:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-heading">ROC Performance Curve</p>', unsafe_allow_html=True)
-        fig2, ax2 = plt.subplots(figsize=(4.5, 3.2))
-        x_val = np.linspace(0, 1, 100)
-        y_val = 1 - np.exp(-5 * x_val)
-        ax2.plot(x_val, y_val, color="#6366F1", lw=2.5)
-        # Línea diagonal fija reparada con datos correctos
-        ax2.plot([0, 1], [0, 1], color="#CBD5E1", linestyle="--")
-        ax2.set_xlabel("1 - Specificity", fontsize=8)
-        ax2.set_ylabel("Sensitivity", fontsize=8)
-        sns.despine()
-        st.pyplot(fig2)
-        st.markdown("</div>", unsafe_allow_html=True)
-        
-    with g3:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p class="card-heading">Risk Distribution Model</p>', unsafe_allow_html=True)
-        fig3, ax3 = plt.subplots(figsize=(4.5, 3.2))
-        sns.kdeplot(np.random.normal(25, 6, 150), color="#3B82F6", fill=True, alpha=0.2, label="Healthy", ax=ax3)
-        sns.kdeplot(np.random.normal(55, 8, 150), color="#8B5CF6", fill=True, alpha=0.2, label="Benign", ax=ax3)
-if st.session_state["menu_activo"] == "🏠 Dashboard": 
-     # 1. Agrega esta línea para inicializar la figura y el eje (ax3)
-    fig3, ax3 = plt.subplots(figsize=(5, 2.5))
-
-    # 2. Tu función de seaborn se acoplará perfectamente al eje ax3
-    sns.kdeplot(
-        np.random.normal(78, 6, 150), 
-        color="#EC4899", 
-        fill=True, 
-        alpha=0.2, 
-        label="Early Cancer", 
-        ax=ax3
-    )
+    # Aquí puedes colocar tus métricas fijas de la interfaz (Sensitivity, Specificity, etc.)
+    
+    fig3, ax3 = plt.subplots(figsize=(6, 2.8))
+    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
     ax3.set_xlabel("Risk Score (%)", fontsize=8)
     ax3.legend(fontsize=7)
     sns.despine()
-    
-    # 3. Renderiza la gráfica en Streamlit
     st.pyplot(fig3)
 
 # 2. Las siguientes secciones ahora sí se conectarán correctamente
