@@ -171,7 +171,6 @@ if st.session_state["menu_activo"] == "Dashboard":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     
-    # Línea 175 Corregida: Exactamente a 4 espacios del borde
     k1, k2, k3, k4 = st.columns(4)
     with k1:
         st.metric(label="SENSITIVITY", value="96.4%")
@@ -185,12 +184,50 @@ if st.session_state["menu_activo"] == "Dashboard":
     st.markdown("</div>", unsafe_allow_html=True)
 
     # --- SECCIÓN DE GRÁFICOS ANALÍTICOS Y MULTIPOBLACIONALES ---
+    st.markdown("### 📊 Clinical Evidence & Multi-Population Models")
+    g1, g2, g3 = st.columns(3)
+   
+    with g1:
+        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+        st.markdown('<p class="card-heading">DNA Methylation: Genomic Position</p>', unsafe_allow_html=True)
+        fig1, ax1 = plt.subplots(figsize=(4.5, 3.2))
+        data_heatmap = np.random.rand(8, 8)
+        sns.heatmap(data_heatmap, cmap="Purples", cbar=True, ax=ax1, xticklabels=False, yticklabels=False)
+        st.pyplot(fig1)
+        st.markdown("</div>", unsafe_allow_html=True)
+       
+    with g2:
+        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+        st.markdown('<p class="card-heading">ROC Performance Curve</p>', unsafe_allow_html=True)
+        fig2, ax2 = plt.subplots(figsize=(4.5, 3.2))
+        x_val = np.linspace(0, 1, 100)
+        y_val = 1 - np.exp(-5 * x_val)
+        ax2.plot(x_val, y_val, color="#6366F1", lw=2.5)
+        ax2.plot([0, 1], [0, 1], color="#CBD5E1", linestyle="--")
+        ax2.set_xlabel("1 - Specificity", fontsize=8)
+        ax2.set_ylabel("Sensitivity", fontsize=8)
+        sns.despine()
+        st.pyplot(fig2)
+        st.markdown("</div>", unsafe_allow_html=True)
+       
+    with g3:
+        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+        st.markdown('<p class="card-heading">Risk Distribution Model</p>', unsafe_allow_html=True)
+        fig3, ax3 = plt.subplots(figsize=(4.5, 3.2))
+        sns.kdeplot(np.random.normal(25, 6, 150), color="#3B82F6", fill=True, alpha=0.2, label="Healthy", ax=ax3)
+        sns.kdeplot(np.random.normal(55, 8, 150), color="#8B5CF6", fill=True, alpha=0.2, label="Benign", ax=ax3)
+        sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
+        ax3.set_xlabel("Risk Score (%)", fontsize=8)
+        ax3.legend(fontsize=7)
+        sns.despine()
+        st.pyplot(fig3)
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # --- 4. CONTROL DE PANTALLAS ---
 if st.session_state["menu_activo"] == "Dashboard":
     # 1. Banner corporativo premium de extremo a extremo por CSS
     # 1. Banner corporativo premium de extremo a extremo con tu imagen integrada
-st.markdown(
+            st.markdown(
         """
         <div style="
             position: fixed;
