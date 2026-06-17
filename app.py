@@ -116,7 +116,7 @@ if st.session_state["menu_activo"] == "Dashboard":
         src_final = ""
 
         # 2. Inyección de imagen líquida fija directa sobre todas las capas de Streamlit
-    banner_html = <img src="https://githubusercontent.com" style="position:fixed; top:0; left:0; width:100vw; height:90px; object-fit:cover; z-index:99999999 !important; border-bottom:4px solid #10B981; box-shadow:0 4px 20px rgba(0,0,0,0.15);">'
+    banner_html = '<img src="https://githubusercontent.com" style="position:fixed; top:0; left:0; width:100vw; height:90px; object-fit:cover; z-index:99999999 !important; border-bottom:4px solid #10B981; box-shadow:0 4px 20px rgba(0,0,0,0.15);">'
     st.markdown(banner_html, unsafe_allow_html=True)
     
     # 3. Ocultamos el st.image vacío nativo de abajo para que no estorbe
