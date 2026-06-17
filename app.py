@@ -206,13 +206,30 @@ st.pyplot(fig3)
 # Cierre del content wrapper del módulo anterior
 st.markdown("</div>", unsafe_allow_html=True) 
 
-# --- VISTA: SAMPLES ---
+# --- SECCIÓN ANTERIOR (Ejemplo de cómo debe cerrar tu IF previo) ---
+if st.session_state["menu_activo"] == "📊 Dashboard": # <--- Tu IF original debe ser algo así
+    sns.kdeplot(
+        np.random.normal(78, 6, 150), 
+        color="#EC4899", 
+        fill=True, 
+        alpha=0.2, 
+        label="Early Cancer", 
+        ax=ax3
+    )
+    ax3.set_xlabel("Risk Score (%)", fontsize=8)
+    ax3.legend(fontsize=7)
+    sns.despine()
+    st.pyplot(fig3)
+
+    # CORRECCIÓN: El cierre del div DEBE estar dentro del IF anterior
+    st.markdown("</div>", unsafe_allow_html=True) 
+
+# --- VISTA: SAMPLES (Ahora sí se puede conectar el ELIF) ---
 elif st.session_state["menu_activo"] == "🧪 Samples":
     st.markdown('<div class="main-content">', unsafe_allow_html=True)
     st.title("🧪 Sample Records & Permanent Database")
     st.markdown("---")
     
-    # Conexión segura a la base de datos
     with sqlite3.connect("methyl_clinic.db") as conn:
         df_pacientes = pd.read_sql_query("SELECT * FROM pacientes", conn)
     
@@ -238,3 +255,4 @@ elif st.session_state["menu_activo"] == "⚙️ Settings":
         st.error("❌ No se pudo enlazar el visor con motores.py")
         
     st.markdown("</div>", unsafe_allow_html=True)
+
