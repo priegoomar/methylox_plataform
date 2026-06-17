@@ -121,7 +121,7 @@ st.sidebar.caption("© 2026 MethylOx™")
 if st.session_state["menu_activo"] == "🏠 Dashboard":
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-      st.markdown(
+    st.markdown(
         """
         <div style="width: 100%; position: relative; z-index: 999; min-height: 110px; margin-top: 5px; margin-bottom: 25px; display: block; clear: both; overflow: visible;">
             <img src="https://githubusercontent.com" 
