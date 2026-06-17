@@ -132,7 +132,7 @@ if st.session_state["menu_activo"] == "Dashboard":
             z-index: 99999 !important;
             border-bottom: 4px solid #10B981 !important;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-        }
+    }
         [data-testid="stImage"] img {{
             display: none !important;
         }
