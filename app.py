@@ -121,7 +121,15 @@ st.sidebar.caption("© 2026 MethylOx™")
 if st.session_state["menu_activo"] == "🏠 Dashboard":
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="executive-card" style="height: auto !important; min-height: 250px !important; overflow: visible !important;">', unsafe_allow_html=True)
-    st.image("banner_real.png", use_container_width=True, output_format="PNG")
+    st.markdown(
+        """
+        <div style="width: 100%; min-height: 150px; display: block; clear: both; overflow: visible; padding: 10px 0;">
+            <img src="https://githubusercontent.com" 
+                 style="width: 100%; height: auto; display: block; border-radius: 8px; object-fit: contain;">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
         patient_id = st.text_input("🆔 Patient Identifier", placeholder="Ej. METH-2026-0X")
