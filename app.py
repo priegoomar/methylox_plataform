@@ -117,7 +117,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         # Método alternativo nativo para forzar la carga de la imagen
         # BANNER ABSOLUTO: Se monta sobre toda la pantalla ignorando los contenedores de Streamlit
         banner_html = """
-        <img src="app/static/banner_real.png" style="
+        <img priegoomar="https://githubusercontent.com" style="
             position: fixed;
             top: 0;
             left: 0;
