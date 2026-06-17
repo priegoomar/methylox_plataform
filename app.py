@@ -121,7 +121,6 @@ if st.session_state["menu_activo"] == "Dashboard":
     
     # 3. Ocultamos el st.image vacío nativo de abajo para que no estorbe
     st.markdown('<style>[data-testid="stImage"] { display: none !important; }</style>', unsafe_allow_html=True)
-        }
         </style>
         """, 
         unsafe_allow_html=True
