@@ -124,7 +124,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📋 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
-   col_btn1, col_btn2 = st.columns(2)
+    col_btn1, col_btn2 = st.columns(2)
 
     with col_btn1:
         if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
