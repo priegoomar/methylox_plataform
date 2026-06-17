@@ -114,8 +114,7 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-        # Método alternativo nativo para forzar la carga de la imagen
-        # BANNER ABSOLUTO: Se monta sobre toda la pantalla ignorando los contenedores de Streamlit
+      
        import base64
 
         # 1. Leemos la imagen local y la convertimos en código binario de texto
