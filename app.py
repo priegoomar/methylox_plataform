@@ -106,7 +106,7 @@ st.sidebar.markdown("---")
 
 # --- 4. CONTROL DE PANTALLAS ---
 if st.session_state["menu_activo"] == "Dashboard":
-   # 1. Cargador seguro en memoria (Lee el archivo local en la nube y lo vuelve texto Base64)
+    # 1. Cargador seguro en memoria (Lee el archivo local y lo vuelve texto Base64)
     import base64
     try:
         with open("banner_real.png", "rb") as image_file:
@@ -121,12 +121,8 @@ if st.session_state["menu_activo"] == "Dashboard":
     
     # 3. Ocultamos el st.image vacío nativo de abajo para que no estorbe
     st.markdown('<style>[data-testid="stImage"] { display: none !important; }</style>', unsafe_allow_html=True)
-        </style>
-        """, 
-        unsafe_allow_html=True
-    )
-    
-    # 3. Interfaz del Hub Molecular
+
+    # 4. Interfaz del Hub Molecular
     st.title("Molecular Methylation Analysis Hub")
     st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
     st.markdown("---")
