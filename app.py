@@ -162,10 +162,10 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
         k1, k2, k3, k4 = st.columns(4)
 
-    with k1: st.metric(label="SENSITIVITY", value="96.4%")
-    with k2: st.metric(label="SPECIFICITY", value="94.1%")
-    with k3: st.metric(label="AUC (ROC)", value="0.983")
-    with k4: st.metric(label="VERDICT STATUS", value=resultado)
+        with k1: st.metric(label="SENSITIVITY", value="96.4%")
+        with k2: st.metric(label="SPECIFICITY", value="94.1%")
+        with k3: st.metric(label="AUC (ROC)", value="0.983")
+        with k4: st.metric(label="VERDICT STATUS", value=resultado)
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("### 📊 Clinical Evidence & Multi-Population Models")
