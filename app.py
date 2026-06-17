@@ -227,11 +227,11 @@ if st.session_state["menu_activo"] == "Dashboard":
     
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
-        patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X")
+        patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X", key="dash_patient_id")
     with col_f2:
-        patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45)
+        patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45, key="dash_patient_age")
     with col_f3:
-        ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f")
+        ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f", key="dash_ctdna_score")
 
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
 
