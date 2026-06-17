@@ -116,7 +116,7 @@ st.sidebar.caption("© 2026 MethylOx™")
 if st.session_state["menu_activo"] == "🏠 Dashboard":
         # Método alternativo nativo para forzar la carga de la imagen
         # BANNER ABSOLUTO: Se monta sobre toda la pantalla ignorando los contenedores de Streamlit
-               import base64
+       import base64
 
         # 1. Leemos la imagen local y la convertimos en código binario de texto
         try:
@@ -142,6 +142,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         ">
         """
         st.markdown(banner_html, unsafe_allow_html=True)
+
         
         # Este contenedor empuja el contenido hacia abajo EXACTAMENTE los píxeles necesarios para que no se tape nada
         st.markdown('<div class="main-content-wrapper" style="margin-top: 100px;">', unsafe_allow_html=True)        
