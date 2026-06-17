@@ -31,8 +31,8 @@ st.markdown(
         background-color: #FFFFFF !important;
         border-right: 2px solid #E2E8F0 !important;
     }
-    [data-testid="stSidebar"] .stMarkdown, 
-    [data-testid="stSidebar"] p, 
+    [data-testid="stSidebar"] .stMarkdown,
+    [data-testid="stSidebar"] p,
     [data-testid="stSidebar"] h2 {
         color: #0F172A !important;
     }
@@ -96,32 +96,32 @@ if "menu_activo" not in st.session_state:
     st.session_state["menu_activo"] = "🏠 Dashboard"
 
 # Botones directos con mapeo limpio
-if st.sidebar.button("🏠 Dashboard", use_container_width=True): 
+if st.sidebar.button("🏠 Dashboard", use_container_width=True):
     st.session_state["menu_activo"] = "🏠 Dashboard"
 
-if st.sidebar.button("👤 Patient Profiles", use_container_width=True): 
+if st.sidebar.button("👤 Patient Profiles", use_container_width=True):
     st.session_state["menu_activo"] = "👤 Patient Profiles"
 
-if st.sidebar.button("📊 Methylation Matrix", use_container_width=True): 
+if st.sidebar.button("📊 Methylation Matrix", use_container_width=True):
     st.session_state["menu_activo"] = "📊 Methylation Matrix"
 
-if st.sidebar.button("🧬 CRISPR Guide Library", use_container_width=True): 
+if st.sidebar.button("🧬 CRISPR Guide Library", use_container_width=True):
     st.session_state["menu_activo"] = "🧬 CRISPR Guide Library"
 
-if st.sidebar.button("🧪 Gel Analysis", use_container_width=True): 
+if st.sidebar.button("🧪 Gel Analysis", use_container_width=True):
     st.session_state["menu_activo"] = "🧪 Gel Analysis"
 
-if st.sidebar.button("📄 Reports", use_container_width=True): 
+if st.sidebar.button("📄 Reports", use_container_width=True):
     st.session_state["menu_activo"] = "📄 Reports"
 
-if st.sidebar.button("⚙️ Settings", use_container_width=True): 
+if st.sidebar.button("⚙️ Settings", use_container_width=True):
     st.session_state["menu_activo"] = "⚙️ Settings"
 
 
 # --- 4. RENDERIZADO DE LAS PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-    
+
     # Inyección CSS para forzar el banner a expandirse al 100% horizontal
     st.markdown(
         """
@@ -139,30 +139,30 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         """,
         unsafe_allow_html=True
     )
-    
+
     # Renderizado del banner panorámico completo
     st.image(
-        "banner_real.png", 
+        "banner_real.png",
         use_container_width=True
     )
-        
+
     st.title("Molecular Methylation Analysis Hub")
     st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
     st.markdown("---")
-    
+
     st.markdown("<div class='biotech-panel'>", unsafe_allow_html=True)
     st.markdown("<h4>📥 Patient Enrollment Matrix</h4>", unsafe_allow_html=True)
-    
+
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1: patient_id = st.text_input("🆔 ID Único del Paciente", placeholder="Ej. METH-2026-0X")
     with col_f2: patient_age = st.number_input("🎂 Edad Cronológica", min_value=18, max_value=100, value=45)
     with col_f3: ctdna_score = st.number_input("🔬 Concentración de ctDNA (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f", value=0.2500)
-    
+
     if ctdna_score >= UMBRAL:
         resultado = "High Risk - CPEB4+ Detected"
     else:
         resultado = "Low Risk - Baseline Stable"
-        
+
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("💾 Commit Diagnostic Data", use_container_width=True):
@@ -179,7 +179,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
                     conn.close()
             else:
                 st.warning("Por favor ingrese un ID válido.")
-                
+
     with col_btn2:
         reporte_txt = f"REPORT\nID: {patient_id}\nEdad: {patient_age}\nScore: {ctdna_score:.4f}\nVerdict: {resultado}"
         st.download_button("📥 Export Prognostic Report (.TXT)", data=reporte_txt, file_name=f"Report_{patient_id}.txt", use_container_width=True)
@@ -197,11 +197,11 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
 elif st.session_state["menu_activo"] == "👤 Patient Profiles":
     st.title("👤 Patient Profiles & Clinical Records")
     st.markdown("---")
-    
+
     conn = sqlite3.connect("methyl_clinic.db")
     df_pacientes = pd.read_sql_query("SELECT * FROM pacientes", conn)
     conn.close()
-    
+
     if not df_pacientes.empty:
         st.markdown("<div class='biotech-panel'>", unsafe_allow_html=True)
         st.dataframe(df_pacientes, use_container_width=True)
@@ -213,7 +213,7 @@ elif st.session_state["menu_activo"] == "👤 Patient Profiles":
 elif st.session_state["menu_activo"] == "📊 Methylation Matrix":
     st.title("📊 Methylation Matrix Analytics")
     st.markdown("---")
-    
+
     st.markdown("<div class='biotech-panel'>", unsafe_allow_html=True)
     g1, g2, g3 = st.columns(3)
     with g1:
@@ -240,11 +240,11 @@ elif st.session_state["menu_activo"] == "📊 Methylation Matrix":
 elif st.session_state["menu_activo"] == "🧬 CRISPR Guide Library":
     st.title("🧬 CRISPR Guide Library & Screening")
     st.markdown("---")
-    
+
     st.markdown("<div class='biotech-panel'>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Subir cualquier documento genómico o base de datos de Colab")
     st.markdown("</div>", unsafe_allow_html=True)
-    
+
     if uploaded_file is not None:
         try:
             nombre_archivo = uploaded_file.name
@@ -254,7 +254,7 @@ elif st.session_state["menu_activo"] == "🧬 CRISPR Guide Library":
                 df_secuencias = pd.read_excel(uploaded_file)
             else:
                 df_secuencias = pd.read_csv(uploaded_file, sep="\t")
-                
+
             st.success("Archivo cargado con éxito. Motores de filtrado listos.")
             st.dataframe(df_secuencias, use_container_width=True)
         except Exception:
@@ -276,8 +276,8 @@ elif st.session_state["menu_activo"] == "🧪 Gel Analysis":
 # PANTALLA 6: REPORTES
 elif st.session_state["menu_activo"] == "📄 Reports":
     st.title("📄 Clinical Reports Archive")
-st.markdown("---")
-st.info("Archivo histórico de bitácoras institucionales activo.")
+    st.markdown("---")
+    st.info("Archivo histórico de bitácoras institucionales activo.")
 
 # PANTALLA 7: CONFIGURACIÓN / INGENIERÍA (AQUÍ SE RESTAURA TU BACKEND EN VIVO)
 elif st.session_state["menu_activo"] == "⚙️ Settings":
@@ -285,7 +285,7 @@ elif st.session_state["menu_activo"] == "⚙️ Settings":
     st.caption("Inspección en vivo del código analítico puro alojado en motores.py")
     st.markdown("---")
     st.markdown("### 🖥️ Código de los Motores Unificados en Ejecución")
-    
+
     try:
         with open("motores.py", "r", encoding="utf-8") as file:
             codigo_backend = file.read()
