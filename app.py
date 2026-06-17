@@ -136,13 +136,13 @@ st.markdown('<div style="margin-top: 40px;">', unsafe_allow_html=True)
     # 2. Contenedor que empuja el contenido abajo para que el banner no lo tape
 st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
     
- st.title("Molecular Methylation Analysis Hub")
+st.title("Molecular Methylation Analysis Hub")
 st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
 st.markdown("---")
     
     # Tarjeta 1: Formulario de Pacientes
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('<p class="card-heading">🧬 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
+st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+st.markdown('<p class="card-heading">🧬 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
@@ -219,4 +219,4 @@ st.markdown(
     )
     
     # 2. Contenedor que empuja el contenido abajo para que el banner no lo tape
-    st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
+st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
