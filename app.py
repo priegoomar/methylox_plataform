@@ -1,4 +1,3 @@
-
 import sqlite3
 import streamlit as st
 import numpy as np
@@ -22,8 +21,7 @@ st.markdown(
     """
     <style>
     .stApp { background-color: #F1F5F9 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
-    [data-testid="stSidebar"] { background-color: #1E293B !important; border-right: none !important; }
-    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { color: #FFFFFF !important; }
+     [data-testid="stImage"] img { width: 100% !important; max-height: 85px !important; object-fit: fill !important; border-radius: 8px !important; }
 
     /* ⚙️ FORZAR BANNER MICRO-COMPACTO Y DELGADO (Baja Altura) */
     [data-testid="stImage"] { width: 100% !important; text-align: center !important; }
@@ -65,7 +63,7 @@ st.sidebar.markdown("## 🔮 MethylOx™")
 st.sidebar.caption("Epigenetic AI Platform")
 st.sidebar.markdown("---")
 
-if "menu_activo" not in st.session_state:
+st.image("banner_real.png", use_container_width=True)
     st.session_state["menu_activo"] = "🏠 Dashboard"
 
 if st.sidebar.button("🏠 Dashboard", use_container_width=True): st.session_state["menu_activo"] = "🏠 Dashboard"
