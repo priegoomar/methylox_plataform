@@ -85,6 +85,7 @@ st.sidebar.markdown("## 🔮 MethylOx™")
 st.sidebar.caption("Epigenetic AI Platform")
 st.sidebar.markdown("---")
 
+# --- 3. BARRA LATERAL DE NAVEGACIÓN ---
 if "menu_activo" not in st.session_state:
     st.session_state["menu_activo"] = "Dashboard"
 
@@ -102,24 +103,10 @@ if st.sidebar.button("⚙️ Settings", use_container_width=True):
     st.session_state["menu_activo"] = "Settings"
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("<p style='font-size:11px; color:#94A3B8; margin-bottom:2px;'>SYSTEM STATUS</p>", unsafe_allow_html=True)
-st.sidebar.markdown("<p style='font-size:13px; color:#FFFFFF; font-weight:600; margin-top:0;'><span class='vital-dot'></span>Core Engine Processing...</p>", unsafe_allow_html=True)
 
-# Gráfica lineal del latido del procesador
-fig_pulse, ax_pulse = plt.subplots(figsize=(2.5, 0.4))
-x_pulse = np.linspace(0, 10, 50)
-y_pulse = np.sin(x_pulse * 2) * np.exp(-0.05 * x_pulse)
-ax_pulse.plot(x_pulse, y_pulse, color="#10B981", lw=1.2)
-ax_pulse.axis("off")
-fig_pulse.patch.set_facecolor("none")
-ax_pulse.set_facecolor("none")
-st.sidebar.pyplot(fig_pulse)
 
-st.sidebar.caption("© 2026 MethylOx™")
-# Línea temporal de prueba (Pégala pegada al borde izquierdo)
-st.sidebar.write(f"Menú activo real en memoria: '{st.session_state.get('menu_activo', 'No asignado')}'")
 # --- 4. CONTROL DE PANTALLAS ---
-if "menu_activo" in st.session_state and "Dashboard" in st.session_state["menu_activo"]:
+if st.session_state["menu_activo"] == "Dashboard":
     # 1. Banner corporativo premium de extremo a extremo por CSS
     st.markdown(
         """
@@ -145,20 +132,49 @@ if "menu_activo" in st.session_state and "Dashboard" in st.session_state["menu_a
         unsafe_allow_html=True
     )
     
-    st.markdown('<div style="margin-top: 100px;">', unsafe_allow_html=True)
+    # 2. Contenedor que empuja el contenido abajo para que el banner no lo tape
+    st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
     
     st.title("Molecular Methylation Analysis Hub")
     st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
     st.markdown("---")
     
-    # Formulario Base de Entrada de Datos
-    patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X")
-    patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45)
-    ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f")
+    # Tarjeta 1: Formulario de Pacientes
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">🧬 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
-    st.markdown("---")
+    col_f1, col_f2, col_f3 = st.columns(3)
+    with col_f1:
+        patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X")
+    with col_f2:
+        patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45)
+    with col_f3:
+        ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f")
+
+    resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
+
+    col_btn1, col_btn2 = st.columns(2)
+    with col_btn1:
+        if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
+            if patient_id:
+                estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
+                if estatus_db == "Éxito":
+                    st.success(f"Record secured in SQLite3 for ID: {patient_id}")
+                else:
+                    st.error("Database status: Patient Identifier already exists.")
+            else:
+                st.warning("Please enter a valid Patient Identifier.")
+
+    with col_btn2:
+        reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
+        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True)
+
+    st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 1
+
+    # Tarjeta 2: Métricas en tiempo real
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     
-    # Bloque de Métricas Estándar siempre activas
     k1, k2, k3, k4 = st.columns(4)
     with k1:
         st.metric(label="SENSITIVITY", value="96.4%")
@@ -168,22 +184,9 @@ if "menu_activo" in st.session_state and "Dashboard" in st.session_state["menu_a
         st.metric(label="AUC (ROC)", value="0.982")
     with k4:
         st.metric(label="VERDICT STATUS", value="Low Risk")
-        
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-elif st.session_state["menu_activo"] == "🧪 Samples":
-    st.title("🧪 Sample Records & Permanent Database")
-    st.markdown("---")
-   
-    conn = sqlite3.connect("methyl_clinic.db")
-    df_pacientes = pd.read_sql_query("SELECT * FROM pacientes", conn)
-    conn.close()
-   
-    if not df_pacientes.empty:
-        st.dataframe(df_pacientes, use_container_width=True)
-    else:
-        st.info("No active patient logs detected inside methyl_clinic.db.")
 
+    st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 2
+    st.markdown("</div>", unsafe_allow_html=True) # Cierre del contenedor de margen
 elif st.session_state["menu_activo"] == "⚙️ Settings":
     st.title("⚙️ Engineering Core & Backend Diagnostics")
     st.markdown("---")
