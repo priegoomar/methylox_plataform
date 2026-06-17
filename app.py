@@ -107,25 +107,34 @@ st.sidebar.markdown("---")
 # --- 4. CONTROL DE PANTALLAS ---
 if st.session_state["menu_activo"] == "Dashboard":
     # 1. Cargador seguro nativo
+   # 1. Cargador seguro en memoria (Lee el archivo local en la nube y lo vuelve texto Base64)
+    import base64
     try:
-        st.image("https://githubusercontent.com", use_container_width=True)
+        with open("banner_real.png", "rb") as image_file:
+            encoded_banner = base64.b64encode(image_file.read()).decode()
+        bg_value = f"url('data:image/png;base64,{encoded_banner}')"
     except Exception:
-        st.image('https://unsplash.com', use_container_width=True)
+        bg_value = "linear-gradient(90deg, #1E3A8A 0%, #2563EB 100%)"
 
-    # 2. Inyección de CSS líquido para fijar el logo de lado a lado
+    # 2. Inyección de CSS líquido usando la imagen procesada en memoria
     st.markdown(
-        """
+        f"""
         <style>
-        [data-testid="stImage"] img {
+        [data-testid="stImage"] {{
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
             width: 100vw !important;
             height: 90px !important;
-            object-fit: cover !important;
+            background-image: {bg_value} !important;
+            background-size: cover !important;
+            background-position: center !important;
             z-index: 99999 !important;
             border-bottom: 4px solid #10B981 !important;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+        }
+        [data-testid="stImage"] img {{
+            display: none !important;
         }
         </style>
         """, 
