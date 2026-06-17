@@ -106,34 +106,21 @@ st.sidebar.markdown("---")
 
 # --- 4. CONTROL DE PANTALLAS ---
 if st.session_state["menu_activo"] == "Dashboard":
-    # 1. Cargador seguro nativo
    # 1. Cargador seguro en memoria (Lee el archivo local en la nube y lo vuelve texto Base64)
     import base64
     try:
         with open("banner_real.png", "rb") as image_file:
             encoded_banner = base64.b64encode(image_file.read()).decode()
-        bg_value = f"url('data:image/png;base64,{encoded_banner}')"
+        src_final = "data:image/png;base64," + encoded_banner
     except Exception:
-        bg_value = "linear-gradient(90deg, #1E3A8A 0%, #2563EB 100%)"
+        src_final = ""
 
-    # 2. Inyección de CSS líquido usando la imagen procesada en memoria
-    st.markdown(
-        f"""
-        <style>
-        [data-testid="stImage"] {{
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 90px !important;
-            background-image: {bg_value} !important;
-            background-size: cover !important;
-            background-position: center !important;
-            z-index: 99999 !important;
-            border-bottom: 4px solid #10B981 !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;}
-        [data-testid="stImage"] img {{
-            display: none !important;
+    # 2. Inyección de CSS líquido usando una etiqueta HTML directa para evitar problemas de llaves
+    banner_html = f'<div style="position:fixed; top:0; left:0; width:100vw; height:90px; background-image:url(\'{src_final}\'); background-size:cover; background-position:center; z-index:99999; border-bottom:4px solid #10B981; box-shadow:0 4px 20px rgba(0,0,0,0.15);"></div>'
+    st.markdown(banner_html, unsafe_allow_html=True)
+    
+    # 3. Ocultamos el st.image vacío nativo de abajo para que no estorbe
+    st.markdown('<style>[data-testid="stImage"] { display: none !important; }</style>', unsafe_allow_html=True)
         }
         </style>
         """, 
