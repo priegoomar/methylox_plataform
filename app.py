@@ -237,7 +237,7 @@ if st.session_state["menu_activo"] == "Dashboard":
 
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
+        if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True, key="btn_commit"):
             if patient_id:
                 estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
                 if estatus_db == "Éxito":
@@ -249,7 +249,7 @@ if st.session_state["menu_activo"] == "Dashboard":
 
     with col_btn2:
         reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
-        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True)
+        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True, key="btn_download")
 
     st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 1
 
