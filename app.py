@@ -131,18 +131,18 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('<p class="card-heading">📥 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">📋 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1: patient_id = st.text_input("🆔 Patient Identifier", placeholder="Ej. METH-2026-0X")
-    with col_f2: patient_age = st.number_input("🎂 Chronological Age", min_value=18, max_value=100, value=45)
-    with col_f3: ctdna_score = st.number_input("🔬 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f", value=0.2500)
+    with col_f2: patient_age = st.number_input("📅 Chronological Age", min_value=18, max_value=100, value=45)
+    if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True)
     
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
         
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
+        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"Methylox_Report_{patient_id}.pdf", use_container_width=True)
             if patient_id:
                 estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
                 if estatus_db == "Éxito": st.success(f"Record secured in SQLite3 for ID: {patient_id}")
