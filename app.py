@@ -117,7 +117,7 @@ st.sidebar.pyplot(fig_pulse)
 st.sidebar.caption("© 2026 MethylOx™")
 
 # --- 4. CONTROL DE PANTALLAS ---
-if st.session_state["menu_activo"] == "📊 Dashboard":
+if st.session_state["menu_activo"] == " Dashboard":
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     
