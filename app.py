@@ -205,14 +205,7 @@ if st.session_state["menu_activo"] == "📊 Dashboard":
         sns.kdeplot(np.random.normal(25, 6, 150), color="#3B82F6", fill=True, alpha=0.2, label="Healthy", ax=ax3)
         sns.kdeplot(np.random.normal(55, 8, 150), color="#8B5CF6", fill=True, alpha=0.2, label="Benign", ax=ax3)
 if st.session_state["menu_activo"] == "🏠 Dashboard": 
-    sns.kdeplot(
-        np.random.normal(78, 6, 150),
-        color="#EC4899",
-        fill=True,
-        alpha=0.2,
-        label="Early Cancer",
-        ax=ax3,
-    )
+    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3,)
     ax3.set_xlabel("Risk Score (%)", fontsize=8)
     ax3.legend(fontsize=7)
     sns.despine()
