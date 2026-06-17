@@ -113,27 +113,27 @@ st.sidebar.caption("© 2026 MethylOx™")
 
 # --- 4. CONTROL DE PANTALLAS ---
 
-    if st.session_state["menu_activo"] == "📊 Dashboard":
-        # Renderizado HTML limpio usando el archivo de imagen de la raíz
-        banner_html = """
-        <img src="banner_real.png" style="
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 120px;
-            object-fit: cover;
-            z-index: 999999;
-            border-bottom: 4px solid #2563EB;
-            box-shadow: 0 4px 12px rgba(37,99,235,0.15);
-        ">
-        """
-        st.markdown(banner_html, unsafe_allow_html=True)
-        
-        # Separador dinámico para evitar que el contenido sea tapado
-        st.markdown('<div class="main-content-wrapper" style="margin-top: 100px;">', unsafe_allow_html=True)
-        
-        st.title("Molecular Methylation Analysis Hub")
+if st.session_state["menu_activo"] == "📊 Dashboard":
+    # Renderizado HTML limpio usando el archivo de imagen de la raíz
+    banner_html = """
+    <img src="banner_real.png" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 120px;
+        object-fit: cover;
+        z-index: 999999;
+        border-bottom: 4px solid #2563EB;
+        box-shadow: 0 4px 12px rgba(37,99,235,0.15);
+    ">
+    """
+    st.markdown(banner_html, unsafe_allow_html=True)
+    
+    # Separador dinámico para evitar que el contenido sea tapado
+    st.markdown('<div class="main-content-wrapper" style="margin-top: 100px;">', unsafe_allow_html=True)
+    
+    st.title("Molecular Methylation Analysis Hub")
 
         st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
         st.markdown("---")
