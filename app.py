@@ -6,13 +6,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Importación directa del Backend Persistente
-from motores import (
-    iniciar_base_datos,
-    procesar_diagnostico_clinico,
-    registrar_paciente_db,
-    generar_pdf_clinico,
-    UMBRAL_GLOBAL
-)
+import motores
+from motores import iniciar_base_datos
+from motores import procesar_diagnostico_clinico
+from motores import registrar_paciente_db
+from motores import generar_pdf_clinico
+from motores import UMBRAL_GLOBAL
 
 # 1. CONFIGURACION DE PAGINA MAESTRA
 st.set_page_config(
