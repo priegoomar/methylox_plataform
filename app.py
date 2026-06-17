@@ -205,7 +205,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
     ax3.set_xlabel("Risk Score (%)", fontsize=8)
     ax3.legend(fontsize=7)
     sns.despine()
-    st.pyplot(fig3), use_container_width=False
+    st.pyplot(fig3, use_container_width=False)
 
 # 2. Las siguientes secciones ahora sí se conectarán correctamente
 elif st.session_state["menu_activo"] == "🧪 Samples":
