@@ -138,7 +138,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
     with col_f2: patient_age = st.number_input("📅 Chronological Age", min_value=18, max_value=100, value=45)
     if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
     
-    resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
+        resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
         
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
