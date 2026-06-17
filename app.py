@@ -20,7 +20,7 @@ plt.rcParams["ytick.color"] = "#64748B"
 st.markdown(
     """
     <style>
-    /* Fondo general de la plataforma gris clínico satinado */
+    /* Fondo general de la plataforma blanco clínico satinado */
     .stApp { background-color: #F1F5F9 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
     
     /* Forzar que el espacio de contenido de Streamlit no tenga márgenes superiores */
@@ -114,7 +114,6 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-    # 🖼️ RENDERIZADO HTML LÍQUIDO DEL BANNER (Ocupa el 100% horizontal de la ventana)
         
         # RENDERIZADO HTML LÍQUIDO DEL BANNER (Ocupa el 100% horizontal de la ventana)
         banner_html = '<img src="tu_imagen.png" style="width:100vw; max-height:140px; object-fit:cover; margin-top:-50px; border-bottom:4px solid #2563EB; box-shadow: 0 4px 12px rgba(37,99,235,0.15);">'
