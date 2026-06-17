@@ -91,15 +91,20 @@ st.sidebar.caption("Epigenetic AI Platform")
 st.sidebar.markdown("---")
 
 if "menu_activo" not in st.session_state:
-    st.session_state["menu_activo"] = "🏠 Dashboard"
+    st.session_state["menu_activo"] = "Dashboard"
 
-if st.sidebar.button("🏠 Dashboard", use_container_width=True): st.session_state["menu_activo"] = "🏠 Dashboard"
-if st.sidebar.button("🧪 Samples", use_container_width=True): st.session_state["menu_activo"] = "🧪 Samples"
-if st.sidebar.button("🧠 AI Analysis", use_container_width=True): st.session_state["menu_activo"] = "🧠 AI Analysis"
-if st.sidebar.button("🧬 Biomarkers", use_container_width=True): st.session_state["menu_activo"] = "🧬 Biomarkers"
-if st.sidebar.button("📄 Reports", use_container_width=True): st.session_state["menu_activo"] = "📄 Reports"
-if st.sidebar.button("⚙️ Settings", use_container_width=True): st.session_state["menu_activo"] = "⚙️ Settings"
-
+if st.sidebar.button("📋 Dashboard", use_container_width=True):
+    st.session_state["menu_activo"] = "Dashboard"
+if st.sidebar.button("🧪 Samples", use_container_width=True):
+    st.session_state["menu_activo"] = "Samples"
+if st.sidebar.button("📊 AI Analysis", use_container_width=True):
+    st.session_state["menu_activo"] = "AI Analysis"
+if st.sidebar.button("🧬 Biomarkers", use_container_width=True):
+    st.session_state["menu_activo"] = "Biomarkers"
+if st.sidebar.button("📈 Reports", use_container_width=True):
+    st.session_state["menu_activo"] = "Reports"
+if st.sidebar.button("⚙️ Settings", use_container_width=True):
+    st.session_state["menu_activo"] = "Settings"
 st.sidebar.markdown("---")
 st.sidebar.markdown("<p style='font-size:11px; color:#94A3B8; margin-bottom:2px;'>SYSTEM STATUS</p>", unsafe_allow_html=True)
 st.sidebar.markdown("<p style='font-size:13px; color:#FFFFFF; font-weight:600; margin-top:0;'><span class='vital-dot'></span>Core Engine Processing...</p>", unsafe_allow_html=True)
