@@ -5,6 +5,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import motores
+from motores import iniciar_base_datos
+from motores import procesar_diagnostico_clinico
+from motores import registrar_paciente_db
+from motores import generar_pdf_clinico
+from motores import UMBRAL_GLOBAL
 
 # 1. CONFIGURACION DE PAGINA MAESTRA
 st.set_page_config(page_title="MethylOx Labs", layout="wide", initial_sidebar_state="expanded")
