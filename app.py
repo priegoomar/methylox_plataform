@@ -119,9 +119,14 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-    st.write ("")
-    st.image("https://githubusercontent.com", use_container_width=True)
-
+    st.markdown(
+        """
+        <div style="width: 100%; text-align: center; margin-bottom: 20px; display: block; clear: both;">
+            <img src="https://githubusercontent.com" style="width: 100%; max-height: 180px; object-fit: contain; border-radius: 8px;">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📋 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     col_f1, col_f2, col_f3 = st.columns(3)
