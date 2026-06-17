@@ -169,29 +169,14 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         st.pyplot(fig1)
         st.markdown("</div>", unsafe_allow_html=True)
         
-    with g2:
+    with col2:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">ROC Performance Curve</p>', unsafe_allow_html=True)
-         # Gráfico 2: Curva ROC del Clasificador
         fig2, ax2 = plt.subplots(figsize=(4.5, 3.2))
         x_val = np.linspace(0, 1, 100)
         y_val = 1 - np.exp(-5 * x_val)
-        
-        # Línea del modelo de IA
-        ax2.plot(
-            x_val, 
-            y_val, 
-            color="#6366F1", 
-            lw=2.5
-        )
-        
-        # Línea diagonal de referencia corregida (Sin las comas vacías)
-        ax2.plot(, 
-, 
-            color="#CBD5E1", 
-            linestyle="--"
-        )
-        
+        ax2.plot(x_val, y_val, color="#6366F1", lw=2.5)
+        ax2.plot([0, 1], [0, 1], color="#CBD5E1", linestyle="--")
         ax2.set_xlabel("1 - Specificity", fontsize=8)
         ax2.set_ylabel("Sensitivity", fontsize=8)
         sns.despine()
