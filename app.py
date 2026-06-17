@@ -16,17 +16,18 @@ plt.rcParams["axes.labelcolor"] = "#475569"
 plt.rcParams["xtick.color"] = "#64748B"
 plt.rcParams["ytick.color"] = "#64748B"
 
-# 2. INYECCIÓN CSS: BANNER DELGADO, CONTENEDORES Y ANIMACIÓN DE SIGNO VITAL
+# 2. INYECCIÓN CSS SEGURO: TEMÁTICA GRAFITO MATE, RECUADROS Y BANNER PANORÁMICO REAL
 st.markdown(
     """
     <style>
     .stApp { background-color: #F1F5F9 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
-     [data-testid="stImage"] img { width: 100% !important; max-height: 85px !important; object-fit: fill !important; border-radius: 8px !important; }
-
-    /* ⚙️ FORZAR BANNER MICRO-COMPACTO Y DELGADO (Baja Altura) */
+    [data-testid="stSidebar"] { background-color: #1E293B !important; border-right: none !important; }
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { color: #FFFFFF !important; }
+    
+    /* 🖼️ BANNER PANORÁMICO COMPACTO FORZADO A EXPANSIÓN COMPLETA HORIZONTAL */
     [data-testid="stImage"] { width: 100% !important; text-align: center !important; }
-    [data-testid="stImage"] img { width: 100% !important; max-height: 80px !important; object-fit: contain !important; }
-
+    [data-testid="stImage"] img { width: 100% !important; max-height: 85px !important; object-fit: fill !important; border-radius: 8px !important; }
+    
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important; color: #CBD5E1 !important; border: none !important;
         text-align: left !important; justify-content: flex-start !important; padding-left: 20px !important;
@@ -38,7 +39,7 @@ st.markdown(
         padding: 24px !important; margin-bottom: 20px !important; box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03) !important;
     }
     .card-heading { color: #0F172A !important; font-size: 13px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.75px !important; margin-bottom: 15px !important; }
-
+    
     /* 🧬 ANIMACIÓN DE SIGNO VITAL (HEARTBEAT PULSE) */
     @keyframes vitalPulse {
         0% { transform: scale(0.9); opacity: 0.6; }
@@ -46,7 +47,7 @@ st.markdown(
         100% { transform: scale(0.9); opacity: 0.6; }
     }
     .vital-dot {
-        display: inline-block; width: 10px; height: 10px; background-color: #10B981;
+        display: inline-block; width: 10px; height: 10px; background-color: #10B981; 
         border-radius: 50%; margin-right: 8px; animation: vitalPulse 1.5s infinite ease-in-out;
     }
     </style>
@@ -54,7 +55,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Inicialización silenciosa de base de datos
+# Inicialización segura de BD llamando al backend
 motores.iniciar_base_datos()
 UMBRAL = motores.UMBRAL_GLOBAL
 
@@ -63,7 +64,7 @@ st.sidebar.markdown("## 🔮 MethylOx™")
 st.sidebar.caption("Epigenetic AI Platform")
 st.sidebar.markdown("---")
 
-st.image("banner_real.png", use_container_width=True)
+if "menu_activo" not in st.session_state:
     st.session_state["menu_activo"] = "🏠 Dashboard"
 
 if st.sidebar.button("🏠 Dashboard", use_container_width=True): st.session_state["menu_activo"] = "🏠 Dashboard"
@@ -75,8 +76,6 @@ if st.sidebar.button("⚙️ Settings", use_container_width=True): st.session_st
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("<p style='font-size:11px; color:#94A3B8; margin-bottom:2px;'>SYSTEM STATUS</p>", unsafe_allow_html=True)
-
-# 📡 Inyección del signo vital animado en texto HTML real
 st.sidebar.markdown("<p style='font-size:13px; color:#FFFFFF; font-weight:600; margin-top:0;'><span class='vital-dot'></span>Core Engine Processing...</p>", unsafe_allow_html=True)
 
 # Gráfica lineal del latido del procesador
@@ -95,17 +94,17 @@ st.sidebar.caption("© 2026 MethylOx™")
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
     st.image("banner_real.png", use_container_width=True)
-
+    
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📥 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
-
+    
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1: patient_id = st.text_input("🆔 Patient Identifier", placeholder="Ej. METH-2026-0X")
     with col_f2: patient_age = st.number_input("🎂 Chronological Age", min_value=18, max_value=100, value=45)
     with col_f3: ctdna_score = st.number_input("🔬 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f", value=0.2500)
-
+    
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
-
+        
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
@@ -114,18 +113,10 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
                 if estatus_db == "Éxito": st.success(f"Record secured in SQLite3 for ID: {patient_id}")
                 else: st.error("Database status: Patient Identifier already exists.")
             else: st.warning("Please enter a valid Patient Identifier.")
-
+                
     with col_btn2:
         reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
-
-        # Configuración de tipo MIME formal para emular un documento oficial listo para imprimir
-        st.download_button(
-            label="📥 Download Personalized Clinical Report (.DOC)",
-            data=reporte_pdf_contenido,
-            file_name=f"MethylOx_Report_{patient_id if patient_id else 'Draft'}.doc",
-            mime="application/msword",
-            use_container_width=True
-        )
+        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_Report_{patient_id if patient_id else 'Draft'}.doc", mime="application/msword", use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
@@ -139,15 +130,16 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
 
     st.markdown("### 📊 Clinical Evidence & Multi-Population Models")
     g1, g2, g3 = st.columns(3)
-
+    
     with g1:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">DNA Methylation: Genomic Position</p>', unsafe_allow_html=True)
         fig1, ax1 = plt.subplots(figsize=(4.5, 3.2))
-        sns.heatmap(np.random.rand(8, 8), cmap="Purples", cbar=True, ax=ax1, xticklabels=False, yticklabels=False)
+        data_heatmap = np.random.rand(8, 8)
+        sns.heatmap(data_heatmap, cmap="Purples", cbar=True, ax=ax1, xticklabels=False, yticklabels=False)
         st.pyplot(fig1)
         st.markdown("</div>", unsafe_allow_html=True)
-
+        
     with g2:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">ROC Performance Curve</p>', unsafe_allow_html=True)
@@ -161,7 +153,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         sns.despine()
         st.pyplot(fig2)
         st.markdown("</div>", unsafe_allow_html=True)
-
+        
     with g3:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">Risk Distribution Model</p>', unsafe_allow_html=True)
@@ -194,7 +186,7 @@ elif st.session_state["menu_activo"] == "⚙️ Settings":
     try:
         with open("motores.py", "r", encoding="utf-8") as file:
             codigo_backend = file.read()
-            st.code(codigo_backend, language="python")
+        st.code(codigo_backend, language="python")
         st.success("✅ Conexión e integridad del archivo motores.py verificada.")
     except Exception:
         st.error("❌ No se pudo enlazar el visor con motores.py")
