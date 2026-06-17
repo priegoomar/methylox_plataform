@@ -132,7 +132,7 @@ if st.session_state["menu_activo"] == "Dashboard":
         unsafe_allow_html=True
     )
     
-    # 3. Margen superior e interfaz limpia del Hub Molecular
+    # 3. Interfaz del Hub Molecular
     st.title("Molecular Methylation Analysis Hub")
     st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
     st.markdown("---")
@@ -140,7 +140,6 @@ if st.session_state["menu_activo"] == "Dashboard":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">🧬 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
-    # Línea 147 corregida: Alineada a exactamente 4 espacios desde el borde izquierdo
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
         patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X", key="dash_patient_id")
@@ -148,11 +147,12 @@ if st.session_state["menu_activo"] == "Dashboard":
         patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45, key="dash_patient_age")
     with col_f3:
         ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f", key="dash_ctdna_score")
+
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
 
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
+        if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True, key="btn_commit"):
             if patient_id:
                 estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
                 if estatus_db == "Éxito":
@@ -164,14 +164,14 @@ if st.session_state["menu_activo"] == "Dashboard":
 
     with col_btn2:
         reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
-        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True)
+        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True, key="btn_download")
 
-st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 1
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    # Tarjeta 2: Métricas en tiempo real
-st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     
+    # Línea 175 Corregida: Exactamente a 4 espacios del borde
     k1, k2, k3, k4 = st.columns(4)
     with k1:
         st.metric(label="SENSITIVITY", value="96.4%")
@@ -182,8 +182,9 @@ st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', uns
     with k4:
         st.metric(label="VERDICT STATUS", value="Low Risk")
 
-st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 2
-st.markdown("</div>", unsafe_allow_html=True) # Cierre del contenedor de margen
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # --- SECCIÓN DE GRÁFICOS ANALÍTICOS Y MULTIPOBLACIONALES ---
 
 # --- 4. CONTROL DE PANTALLAS ---
 if st.session_state["menu_activo"] == "Dashboard":
