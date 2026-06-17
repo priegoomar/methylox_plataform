@@ -105,31 +105,34 @@ st.sidebar.markdown("---")
 
 
 # --- 4. CONTROL DE PANTALLAS ---
-if st.session_state["menu_activo"] == "Dashboard":
-    # 1. Banner corporativo premium de extremo a extremo por CSS
+   # 1. Cargador seguro nativo (Streamlit procesa la imagen sin bloqueos de seguridad)
+    try:
+        st.image("banner_real.png", use_container_width=True)
+    except Exception:
+        st.warning("⚠️ El archivo 'banner_real.png' no se encuentra en la carpeta raíz.")
+
+    # 2. Inyección de CSS líquido para romper los márgenes y fijar el logo de lado a lado
     st.markdown(
         """
-        <div style="
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 90px;
-            background: linear-gradient(90deg, #1E3A8A 0%, #2563EB 100%);
-            z-index: 99999;
-            border-bottom: 4px solid #10B981;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            padding-left: 20px;
-        ">
-            <h1 style="color: white; font-family: 'Inter', sans-serif; font-size: 22px; margin: 0; font-weight: 700; letter-spacing: 0.5px;">
-                🧬 MethylOx™ <span style="font-weight: 300; font-size: 16px; color: #93C5FD;">| Molecular Methylation Analysis Hub</span>
-            </h1>
-        </div>
+        <style>
+        [data-testid="stImage"] img {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 90px !important;
+            object-fit: cover !important;
+            z-index: 99999 !important;
+            border-bottom: 4px solid #10B981 !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+        }
+        </style>
         """, 
         unsafe_allow_html=True
     )
+    
+    # 3. Margen superior para que el texto no quede tapado por el banner flotante
+    st.markdown('<div style="margin-top: 40px;">', unsafe_allow_html=True)
     
     # 2. Contenedor que empuja el contenido abajo para que el banner no lo tape
     st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
