@@ -116,7 +116,7 @@ st.sidebar.caption("© 2026 MethylOx™")
 if st.session_state["menu_activo"] == "🏠 Dashboard":
         
         # RENDERIZADO HTML LÍQUIDO DEL BANNER (Ocupa el 100% horizontal de la ventana)
-        banner_html = '<img src="tu_imagen.png" style="width:100vw; max-height:140px; object-fit:cover; margin-top:-50px; border-bottom:4px solid #2563EB; box-shadow: 0 4px 12px rgba(37,99,235,0.15);">'
+        banner_html = '<img src="banner_real.png" style="width:100vw; max-height:140px; object-fit:cover; margin-top:-50px; border-bottom:4px solid #2563EB; box-shadow: 0 4px 12px rgba(37,99,235,0.15);">'
         st.markdown(banner_html, unsafe_allow_html=True)
         
         # Encapsulamos el resto del contenido para que mantenga sus márgenes elegantes
