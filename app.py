@@ -114,9 +114,9 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
     if st.session_state["menu_activo"] == "📊 Dashboard":
-        # 1. Inyectamos la imagen con su código de texto de extremo a extremo
-        banner_html = f"""
-        <img src="{src_base64}" style="
+        # Renderizado HTML limpio usando el archivo de imagen de la raíz
+        banner_html = """
+        <img src="banner_real.png" style="
             position: fixed;
             top: 0;
             left: 0;
@@ -130,10 +130,11 @@ st.sidebar.caption("© 2026 MethylOx™")
         """
         st.markdown(banner_html, unsafe_allow_html=True)
         
-        # 2. Contenedor para empujar el contenido hacia abajo y que no se tape
+        # Separador dinámico para evitar que el contenido sea tapado
         st.markdown('<div class="main-content-wrapper" style="margin-top: 100px;">', unsafe_allow_html=True)
         
         st.title("Molecular Methylation Analysis Hub")
+
         st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
         st.markdown("---")
     
