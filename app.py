@@ -123,6 +123,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
     st.image("banner_real.png", use_container_width=True, output_format="PNG")
     st.write("")
     st.write("")
+    
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
         patient_id = st.text_input("🆔 Patient Identifier", placeholder="Ej. METH-2026-0X")
