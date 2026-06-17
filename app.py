@@ -108,9 +108,9 @@ st.sidebar.markdown("---")
 if st.session_state["menu_activo"] == "Dashboard":
     # 1. Cargador seguro nativo
     try:
-        st.image("banner_real.png", use_container_width=True)
+        st.image("https://githubusercontent.com", use_container_width=True)
     except Exception:
-        st.warning("⚠️ El archivo 'banner_real.png' no se encuentra en la carpeta raíz.")
+        st.warning("https://unsplash.com' use_container_width=True")
 
     # 2. Inyección de CSS líquido para fijar el logo de lado a lado
     st.markdown(
