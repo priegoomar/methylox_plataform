@@ -105,53 +105,49 @@ st.sidebar.markdown("---")
 
 
 # --- 4. CONTROL DE PANTALLAS ---
-try:
-    st.image("banner_real.png", use_container_width=True)
-except Exception:
-    st.warning("⚠️ El archivo 'banner_real.png' no se encuentra en la carpeta raíz.")
+if st.session_state["menu_activo"] == "Dashboard":
+    # 1. Cargador seguro nativo
+    try:
+        st.image("banner_real.png", use_container_width=True)
+    except Exception:
+        st.warning("⚠️ El archivo 'banner_real.png' no se encuentra en la carpeta raíz.")
 
-# 2. Inyección de CSS líquido para romper los márgenes y fijar el logo de lado a lado
-st.markdown(
-    """
-    <style>
-    [data-testid="stImage"] img {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 90px !important;
-        object-fit: cover !important;
-        z-index: 99999 !important;
-        border-bottom: 4px solid #10B981 !important;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-    }
-    </style>
-    """, 
-    unsafe_allow_html=True
-)
-
-    # 3. Margen superior para que el texto no quede tapado por el banner flotante
-st.markdown('<div style="margin-top: 40px;">', unsafe_allow_html=True)
+    # 2. Inyección de CSS líquido para fijar el logo de lado a lado
+    st.markdown(
+        """
+        <style>
+        [data-testid="stImage"] img {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 90px !important;
+            object-fit: cover !important;
+            z-index: 99999 !important;
+            border-bottom: 4px solid #10B981 !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+        }
+        </style>
+        """, 
+        unsafe_allow_html=True
+    )
     
-    # 2. Contenedor que empuja el contenido abajo para que el banner no lo tape
-st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
+    # 3. Margen superior e interfaz limpia del Hub Molecular
+    st.title("Molecular Methylation Analysis Hub")
+    st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
+    st.markdown("---")
     
-st.title("Molecular Methylation Analysis Hub")
-st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
-st.markdown("---")
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">🧬 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
-    # Tarjeta 1: Formulario de Pacientes
-st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-st.markdown('<p class="card-heading">🧬 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
-    
+    # Línea 147 corregida: Alineada a exactamente 4 espacios desde el borde izquierdo
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
-        patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X")
+        patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X", key="dash_patient_id")
     with col_f2:
-        patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45)
+        patient_age = st.number_input("📋 Chronological Age", min_value=18, max_value=100, value=45, key="dash_patient_age")
     with col_f3:
-        ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f")
-
+        ctdna_score = st.number_input("🩸 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f", key="dash_ctdna_score")
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
 
     col_btn1, col_btn2 = st.columns(2)
