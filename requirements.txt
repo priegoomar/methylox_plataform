@@ -1,5 +1,5 @@
 matplotlib
 pandas
 numpy
-openpyx1
+openpyxl
 seaborn
