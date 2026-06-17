@@ -134,11 +134,11 @@ st.markdown(
 st.markdown('<div style="margin-top: 40px;">', unsafe_allow_html=True)
     
     # 2. Contenedor que empuja el contenido abajo para que el banner no lo tape
-    st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
+st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
     
-    st.title("Molecular Methylation Analysis Hub")
-    st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
-    st.markdown("---")
+ st.title("Molecular Methylation Analysis Hub")
+st.caption("Panel Ejecutivo de Cribado para Cáncer de Mama en Etapa Temprana")
+st.markdown("---")
     
     # Tarjeta 1: Formulario de Pacientes
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
@@ -170,11 +170,11 @@ st.markdown('<div style="margin-top: 40px;">', unsafe_allow_html=True)
         reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
         st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_{patient_id}.pdf", use_container_width=True)
 
-    st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 1
+st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 1
 
     # Tarjeta 2: Métricas en tiempo real
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
+st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     
     k1, k2, k3, k4 = st.columns(4)
     with k1:
@@ -186,14 +186,14 @@ st.markdown('<div style="margin-top: 40px;">', unsafe_allow_html=True)
     with k4:
         st.metric(label="VERDICT STATUS", value="Low Risk")
 
-    st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 2
-    st.markdown("</div>", unsafe_allow_html=True) # Cierre del contenedor de margen
+st.markdown("</div>", unsafe_allow_html=True) # Cierre de Tarjeta 2
+st.markdown("</div>", unsafe_allow_html=True) # Cierre del contenedor de margen
 
 # --- 4. CONTROL DE PANTALLAS ---
 if st.session_state["menu_activo"] == "Dashboard":
     # 1. Banner corporativo premium de extremo a extremo por CSS
     # 1. Banner corporativo premium de extremo a extremo con tu imagen integrada
-    st.markdown(
+st.markdown(
         """
         <div style="
             position: fixed;
