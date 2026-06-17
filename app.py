@@ -193,21 +193,23 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         fig3, ax3 = plt.subplots(figsize=(4.5, 3.2))
         sns.kdeplot(np.random.normal(25, 6, 150), color="#3B82F6", fill=True, alpha=0.2, label="Healthy", ax=ax3)
         sns.kdeplot(np.random.normal(55, 8, 150), color="#8B5CF6", fill=True, alpha=0.2, label="Benign", ax=ax3)
-sns.kdeplot(
-    np.random.normal(78, 6, 150),
-    color="#EC4899",
-    fill=True,
-    alpha=0.2,
-    label="Early Cancer",
-    ax=ax3,
-)
-ax3.set_xlabel("Risk Score (%)", fontsize=8)
-ax3.legend(fontsize=7)
-sns.despine()
-st.pyplot(fig3)
-st.markdown("", unsafe_allow_html=True)
-st.markdown("", unsafe_allow_html=True)
+if st.session_state["menu_activo"] == "🏠 Dashboard": 
+    sns.kdeplot(
+        np.random.normal(78, 6, 150),
+        color="#EC4899",
+        fill=True,
+        alpha=0.2,
+        label="Early Cancer",
+        ax=ax3,
+    )
+    ax3.set_xlabel("Risk Score (%)", fontsize=8)
+    ax3.legend(fontsize=7)
+    sns.despine()
+    st.pyplot(fig3)
+    st.markdown("", unsafe_allow_html=True)
+    st.markdown("", unsafe_allow_html=True)
 
+# 2. Las siguientes secciones ahora sí se conectarán correctamente
 elif st.session_state["menu_activo"] == "🧪 Samples":
     st.markdown("", unsafe_allow_html=True)
     st.title("🧪 Sample Records & Permanent Database")
