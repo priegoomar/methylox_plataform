@@ -113,8 +113,7 @@ st.sidebar.caption("© 2026 MethylOx™")
 # Línea temporal de prueba (Pégala pegada al borde izquierdo)
 st.sidebar.write(f"Menú activo real en memoria: '{st.session_state.get('menu_activo', 'No asignado')}'")
 # --- 4. CONTROL DE PANTALLAS ---
-
-if st.session_state["menu_activo"] == "📊 Dashboard":
+if "menu_activo" in st.session_state and "Dashboard" in st.session_state["menu_activo"]:
     # 1. Banner corporativo premium de extremo a extremo por CSS
     st.markdown(
         """
