@@ -190,6 +190,7 @@ if st.session_state["menu_activo"] == "Dashboard":
 # --- 4. CONTROL DE PANTALLAS ---
 if st.session_state["menu_activo"] == "Dashboard":
     # 1. Banner corporativo premium de extremo a extremo por CSS
+    # 1. Banner corporativo premium de extremo a extremo con tu imagen integrada
     st.markdown(
         """
         <div style="
@@ -204,11 +205,12 @@ if st.session_state["menu_activo"] == "Dashboard":
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
-            padding-left: 20px;
         ">
-            <h1 style="color: white; font-family: 'Inter', sans-serif; font-size: 22px; margin: 0; font-weight: 700; letter-spacing: 0.5px;">
-                🧬 MethylOx™ <span style="font-weight: 300; font-size: 16px; color: #93C5FD;">| Molecular Methylation Analysis Hub</span>
-            </h1>
+            <img src="app/static/banner_real.png" style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            ">
         </div>
         """, 
         unsafe_allow_html=True
