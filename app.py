@@ -119,9 +119,8 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-        st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
+    st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="executive-card" style="background-color: #FFFFFF; padding: 25px; border-radius: 12px; overflow: visible;">', unsafe_allow_html=True)
-    
     st.markdown(
         """
         <div style="width: 100%; position: relative; z-index: 999; min-height: 110px; margin-top: 5px; margin-bottom: 25px; display: block; clear: both; overflow: visible; text-align: center;">
