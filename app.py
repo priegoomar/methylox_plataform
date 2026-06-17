@@ -4,91 +4,46 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-# Importación directa del Backend Persistente
 import motores
-from motores import iniciar_base_datos
-from motores import procesar_diagnostico_clinico
-from motores import registrar_paciente_db
-from motores import generar_pdf_clinico
-from motores import UMBRAL_GLOBAL
 
 # 1. CONFIGURACION DE PAGINA MAESTRA
-st.set_page_config(
-    page_title="MethylOx Labs",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="MethylOx Labs", layout="wide", initial_sidebar_state="expanded")
 
-# Estilos de Gráficos Ejecutivos
+# Configuración estética de gráficos premium
 sns.set_theme(style="white")
 plt.rcParams["text.color"] = "#0F172A"
 plt.rcParams["axes.labelcolor"] = "#475569"
 plt.rcParams["xtick.color"] = "#64748B"
 plt.rcParams["ytick.color"] = "#64748B"
 
-# 2. INYECCIÓN CSS: TEMÁTICA GRAFITO MATE (#1E293B) Y PANELES EJECUTIVOS
+# 2. INYECCIÓN CSS SEGURO: TEMÁTICA GRAFITO MATE (#1E293B) Y RECUADROS BLANCOS
 st.markdown(
     """
     <style>
-    /* Fondo general gris claro clínico satinado */
-    .stApp {
-        background-color: #F1F5F9 !important;
-        font-family: 'Inter', -apple-system, sans-serif !important;
-    }
-    /* BARRA LATERAL GRAFITO MATE (#1E293B) - Reemplaza al azul */
-    [data-testid="stSidebar"] {
-        background-color: #1E293B !important;
-        border-right: none !important;
-    }
-    [data-testid="stSidebar"] .stMarkdown, 
-    [data-testid="stSidebar"] p, 
-    [data-testid="stSidebar"] h2 {
-        color: #FFFFFF !important;
-    }
-    /* Botones interactivos de la barra lateral */
+    .stApp { background-color: #F1F5F9 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
+    [data-testid="stSidebar"] { background-color: #1E293B !important; border-right: none !important; }
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { color: #FFFFFF !important; }
     [data-testid="stSidebar"] .stButton>button {
-        background-color: transparent !important;
-        color: #CBD5E1 !important;
-        border: none !important;
-        text-align: left !important;
-        justify-content: flex-start !important;
-        padding-left: 20px !important;
-        border-radius: 8px !important;
-        margin-bottom: 8px !important;
-        font-size: 14px !important;
-        font-weight: 500 !important;
+        background-color: transparent !important; color: #CBD5E1 !important; border: none !important;
+        text-align: left !important; justify-content: flex-start !important; padding-left: 20px !important;
+        border-radius: 8px !important; margin-bottom: 8px !important; font-size: 14px !important; font-weight: 500 !important;
     }
-    [data-testid="stSidebar"] .stButton>button:hover {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        color: #FFFFFF !important;
-    }
-    /* Tarjetas ejecutivas blancas con sombra fina */
+    [data-testid="stSidebar"] .stButton>button:hover { background-color: rgba(255, 255, 255, 0.1) !important; color: #FFFFFF !important; }
     .executive-card {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 16px !important;
-        padding: 24px !important;
-        margin-bottom: 20px !important;
-        box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03) !important;
+        background-color: #FFFFFF !important; border: 1px solid #E2E8F0 !important; border-radius: 16px !important;
+        padding: 24px !important; margin-bottom: 20px !important; box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03) !important;
     }
-    .card-heading {
-        color: #0F172A !important;
-        font-size: 13px !important;
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.75px !important;
-        margin-bottom: 15px !important;
-    }
+    .card-heading { color: #0F172A !important; font-size: 13px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.75px !important; margin-bottom: 15px !important; }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Inicialización persistente de la BD
-iniciar_base_datos()
+# Inicialización segura de BD llamando al backend
+motores.iniciar_base_datos()
+UMBRAL = motores.UMBRAL_GLOBAL
 
-# --- 3. BARRA LATERAL IZQUIERDA CON LOS 6 BOTONES EXACTOS ---
+# --- 3. BARRA LATERAL DE NAVEGACIÓN ---
 st.sidebar.markdown("## 🔮 MethylOx™")
 st.sidebar.caption("Epigenetic AI Platform")
 st.sidebar.markdown("---")
@@ -108,13 +63,11 @@ st.sidebar.markdown("<p style='font-size:11px; color:#94A3B8; margin-bottom:2px;
 st.sidebar.markdown("<p style='font-size:13px; color:#10B981; font-weight:600; margin-top:0;'>● All systems operational</p>", unsafe_allow_html=True)
 st.sidebar.caption("© 2026 MethylOx™")
 
-
-# --- 4. RENDERIZADO DE LAS PANTALLAS ---
+# --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
     st.image("banner_real.png", use_container_width=True)
     
-    # CONTROL CLÍNICO DE CAPTURA
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📥 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
@@ -123,30 +76,22 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
     with col_f2: patient_age = st.number_input("🎂 Chronological Age", min_value=18, max_value=100, value=45)
     with col_f3: ctdna_score = st.number_input("🔬 ctDNA Concentration (ng/mL)", min_value=0.0000, max_value=5.0000, format="%.4f", value=0.2500)
     
-    resultado = procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
+    resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
         
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("💾 Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
             if patient_id:
-                estatus_db = registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
-                if estatus_db == "Éxito": st.success(f"Record successfully secured in SQLite3 for ID: {patient_id}")
+                estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
+                if estatus_db == "Éxito": st.success(f"Record secured in SQLite3 for ID: {patient_id}")
                 else: st.error("Database status: Patient Identifier already exists.")
             else: st.warning("Please enter a valid Patient Identifier.")
                 
     with col_btn2:
-        # Generación del PDF Clínico Personalizado desde el Cerebro del Backend
-        reporte_pdf_contenido = generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
-        
-        st.download_button(
-            label="📥 Download Personalized Clinical Report (PDF/DOC)", 
-            data=reporte_pdf_contenido, 
-            file_name=f"MethylOx_Report_{patient_id if patient_id else 'Draft'}.doc", 
-            use_container_width=True
-        )
+        reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
+        st.download_button(label="📥 Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"MethylOx_Report_{patient_id if patient_id else 'Draft'}.doc", use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # PANEL DE KPIs ESTILO CORPORATIVO
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📈 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     k1, k2, k3, k4 = st.columns(4)
@@ -156,7 +101,6 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
     with k4: st.metric(label="VERDICT STATUS", value=resultado)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # PANELES DE ANÁLISIS ESTADÍSTICO DE ALTA GAMA
     st.markdown("### 📊 Clinical Evidence & Multi-Population Models")
     g1, g2, g3 = st.columns(3)
     
@@ -168,7 +112,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         st.pyplot(fig1)
         st.markdown("</div>", unsafe_allow_html=True)
         
-    with col2:
+    with g2:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">ROC Performance Curve</p>', unsafe_allow_html=True)
         fig2, ax2 = plt.subplots(figsize=(4.5, 3.2))
@@ -195,24 +139,19 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         st.pyplot(fig3)
         st.markdown("</div>", unsafe_allow_html=True)
 
-# PANTALLA 2: AUDITORÍA DE REGISTROS (SAMPLES)
 elif st.session_state["menu_activo"] == "🧪 Samples":
     st.title("🧪 Sample Records & Permanent Database")
-    st.caption("Resguardo clínico inmutable alojado de forma física en el servidor en la nube")
     st.markdown("---")
-    
     conn = sqlite3.connect("methyl_clinic.db")
     df_pacientes = pd.read_sql_query("SELECT * FROM pacientes", conn)
     conn.close()
-    
     if not df_pacientes.empty:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.dataframe(df_pacientes, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
     else:
-        st.info("No active patient logs detected inside methyl_clinic.db file.")
+        st.info("No active patient logs detected inside methyl_clinic.db.")
 
-# PANTALLA 7: SETTINGS (Visor de Backend)
 elif st.session_state["menu_activo"] == "⚙️ Settings":
     st.title("⚙️ Engineering Core & Backend Diagnostics")
     st.markdown("---")
