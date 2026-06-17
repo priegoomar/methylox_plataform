@@ -119,18 +119,18 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
-    st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+        st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card" style="background-color: #FFFFFF; padding: 25px; border-radius: 12px; overflow: visible;">', unsafe_allow_html=True)
+    
     st.markdown(
         """
-        <div style="width: 100%; position: relative; z-index: 999; min-height: 110px; margin-top: 5px; margin-bottom: 25px; display: block; clear: both; overflow: visible;">
+        <div style="width: 100%; position: relative; z-index: 999; min-height: 110px; margin-top: 5px; margin-bottom: 25px; display: block; clear: both; overflow: visible; text-align: center;">
             <img src="https://githubusercontent.com" 
                  style="width: 100%; max-height: 110px; object-fit: contain; display: block; border-radius: 8px;">
         </div>
         """,
         unsafe_allow_html=True
     )
-    st.markdown('<div class="executive-card" style="background-color: #FFFFFF; padding: 20px; border-radius: 10px;">', unsafe_allow_html=True)
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
         patient_id = st.text_input("🆔 Patient Identifier", placeholder="Ej. METH-2026-0X")
