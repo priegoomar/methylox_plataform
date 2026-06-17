@@ -120,7 +120,7 @@ st.sidebar.caption("© 2026 MethylOx™")
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
-    st.image("banner_real.png", use_container_width=True, output_format=PNG")
+    st.image("banner_real.png", use_container_width=True, output_format="PNG")
     st.markdown(
         """
         <div style="width: 100%; min-height: 150px; display: block; clear: both; overflow: visible; padding: 10px 0;">
