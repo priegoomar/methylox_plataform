@@ -119,6 +119,7 @@ st.sidebar.caption("© 2026 MethylOx™")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "🏠 Dashboard":
+    st-write (")
     st.image("https://githubusercontent.com", use_container_width=True)
 
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
