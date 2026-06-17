@@ -110,7 +110,8 @@ ax_pulse.set_facecolor("none")
 st.sidebar.pyplot(fig_pulse)
 
 st.sidebar.caption("© 2026 MethylOx™")
-
+# Línea temporal de prueba (Pégala pegada al borde izquierdo)
+st.sidebar.write(f"Menú activo real en memoria: '{st.session_state.get('menu_activo', 'No asignado')}'")
 # --- 4. CONTROL DE PANTALLAS ---
 
 if st.session_state["menu_activo"] == "📊 Dashboard":
@@ -164,6 +165,7 @@ if st.session_state["menu_activo"] == "📊 Dashboard":
         st.metric(label="VERDICT STATUS", value="Low Risk")
         
     st.markdown('</div>', unsafe_allow_html=True)
+    
 elif st.session_state["menu_activo"] == "🧪 Samples":
     st.title("🧪 Sample Records & Permanent Database")
     st.markdown("---")
