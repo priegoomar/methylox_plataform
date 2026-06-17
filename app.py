@@ -131,7 +131,7 @@ st.markdown(
 )
 
     # 3. Margen superior para que el texto no quede tapado por el banner flotante
-    st.markdown('<div style="margin-top: 40px;">', unsafe_allow_html=True)
+st.markdown('<div style="margin-top: 40px;">', unsafe_allow_html=True)
     
     # 2. Contenedor que empuja el contenido abajo para que el banner no lo tape
     st.markdown('<div style="margin-top: 140px;">', unsafe_allow_html=True)
