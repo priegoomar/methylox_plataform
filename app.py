@@ -130,7 +130,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">📥 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
     
-          col_f1, col_f2, col_f3 = st.columns(3)
+        col_f1, col_f2, col_f3 = st.columns(3)
         with col_f1:
             patient_id = st.text_input("🧬 Patient Identifier", placeholder="Ej. METH-2026-0X")
         with col_f2:
