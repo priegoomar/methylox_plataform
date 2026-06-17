@@ -197,3 +197,5 @@ elif st.session_state["menu_activo"] == "⚙️ Settings":
             codigo_backend = file.read()
             st.code(codigo_backend, language="python")
         st.success("✅ Conexión e integridad del archivo motores.py verificada.")
+except Exception:
+        st.error("❌ No se pudo enlazar el visor con motores.py")
