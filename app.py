@@ -122,7 +122,7 @@ if st.session_state["menu_activo"] == "🏠 Dashboard":
      import base64
 
     # 1. Leemos la imagen local en máxima resolución
-    with open("banner_real.png", "rb") as image_file:
+     with open("banner_real.png", "rb") as image_file:
         encoded_banner = base64.b64encode(image_file.read()).decode()
 
     # 2. La dibujamos en HTML para que no pierda nada de nitidez
