@@ -45,32 +45,28 @@ st.markdown(
         color: #FFFFFF !important;
     }
     
-    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO REFORZADO */
+    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO PANORÁMICO */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
         max-width: 100vw !important;
-        min-width: 100vw !important; /* Fuerza al contenedor padre a tocar las paredes del monitor */
         margin-left: calc(50% - 50vw) !important;
         margin-top: -65px !important;
-        margin-bottom: 30px !important;
-        background-color: #f7f9fa !important;
+        margin-bottom: 35px !important;
+        display: block !important;
     }
 
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
         width: 100vw !important;
         max-width: 100vw !important;
-        min-width: 100vw !important; /* Rompe el candado invisible de ancho de Streamlit */
         display: block !important;
-        background-color: #f7f9fa !important; /* Relleno continuo para los extremos vacíos */
     }
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100% !important;
-        max-width: 100% !important;
-        height: 200px !important; /* Altura perfecta para que el diseño respire hacia abajo */
-        object-fit: contain !important; /* Prohibido distorsionar, aplastar o cortar las letras */
-        image-rendering: -webkit-optimize-contrast !important; /* Filtro empresarial de ultra-enfoque de texto */
-        margin: 0 auto !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 240px !important; /* Altura más grande para que las letras se abran gigantes y legibles */
+        object-fit: fill !important; /* REGLA CORPORATIVA: Estira la lona de extremo a extremo sin dejar huecos a los lados */
+        image-rendering: -webkit-optimize-contrast !important; /* Filtro premium para que los bordes de los textos se vean súper definidos */
         display: block !important;
     }
     /* Botones de navegación de la barra lateral */
