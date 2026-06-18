@@ -46,7 +46,6 @@ st.markdown(
     }
     
     /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO PANORÁMICO */
-    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO PANORÁMICO */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
         max-width: 100vw !important;
