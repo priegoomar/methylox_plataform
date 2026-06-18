@@ -49,23 +49,27 @@ st.markdown(
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
         max-width: 100vw !important;
+        min-width: 100vw !important; /* Fuerza al contenedor padre a tocar las paredes del monitor */
         margin-left: calc(50% - 50vw) !important;
         margin-top: -65px !important;
         margin-bottom: 30px !important;
+        background-color: #f7f9fa !important;
     }
 
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
         width: 100vw !important;
         max-width: 100vw !important;
+        min-width: 100vw !important; /* Rompe el candado invisible de ancho de Streamlit */
         display: block !important;
-        background-color: #f7f9fa !important; /* Une los lados vacíos con el color de tu imagen */
+        background-color: #f7f9fa !important; /* Relleno continuo para los extremos vacíos */
     }
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100% !important;
-        height: 200px !important; /* Altura perfecta para que el diseño se abra completo hacia abajo */
-        object-fit: contain !important; /* Evita que el logo y el ADN se distorsionen o se corten */
-        image-rendering: -webkit-optimize-contrast !important; /* Filtro premium para que las letras se lean súper nítidas */
+        max-width: 100% !important;
+        height: 200px !important; /* Altura perfecta para que el diseño respire hacia abajo */
+        object-fit: contain !important; /* Prohibido distorsionar, aplastar o cortar las letras */
+        image-rendering: -webkit-optimize-contrast !important; /* Filtro empresarial de ultra-enfoque de texto */
         margin: 0 auto !important;
         display: block !important;
     }
