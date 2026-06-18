@@ -56,29 +56,37 @@ st.markdown(
     
     
     /* Espaciador interno para mantener los márgenes de las tarjetas del médico */
-    .main-content-wrapper {
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
-        padding-top: 1rem !important;
+    /* 1. ROMPER MÁRGENES DE STREAMLIT PARA QUE EL BANNER TOQUE LOS BORDES */
+    [data-testid="stMainBlockContainer"] {
+        padding-top: 0rem !important;
+        padding-left: 0rem !important;
+        padding-right: 0rem !important;
+        max-width: 100% !important;
     }
-
-       /* 🛠️ AJUSTE PERFECTO Y EQUILIBRADO PARA EL BANNER CORPORATIVO */
-    /* 🛠️ AJUSTE DE PROPORCIÓN IDEAL (ESTILO CINTILLO EJECUTIVO) */
+    
+    /* 2. EL CONTENEDOR DEL BANNER CON ANCHO TOTAL ABSOLUTO */
     [data-testid="stMainBlockContainer"] [data-testid="stImage"] {
-        width: 100% !important;
-        height: 12800px !important; /* Fijamos una altura limpia y moderada */
-        overflow: hidden !important; /* Oculta los textos inferiores sobrantes */
-        margin-bottom: 25px !important;
+        width: 100vw !important;        
+        height: 140px !important; /* 🎯 Altura corregida, delgada y elegante */
+        overflow: hidden !important;
+        margin: 0px 0px 20px 0px !important;
+        padding: 0px !important;
         display: block !important;
     }
     
     [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100% !important;
-        height: 180px !important;
-        object-fit: cover !important; /* Estira al ancho completo de la pantalla sin deformar */
-        object-position: center 15% !important; /* 🎯 ENFOQUE PERFECTO: Muestra el logo grande y el ADN, ocultando el bloque de texto de abajo */
-        border-bottom: 2px solid #CBD5E1 !important;
-    }    
+        width: 100vw !important;
+        height: 140px !important;
+        object-fit: cover !important;    
+        object-position: center 22% !important; /* Enfoca perfectamente MethylOx y el ADN */
+    }
+
+    /* 3. WRAPPER PARA QUE TUS CAMPOS NO SE PEGUEN A LOS BORDES */
+    .main-content-wrapper {
+        padding-left: 3rem !important;  
+        padding-right: 3rem !important;
+        padding-top: 1rem !important;
+    }
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important; 
