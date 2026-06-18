@@ -56,29 +56,18 @@ st.markdown(
     
     
     /* Espaciador interno para mantener los márgenes de las tarjetas del médico */
-    /* 1. ROMPER MÁRGENES DE STREAMLIT PARA QUE EL BANNER TOQUE LOS BORDES */
-    [data-testid="stMainBlockContainer"] {
-        padding-top: 0rem !important;
-        padding-left: 0rem !important;
-        padding-right: 0rem !important;
-        max-width: 100% !important;
+    /* BANNER ESTILIZADO (VERSION ESTABLE) */
+    [data-testid="stImage"] {
+        margin-bottom: 20px !important;
     }
     
-    /* 2. EL CONTENEDOR DEL BANNER CON ANCHO TOTAL ABSOLUTO */
-    [data-testid="stMainBlockContainer"] [data-testid="stImage"] {
-        width: 100vw !important;        
-        height: 140px !important; /* 🎯 Altura corregida, delgada y elegante */
-        overflow: hidden !important;
-        margin: 0px 0px 20px 0px !important;
-        padding: 0px !important;
-        display: block !important;
-    }
-    
-    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100vw !important;
+    [data-testid="stImage"] img {
+        width: 100% !important;
         height: 140px !important;
-        object-fit: cover !important;    
-        object-position: center 22% !important; /* Enfoca perfectamente MethylOx y el ADN */
+        object-fit: cover !important;
+        object-position: center 30% !important;
+        border-radius: 8px !important; /* Bordes redondeados profesionales */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
     }
 
     /* 3. WRAPPER PARA QUE TUS CAMPOS NO SE PEGUEN A LOS BORDES */
