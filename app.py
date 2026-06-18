@@ -45,7 +45,7 @@ st.markdown(
         color: #FFFFFF !important;
     }
     
-    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO REFORZADO */
+ /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO REFORZADO */
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
         width: 100vw !important; 
         margin-left: calc(50% - 50vw) !important; 
@@ -56,10 +56,9 @@ st.markdown(
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100vw !important;
-        height: auto !important; 
-        max-height: 160px !important; 
-        object-fit: contain !important; 
-        background: linear-gradient(135deg, #0A0F1D 0%, #070A14 100%) !important; 
+        height: 160px !important; /* Altura fija perfecta de cabecera */
+        object-fit: cover !important; /* ESTO ES LA CLAVE: Estira tu nueva imagen para cubrir todo el ancho */
+        object-position: center center !important; 
     }
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
@@ -194,7 +193,8 @@ st.sidebar.caption("© 2026 MethylOx™")
 if st.session_state["menu_activo"] in ["Dashboard"]:
    
     # 🎯 TU BANNER CORRECTO CON MÁXIMA CALIDAD PARA LAS LETRAS E ICONOS
-    st.image("https://githubusercontent.com", use_container_width=True, output_format="PNG")
+    st.write("")
+    st.image("1000199352.png", use_container_width=True)
    
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
