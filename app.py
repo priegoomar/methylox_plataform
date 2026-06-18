@@ -76,9 +76,10 @@ st.markdown(
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100vw !important;
-        height: 160px !important; 
-        object-fit: cover !important; 
-        object-position: center center !important;
+        height: auto !important; /* CORRECCIÓN: Altura elástica para que no se corte la imagen */
+        max-height: 240px !important; /* Aumentamos el límite para que se descubra la parte de abajo */
+        object-fit: contain !important; /* SOLUCIÓN CLAVE: Muestra el banner ENTERO sin rebanar los textos */
+        background-color: #F1F5F9 !important; /* Color de fondo idéntico al de tu plataforma */
     }
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
