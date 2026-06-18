@@ -60,29 +60,26 @@ st.markdown(
         object-fit: cover !important; /* ESTO ES LA CLAVE: Estira tu nueva imagen para cubrir todo el ancho */
         object-position: center center !important; 
     }
-   
-    div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+    div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
-        height: auto !important; /* Altura elástica proporcional */
-        max-height: 160px !important; /* Altura máxima ejecutiva y limpia */
-        object-fit: contain !important; /* Conserva las letras y el logo nítidos sin cortes */
-        background: linear-gradient(135deg, #0A0F1D 0%, #070A14 100%) !important; /* Fondo de relleno oscuro */
+        max-width: 100vw !important;
+        margin-left: calc(50% - 50vw) !important;
+        margin-top: -65px !important;
+        margin-bottom: 30px !important;
     }
-    /* 🛠️ AJUSTE DE BANNER: ANCHO COMPLETO Y ALINEACIÓN PROFESIONAL */
-    [data-testid="stMainBlockContainer"] [data-testid="stImage"] {
-        width: 100vw !important; /* Forzamos el ancho al 100% de la ventana */
-        margin-left: calc(50% - 50vw) !important; /* Truco CSS para romper márgenes de Streamlit */
-        margin-bottom: 25px !important;
+
+    div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
+        width: 100vw !important;
+        max-width: 100vw !important;
         display: block !important;
     }
    
-    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+    div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100vw !important;
-        height: 150px !important; /* Altura constante y limpia */
-        object-fit: cover !important; /* ESTO ES LA CLAVE: Estira la imagen para cubrir el espacio sin deformar */
-        object-position: center 25% !important; /* Enfoca el logo y ADN, recorta el exceso inferior */
+        height: 160px !important; 
+        object-fit: cover !important; 
+        object-position: center center !important;
     }
-
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important;
