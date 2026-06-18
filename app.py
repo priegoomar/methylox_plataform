@@ -20,67 +20,100 @@ plt.rcParams["ytick.color"] = "#64748B"
 st.markdown(
     """
     <style>
-    /* Fondo general de la plataforma gris clínico satinado */
-    .stApp { background-color: #F1F5F9 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
-    
-    /* Eliminar márgenes superiores y laterales por defecto de Streamlit */
-    .block-container { padding-top: 0rem !important; padding-left: 0rem !important; padding-right: 0rem !important; max-width: 100% !important; }
-    
-    /* BARRA LATERAL GRAFITO MATE (#1E293B) */
-    [data-testid="stSidebar"] { background-color: #1E293B !important; border-right: none !important; }
-    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { color: #FFFFFF !important; }
-    
-    /* 🖼️ MOTOR INYECTOR PANORÁMICO: Fuerza al st.image nativo a ocupar el 100% de la pantalla horizontal */
-    [data-testid="stImage"] { 
-        width: 100vw !important; 
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-        padding: 0px !important;
-        text-align: center !important; 
+    st.markdown(
+    """
+    <style>
+    /* 1. Fondo de la aplicación moderno y limpio */
+    .stApp {
+        background-color: #F8FAFC !important;
     }
-    [data-testid="stImage"] img { 
-        width: 100vw !important; 
-        max-height: 90px !important; 
-        object-fit: fill !important; 
-        border-radius: 0px !important;
-        border-bottom: 3px solid #2563EB !important;
+    
+    /* 2. Barra lateral tecnológica (Sidebar) */
+    [data-testid="stSidebar"] {
+        background-color: #FFFFFF !important;
+        border-right: 1px solid #E2E8F0 !important;
+        box-shadow: 4px 0 10px rgba(15, 23, 42, 0.02) !important;
+    }
+    
+    /* 3. El contenedor principal de contenido */
+    .main-content-wrapper {
+        padding: 20px !important;
+    }
+    
+    /* 4. Tarjetas ejecutivas con bordes suaves y sombras sutiles (Como la imagen) */
+    .executive-card {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 16px !important;
+        padding: 30px !important;
+        box-shadow: 0 10px 25px rgba(148, 163, 184, 0.08) !important;
+        margin-bottom: 25px !important;
+    }
+    
+    /* 5. Títulos de las tarjetas estilizados */
+    .card-heading {
+        color: #0F172A !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        letter-spacing: 0.5px !important;
+        text-transform: uppercase !important;
+        margin-bottom: 25px !important;
+        border-bottom: 2px solid #F1F5F9 !important;
+        padding-bottom: 10px !important;
+    }
+    
+    /* 6. Botón de guardar (Commit) - Azul Tecnológico */
+    div.stButton > button {
+        background-color: #2563EB !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 12px 24px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        transition: all 0.3s ease !important;
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
     }
-    
-    /* Espaciador interno para mantener los márgenes de las tarjetas del médico */
-    .main-content-wrapper {
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
-        padding-top: 1rem !important;
+    div.stButton > button:hover {
+        background-color: #1D4ED8 !important;
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25) !important;
+        transform: translateY(-1px) !important;
     }
     
-    [data-testid="stSidebar"] .stButton>button {
-        background-color: transparent !important; color: #CBD5E1 !important; border: none !important;
-        text-align: left !important; justify-content: flex-start !important; padding-left: 20px !important;
-        border-radius: 8px !important; margin-bottom: 8px !important; font-size: 14px !important; font-weight: 500 !important;
+    /* 7. Botón de descarga (Reporte) - Rosa/Lila de Contraste */
+    div.stDownloadButton > button {
+        background-color: #EC4899 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 12px 24px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 12px rgba(236, 72, 153, 0.15) !important;
     }
-    [data-testid="stSidebar"] .stButton>button:hover { background-color: rgba(255, 255, 255, 0.1) !important; color: #FFFFFF !important; }
-    .executive-card {
-        background-color: #FFFFFF !important; border: 1px solid #E2E8F0 !important; border-radius: 16px !important;
-        padding: 24px !important; margin-bottom: 20px !important; box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03) !important;
+    div.stDownloadButton > button:hover {
+        background-color: #DB2777 !important;
+        box-shadow: 0 6px 16px rgba(236, 72, 153, 0.25) !important;
+        transform: translateY(-1px) !important;
     }
-    .card-heading { color: #0F172A !important; font-size: 13px !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.75px !important; margin-bottom: 15px !important; }
     
-    /* 🧬 ANIMACIÓN DE SIGNO VITAL (HEARTBEAT PULSE) */
-    @keyframes vitalPulse {
-        0% { transform: scale(0.9); opacity: 0.6; }
-        50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #10B981; }
-        100% { transform: scale(0.9); opacity: 0.6; }
+    /* 8. Estilizar los campos de entrada de texto y números */
+    .stTextInput input, .stNumberInput input {
+        background-color: #F8FAFC !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 8px !important;
+        color: #0F172A !important;
     }
-    .vital-dot {
-        display: inline-block; width: 10px; height: 10px; background-color: #10B981; 
-        border-radius: 50%; margin-right: 8px; animation: vitalPulse 1.5s infinite ease-in-out;
+    .stTextInput input:focus, .stNumberInput input:focus {
+        border-color: #2563EB !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
-
 # Inicialización silenciosa de BD llamando al backend
 motores.iniciar_base_datos()
 UMBRAL = motores.UMBRAL_GLOBAL
