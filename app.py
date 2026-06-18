@@ -222,7 +222,7 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
     st.markdown("<p style='font-size: 13px; font-weight: 700; color: #0F172A; text-transform: uppercase; letter-spacing: 0.5px;'>🗘 Bulk Sample Pipeline (Excel / CSV Upload)</p>", unsafe_allow_html=True)
     
     archivo_cargado = st.file_uploader("Drag and drop your sequencer data matrix here", type=["csv", "xlsx"])
-    if archivo_cargado is not NULL:
+if archivo_cargado is not NULL:
         try:
             # Leemos el archivo según su formato
             if archivo_cargado.name.endswith('.csv'):
