@@ -54,20 +54,6 @@ st.markdown(
         padding: 0px !important;
     }
     
-    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100% !important;
-        height: 140px !important; /* Altura fija y delgada tipo cintillo corporativo */
-        object-fit: cover !important; /* Ajusta la imagen al contenedor */
-        object-position: center 30% !important; /* 🎯 Sube el enfoque para que se vean tus letras e iconos y no se corte lo importante */
-        border-bottom: 3px solid #2563EB !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
-    }
-    
-    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100% !important;
-        height: 140px !important; /* Altura fija y delgada tipo cintillo corporativo */
-        object-fit: cover !important; /* Ajusta la imagen al contenedor */
-        object-position: center 30% !important; /* 🎯 Sube el enfoque para que se vean tus letras e iconos y no se corte lo importante */
     
     /* Espaciador interno para mantener los márgenes de las tarjetas del médico */
     .main-content-wrapper {
@@ -75,7 +61,25 @@ st.markdown(
         padding-right: 2rem !important;
         padding-top: 1rem !important;
     }
+
+       /* 🛠️ AJUSTE PERFECTO Y EQUILIBRADO PARA EL BANNER CORPORATIVO */
+    [data-testid="stMainBlockContainer"] [data-testid="stImage"] {
+        width: 100% !important;
+        background-color: #FFFFFF !important; /* Mantiene un fondo limpio si la pantalla se estira */
+        border-bottom: 2px solid #E2E8F0 !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+        margin-bottom: 20px !important;
+        text-align: center !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
     
+    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+        width: 100% !important;
+        max-height: 110px !important; /* 🎯 Altura elegante y ejecutiva (ni gigante, ni miniatura) */
+        object-fit: contain !important; /* 👈 GARANTIZA QUE NINGÚN TEXTO O ICONO SE CORTE */
+        height: auto !important;
+    }
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important; 
