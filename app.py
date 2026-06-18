@@ -76,10 +76,9 @@ st.markdown(
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100vw !important;
-        height: auto !important; /* CORRECCIÓN: Altura elástica para que no se corte la imagen */
-        max-height: 240px !important; /* Aumentamos el límite para que se descubra la parte de abajo */
-        object-fit: contain !important; /* SOLUCIÓN CLAVE: Muestra el banner ENTERO sin rebanar los textos */
-        background-color: #F1F5F9 !important; /* Color de fondo idéntico al de tu plataforma */
+        height: 220px !important; /* Forzamos una altura más alta para que se abra hacia abajo */
+        object-fit: fill !important; /* SOLUClÓN: Estira la imagen de extremo a extremo sin cortar nada */
+        object-position: center center !important;
     }
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
