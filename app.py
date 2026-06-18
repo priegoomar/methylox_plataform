@@ -21,13 +21,45 @@ plt.rcParams["ytick.color"] = "#64748B"
 st.markdown(
     """
     <style>
-    /* 🛠️ AJUSTE DE BANNER REFORZADO PARA NUEVAS VERSIONES DE STREAMLIT */
+    /* 1. Fondo de la plataforma gris clínico satinado */
+    .stApp {
+        background-color: #F1F5F9 !important;
+        font-family: 'Inter', -apple-system, sans-serif !important;
+    }
+   
+    /* 2. Eliminar márgenes superiores y laterales de Streamlit */
+    .block-container {
+        padding-top: 0rem !important;
+        padding-left: 0rem !important;
+        padding-right: 0rem !important;
+        max-width: 100% !important;
+    }
+   
+    /* 3. BARRA LATERAL GRAFITO MATE */
+    [data-testid="stSidebar"] {
+        background-color: #1E293B !important;
+        border-right: none !important;
+    }
+   
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 {
+        color: #FFFFFF !important;
+    }
+    
+    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO REFORZADO */
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
-        width: 100vw !important; /* Forzamos el ancho al 100% de la ventana */
-        margin-left: calc(50% - 50vw) !important; /* Rompe los márgenes laterales */
-        margin-top: -65px !important; /* Elimina el espacio en blanco gigante superior de Streamlit */
+        width: 100vw !important; 
+        margin-left: calc(50% - 50vw) !important; 
+        margin-top: -65px !important; 
         margin-bottom: 30px !important;
         display: block !important;
+    }
+   
+    div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+        width: 100vw !important;
+        height: auto !important; 
+        max-height: 160px !important; 
+        object-fit: contain !important; 
+        background: linear-gradient(135deg, #0A0F1D 0%, #070A14 100%) !important; 
     }
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
