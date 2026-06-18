@@ -63,23 +63,22 @@ st.markdown(
     }
 
        /* 🛠️ AJUSTE PERFECTO Y EQUILIBRADO PARA EL BANNER CORPORATIVO */
+    /* 🛠️ AJUSTE DE PROPORCIÓN IDEAL (ESTILO CINTILLO EJECUTIVO) */
     [data-testid="stMainBlockContainer"] [data-testid="stImage"] {
         width: 100% !important;
-        background-color: #FFFFFF !important; /* Mantiene un fondo limpio si la pantalla se estira */
-        border-bottom: 2px solid #E2E8F0 !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
-        margin-bottom: 20px !important;
-        text-align: center !important;
-        display: flex !important;
-        justify-content: center !important;
+        height: 120px !important; /* Fijamos una altura limpia y moderada */
+        overflow: hidden !important; /* Oculta los textos inferiores sobrantes */
+        margin-bottom: 25px !important;
+        display: block !important;
     }
     
     [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100% !important;
-        max-height: 110px !important; /* 🎯 Altura elegante y ejecutiva (ni gigante, ni miniatura) */
-        object-fit: contain !important; /* 👈 GARANTIZA QUE NINGÚN TEXTO O ICONO SE CORTE */
-        height: auto !important;
-    }
+        height: 120px !important;
+        object-fit: cover !important; /* Estira al ancho completo de la pantalla sin deformar */
+        object-position: center 15% !important; /* 🎯 ENFOQUE PERFECTO: Muestra el logo grande y el ADN, ocultando el bloque de texto de abajo */
+        border-bottom: 2px solid #CBD5E1 !important;
+    }    
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important; 
