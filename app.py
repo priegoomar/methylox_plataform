@@ -44,7 +44,7 @@ st.markdown(
     [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { 
         color: #FFFFFF !important; 
     }
-        /* BANNER CORPORATIVO - AJUSTE FINAL */
+    /* BANNER CORPORATIVO - AJUSTE FINAL DEFINITIVO */
     [data-testid="stImage"] {
         width: 100% !important;
         margin-bottom: 25px !important;
@@ -53,18 +53,13 @@ st.markdown(
     
     [data-testid="stImage"] img {
         width: 100% !important;
-        height: 140px !important;
+        height: auto !important; /* Permitimos que la altura se ajuste proporcionalmente */
+        min-height: 160px !important; /* 🎯 Esto evita que se vea pequeño */
+        max-height: 250px !important; /* Límite máximo para que no se vea gigante */
         object-fit: cover !important;
-        object-position: center 30% !important; /* Enfoca el logo y ADN */
+        object-position: center 30% !important; 
         border-radius: 8px !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
-    }
-    
-    /* 3. WRAPPER PARA QUE TUS CAMPOS NO SE PEGUEN A LOS BORDES */
-    .main-content-wrapper {
-        padding-left: 3rem !important;  
-        padding-right: 3rem !important;
-        padding-top: 1rem !important;
     }
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
