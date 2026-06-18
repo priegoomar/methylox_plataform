@@ -45,22 +45,20 @@ st.markdown(
         color: #FFFFFF !important; 
     }
     
-    /* 🛠️ CONTROL EXCLUSIVO PARA TU BANNER REAL (1000199352.png) */
-    [data-testid="stImage"] {
-        width: 100vw !important;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
+    /* 🛠️ NUEVO AJUSTE COMPACTO PARA EL BANNER */
+    [data-testid="stMainBlockContainer"] [data-testid="stImage"] {
+        width: 100% !important;
+        max-height: 140px !important; /* Limitamos la altura para que no se coma la pantalla */
+        overflow: hidden !important;
+        margin: 0px !important;
         padding: 0px !important;
-        text-align: center !important;
     }
     
-    [data-testid="stImage"] img {
-        width: 100vw !important;
-        height: auto !important; /* Altura automática para que NO se corten letras ni iconos */
-        object-fit: contain !important; /* Mantiene la proporción original exacta */
-        border-bottom: 3px solid #2563EB !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
-    }
+    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+        width: 100% !important;
+        height: 140px !important; /* Altura fija y delgada tipo cintillo corporativo */
+        object-fit: cover !important; /* Ajusta la imagen al contenedor */
+        object-position: center 30% !important; /* 🎯 Sube el enfoque para que se vean tus letras e iconos y no se corte lo importante */
     
     /* Espaciador interno para mantener los márgenes de las tarjetas del médico */
     .main-content-wrapper {
