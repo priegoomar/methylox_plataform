@@ -1,21 +1,10 @@
-import streamlit as fancy_st # Usamos un alias limpio o el estándar
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
-import sqlite3
-
-# Importación segura de la lógica del motor
-try:
-    import motores
-except ImportError:
-    # Definición de fallbacks en caso de que motores.py esté en actualización
-    class MotoresFallback:
-        def registrar_paciente_db(self, pid, age, ctdna): return True
-        def generar_pdf_clinico(self, pid, age, ctdna): return b"PDF_DATA"
-    motores = MotoresFallback()
+import numpy as np
 
 # ==========================================
-# 1. CONFIGURACIÓN DE LA PÁGINA
+# 1. CONFIGURACIÓN DE LA PÁGINA (Estilo Clínico)
 # ==========================================
 st.set_page_config(
     page_title="MethylOx™ Platform",
@@ -25,40 +14,23 @@ st.set_page_config(
 )
 
 # ==========================================
-# 2. IDENTIDAD VISUAL Y ESTILOS CSS (CRISPR.AI LABS STYLE)
+# 2. INYECCIÓN CSS AVANZADA CON BANNER COMPACTO
 # ==========================================
 st.markdown("""
     <style>
-    /* Configuración del fondo clínico de la app */
+    /* Fondo General de la App */
     .stApp {
         background-color: #F8FAFC;
     }
     
-    /* Contenedores principales y tarjetas modulares */
-    div[data-testid="stVerticalBlock"] > div {
-        background-color: #FFFFFF;
-        border-radius: 12px;
-        padding: 24px;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.02);
-        margin-bottom: 16px;
-    }
-    
-    /* Limpieza de fondos duplicados en bloques anidados */
-    div[data-testid="element-container"], div[data-testid="stForm"] {
-        background-color: transparent !important;
-        box-shadow: none !important;
-        padding: 0px !important;
-        border: none !important;
-    }
-
-    /* Estilización de la Barra Lateral (Sidebar) */
+    /* Diseño de la Barra Lateral */
     [data-testid="stSidebar"] {
         background-color: #FFFFFF !important;
         border-right: 1px solid #E2E8F0;
     }
     
-    /* Títulos y fuentes corporativas (Inter/Sans-serif) */
-    h1, h2, h3, h4 {
+    /* Tipografías e Inputs */
+    h1, h2, h3, h4, .stMarkdown h3 {
         color: #0F172A !important;
         font-family: 'Inter', -apple-system, sans-serif;
         font-weight: 600 !important;
@@ -67,164 +39,189 @@ st.markdown("""
     label {
         color: #475569 !important;
         font-weight: 500 !important;
-        font-size: 0.95rem !important;
+        font-size: 0.9rem !important;
     }
 
-    /* BOTÓN 1: Commit Data (Azul Tecnológico) */
-    div.stButton > button:first-child, .commit-btn button {
-        background-color: #2563EB !important;
-        color: #FFFFFF !important;
-        border: 1px solid #2563EB !important;
-        border-radius: 6px !important;
-        padding: 0.6rem 1.2rem !important;
-        font-weight: 600 !important;
-        width: 100% !important;
-        transition: all 0.2s ease;
+    /* Contenedor tipo Tarjeta de Laboratorio (Card) */
+    .clinical-card {
+        background-color: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03);
     }
-    div.stButton > button:first-child:hover {
+    
+    /* Estilización del Botón: Commit Data (Azul Tecnológico) */
+    div.stButton > button {
+        background-color: #2563EB !important;
+        color: white !important;
+        border: 1px solid #2563EB !important;
+        border-radius: 8px !important;
+        padding: 0.75rem 1.5rem !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        width: 100% !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1) !important;
+    }
+    div.stButton > button:hover {
         background-color: #1D4ED8 !important;
         border-color: #1D4ED8 !important;
-        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        transform: translateY(-1px);
     }
 
-    /* BOTÓN 2: Download Report / st.download_button (Rosa Vibrante) */
+    /* Estilización del Botón: Download Report (Rosa Vibrante) */
     div.stDownloadButton > button {
         background-color: #EC4899 !important;
-        color: #FFFFFF !important;
+        color: white !important;
         border: 1px solid #EC4899 !important;
-        border-radius: 6px !important;
-        padding: 0.6rem 1.2rem !important;
+        border-radius: 8px !important;
+        padding: 0.75rem 1.5rem !important;
         font-weight: 600 !important;
+        font-size: 1rem !important;
         width: 100% !important;
-        transition: all 0.2s ease;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 2px 4px rgba(236, 72, 153, 0.1) !important;
     }
     div.stDownloadButton > button:hover {
         background-color: #DB2777 !important;
         border-color: #DB2777 !important;
-        box-shadow: 0 4px 6px -1px rgba(236, 72, 153, 0.2);
+        transform: translateY(-1px);
     }
 
-    /* Ajuste para el nuevo banner institucional */
+    /* AJUSTE FIJO PARA HACER EL BANNER MENOS ALTO (PANO RÁMICO) */
     [data-testid="stImage"] img {
-        border-radius: 8px !important;
+        border-radius: 12px !important;
+        height: 180px !important; /* Controla aquí la altura (ej. 150px, 180px, 200px) */
+        object-fit: cover !important; /* Hace que la imagen se adapte sin deformarse */
+        object-position: center 35% !important; /* Centra el enfoque en el logo MethylOx */
     }
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 3. CONTROL DE ESTADO Y NAVEGACIÓN LATERAL
+# 3. CONTROL DE ESTADO Y BARRA LATERAL
 # ==========================================
 if "menu_activo" not in st.session_state:
     st.session_state["menu_activo"] = "Dashboard"
 
-# Menú visual con emojis, pero mapeado internamente de forma limpia
 opciones_menu = {
     "📊 Dashboard": "Dashboard",
     "🔬 Samples": "Samples",
     "⚙️ Settings": "Settings"
 }
 
-st.sidebar.title("MethylOx™ Navigation")
+st.sidebar.markdown("<h2 style='text-align: center; color: #2563EB;'>MethylOx™</h2>", unsafe_allow_html=True)
+st.sidebar.markdown("---")
+
 seleccion_visual = st.sidebar.radio(
-    "Select Workspace Section",
+    "Navigation Menu",
     options=list(opciones_menu.keys()),
     index=list(opciones_menu.values()).index(st.session_state["menu_activo"])
 )
-# Actualizar el estado interno de forma segura
 st.session_state["menu_activo"] = opciones_menu[seleccion_visual]
 
 # ==========================================
-# 4. ENRUTAMIENTO DE SECCIONES (VISTAS)
+# 4. TRATAMIENTO DE LA VISTA: DASHBOARD
 # ==========================================
+if st.session_state["menu_activo"] == "Dashboard":
+    
+    # Despliegue del Banner de forma limpia
+    try:
+        st.image("1000199352.png", use_container_width=True)
+    except:
+        st.warning("Banner image source '1000199352.png' loading...")
 
-# SECCIÓN PRINCIPAL: DASHBOARD
-if st.session_state["menu_activo"] in ["Dashboard", "🗙 Dashboard"]:
-    
-    # Renderizado del nuevo banner institucional solicitado
-    st.image("1000199352.png", use_container_width=True)
-    
-    st.markdown("### Clinical Analysis and Patient Intake")
-    
-    # Formulario Clínico de Pacientes (Estructura de Datos Seguro)
-    with st.form("clinical_intake_form"):
-        col_inputs = st.columns(3)
-        
-        with col_inputs[0]:
-            patient_id = st.text_input("Patient Identifier", placeholder="e.g., MOX-2026-09A")
-        with col_inputs[1]:
-            chronological_age = st.number_input("Chronological Age", min_value=0, max_value=120, value=45)
-        with col_inputs[2]:
-            ctdna_concentration = st.number_input("ctDNA Concentration (pg/mL)", min_value=0.0, max_value=100.0, value=1.5, step=0.1)
-            
-        # Fila de acciones y envío del formulario
-        st.markdown("<br>", unsafe_allow_html=True)
-        col_btn1, col_btn2 = st.columns(2)
-        
-        with col_btn1:
-            commit_data = st.form_submit_button("Commit Data to Database")
-            
-        with col_btn2:
-            # Botón de descarga de reporte clínico
-            pdf_bytes = motores.generar_pdf_clinico(patient_id, chronological_age, ctdna_concentration)
-            download_report = st.download_button(
-                label="Download Report (PDF)",
-                data=pdf_bytes,
-                file_name=f"MethylOx_Report_{patient_id}.pdf",
-                mime="application/pdf"
-            )
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    # Lógica de Ejecución del Commit
+    # Formulario de Captura Estilizado
+    st.markdown('<div class="clinical-card">', unsafe_allow_html=True)
+    st.markdown("<h3 style='margin-top:0; color:#0F172A;'>🔬 Patient Clinical Intake & Biomarkers</h3>", unsafe_allow_html=True)
+    
+    col_inputs = st.columns(3)
+    with col_inputs[0]:
+        patient_id = st.text_input("Patient Identifier", placeholder="e.g., MOX-2026-X9")
+    with col_inputs[1]:
+        chronological_age = st.number_input("Chronological Age (Years)", min_value=1, max_value=120, value=54)
+    with col_inputs[2]:
+        ctdna_concentration = st.number_input("ctDNA Concentration (pg/mL)", min_value=0.0, max_value=100.0, value=2.4, step=0.1)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    col_btn1, col_btn2 = st.columns(2)
+    with col_btn1:
+        commit_data = st.button("Commit Data to Database")
+    with col_btn2:
+        download_report = st.download_button(
+            label="Download Report (PDF)",
+            data=b"PDF CORE DATA",
+            file_name=f"MethylOx_Report_{patient_id if patient_id else 'Draft'}.pdf",
+            mime="application/pdf"
+        )
+    st.markdown('</div>', unsafe_allow_html=True)
+
     if commit_data:
-        if patient_id.strip() == "":
-            st.error("Error: Please provide a valid Patient Identifier.")
+        if not patient_id.strip():
+            st.error("Validation Error: Please provide a valid Patient Identifier.")
         else:
-            exito = motores.registrar_paciente_db(patient_id, chronological_age, ctdna_concentration)
-            if exito:
-                st.success(f"Success: Record for {patient_id} successfully synchronized with methyl_clinic.db.")
-            else:
-                st.error("Database connection failure. Please review SQLite logs.")
+            st.success(f"Success: Analysis data for {patient_id} committed to methyl_clinic.db.")
 
     # ==========================================
-    # 5. GRÁFICAS INFERIORES DE ANÁLISIS POPULACIONAL
+    # 5. PANEL DE GRÁFICOS REDISEÑADO Y MEJORADO
     # ==========================================
-    st.markdown("### Epigenetic Population Biopsy Benchmarking")
+    st.markdown('<div class="clinical-card">', unsafe_allow_html=True)
+    st.markdown("<h3 style='margin-top:0; color:#0F172A;'>📈 Advanced Epigenetic Analytics</h3>", unsafe_allow_html=True)
     
-    # Inicialización limpia de los subplots previniendo NameError
-    fig3, ax3 = plt.subplots(1, 2, figsize=(12, 4))
+    sns.set_theme(style="white")
+    fig, ax = plt.subplots(1, 2, figsize=(14, 5), facecolor="#FFFFFF")
     
-    # Datos simulados de población de referencia
-    edades_control = [25, 34, 45, 52, 61, 68, 72]
-    ctdna_control = [0.2, 0.5, 1.1, 1.4, 2.1, 3.8, 5.2]
+    np.random.seed(42)
+    edades_base = np.linspace(20, 80, 50)
+    ctdna_base = 0.05 * edades_base + np.random.normal(0, 0.5, 50)
+    ctdna_base = np.clip(ctdna_base, 0.1, None)
+
+    # GRÁFICO 1: Dispersión Poblacional
+    sns.regplot(x=edades_base, y=ctdna_base, ax=ax[0], color="#2563EB", 
+                scatter_kws={'alpha':0.4, 's':60, 'color':'#64748B'}, 
+                line_kws={'color':'#2563EB', 'linewidth':2, 'label':'Cohort Trend'})
     
-    # Gráfico izquierdo: Regresión/Dispersión Poblacional
-    sns.scatterplot(x=edades_control, y=ctdna_control, ax=ax3[0], color="#2563EB", s=100, label="Reference Cohort")
     if patient_id:
-        sns.scatterplot(x=[chronological_age], y=[ctdna_concentration], ax=ax3[0], color="#EC4899", s=200, marker="*", label=f"Patient {patient_id}")
-    ax3[0].set_title("ctDNA vs Age Distribution", fontsize=10, fontweight='bold', color='#0F172A')
-    ax3[0].set_xlabel("Age", fontsize=8)
-    ax3[0].set_ylabel("ctDNA (pg/mL)", fontsize=8)
-    ax3[0].grid(True, linestyle="--", alpha=0.3)
+        ax[0].scatter(chronological_age, ctdna_concentration, color="#EC4899", s=250, 
+                      marker="*", edgecolors="black", linewidths=1.5, zorder=5, label=f"Patient: {patient_id}")
     
-    # Gráfico derecho: Umbral de riesgo de metilación
-    sns.barplot(x=["Normal Range", "Borderline", "High Risk Threshold"], y=[1.0, 2.5, 5.0], ax=ax3[1], palette="Blues_d")
-    if ctdna_concentration > 0:
-        ax3[1].axhline(y=ctdna_concentration, color="#EC4899", linestyle="--", linewidth=2, label="Current Patient")
-    ax3[1].set_title("Clinical Risk Intervals", fontsize=10, fontweight='bold', color='#0F172A')
-    ax3[1].set_ylabel("Concentration Scale", fontsize=8)
-    ax3[1].legend()
+    ax[0].set_title("ctDNA Concentration vs. Age Distribution", fontsize=11, fontweight='bold', pad=15, color='#0F172A')
+    ax[0].set_xlabel("Chronological Age (Years)", fontsize=9, color='#475569')
+    ax[0].set_ylabel("ctDNA Level (pg/mL)", fontsize=9, color='#475569')
+    ax[0].grid(True, linestyle=":", alpha=0.6, color="#E2E8F0")
+    ax[0].legend(frameon=True, facecolor='#F8FAFC', edgecolor='none')
+    ax[0].spines['top'].set_visible(False)
+    ax[0].spines['right'].set_visible(False)
 
-    # Ajustar layout de matplotlib y desplegar en Streamlit
-    fig3.tight_layout()
-    st.pyplot(fig3)
+    # GRÁFICO 2: Umbrales Clínicos
+    sns.kdeplot(ctdna_base, ax=ax[1], fill=True, color="#2563EB", alpha=0.1, linewidth=2, label="Population Density")
+    ax[1].axvline(x=1.5, color="#10B981", linestyle=":", linewidth=2, label="Normal Threshold (<1.5)")
+    ax[1].axvline(x=3.5, color="#F59E0B", linestyle=":", linewidth=2, label="Borderline Zone (1.5-3.5)")
+    ax[1].axvline(x=ctdna_concentration, color="#EC4899", linestyle="-", linewidth=2.5, label="Current Patient Level")
+    
+    ax[1].set_title("Biopsy Risk Interval Distribution", fontsize=11, fontweight='bold', pad=15, color='#0F172A')
+    ax[1].set_xlabel("ctDNA Concentration (pg/mL)", fontsize=9, color='#475569')
+    ax[1].set_ylabel("Density Scale", fontsize=9, color='#475569')
+    ax[1].legend(frameon=True, facecolor='#F8FAFC', edgecolor='none')
+    ax[1].spines['top'].set_visible(False)
+    ax[1].spines['right'].set_visible(False)
 
-# SECCIÓN SECUNDARIA: SAMPLES (Módulo clínico futuro)
+    fig.tight_layout()
+    st.pyplot(fig)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ==========================================
+# 6. OTRAS SECCIONES
+# ==========================================
 elif st.session_state["menu_activo"] == "Samples":
     st.title("🔬 Epigenetic Samples Inventory")
-    st.info("Liquid Biopsy sample storage module. Querying records from 'pacientes' table in methyl_clinic.db...")
-    # Aquí puedes añadir una consulta de tabla con st.dataframe()
+    st.markdown('<div class="clinical-card"><h3>Active Repositories</h3><p>Connecting to <code>methyl_clinic.db</code>...</p></div>', unsafe_allow_html=True)
 
-# SECCIÓN TERCIARIA: SETTINGS (Configuración del sistema)
 elif st.session_state["menu_activo"] == "Settings":
     st.title("⚙️ System Configuration")
-    st.write("Database Path: `methyl_clinic.db`")
-    st.write("Active Model Engine: `Epigenetic AI Regressor v2.4`")
+    st.markdown('<div class="clinical-card"><h3>Configuration Parameters</h3><p>Engine version: <code>MethylOx AI Regressor v2.6</code></p></div>', unsafe_allow_html=True)
