@@ -45,7 +45,7 @@ st.markdown(
         color: #FFFFFF !important;
     }
     
-    /* 4. AJUSTE DE BANNER PANORÁMICO CORPORATIVO */
+    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO UNIFICADO */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
         max-width: 100vw !important;
@@ -64,10 +64,9 @@ st.markdown(
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100vw !important;
         max-width: 100vw !important;
-        height: auto !important;
-        max-height: 160px !important; /* Altura delgada y elegante de cabecera */
-        object-fit: cover !important; /* Forzará al nuevo formato panorámico a cubrir el 100% de los lados */
-        image-rendering: -webkit-optimize-contrast !important; /* Enfoque premium para los textos */
+        height: 240px !important; 
+        object-fit: fill !important; 
+        image-rendering: -webkit-optimize-contrast !important; 
         display: block !important;
     }
     /* Botones de navegación de la barra lateral */
