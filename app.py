@@ -5,6 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import motores
+import time # <--- Agregamos esto para romper la caché de la imagen
 
 # ==========================================
 # 1. CONFIGURACIÓN DE PÁGINA MAESTRA
@@ -22,56 +23,64 @@ plt.rcParams["axes.labelcolor"] = "#475569"
 plt.rcParams["xtick.color"] = "#64748B"
 plt.rcParams["ytick.color"] = "#64748B"
 
+# Generamos un timestamp único por cada recarga para obligar al navegador a descargar la imagen nueva
+timestamp_url = f"https://raw.githubusercontent.com/priegoomar/methylox_plataform/main/1000199352.png?v={int(time.time())}"
+
 # ==========================================
 # 2. INYECCIÓN CSS SEGURO Y COMPACTO
 # ==========================================
-st.markdown("""
+st.markdown(f"""
     <style>
     /* Fondo de la app */
-    .stApp { 
+    .stApp {{ 
         background-color: #F1F5F9 !important; 
         font-family: 'Inter', -apple-system, sans-serif !important;
-    }
+    }}
     
     /* Remover espacios redundantes del contenedor principal */
-    .block-container { 
+    .block-container {{ 
         padding-top: 0rem !important; 
         padding-left: 0rem !important; 
         padding-right: 0rem !important; 
         max-width: 100% !important; 
-    }
+    }}
     
     /* BARRA LATERAL GRAFITO MATE */
-    [data-testid="stSidebar"] { 
+    [data-testid="stSidebar"] {{ 
         background-color: #1E293B !important; 
         border-right: none !important; 
-    }
-    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { 
+    }}
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 {{ 
         color: #FFFFFF !important; 
-    }
+    }}
     
-    /* CONTENEDOR CONTROLLABLE PARA EL BANNER EXCLUSIVO */
-    .custom-banner {
+    /* ELIMINAR CUALQUIER RASTRO DE ST.IMAGE ANTERIOR */
+    [data-testid="stImage"] {{
+        display: none !important;
+    }}
+    
+    /* CONTENEDOR EXCLUSIVO PARA EL BANNER PURO */
+    .custom-banner {{
         width: 100vw !important;
-        height: 120px !important; /* Cambia este número si lo quieres más alto o más delgado */
-        background-image: url('https://raw.githubusercontent.com/priegoomar/methylox_plataform/main/1000199352.png') !important;
+        height: 120px !important;
+        background-image: url('{timestamp_url}') !important;
         background-size: cover !important;
-        background-position: center 30% !important; /* Centra el contenido verticalmente para que no se corte el logo */
+        background-position: center 30% !important;
         background-repeat: no-repeat !important;
         border-bottom: 3px solid #2563EB !important;
         margin: 0px !important;
         padding: 0px !important;
-    }
+    }}
     
     /* Espaciador interno para las tarjetas del contenido de abajo */
-    .main-content-wrapper {
+    .main-content-wrapper {{
         padding-left: 2rem !important;
         padding-right: 2rem !important;
         padding-top: 1.5rem !important;
-    }
+    }}
     
     /* Botones de la barra lateral */
-    [data-testid="stSidebar"] .stButton > button {
+    [data-testid="stSidebar"] .stButton > button {{
         background-color: transparent !important; 
         color: #CBD5E1 !important; 
         border: none !important;
@@ -83,39 +92,39 @@ st.markdown("""
         font-size: 14px !important; 
         font-weight: 500 !important;
         width: 100% !important;
-    }
-    [data-testid="stSidebar"] .stButton > button:hover { 
+    }}
+    [data-testid="stSidebar"] .stButton > button:hover {{ 
         background-color: rgba(255, 255, 255, 0.1) !important; 
         color: #FFFFFF !important; 
-    }
+    }}
     
     /* Tarjetas Ejecutivas Blancas */
-    .executive-card {
+    .executive-card {{
         background-color: #FFFFFF !important; 
         border: 1px solid #E2E8F0 !important; 
         border-radius: 16px !important;
         padding: 24px !important; 
         margin-bottom: 20px !important; 
         box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03) !important;
-    }
+    }}
     
-    .card-heading { 
+    .card-heading {{ 
         color: #0F172A !important; 
         font-size: 13px !important; 
         font-weight: 700 !important; 
         text-transform: uppercase !important;
         letter-spacing: 0.75px !important; 
         margin-bottom: 15px !important; 
-    }
+    }}
     
     /* Animación de latido del sistema */
-    @keyframes vitalPulse {
-        0% { transform: scale(0.9); opacity: 0.6; }
-        50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #10B981; }
-        100% { transform: scale(0.9); opacity: 0.6; }
-    }
+    @keyframes vitalPulse {{
+        0% {{ transform: scale(0.9); opacity: 0.6; }}
+        50% {{ transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #10B981; }}
+        100% {{ transform: scale(0.9); opacity: 0.6; }}
+    }}
     
-    .vital-dot {
+    .vital-dot {{
         display: inline-block; 
         width: 10px; 
         height: 10px; 
@@ -123,7 +132,7 @@ st.markdown("""
         border-radius: 50%; 
         margin-right: 8px; 
         animation: vitalPulse 1.5s infinite ease-in-out;
-    }
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -169,7 +178,7 @@ st.sidebar.caption("© 2026 MethylOx™")
 # ==========================================
 if st.session_state["menu_activo"] == "Dashboard":
     
-    # INYECCIÓN DEL BANNER EN CSS PURO (Evita duplicados y estiramientos raros)
+    # NUEVO CONTENEDOR DE BANNER PURO
     st.markdown('<div class="custom-banner"></div>', unsafe_allow_html=True)
     
     # Contenedor con márgenes correctos para tus tarjetas
