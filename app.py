@@ -59,6 +59,15 @@ st.markdown(
         height: 140px !important; /* Altura fija y delgada tipo cintillo corporativo */
         object-fit: cover !important; /* Ajusta la imagen al contenedor */
         object-position: center 30% !important; /* 🎯 Sube el enfoque para que se vean tus letras e iconos y no se corte lo importante */
+        border-bottom: 3px solid #2563EB !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+    }
+    
+    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+        width: 100% !important;
+        height: 140px !important; /* Altura fija y delgada tipo cintillo corporativo */
+        object-fit: cover !important; /* Ajusta la imagen al contenedor */
+        object-position: center 30% !important; /* 🎯 Sube el enfoque para que se vean tus letras e iconos y no se corte lo importante */
     
     /* Espaciador interno para mantener los márgenes de las tarjetas del médico */
     .main-content-wrapper {
