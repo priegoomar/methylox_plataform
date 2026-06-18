@@ -45,7 +45,7 @@ st.markdown(
         color: #FFFFFF !important;
     }
     
-    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO PANORÁMICO */
+    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO PANORÁMICO EQUILIBRADO */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
         max-width: 100vw !important;
@@ -53,24 +53,20 @@ st.markdown(
         margin-top: -65px !important;
         margin-bottom: 35px !important;
         display: block !important;
-        background-color: #f7f9fa !important; /* Fondo idéntico de la lona para unificar los extremos */
     }
 
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
         width: 100vw !important;
         max-width: 100vw !important;
         display: block !important;
-        background-color: #f7f9fa !important;
     }
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100% !important;
-        max-width: 100% !important;
-        height: 180px !important; /* Altura ejecutiva ideal para que no coma pantalla */
-        object-fit: scale-down !important; /* REGLA MAESTRA: Muestra la lona completa al 100% sin cortar NADA */
-        background-color: #f7f9fa !important;
-        image-rendering: -webkit-optimize-contrast !important; /* Máxima nitidez en las letras */
-        margin: 0 auto !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 280px !important; /* Incrementamos la altura para equilibrar las letras y quitar la distorsión */
+        object-fit: fill !important; /* Fuerza a la lona a cubrir los laterales al 100% */
+        image-rendering: -webkit-optimize-contrast !important; /* Ultra-enfoque para los bordes del texto */
         display: block !important;
     }
     /* Botones de navegación de la barra lateral */
