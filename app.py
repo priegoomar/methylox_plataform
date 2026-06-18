@@ -23,17 +23,17 @@ plt.rcParams["xtick.color"] = "#64748B"
 plt.rcParams["ytick.color"] = "#64748B"
 
 # ==========================================
-# 2. INYECCIÓN CSS SEGURO Y LIMPIO
+# 2. INYECCIÓN CSS SEGURO Y COMPACTO
 # ==========================================
 st.markdown("""
     <style>
-    /* Fondo general de la plataforma gris clínico salinado */
+    /* Fondo de la app */
     .stApp { 
         background-color: #F1F5F9 !important; 
         font-family: 'Inter', -apple-system, sans-serif !important;
     }
     
-    /* Eliminar márgenes superiores y laterales por defecto de Streamlit */
+    /* Remover espacios redundantes del contenedor principal */
     .block-container { 
         padding-top: 0rem !important; 
         padding-left: 0rem !important; 
@@ -41,7 +41,7 @@ st.markdown("""
         max-width: 100% !important; 
     }
     
-    /* BARRA LATERAL GRAFITO MATE (#1E293B) */
+    /* BARRA LATERAL GRAFITO MATE */
     [data-testid="stSidebar"] { 
         background-color: #1E293B !important; 
         border-right: none !important; 
@@ -50,28 +50,27 @@ st.markdown("""
         color: #FFFFFF !important; 
     }
     
-    /* CONTENEDOR EXCLUSIVO PARA EL BANNER PANORÁMICO DELGADO */
-    .banner-ajustado {
-        width: 100% !important;
-        height: 120px !important; /* Altura delgada ideal para laptops */
-        overflow: hidden !important;
+    /* CONTROL ESTRICTO DEL BANNER (Cintillo Único y Delgado) */
+    .stHeaderBlock {
+        display: none !important; /* Quita espacios muertos de cabeceras nativas */
+    }
+    
+    /* Buscamos el contenedor exacto de la primera imagen del bloque principal */
+    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+        width: 100vw !important;
+        height: 110px !important; /* Altura compacta ideal para que no tape los gráficos */
+        object-fit: cover !important; /* Recorta la imagen limpia sin aplastarla */
+        object-position: center 30% !important; /* Centra el logo de MethylOx horizontal y verticalmente */
+        margin: 0px !important;
+        padding: 0px !important;
         border-bottom: 3px solid #2563EB !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
-        margin-bottom: 20px !important;
     }
     
-    .banner-ajustado img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important; /* Evita que las letras se aplasten o deformen */
-        object-position: center 32% !important; /* Enfoca el logo de MethylOx verticalmente */
-    }
-    
-    /* Espaciador interno para mantener los márgenes de las tarjetas */
+    /* Espaciador interno para las tarjetas del contenido de abajo */
     .main-content-wrapper {
         padding-left: 2rem !important;
         padding-right: 2rem !important;
-        padding-top: 0.5rem !important;
+        padding-top: 1.5rem !important;
     }
     
     /* Botones de la barra lateral */
@@ -112,7 +111,7 @@ st.markdown("""
         margin-bottom: 15px !important; 
     }
     
-    /* ANIMACIÓN DE SIGNO VITAL */
+    /* Animación de latido del sistema */
     @keyframes vitalPulse {
         0% { transform: scale(0.9); opacity: 0.6; }
         50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #10B981; }
@@ -131,7 +130,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Inicialización silenciosa de BD llamando al backend
+# Inicialización de BD
 motores.iniciar_base_datos()
 UMBRAL = motores.UMBRAL_GLOBAL
 
@@ -156,7 +155,7 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("<p style='font-size:11px; color:#94A3B8; margin-bottom:2px;'>SYSTEM STATUS</p>", unsafe_allow_html=True)
 st.sidebar.markdown("<p style='font-size:13px; color:#FFFFFF; font-weight:600; margin-top:0;'><span class='vital-dot'></span>Core Engine Processing...</p>", unsafe_allow_html=True)
 
-# Gráfica lineal del latido del procesador en el sidebar
+# Gráfica lineal en el sidebar
 fig_pulse, ax_pulse = plt.subplots(figsize=(2.5, 0.4))
 x_pulse = np.linspace(0, 10, 50)
 y_pulse = np.sin(x_pulse * 2) * np.exp(-0.05 * x_pulse)
@@ -173,13 +172,10 @@ st.sidebar.caption("© 2026 MethylOx™")
 # ==========================================
 if st.session_state["menu_activo"] == "Dashboard":
     
-    # RENDER DEL BANNER DENTRO DE SU DIV PROTECTOR EN ALTA CALIDAD
-    st.markdown(
-        f'<div class="banner-ajustado"><img src="data:image/png;base64,{st.image("1000199352.png") or ""}" style="display:none;"><img src="https://raw.githubusercontent.com/priegoomar/methylox_plataform/main/1000199352.png"></div>', 
-        unsafe_allow_html=True
-    )
+    # UN SOLO BANNER NATIVO (Se ajusta por CSS a modo de cintillo perfecto)
+    st.image("1000199352.png", use_container_width=True, output_format="PNG")
     
-    # Contenedor principal con márgenes limpios para el cuerpo del dashboard
+    # Contenedor con márgenes correctos para tus tarjetas
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     
     # ENTRADA DE DATOS DEL PACIENTE
@@ -196,9 +192,10 @@ if st.session_state["menu_activo"] == "Dashboard":
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # LÓGICA DE PROCESAMIENTO Y BOTONES
+    # PROCESAMIENTO
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
     
+    # TUS BOTONES INTACTOS
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
@@ -222,15 +219,14 @@ if st.session_state["menu_activo"] == "Dashboard":
         
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # ANALÍTICAS EN TIEMPO REAL Y GRÁFICOS (Ajustado a la tarjeta blanca)
+    # REAL-TIME ANALYTICS OVERVIEW (Gráficos fijos en proporción perfecta)
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     
-    fig3, ax3 = plt.subplots(figsize=(10, 3.2)) # Proporción más ancha y estilizada
-    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.15, label="Early Cancer Spectrum", ax=ax3, linewidth=2)
-    ax3.set_xlabel("Risk Score (%)", fontsize=9, fontweight="bold")
-    ax3.set_ylabel("Density", fontsize=9, fontweight="bold")
-    ax3.legend(fontsize=8, frameon=False)
+    fig3, ax3 = plt.subplots(figsize=(10, 3.0)) # Escalado limpio y nítido para pantallas anchas
+    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.15, label="Early Cancer", ax=ax3, linewidth=2)
+    ax3.set_xlabel("Risk Score (%)", fontsize=8)
+    ax3.legend(fontsize=7, frameon=False)
     sns.despine()
     fig3.tight_layout()
     st.pyplot(fig3)
