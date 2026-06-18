@@ -44,32 +44,22 @@ st.markdown(
     [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { 
         color: #FFFFFF !important; 
     }
-    
-    /* 🛠️ NUEVO AJUSTE COMPACTO PARA EL BANNER */
-    [data-testid="stMainBlockContainer"] [data-testid="stImage"] {
-        width: 100% !important;
-        max-height: 140px !important; /* Limitamos la altura para que no se coma la pantalla */
-        overflow: hidden !important;
-        margin: 0px !important;
-        padding: 0px !important;
-    }
-    
-    
-    /* Espaciador interno para mantener los márgenes de las tarjetas del médico */
-    /* BANNER ESTILIZADO (VERSION ESTABLE) */
+        /* BANNER CORPORATIVO - AJUSTE FINAL */
     [data-testid="stImage"] {
-        margin-bottom: 20px !important;
+        width: 100% !important;
+        margin-bottom: 25px !important;
+        text-align: center !important;
     }
     
     [data-testid="stImage"] img {
         width: 100% !important;
         height: 140px !important;
         object-fit: cover !important;
-        object-position: center 30% !important;
-        border-radius: 8px !important; /* Bordes redondeados profesionales */
+        object-position: center 30% !important; /* Enfoca el logo y ADN */
+        border-radius: 8px !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
     }
-
+    
     /* 3. WRAPPER PARA QUE TUS CAMPOS NO SE PEGUEN A LOS BORDES */
     .main-content-wrapper {
         padding-left: 3rem !important;  
