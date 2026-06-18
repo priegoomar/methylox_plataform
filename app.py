@@ -194,7 +194,7 @@ st.sidebar.caption("© 2026 MethylOx™")
 if st.session_state["menu_activo"] in ["Dashboard"]:
    
     # 🎯 TU BANNER CORRECTO CON MÁXIMA CALIDAD PARA LAS LETRAS E ICONOS
-    st.image("1000199352.png", use_container_width=True, output_format="PNG")
+    st.image("https://githubusercontent.com", use_container_width=True, output_format="PNG")
    
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
