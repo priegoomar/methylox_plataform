@@ -45,7 +45,7 @@ st.markdown(
         color: #FFFFFF !important;
     }
     
-    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO HÍBRIDO PROFESIONAL */
+    /* 4. AJUSTE DE BANNER PANORÁMICO CORPORATIVO */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
         max-width: 100vw !important;
@@ -53,24 +53,21 @@ st.markdown(
         margin-top: -65px !important;
         margin-bottom: 35px !important;
         display: block !important;
-        background-color: #f7f9fa !important; /* Fuerza al contenedor a pintar el fondo a los laterales */
     }
 
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
         width: 100vw !important;
         max-width: 100vw !important;
         display: block !important;
-        background-color: #f7f9fa !important;
     }
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100% !important;
-        max-width: 100% !important;
-        height: 180px !important; /* Altura ejecutiva ideal para que no tape tu formulario */
-        object-fit: contain !important; /* Mantiene la lona entera en su proporción original sin distorsión */
-        background-color: #f7f9fa !important;
-        image-rendering: -webkit-optimize-contrast !important; /* Filtro premium para máxima nitidez en letras */
-        margin: 0 auto !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: auto !important;
+        max-height: 160px !important; /* Altura delgada y elegante de cabecera */
+        object-fit: cover !important; /* Forzará al nuevo formato panorámico a cubrir el 100% de los lados */
+        image-rendering: -webkit-optimize-contrast !important; /* Enfoque premium para los textos */
         display: block !important;
     }
     /* Botones de navegación de la barra lateral */
