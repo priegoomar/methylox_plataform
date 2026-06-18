@@ -44,23 +44,21 @@ st.markdown(
     [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { 
         color: #FFFFFF !important; 
     }
-    /* BANNER CORPORATIVO - AJUSTE FINAL DEFINITIVO */
-    [data-testid="stImage"] {
-        width: 100% !important;
+    /* 🛠️ AJUSTE DE BANNER: ANCHO COMPLETO Y ALINEACIÓN PROFESIONAL */
+    [data-testid="stMainBlockContainer"] [data-testid="stImage"] {
+        width: 100vw !important; /* Forzamos el ancho al 100% de la ventana */
+        margin-left: calc(50% - 50vw) !important; /* Truco CSS para romper márgenes de Streamlit */
         margin-bottom: 25px !important;
-        text-align: center !important;
+        display: block !important;
     }
     
-    [data-testid="stImage"] img {
-        width: 100% !important;
-        height: auto !important; /* Permitimos que la altura se ajuste proporcionalmente */
-        min-height: 160px !important; /* 🎯 Esto evita que se vea pequeño */
-        max-height: 250px !important; /* Límite máximo para que no se vea gigante */
-        object-fit: cover !important;
-        object-position: center 30% !important; 
-        border-radius: 8px !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+        width: 100vw !important;
+        height: 150px !important; /* Altura constante y limpia */
+        object-fit: cover !important; /* ESTO ES LA CLAVE: Estira la imagen para cubrir el espacio sin deformar */
+        object-position: center 25% !important; /* Enfoca el logo y ADN, recorta el exceso inferior */
     }
+
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important; 
