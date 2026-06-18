@@ -217,7 +217,42 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
             file_name=f"MethylOx_Report_{patient_id}.pdf",
             use_container_width=True
         )
-       
+        
+    st.markdown("<hr style='margin: 25px 0; border: 0; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 13px; font-weight: 700; color: #0F172A; text-transform: uppercase; letter-spacing: 0.5px;'>🗘 Bulk Sample Pipeline (Excel / CSV Upload)</p>", unsafe_allow_html=True)
+    
+    archivo_cargado = st.file_uploader("Drag and drop your sequencer data matrix here", type=["csv", "xlsx"])
+    if archivo_cargado is not NULL:
+        try:
+            # Leemos el archivo según su formato
+            if archivo_cargado.name.endswith('.csv'):
+                df_bulk = pd.read_csv(archivo_cargado)
+            else:
+                df_bulk = pd.read_excel(archivo_cargado)
+                
+            # Verificamos que tenga las columnas necesarias
+            columnas_requeridas = ['Patient Identifier', 'Chronological Age', 'ctDNA Concentration']
+            if all(col in df_bulk.columns for col in columnas_requeridas):
+                st.success(f"🧬 Pipeline Active: {len(df_bulk)} samples parsed from file.")
+                
+                # Botón para procesar e inyectar todo a SQLite3 en bloque
+                if st.button("🚀 Execute Bulk Processing & Secure to Database", use_container_width=True):
+                    registros_exitosos = 0
+                    for _, fila in df_bulk.iterrows():
+                        p_id = str(fila['Patient Identifier'])
+                        p_age = int(fila['Chronological Age'])
+                        p_score = float(fila['ctDNA Concentration'])
+                        
+                        # El backend calcula silenciosamente en base a tus genes confidenciales
+                        res = motores.procesar_diagnostico_clinico(p_id, p_age, p_score)
+                        estatus = motores.registrar_paciente_db(p_id, p_age, p_score, res)
+                        if estatus == "Éxito":
+                            registros_exitosos += 1
+                    st.toast(f"💾 Secure Storage: {registros_exitosos} new cases appended to SQLite3.", icon="✅")
+            else:
+                st.error("❌ Schema Mismatch: File must contain 'Patient Identifier', 'Chronological Age', and 'ctDNA Concentration' columns.")
+        except Exception as e:
+            st.error(f"Error parsing file: {e}")       
     st.markdown('</div>', unsafe_allow_html=True)
    
     # #4. ANALÍTICAS EN TIEMPO REAL Y GRÁFICOS
