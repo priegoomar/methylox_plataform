@@ -38,15 +38,14 @@ st.markdown(
         padding: 30px !important;
     }
     
-    /* PROTECCIÓN CLAVE PARA EL BANNER: 
-       Evita que Streamlit estire y mutile la imagen en pantallas anchas.
-    */
+    /* 🛠️ CONFIGURACIÓN EXACTA PARA TU BANNER AZUL (1000199352) */
     [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        max-height: 120px !important; /* Limita la altura de cintillo profesional */
-        object-fit: contain !important; /* Mantiene la proporción perfecta del logotipo sin cortes */
-        object-position: center !important; 
-        width: 100% !important;
-        margin-bottom: 10px !important;
+        width: 100vw !important; /* Se estira limpiamente a lo ancho */
+        height: 110px !important; /* Altura fija ideal tipo cintillo corporativo */
+        object-fit: cover !important; /* Mantiene los logos y textos proporcionados sin aplastarlos */
+        object-position: center !important; /* Enfoca el centro exacto de tu diseño */
+        margin: 0px !important;
+        padding: 0px !important;
     }
     
     /* Tarjetas ejecutivas con bordes suaves y sombras sutiles */
@@ -156,10 +155,10 @@ st.sidebar.caption("SYSTEM STATUS: 🟢 Core Engine Processing...")
 
 # PESTAÑA A: DASHBOARD PRINCIPAL
 if st.session_state["menu_activo"] in ["Dashboard", "🗙 Dashboard"]:
-    # Colocamos el banner arriba del todo aprovechando el padding cero
-    st.image("banner_real.png", use_container_width=True, output_format="PNG")
+    # Cambiado con éxito al nombre correcto de tu archivo
+    st.image("1000199352.png", use_container_width=True, output_format="PNG")
     
-    # Contenedor con márgenes limpios para estructurar el resto de componentes del dashboard
+    # Contenedor con márgenes para estructurar el contenido de abajo
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
 
@@ -195,7 +194,7 @@ if st.session_state["menu_activo"] in ["Dashboard", "🗙 Dashboard"]:
         st.download_button(
             label="📥 Download Personalized Clinical Report", 
             data=reporte_pdf_contenido, 
-            file_name=f"Methylox_Report_{patient_id}.pdf", 
+            file_name=f"Methylox_Report_{patient_id}.pdf",
             use_container_width=True
         )
         
