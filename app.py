@@ -20,6 +20,7 @@ plt.rcParams["ytick.color"] = "#64748B"
 
 st.markdown(
     """
+    <style>
     /* 🛠️ AJUSTE DE BANNER REFORZADO PARA NUEVAS VERSIONES DE STREAMLIT */
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
         width: 100vw !important; /* Forzamos el ancho al 100% de la ventana */
