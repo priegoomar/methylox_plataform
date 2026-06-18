@@ -66,7 +66,7 @@ st.markdown(
     /* 🛠️ AJUSTE DE PROPORCIÓN IDEAL (ESTILO CINTILLO EJECUTIVO) */
     [data-testid="stMainBlockContainer"] [data-testid="stImage"] {
         width: 100% !important;
-        height: 120px !important; /* Fijamos una altura limpia y moderada */
+        height: 12800px !important; /* Fijamos una altura limpia y moderada */
         overflow: hidden !important; /* Oculta los textos inferiores sobrantes */
         margin-bottom: 25px !important;
         display: block !important;
@@ -74,7 +74,7 @@ st.markdown(
     
     [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100% !important;
-        height: 120px !important;
+        height: 180px !important;
         object-fit: cover !important; /* Estira al ancho completo de la pantalla sin deformar */
         object-position: center 15% !important; /* 🎯 ENFOQUE PERFECTO: Muestra el logo grande y el ADN, ocultando el bloque de texto de abajo */
         border-bottom: 2px solid #CBD5E1 !important;
