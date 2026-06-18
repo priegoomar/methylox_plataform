@@ -23,7 +23,7 @@ plt.rcParams["xtick.color"] = "#64748B"
 plt.rcParams["ytick.color"] = "#64748B"
 
 # ==========================================
-# 2. INYECCIÓN CSS SEGURO: CONTROL DE MARGENES ABSOLUTOS DE EXTREMO A EXTREMO
+# 2. INYECCIÓN CSS SEGURO Y LIMPIO
 # ==========================================
 st.markdown("""
     <style>
@@ -50,30 +50,28 @@ st.markdown("""
         color: #FFFFFF !important; 
     }
     
-    /* MOTOR INYECTOR PANORÁMICO: Fuerza al st.image nativo a ocupar el 100% de la pantalla horizontal */
-    [data-testid="stImage"] {
-        width: 100vw !important;
-        margin-left: 0px !important;
-        margin-right: 0px !important;
-        padding: 0px !important;
-        text-align: center !important;
-    }
-    
-    [data-testid="stImage"] img {
-        width: 100vw !important;
-        max-height: 140px !important; /* Altura ideal delgada para laptops sin tapar contenido */
-        object-fit: cover !important; /* Recorta la imagen limpiamente en lugar de aplastarla */
-        object-position: center 30% !important; /* Centra el texto del banner de MethylOx perfectamente */
-        border-radius: 0px !important;
+    /* CONTENEDOR EXCLUSIVO PARA EL BANNER PANORÁMICO DELGADO */
+    .banner-ajustado {
+        width: 100% !important;
+        height: 120px !important; /* Altura delgada ideal para laptops */
+        overflow: hidden !important;
         border-bottom: 3px solid #2563EB !important;
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+        margin-bottom: 20px !important;
     }
     
-    /* Espaciador interno para mantener los márgenes de las tarjetas del médico */
+    .banner-ajustado img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important; /* Evita que las letras se aplasten o deformen */
+        object-position: center 32% !important; /* Enfoca el logo de MethylOx verticalmente */
+    }
+    
+    /* Espaciador interno para mantener los márgenes de las tarjetas */
     .main-content-wrapper {
         padding-left: 2rem !important;
         padding-right: 2rem !important;
-        padding-top: 1rem !important;
+        padding-top: 0.5rem !important;
     }
     
     /* Botones de la barra lateral */
@@ -114,7 +112,7 @@ st.markdown("""
         margin-bottom: 15px !important; 
     }
     
-    /* ANIMACIÓN DE SIGNO VITAL (HEARTBEAT PULSE) */
+    /* ANIMACIÓN DE SIGNO VITAL */
     @keyframes vitalPulse {
         0% { transform: scale(0.9); opacity: 0.6; }
         50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #10B981; }
@@ -175,10 +173,13 @@ st.sidebar.caption("© 2026 MethylOx™")
 # ==========================================
 if st.session_state["menu_activo"] == "Dashboard":
     
-    # BANNER LOCAL QUE SÍ FUNCIONA (Ajustado dinámicamente)
-    st.image("1000199352.png", use_container_width=True, output_format="PNG")
+    # RENDER DEL BANNER DENTRO DE SU DIV PROTECTOR EN ALTA CALIDAD
+    st.markdown(
+        f'<div class="banner-ajustado"><img src="data:image/png;base64,{st.image("1000199352.png") or ""}" style="display:none;"><img src="https://raw.githubusercontent.com/priegoomar/methylox_plataform/main/1000199352.png"></div>', 
+        unsafe_allow_html=True
+    )
     
-    # Contenedor para aplicar padding al contenido bajo el banner panorámico
+    # Contenedor principal con márgenes limpios para el cuerpo del dashboard
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     
     # ENTRADA DE DATOS DEL PACIENTE
@@ -195,7 +196,7 @@ if st.session_state["menu_activo"] == "Dashboard":
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # LÓGICA DE PROCESAMIENTO Y BOTONES (Respetando tus botones intactos)
+    # LÓGICA DE PROCESAMIENTO Y BOTONES
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
     
     col_btn1, col_btn2 = st.columns(2)
@@ -219,21 +220,23 @@ if st.session_state["menu_activo"] == "Dashboard":
             use_container_width=True
         )
         
-    st.markdown('</div>', unsafe_allow_html=True) # Cierre tarjeta formulario
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # ANALÍTICAS EN TIEMPO REAL Y GRÁFICOS
+    # ANALÍTICAS EN TIEMPO REAL Y GRÁFICOS (Ajustado a la tarjeta blanca)
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('### REAL-TIME ANALYTICS OVERVIEW')
+    st.markdown('<p class="card-heading">Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     
-    fig3, ax3 = plt.subplots(figsize=(6, 2.8))
-    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
-    ax3.set_xlabel("Risk Score (%)", fontsize=8)
-    ax3.legend(fontsize=7)
+    fig3, ax3 = plt.subplots(figsize=(10, 3.2)) # Proporción más ancha y estilizada
+    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.15, label="Early Cancer Spectrum", ax=ax3, linewidth=2)
+    ax3.set_xlabel("Risk Score (%)", fontsize=9, fontweight="bold")
+    ax3.set_ylabel("Density", fontsize=9, fontweight="bold")
+    ax3.legend(fontsize=8, frameon=False)
     sns.despine()
+    fig3.tight_layout()
     st.pyplot(fig3)
     
-    st.markdown('</div>', unsafe_allow_html=True) # Cierre tarjeta gráficos
-    st.markdown('</div>', unsafe_allow_html=True) # Cierre main-content-wrapper
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 elif st.session_state["menu_activo"] == "Samples":
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
