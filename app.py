@@ -20,99 +20,122 @@ plt.rcParams["ytick.color"] = "#64748B"
 st.markdown(
     """
     <style>
-    st.markdown(
-    """
-    <style>
-    /* 1. Fondo de la aplicación moderno y limpio */
+    # ESTILOS PREMIUM INSPIRADOS EN CRISPR.AI LABS (METHYLOX)
+# =========================================================
+st.markdown("""
+<style>
+    /* 1. Fondo Global y Tipografía Limpia */
+    @import url('https://googleapis.com');
+    
     .stApp {
         background-color: #F8FAFC !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
     }
-    
-    /* 2. Barra lateral tecnológica (Sidebar) */
-    [data-testid="stSidebar"] {
-        background-color: #FFFFFF !important;
-        border-right: 1px solid #E2E8F0 !important;
-        box-shadow: 4px 0 10px rgba(15, 23, 42, 0.02) !important;
-    }
-    
-    /* 3. El contenedor principal de contenido */
-    .main-content-wrapper {
-        padding: 20px !important;
-    }
-    
-    /* 4. Tarjetas ejecutivas con bordes suaves y sombras sutiles (Como la imagen) */
-    .executive-card {
+
+    /* 2. Tarjetas Modulares Estilo Laboratorio (Bordes Suaves, Sombras Sutiles) */
+    div[data-testid="stVerticalBlock"] > div {
         background-color: #FFFFFF !important;
         border: 1px solid #E2E8F0 !important;
         border-radius: 16px !important;
-        padding: 30px !important;
-        box-shadow: 0 10px 25px rgba(148, 163, 184, 0.08) !important;
-        margin-bottom: 25px !important;
+        padding: 24px !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+        margin-bottom: 20px !important;
     }
-    
-    /* 5. Títulos de las tarjetas estilizados */
-    .card-heading {
-        color: #0F172A !important;
-        font-family: 'Inter', sans-serif !important;
-        font-weight: 700 !important;
-        font-size: 16px !important;
-        letter-spacing: 0.5px !important;
-        text-transform: uppercase !important;
-        margin-bottom: 25px !important;
-        border-bottom: 2px solid #F1F5F9 !important;
-        padding-bottom: 10px !important;
-    }
-    
-    /* 6. Botón de guardar (Commit) - Azul Tecnológico */
-    div.stButton > button {
-        background-color: #2563EB !important;
-        color: #FFFFFF !important;
+
+    /* Evitar que el contenedor maestro duplique fondos */
+    div[data-testid="stMain"] > div[data-testid="stVerticalBlock"] {
+        background-color: transparent !important;
         border: none !important;
-        border-radius: 8px !important;
-        padding: 12px 24px !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important;
+        box-shadow: none !important;
+        padding: 0px !important;
     }
-    div.stButton > button:hover {
-        background-color: #1D4ED8 !important;
-        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25) !important;
-        transform: translateY(-1px) !important;
-    }
-    
-    /* 7. Botón de descarga (Reporte) - Rosa/Lila de Contraste */
-    div.stDownloadButton > button {
-        background-color: #EC4899 !important;
-        color: #FFFFFF !important;
+
+    /* Evitar que las columnas internas hereden dobles bordes */
+    div[data-testid="stHorizontalBlock"] div[data-testid="stVerticalBlock"] > div {
+        background-color: transparent !important;
         border: none !important;
-        border-radius: 8px !important;
-        padding: 12px 24px !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 12px rgba(236, 72, 153, 0.15) !important;
+        box-shadow: none !important;
+        padding: 0px !important;
     }
-    div.stDownloadButton > button:hover {
-        background-color: #DB2777 !important;
-        box-shadow: 0 6px 16px rgba(236, 72, 153, 0.25) !important;
-        transform: translateY(-1px) !important;
-    }
-    
-    /* 8. Estilizar los campos de entrada de texto y números */
-    .stTextInput input, .stNumberInput input {
+
+    /* 3. Diseño de Inputs / Campos de Formulario */
+    div[data-testid="stNumberInput"] input, 
+    div[data-testid="stTextInput"] input {
         background-color: #F8FAFC !important;
         border: 1px solid #CBD5E1 !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
         color: #0F172A !important;
+        font-weight: 500 !important;
+        padding: 10px 14px !important;
     }
-    .stTextInput input:focus, .stNumberInput input:focus {
+    
+    div[data-testid="stNumberInput"] input:focus, 
+    div[data-testid="stTextInput"] input:focus {
         border-color: #2563EB !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
     }
-    </style>
-    """,
-    unsafe_allow_html=True
+
+    label {
+        color: #475569 !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        margin-bottom: 6px !important;
+    }
+
+    /* 4. Botón 1: Commit Data (Azul Tecnológico con Hover Suave) */
+    div.stButton > button:first-child:not([data-testid="download_button"]) {
+        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 12px 24px !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        letter-spacing: 0.025em !important;
+        width: 100% !important;
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2) !important;
+        transition: all 0.2s ease-in-out !important;
+    }
+    
+    div.stButton > button:first-child:not([data-testid="download_button"]):hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 12px -2px rgba(37, 99, 235, 0.3) !important;
+        background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%) !important;
+    }
+
+    /* 5. Botón 2: Download Report (Rosa Vibrante Tecnológico) */
+    div[data-testid="stDownloadButton"] > button, 
+    .stDownloadButton > button {
+        background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 12px 24px !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        letter-spacing: 0.025em !important;
+        width: 100% !important;
+        box-shadow: 0 4px 6px -1px rgba(236, 72, 153, 0.2) !important;
+        transition: all 0.2s ease-in-out !important;
+    }
+
+    div[data-testid="stDownloadButton"] > button:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 12px -2px rgba(236, 72, 153, 0.3) !important;
+        background: linear-gradient(135deg, #DB2777 0%, #C2185B 100%) !important;
+    }
+
+    /* 6. Encabezados y Títulos de Secciones */
+    h1, h2, h3 {
+        color: #0F172A !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.025em !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+# =========================================================
 )
 # Inicialización silenciosa de BD llamando al backend
 motores.iniciar_base_datos()
