@@ -45,21 +45,7 @@ st.markdown(
         color: #FFFFFF !important;
     }
     
- /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO REFORZADO */
-    div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
-        width: 100vw !important; 
-        margin-left: calc(50% - 50vw) !important; 
-        margin-top: -65px !important; 
-        margin-bottom: 30px !important;
-        display: block !important;
-    }
-   
-    div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100vw !important;
-        height: 160px !important; /* Altura fija perfecta de cabecera */
-        object-fit: cover !important; /* ESTO ES LA CLAVE: Estira tu nueva imagen para cubrir todo el ancho */
-        object-position: center center !important; 
-    }
+    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO REFORZADO */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
         max-width: 100vw !important;
@@ -72,13 +58,16 @@ st.markdown(
         width: 100vw !important;
         max-width: 100vw !important;
         display: block !important;
+        background-color: #f7f9fa !important; /* Une los lados vacíos con el color de tu imagen */
     }
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100vw !important;
-        height: 220px !important; /* Forzamos una altura más alta para que se abra hacia abajo */
-        object-fit: fill !important; /* SOLUClÓN: Estira la imagen de extremo a extremo sin cortar nada */
-        object-position: center center !important;
+        width: 100% !important;
+        height: 200px !important; /* Altura perfecta para que el diseño se abra completo hacia abajo */
+        object-fit: contain !important; /* Evita que el logo y el ADN se distorsionen o se corten */
+        image-rendering: -webkit-optimize-contrast !important; /* Filtro premium para que las letras se lean súper nítidas */
+        margin: 0 auto !important;
+        display: block !important;
     }
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
