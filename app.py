@@ -5,7 +5,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import motores
-import time # <--- Agregamos esto para romper la caché de la imagen
 
 # ==========================================
 # 1. CONFIGURACIÓN DE PÁGINA MAESTRA
@@ -23,64 +22,54 @@ plt.rcParams["axes.labelcolor"] = "#475569"
 plt.rcParams["xtick.color"] = "#64748B"
 plt.rcParams["ytick.color"] = "#64748B"
 
-# Generamos un timestamp único por cada recarga para obligar al navegador a descargar la imagen nueva
-timestamp_url = f"https://raw.githubusercontent.com/priegoomar/methylox_plataform/main/1000199352.png?v={int(time.time())}"
-
 # ==========================================
-# 2. INYECCIÓN CSS SEGURO Y COMPACTO
+# 2. INYECCIÓN CSS SEGURO Y CONTROLADO
 # ==========================================
-st.markdown(f"""
+st.markdown("""
     <style>
-    /* Fondo de la app */
-    .stApp {{ 
+    /* Fondo general de la plataforma gris clínico */
+    .stApp { 
         background-color: #F1F5F9 !important; 
         font-family: 'Inter', -apple-system, sans-serif !important;
-    }}
+    }
     
-    /* Remover espacios redundantes del contenedor principal */
-    .block-container {{ 
+    /* Eliminar márgenes redundantes superiores de la página */
+    .block-container { 
         padding-top: 0rem !important; 
         padding-left: 0rem !important; 
         padding-right: 0rem !important; 
         max-width: 100% !important; 
-    }}
+    }
     
     /* BARRA LATERAL GRAFITO MATE */
-    [data-testid="stSidebar"] {{ 
+    [data-testid="stSidebar"] { 
         background-color: #1E293B !important; 
         border-right: none !important; 
-    }}
-    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 {{ 
+    }
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 { 
         color: #FFFFFF !important; 
-    }}
+    }
     
-    /* ELIMINAR CUALQUIER RASTRO DE ST.IMAGE ANTERIOR */
-    [data-testid="stImage"] {{
-        display: none !important;
-    }}
-    
-    /* CONTENEDOR EXCLUSIVO PARA EL BANNER PURO */
-    .custom-banner {{
+    /* FIJAR EL TAMAÑO DEL BANNER SIN AFECTAR OTROS ELEMENTOS */
+    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100vw !important;
-        height: 120px !important;
-        background-image: url('{timestamp_url}') !important;
-        background-size: cover !important;
-        background-position: center 30% !important;
-        background-repeat: no-repeat !important;
-        border-bottom: 3px solid #2563EB !important;
+        height: 100px !important; /* Altura de cintillo delgado para que luzca profesional */
+        object-fit: cover !important; /* Evita que las letras se aplasten o deformen */
+        object-position: center 30% !important; /* Enfoca el texto del logo perfectamente */
         margin: 0px !important;
         padding: 0px !important;
-    }}
+        border-bottom: 3px solid #2563EB !important;
+    }
     
-    /* Espaciador interno para las tarjetas del contenido de abajo */
-    .main-content-wrapper {{
+    /* Espaciador interno para mantener los márgenes de las tarjetas del médico */
+    .main-content-wrapper {
         padding-left: 2rem !important;
         padding-right: 2rem !important;
         padding-top: 1.5rem !important;
-    }}
+    }
     
     /* Botones de la barra lateral */
-    [data-testid="stSidebar"] .stButton > button {{
+    [data-testid="stSidebar"] .stButton > button {
         background-color: transparent !important; 
         color: #CBD5E1 !important; 
         border: none !important;
@@ -92,39 +81,39 @@ st.markdown(f"""
         font-size: 14px !important; 
         font-weight: 500 !important;
         width: 100% !important;
-    }}
-    [data-testid="stSidebar"] .stButton > button:hover {{ 
+    }
+    [data-testid="stSidebar"] .stButton > button:hover { 
         background-color: rgba(255, 255, 255, 0.1) !important; 
         color: #FFFFFF !important; 
-    }}
+    }
     
     /* Tarjetas Ejecutivas Blancas */
-    .executive-card {{
+    .executive-card {
         background-color: #FFFFFF !important; 
         border: 1px solid #E2E8F0 !important; 
         border-radius: 16px !important;
         padding: 24px !important; 
         margin-bottom: 20px !important; 
         box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03) !important;
-    }}
+    }
     
-    .card-heading {{ 
+    .card-heading { 
         color: #0F172A !important; 
         font-size: 13px !important; 
         font-weight: 700 !important; 
         text-transform: uppercase !important;
         letter-spacing: 0.75px !important; 
         margin-bottom: 15px !important; 
-    }}
+    }
     
     /* Animación de latido del sistema */
-    @keyframes vitalPulse {{
-        0% {{ transform: scale(0.9); opacity: 0.6; }}
-        50% {{ transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #10B981; }}
-        100% {{ transform: scale(0.9); opacity: 0.6; }}
-    }}
+    @keyframes vitalPulse {
+        0% { transform: scale(0.9); opacity: 0.6; }
+        50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #10B981; }
+        100% { transform: scale(0.9); opacity: 0.6; }
+    }
     
-    .vital-dot {{
+    .vital-dot {
         display: inline-block; 
         width: 10px; 
         height: 10px; 
@@ -132,11 +121,11 @@ st.markdown(f"""
         border-radius: 50%; 
         margin-right: 8px; 
         animation: vitalPulse 1.5s infinite ease-in-out;
-    }}
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# Inicialización de BD
+# Inicialización de BD llamando al backend
 motores.iniciar_base_datos()
 UMBRAL = motores.UMBRAL_GLOBAL
 
@@ -161,7 +150,7 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("<p style='font-size:11px; color:#94A3B8; margin-bottom:2px;'>SYSTEM STATUS</p>", unsafe_allow_html=True)
 st.sidebar.markdown("<p style='font-size:13px; color:#FFFFFF; font-weight:600; margin-top:0;'><span class='vital-dot'></span>Core Engine Processing...</p>", unsafe_allow_html=True)
 
-# Gráfica lineal en el sidebar
+# Gráfica lineal del latido del procesador en el sidebar
 fig_pulse, ax_pulse = plt.subplots(figsize=(2.5, 0.4))
 x_pulse = np.linspace(0, 10, 50)
 y_pulse = np.sin(x_pulse * 2) * np.exp(-0.05 * x_pulse)
@@ -178,10 +167,10 @@ st.sidebar.caption("© 2026 MethylOx™")
 # ==========================================
 if st.session_state["menu_activo"] == "Dashboard":
     
-    # NUEVO CONTENEDOR DE BANNER PURO
-    st.markdown('<div class="custom-banner"></div>', unsafe_allow_html=True)
+    # LLAMADA LOCAL DIRECTA A TU ARCHIVO
+    st.image("1000199352.png", use_container_width=True, output_format="PNG")
     
-    # Contenedor con márgenes correctos para tus tarjetas
+    # Contenedor para aplicar padding al contenido bajo el banner
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     
     # ENTRADA DE DATOS DEL PACIENTE
@@ -198,7 +187,7 @@ if st.session_state["menu_activo"] == "Dashboard":
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # PROCESAMIENTO
+    # LÓGICA DE PROCESAMIENTO Y BOTONES
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
     
     col_btn1, col_btn2 = st.columns(2)
@@ -224,12 +213,12 @@ if st.session_state["menu_activo"] == "Dashboard":
         
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # REAL-TIME ANALYTICS OVERVIEW
+    # ANALÍTICAS EN TIEMPO REAL Y GRÁFICOS
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     
     fig3, ax3 = plt.subplots(figsize=(10, 3.0)) 
-    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.15, label="Early Cancer", ax=ax3, linewidth=2)
+    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.15, label="Early Cancer Spectrum", ax=ax3, linewidth=2)
     ax3.set_xlabel("Risk Score (%)", fontsize=8)
     ax3.legend(fontsize=7, frameon=False)
     sns.despine()
