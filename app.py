@@ -44,31 +44,35 @@ st.markdown(
     [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 {
         color: #FFFFFF !important;
     }
-    
-    /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO UNIFICADO */
+        /* 4. AJUSTE DE BANNER HÍBRIDO CORPORATIVO (MÁXIMA NITIDEZ) */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        margin-left: calc(50% - 50vw) !important;
+        width: 100% !important;
+        max-width: 100% !important;
         margin-top: -65px !important;
         margin-bottom: 35px !important;
         display: block !important;
+        background-color: #f7f9fa !important; /* El color exacto de tu lona para barrer los extremos infinitamente */
+        border-radius: 0px 0px 16px 16px !important;
     }
 
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] {
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100% !important;
+        max-width: 100% !important;
         display: block !important;
+        background-color: #f7f9fa !important;
     }
    
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        height: 240px !important; 
-        object-fit: fill !important; 
-        image-rendering: -webkit-optimize-contrast !important; 
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 200px !important; /* Altura elástica ideal para que se vea todo el texto de arriba a abajo */
+        object-fit: contain !important; /* SOLUCIÓN AL EFECTO BORROSO: Mantiene la lona entera en su proporción original sin pixelar */
+        image-rendering: -webkit-optimize-contrast !important; /* Filtro premium para máxima nitidez en letras */
+        margin: 0 auto !important;
         display: block !important;
+        padding-left: 20px !important; /* SOLUCIÓN A LA BARRA: Empuja la imagen a la derecha para que el menú no la tape */
     }
+
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important;
