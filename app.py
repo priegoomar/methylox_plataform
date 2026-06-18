@@ -50,20 +50,17 @@ st.markdown("""
         color: #FFFFFF !important; 
     }
     
-    /* CONTROL ESTRICTO DEL BANNER (Cintillo Único y Delgado) */
-    .stHeaderBlock {
-        display: none !important; /* Quita espacios muertos de cabeceras nativas */
-    }
-    
-    /* Buscamos el contenedor exacto de la primera imagen del bloque principal */
-    [data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+    /* CONTENEDOR CONTROLLABLE PARA EL BANNER EXCLUSIVO */
+    .custom-banner {
         width: 100vw !important;
-        height: 110px !important; /* Altura compacta ideal para que no tape los gráficos */
-        object-fit: cover !important; /* Recorta la imagen limpia sin aplastarla */
-        object-position: center 30% !important; /* Centra el logo de MethylOx horizontal y verticalmente */
+        height: 120px !important; /* Cambia este número si lo quieres más alto o más delgado */
+        background-image: url('https://raw.githubusercontent.com/priegoomar/methylox_plataform/main/1000199352.png') !important;
+        background-size: cover !important;
+        background-position: center 30% !important; /* Centra el contenido verticalmente para que no se corte el logo */
+        background-repeat: no-repeat !important;
+        border-bottom: 3px solid #2563EB !important;
         margin: 0px !important;
         padding: 0px !important;
-        border-bottom: 3px solid #2563EB !important;
     }
     
     /* Espaciador interno para las tarjetas del contenido de abajo */
@@ -172,8 +169,8 @@ st.sidebar.caption("© 2026 MethylOx™")
 # ==========================================
 if st.session_state["menu_activo"] == "Dashboard":
     
-    # UN SOLO BANNER NATIVO (Se ajusta por CSS a modo de cintillo perfecto)
-    st.image("1000199352.png", use_container_width=True, output_format="PNG")
+    # INYECCIÓN DEL BANNER EN CSS PURO (Evita duplicados y estiramientos raros)
+    st.markdown('<div class="custom-banner"></div>', unsafe_allow_html=True)
     
     # Contenedor con márgenes correctos para tus tarjetas
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
@@ -195,7 +192,6 @@ if st.session_state["menu_activo"] == "Dashboard":
     # PROCESAMIENTO
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
     
-    # TUS BOTONES INTACTOS
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
@@ -219,11 +215,11 @@ if st.session_state["menu_activo"] == "Dashboard":
         
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # REAL-TIME ANALYTICS OVERVIEW (Gráficos fijos en proporción perfecta)
+    # REAL-TIME ANALYTICS OVERVIEW
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">Real-Time Analytics Overview</p>', unsafe_allow_html=True)
     
-    fig3, ax3 = plt.subplots(figsize=(10, 3.0)) # Escalado limpio y nítido para pantallas anchas
+    fig3, ax3 = plt.subplots(figsize=(10, 3.0)) 
     sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.15, label="Early Cancer", ax=ax3, linewidth=2)
     ax3.set_xlabel("Risk Score (%)", fontsize=8)
     ax3.legend(fontsize=7, frameon=False)
