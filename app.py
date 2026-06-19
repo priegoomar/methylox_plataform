@@ -177,7 +177,10 @@ st.markdown(
         margin-right: 8px;
         animation: vitalPulse 1.5s infinite ease-in-out;
     }
-    
+    </style>
+    """,
+    unsafe_allow_html=True
+)
     /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO PANORÁMICO EQUILIBRADO */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
