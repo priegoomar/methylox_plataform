@@ -220,11 +220,6 @@ st.markdown(
         background-color: rgba(255, 255, 255, 0.1) !important;
         color: #FFFFFF !important;
     }
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
     /* Tarjetas ejecutivas contenedoras */
     .executive-card {
