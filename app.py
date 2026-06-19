@@ -206,6 +206,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important;
