@@ -21,29 +21,166 @@ plt.rcParams["ytick.color"] = "#64748B"
 st.markdown(
     """
     <style>
-    /* 1. Fondo de la plataforma gris clínico satinado */
+    /* 1. TIPOGRAFÍA INTERNACIONAL Y FONDO SATINADO CLÍNICO */
+    @import url('https://googleapis.com');
+    
     .stApp {
-        background-color: #F1F5F9 !important;
+        background-color: #F8FAFC !important; /* Blanco azulino de laboratorio */
         font-family: 'Inter', -apple-system, sans-serif !important;
     }
-
-    /* 2. Eliminar márgenes superiores y laterales de Streamlit */
+   
+    /* 2. ELIMINAR MÁRGENES AGRESIVOS DE STREAMLIT */
     .block-container {
         padding-top: 0rem !important;
         padding-left: 0rem !important;
         padding-right: 0rem !important;
         max-width: 100% !important;
     }
-
-    /* 3. BARRA LATERAL GRAFITO MATE */
+   
+    /* 3. BARRA LATERAL ESTILO GRAFITO MATE TECNOLÓGICO */
     [data-testid="stSidebar"] {
-        background-color: #1E293B !important;
-        border-right: none !important;
+        background-color: #0F172A !important; /* Azul oscuro espacial/grafito */
+        border-right: 1px solid #1E293B !important;
+        box-shadow: 4px 0 25px rgba(15, 23, 42, 0.05) !important;
+    }
+   
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 {
+        color: #F8FAFC !important;
+        font-family: 'Inter', sans-serif !important;
     }
 
-    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 {
-        color: #FFFFFF !important;
+    /* 4. BOTONES DE LA BARRA LATERAL (Premium Glassmorphism Effect) */
+    [data-testid="stSidebar"] .stButton>button {
+        background-color: transparent !important;
+        color: #94A3B8 !important;
+        border: 1px solid transparent !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+        padding: 10px 20px !important;
+        border-radius: 10px !important;
+        margin-bottom: 6px !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
+   
+    [data-testid="stSidebar"] .stButton>button:hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        color: #3B82F6 !important; /* Resalte en azul eléctrico al pasar el mouse */
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        transform: translateX(2px) !important;
+    }
+
+    /* 5. TARJETAS EJECUTIVAS MODULARES PREMIUM (Como CRISPR.AI) */
+    .executive-card {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 20px !important; /* Esquinas curvas fluidas */
+        padding: 35px !important;
+        margin-left: 50px !important;
+        margin-right: 50px !important;
+        margin-bottom: 30px !important;
+        box-shadow: 0 20px 40px -15px rgba(148, 163, 184, 0.12) !important; /* Sombra suave flotante */
+        transition: transform 0.3s ease !important;
+    }
+   
+    .card-heading {
+        color: #0F172A !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 25px !important;
+        border-bottom: 2px solid #F1F5F9 !important;
+        padding-bottom: 12px !important;
+    }
+
+    /* 6. INPUTS Y CAMPOS DE TEXTO ESTILIZADOS EN ALTA DEFINICIÓN */
+    .stTextInput input, .stNumberInput input {
+        background-color: #F8FAFC !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 10px !important;
+        color: #0F172A !important;
+        padding: 12px !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .stTextInput input:focus, .stNumberInput input:focus {
+        border-color: #2563EB !important; /* Brillo azul tecnológico al escribir */
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+        background-color: #FFFFFF !important;
+    }
+   
+    /* 7. BOTÓN PRINCIPAL DE GUARDAR (AZUL ELÉCTRICO) */
+    div.stButton > button {
+        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 14px 28px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        font-family: 'Inter', sans-serif !important;
+        transition: all 0.25s ease !important;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2) !important;
+    }
+    div.stButton > button:hover {
+        background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%) !important;
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3) !important;
+        transform: translateY(-1px) !important;
+    }
+    
+    /* 8. BOTÓN DE DESCARGA PDF (ROSA MAGNÉTIQUE DE CONTRASTE) */
+    div.stDownloadButton > button {
+        background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 14px 28px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        font-family: 'Inter', sans-serif !important;
+        transition: all 0.25s ease !important;
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2) !important;
+    }
+    div.stDownloadButton > button:hover {
+        background: linear-gradient(135deg, #DB2777 0%, #C11574 100%) !important;
+        box-shadow: 0 6px 20px rgba(236, 72, 153, 0.3) !important;
+        transform: translateY(-1px) !important;
+    }
+
+    /* 9. PANELES DE MÉTRICAS (Módulos de datos refinados) */
+    div[data-testid="stMetric"] {
+        background-color: #F8FAFC !important;
+        border: 1px solid #E2E8F0 !important;
+        padding: 20px !important;
+        border-radius: 14px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01) !important;
+    }
+
+    /* ANIMACIÓN DE SIGNO VITAL (HEARTBEAT PULSE) */
+    @keyframes vitalPulse {
+        0% { transform: scale(0.9); opacity: 0.6; }
+        50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #10B981; }
+        100% { transform: scale(0.9); opacity: 0.6; }
+    }
+   
+    .vital-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: #10B981;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: vitalPulse 1.5s infinite ease-in-out;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
     /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO PANORÁMICO EQUILIBRADO */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
