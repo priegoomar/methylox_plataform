@@ -177,10 +177,7 @@ st.markdown(
         margin-right: 8px;
         animation: vitalPulse 1.5s infinite ease-in-out;
     }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+   
     /* 4. AJUSTE DE BANNER DE ANCHO COMPLETO PANORÁMICO EQUILIBRADO */
     div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
         width: 100vw !important;
@@ -205,6 +202,11 @@ st.markdown(
         image-rendering: -webkit-optimize-contrast !important; /* Filtro de ultra-enfoque para textos nítidos */
         display: block !important;
     }
+      }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
         background-color: transparent !important;
