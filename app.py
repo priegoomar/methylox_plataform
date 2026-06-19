@@ -86,8 +86,8 @@ if "menu_activo" not in st.session_state:
 # --- PESTAÑA A: DASHBOARD PRINCIPAL ---
 if st.session_state["menu_activo"] == "Dashboard":
     
-    # HEADER: BANNER Y ANILLO DE PRECISIÓN (AZUL)
-    col_header_left, col_header_right = st.columns()
+    # HEADER: BANNER Y ANILLO DE PRECISIÓN (AZUL) - CORREGIDO AQUÍ
+    col_header_left, col_header_right = st.columns(2)
 
     with col_header_left:
         st.title("MethyLOx™")
