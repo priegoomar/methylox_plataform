@@ -201,11 +201,6 @@ st.markdown(
         object-fit: fill !important; /* Fuerza a la lona a cubrir los laterales de extremo a extremo */
         image-rendering: -webkit-optimize-contrast !important; /* Filtro de ultra-enfoque para textos nítidos */
         display: block !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
     /* Botones de navegación de la barra lateral */
     [data-testid="stSidebar"] .stButton>button {
@@ -225,6 +220,11 @@ st.markdown(
         background-color: rgba(255, 255, 255, 0.1) !important;
         color: #FFFFFF !important;
     }
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
     /* Tarjetas ejecutivas contenedoras */
     .executive-card {
