@@ -202,7 +202,6 @@ st.markdown(
         image-rendering: -webkit-optimize-contrast !important; /* Filtro de ultra-enfoque para textos nítidos */
         display: block !important;
     }
-      }
     </style>
     """,
     unsafe_allow_html=True
