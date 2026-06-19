@@ -26,7 +26,7 @@ st.markdown(
         background-color: #F1F5F9 !important;
         font-family: 'Inter', -apple-system, sans-serif !important;
     }
-   
+
     /* 2. Eliminar márgenes superiores y laterales de Streamlit */
     .block-container {
         padding-top: 0rem !important;
@@ -34,13 +34,13 @@ st.markdown(
         padding-right: 0rem !important;
         max-width: 100% !important;
     }
-   
+
     /* 3. BARRA LATERAL GRAFITO MATE */
     [data-testid="stSidebar"] {
         background-color: #1E293B !important;
         border-right: none !important;
     }
-   
+
     [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 {
         color: #FFFFFF !important;
     }
@@ -59,7 +59,7 @@ st.markdown(
         max-width: 100vw !important;
         display: block !important;
     }
-   
+
     div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
         width: 100vw !important;
         max-width: 100vw !important;
@@ -81,12 +81,12 @@ st.markdown(
         font-size: 14px !important;
         font-weight: 500 !important;
     }
-   
+
     [data-testid="stSidebar"] .stButton>button:hover {
         background-color: rgba(255, 255, 255, 0.1) !important;
         color: #FFFFFF !important;
     }
-   
+
     /* Tarjetas ejecutivas contenedoras */
     .executive-card {
         background-color: #FFFFFF !important;
@@ -96,7 +96,7 @@ st.markdown(
         margin-bottom: 20px !important;
         box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.03) !important;
     }
-   
+
     .card-heading {
         color: #0F172A !important;
         font-size: 13px !important;
@@ -105,14 +105,14 @@ st.markdown(
         letter-spacing: 0.75px !important;
         margin-bottom: 15px !important;
     }
-   
+
     /* ANIMACIÓN DE SIGNO VITAL (HEARTBEAT PULSE) */
     @keyframes vitalPulse {
         0% { transform: scale(0.9); opacity: 0.6; }
         50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #10B981; }
         100% { transform: scale(0.9); opacity: 0.6; }
     }
-   
+
     .vital-dot {
         display: inline-block;
         width: 10px;
@@ -150,28 +150,8 @@ if st.sidebar.button("🧪 Samples", use_container_width=True):
     st.session_state["menu_activo"] = "Samples"
 if st.sidebar.button("📊 AI Analysis", use_container_width=True):
     st.session_state["menu_activo"] = "AI Analysis"
-    elif st.session_state["menu_activo"] == "AI Analysis":
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.title("🔬 AI Analysis Hub & Sequencer Validation")
-    st.markdown("---")
-    
-    # Fila de Control de Calidad del Laboratorio
-    st.markdown("### 🛡️ NEXT-GENERATION SEQUENCING (NGS) QUALITY CONTROL")
-    col_qc1, col_qc2, col_qc3 = st.columns(3)
-    with col_qc1:
-        st.metric(label="🧬 Bisulfite Conversion Rate", value="99.8%", delta="🟢 Optimal (>99.5%)", delta_color="normal")
-    with col_qc2:
-        st.metric(label="📊 Mean Sequencing Depth", value="15,420x", delta="🟢 Certified Target", delta_color="normal")
-    with col_qc3:
-        st.metric(label="🧪 Sample Purity Score (OD 260/280)", value="1.84", delta="🟢 Pure DNA Range", delta_color="normal")
-        
-    st.markdown("<br><p style='font-size:13px; color:#10B981; font-weight:600;'>✅ RUN VALIDATION STATUS: VALID ASSAY. All biological thresholds secured. AI core prediction authorized.</p>", unsafe_allow_html=True)
-    st.markdown("---")
-    
-    # Aquí es donde pondremos en el futuro las curvas ROC de tu modelo de Inteligencia Artificial
-    st.markdown("#### 📈 AI Predictive Accuracy Metrics")
-    st.info("Algoritmo de análisis discriminante epigenético listo para la validación de biomarcadores en bloque.")
-    st.markdown('</div>', unsafe_allow_html=True)
+
+# Moved the AI Analysis page content to the main control block below
 
 if st.sidebar.button("🧬 Biomarkers", use_container_width=True):
     st.session_state["menu_activo"] = "Biomarkers"
@@ -199,15 +179,15 @@ st.sidebar.caption("© 2026 MethylOx™")
 # 4. CONTROL DE PANTALLAS
 # =====================================================================
 if st.session_state["menu_activo"] in ["Dashboard"]:
-   
+
     # 🎯 TU BANNER CORRECTO CON MÁXIMA CALIDAD PARA LAS LETRAS E ICONOS
     st.write("")
     st.image("1000199352.png", use_container_width=True)
-   
+
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
-   
+
     # #2. ENTRADA DE DATOS DEL PACIENTE
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:
@@ -216,10 +196,10 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
         patient_age = st.number_input("Chronological Age (Years)", min_value=18, max_value=100, value=45)
     with col_f3:
         ctdna_score = st.number_input("ctDNA Concentration (ng/mL)", min_value=0.0, max_value=5.0, value=0.25, format="%.4f")
-       
+
     # #3. LÓGICA DE PROCESAMIENTO Y BOTONES
     resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
-   
+
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
@@ -231,7 +211,7 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
                     st.error("Database status: Patient Identifier already exists.")
             else:
                 st.warning("Please enter a valid Patient Identifier.")
-               
+
     with col_btn2:
         reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
         st.download_button(
@@ -240,10 +220,10 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
             file_name=f"MethylOx_Report_{patient_id}.pdf",
             use_container_width=True
         )
-        
+
     st.markdown("<hr style='margin: 25px 0; border: 0; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
     st.markdown("<p style='font-size: 13px; font-weight: 700; color: #0F172A; text-transform: uppercase; letter-spacing: 0.5px;'>🗘 Bulk Sample Pipeline (Excel / CSV Upload)</p>", unsafe_allow_html=True)
-    
+
     archivo_cargado = st.file_uploader("Drag and drop your sequencer data matrix here", type=["csv", "xlsx"])
     if archivo_cargado is not None:
         try:
@@ -252,12 +232,12 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
                 df_bulk = pd.read_csv(archivo_cargado)
             else:
                 df_bulk = pd.read_excel(archivo_cargado)
-                
+
             # Verificamos que tenga las columnas necesarias
             columnas_requeridas = ['Patient Identifier', 'Chronological Age', 'ctDNA Concentration']
             if all(col in df_bulk.columns for col in columnas_requeridas):
                 st.success(f"🧬 Pipeline Active: {len(df_bulk)} samples parsed from file.")
-                
+
                 # Botón para procesar e inyectar todo a SQLite3 en bloque
                 if st.button("🚀 Execute Bulk Processing & Secure to Database", use_container_width=True):
                     registros_exitosos = 0
@@ -265,7 +245,7 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
                         p_id = str(fila['Patient Identifier'])
                         p_age = int(fila['Chronological Age'])
                         p_score = float(fila['ctDNA Concentration'])
-                        
+
                         # El backend calcula silenciosamente en base a tus genes confidenciales
                         res = motores.procesar_diagnostico_clinico(p_id, p_age, p_score)
                         estatus = motores.registrar_paciente_db(p_id, p_age, p_score, res)
@@ -275,12 +255,12 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
             else:
                 st.error("❌ Schema Mismatch: File must contain 'Patient Identifier', 'Chronological Age', and 'ctDNA Concentration' columns.")
         except Exception as e:
-            st.error(f"Error parsing file: {e}")       
+            st.error(f"Error parsing file: {e}")
     st.markdown('</div>', unsafe_allow_html=True)
-   
+
     # #4. ANALÍTICAS EN TIEMPO REAL Y GRÁFICOS
     st.markdown('### REAL-TIME ANALYTICS OVERVIEW')
-   
+
     col_m1, col_m2, col_m3 = st.columns(3)
     with col_m1:
         st.metric(label="Screening Sensitivity", value="96.4%", delta="Target Verified")
@@ -288,7 +268,7 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
         st.metric(label="Analytical Specificity", value="94.1%", delta="Validated")
     with col_m3:
         st.metric(label="ctDNA Detection Limit", value="0.01%", delta="High-Resolution")
-       
+
     col_g1, col_g2 = st.columns(2)
     with col_g1:
         st.markdown("**Risk Score Distribution (KDE)**")
@@ -298,7 +278,7 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
         ax3.legend(fontsize=7)
         sns.despine()
         st.pyplot(fig3)
-       
+
     with col_g2:
         st.markdown("**ctDNA Concentration Variance**")
         fig4, ax4 = plt.subplots(figsize=(6, 2.8))
@@ -306,7 +286,30 @@ if st.session_state["menu_activo"] in ["Dashboard"]:
         ax4.set_xlabel("Concentration (ng/mL)", fontsize=8)
         sns.despine()
         st.pyplot(fig4)
-       
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif st.session_state["menu_activo"] == "AI Analysis":
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.title("🔬 AI Analysis Hub & Sequencer Validation")
+    st.markdown("---")
+
+    # Fila de Control de Calidad del Laboratorio
+    st.markdown("### 🛡️ NEXT-GENERATION SEQUENCING (NGS) QUALITY CONTROL")
+    col_qc1, col_qc2, col_qc3 = st.columns(3)
+    with col_qc1:
+        st.metric(label="🧬 Bisulfite Conversion Rate", value="99.8%", delta="🟢 Optimal (>99.5%)", delta_color="normal")
+    with col_qc2:
+        st.metric(label="📊 Mean Sequencing Depth", value="15,420x", delta="🟢 Certified Target", delta_color="normal")
+    with col_qc3:
+        st.metric(label="🧪 Sample Purity Score (OD 260/280)", value="1.84", delta="🟢 Pure DNA Range", delta_color="normal")
+
+    st.markdown("<br><p style='font-size:13px; color:#10B981; font-weight:600;'>✅ RUN VALIDATION STATUS: VALID ASSAY. All biological thresholds secured. AI core prediction authorized.</p>", unsafe_allow_html=True)
+    st.markdown("---")
+
+    # Aquí es donde pondremos en el futuro las curvas ROC de tu modelo de Inteligencia Artificial
+    st.markdown("#### 📈 AI Predictive Accuracy Metrics")
+    st.info("Algoritmo de análisis discriminante epigenético listo para la validación de biomarcadores en bloque.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # PESTAÑA B: SAMPLES (PERMANENT LOGS INTERFACE)
@@ -314,12 +317,12 @@ elif st.session_state["menu_activo"] == "Samples":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.title("🧪 Sample Records & Permanent Database")
     st.markdown("---")
-   
+
     conn = sqlite3.connect("methyl_clinic.db")
     try:
         df_pacientes = pd.read_sql_query("SELECT * FROM pacientes", conn)
         conn.close()
-       
+
         if not df_pacientes.empty:
             # Herramientas de Auditoría e Indexación
             col_search1, col_search2 = st.columns([2, 1])
@@ -328,7 +331,7 @@ elif st.session_state["menu_activo"] == "Samples":
             with col_search2:
                 # Filtrado por el diagnóstico emitido por el backend
                 filtro_riesgo = st.selectbox("🎯 Filter by Clinical Status", ["All Records", "High Risk", "Low Risk"])
-            
+
             # Aplicamos los filtros en tiempo real sobre el DataFrame
             df_filtrado = df_pacientes.copy()
             if busqueda:
@@ -336,14 +339,14 @@ elif st.session_state["menu_activo"] == "Samples":
             if filtro_riesgo != "All Records":
                 # Asumiendo que tu backend guarda el resultado en una columna llamada 'resultado' o similar
                 df_filtrado = df_filtrado[df_filtrado['resultado'].astype(str).str.contains(filtro_riesgo, case=False)]
-            
+
             st.markdown(f"**Showing {len(df_filtrado)} verified case files:**")
             st.dataframe(df_filtrado, use_container_width=True)
         else:
             st.info("No active patient logs detected inside methyl_clinic.db.")
     except Exception as e:
         st.warning(f"Database layout initializing or empty. (Detail: {e})")
-       
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 # PESTAÑA C: SETTINGS (ENGINEERING DIAGNOSTICS)
@@ -351,7 +354,7 @@ elif st.session_state["menu_activo"] == "Settings":
     st.markdown('<div class="main-content-wrapper">', unsafe_allow_html=True)
     st.title("Engineering Core & Backend Diagnostics")
     st.markdown("---")
-   
+
     try:
         with open("motores.py", "r", encoding="utf-8") as file:
             codigo_backend = file.read()
@@ -359,5 +362,5 @@ elif st.session_state["menu_activo"] == "Settings":
         st.success("Conexión e integridad del archivo motores.py verificada.")
     except Exception:
         st.error("No se pudo enlazar el visor con motores.py")
-       
+
     st.markdown('</div>', unsafe_allow_html=True)
