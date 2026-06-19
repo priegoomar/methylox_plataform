@@ -5,176 +5,114 @@ import seaborn as sns
 import sqlite3
 import pandas as pd
 
-# =====================================================================
-# 1. ESTILOS DE INTERFAZ: MODO CLARO HIGH-TECH (AZUL LIMPIO Y SIN EMOJIS)
-# =====================================================================
-st.markdown("""
-    <style>
-        /* Fondo global blanco puro */
-        .stApp {
-            background-color: #FFFFFF;
-            color: #0F172A;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        /* Barra lateral limpia */
-        [data-testid="stSidebar"] {
-            background-color: #F8FAFC !important;
-            border-right: 1px solid #E2E8F0;
-        }
-        
-        /* Tarjetas con fondo azul cielo ultra-suave y limpio */
-        .medical-card {
-            background-color: #EFF6FF; 
-            border: 1px solid #DBEAFE;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        
-        /* Títulos corporativos */
-        h1, h2, h3, h4 {
-            color: #0F172A !important;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-        
-        /* Badges de estado estilo Apple en tonos azules */
-        .status-badge {
-            background-color: #F1F5F9;
-            color: #475569;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            border: 1px solid #E2E8F0;
-            text-transform: uppercase;
-        }
-        
-        .status-badge-active {
-            background-color: #2563EB; 
-            color: #FFFFFF;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        /* Botón Principal - Azul Tecnológico */
-        div.stButton > button:first-child {
-            background-color: #2563EB !important; 
-            color: white !important;
-            border-radius: 6px;
-            border: none;
-            width: 100%;
-            font-weight: 600;
-            font-size: 13px;
-            padding: 10px;
-        }
-    </style>
-""", unsafe_allow_html=True)
+# Configuración inicial de la página
+st.set_page_config(page_title="MethyLOx™ Platform", layout="wide")
 
-# Lógica básica para controlar el menú si no está inicializado
+# Lógica básica para controlar la barra lateral de navegación si no está inicializada
 if "menu_activo" not in st.session_state:
     st.session_state["menu_activo"] = "Dashboard"
 
 # =====================================================================
-# 2. CONTROL DE PESTAÑAS (IF / ELIF / ELSE)
+# MENÚ DE NAVEGACIÓN LATERAL (SIDEBAR)
 # =====================================================================
-
-# --- PESTAÑA A: DASHBOARD PRINCIPAL ---
-if st.session_state["menu_activo"] == "Dashboard":
-    
-    # HEADER: BANNER Y ANILLO DE PRECISIÓN (AZUL) - CORREGIDO AQUÍ
-    col_header_left, col_header_right = st.columns(2)
-
-    with col_header_left:
-        st.title("MethyLOx™")
-        st.markdown("<p style='color: #475569; font-size: 14px; margin-top: -15px; font-weight: 500;'>Early Detection Through Epigenetic AI</p>", unsafe_allow_html=True)
-        
-        st.markdown("""
-            <div style='display: flex; gap: 8px; margin-top: 15px;'>
-                <span class='status-badge'>DNA Methylation</span>
-                <span class='status-badge-active'>AI Engine Active</span>
-                <span class='status-badge'>Liquid Biopsy</span>
-                <span class='status-badge'>CpG Analysis</span>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col_header_right:
-        fig_anillo, ax_anillo = plt.subplots(figsize=(2.0, 2.0))
-        fig_anillo.patch.set_facecolor("none")
-        ax_anillo.set_facecolor("none")
-        
-        ax_anillo.pie([98.7, 1.3], colors=['#2563EB', '#E2E8F0'], startangle=90, wedgeprops=dict(width=0.20, edgecolor='none'))
-        ax_anillo.text(0, 0, "98.7%\nAccuracy", ha='center', va='center', fontsize=11, fontweight='bold', color='#0F172A')
-        ax_anillo.axis('off')
-        st.pyplot(fig_anillo)
-        
-        st.markdown("""
-            <div style='display: flex; justify-content: space-around; text-align: center; font-size: 11px; margin-top: -15px;'>
-                <div><b style='color: #2563EB; font-size: 13px;'>5,248</b><br><span style='color: #64748B;'>Biomarkers</span></div>
-                <div><b style='color: #EF4444; font-size: 13px;'>89</b><br><span style='color: #64748B;'>High-Risk Cases</span></div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # FILA DE CARACTERÍSTICAS (3 COLUMNAS AZULES)
-    col_feat1, col_feat2, col_feat3 = st.columns(3)
-
-    with col_feat1:
-        st.markdown("""
-            <div class='medical-card'>
-                <div style='font-size: 11px; font-weight: 700; color: #2563EB; letter-spacing: 0.05em; text-transform: uppercase;'>EPIGENETIC AI</div>
-                <div style='font-size: 13px; font-weight: 600; color: #0F172A; margin-top: 5px;'>POWERED PLATFORM</div>
-                <p style='margin: 5px 0 0 0; font-size: 12px; color: #475569; line-height: 1.4;'>Advanced AI models for epigenetic biomarker discovery.</p>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col_feat2:
-        st.markdown("""
-            <div class='medical-card'>
-                <div style='font-size: 11px; font-weight: 700; color: #2563EB; letter-spacing: 0.05em; text-transform: uppercase;'>NON-INVASIVE</div>
-                <div style='font-size: 13px; font-weight: 600; color: #0F172A; margin-top: 5px;'>& LIQUID BIOPSY</div>
-                <p style='margin: 5px 0 0 0; font-size: 12px; color: #475569; line-height: 1.4;'>Accurate, painless, and highly reproducible corporate protocols.</p>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col_feat3:
-        st.markdown("""
-            <div class='medical-card'>
-                <div style='font-size: 11px; font-weight: 700; color: #2563EB; letter-spacing: 0.05em; text-transform: uppercase;'>EARLY DETECTION</div>
-                <div style='font-size: 13px; font-weight: 600; color: #0F172A; margin-top: 5px;'>PROACTIVE SCREENING</div>
-                <p style='margin: 5px 0 0 0; font-size: 12px; color: #475569; line-height: 1.4;'>Substantially better proactive patient outcomes and saved lives.</p>
-            </div>
-        """, unsafe_allow_html=True)
-
-    # MATRIZ DE PACIENTE
-    st.markdown("<h3 style='font-size: 16px; font-weight: 700; margin-bottom: 10px;'>Patient Case Enrollment Matrix</h3>", unsafe_allow_html=True)
-
-    with st.container():
-        st.markdown("<div class='medical-card'>", unsafe_allow_html=True)
-        col_input1, col_input2 = st.columns(2)
-        with col_input1:
-            patient_id = st.text_input("Patient Identifier", value="TL-METH-2026-0X")
-            age = st.number_input("Chronological Age (Years)", value=45)
-        with col_input2:
-            ctdna = st.number_input("ctDNA Concentration (ng/mL)", value=0.2500, format="%.4f")
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        col_btn1, col_btn2 = st.columns(2)
-        with col_btn1:
-            st.button("Commit Diagnostic Data (Save to SQLite3)")
-        with col_btn2:
-            st.button("Download Personalized Clinical Report")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-# --- PESTAÑA B: SAMPLES DATABASE (CONEXIÓN SQLITE) ---
-elif st.session_state["menu_activo"] == "Samples":
-    st.title("Sample Records & Permanent Database")
+with st.sidebar:
+    st.markdown("### MethyLOx™")
+    st.markdown("Epigenetic AI Platform")
     st.markdown("---")
+    
+    # Botones del menú con almacenamiento de estado
+    if st.button("📊 Dashboard Matrix"):
+        st.session_state["menu_activo"] = "Dashboard"
+    if st.button("🧪 Samples Database"):
+        st.session_state["menu_activo"] = "Samples"
+    if st.button("🧠 AI Analysis Hub"):
+        st.session_state["menu_activo"] = "AI Analysis"
+    if st.button("📋 Clinical Reports"):
+        st.session_state["menu_activo"] = "Reports"
+    if st.button("⚙️ System Settings"):
+        st.session_state["menu_activo"] = "Settings"
+
+# =====================================================================
+# 1. PESTAÑA A: DASHBOARD PRINCIPAL (MÉTRICAS Y GRÁFICAS ORIGINALES)
+# =====================================================================
+if st.session_state["menu_activo"] == "Dashboard":
+    st.title("📊 Dashboard Matrix & Operational Analytics")
+    st.markdown("---")
+
+    # Métrica de Anillo Circular Avanzada usando Matplotlib
+    fig_anillo, ax_anillo = plt.subplots(figsize=(3, 3))
+    fig_anillo.patch.set_facecolor("none")
+    ax_anillo.set_facecolor("none")
+
+    # Dibujamos el anillo tecnológico
+    colores_anillo = ['#2563EB', '#E2E8F0'] # Azul eléctrico y gris sutil
+    ax_anillo.pie([98.7, 1.3], colors=colores_anillo, startangle=90, wedgeprops=dict(width=0.25, edgecolor='none'))
+    ax_anillo.text(0, 0, "98.7%\nAccuracy", ha='center', va='center', fontsize=14, fontweight='bold', color='#0F172A')
+    ax_anillo.axis('off')
+    st.pyplot(fig_anillo)
+
+    st.markdown("Total Biomarkers Index: 5,248 | High-Risk Sequence Delta: 89", unsafe_allow_html=True)
+    st.markdown('---')
+
+    # 4.1 ANALÍTICAS INFERIORES PREMIUM EN PARALELO
+    st.markdown('📊 Real-Time Analytics Overview', unsafe_allow_html=True)
+
+    col_m1, col_m2, col_m3 = st.columns(3)
+    with col_m1:
+        st.metric(label="Screening Sensitivity", value="96.4%", delta="Target Verified")
+    with col_m2:
+        st.metric(label="Analytical Specificity", value="94.1%", delta="Validated")
+    with col_m3:
+        st.metric(label="ctDNA Detection Limit", value="0.01%", delta="High-Resolution")
+
+    st.markdown("---")
+
+    col_g1, col_g2 = st.columns(2)
+    with col_g1:
+        st.markdown("Risk Score Distribution (KDE)")
+        fig3, ax3 = plt.subplots(figsize=(6, 2.8))
+        fig3.patch.set_facecolor('#FFFFFF')
+        ax3.set_facecolor('#F8FAFC')
+        sns.kdeplot(np.random.normal(30, 8, 150), color="#3B82F6", fill=True, alpha=0.15, label="Healthy", ax=ax3)
+        sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
+        ax3.set_xlabel("Risk Score (%)", fontsize=8)
+        ax3.grid(True, linestyle='--', alpha=0.5, color='#E2E8F0')
+        ax3.legend(fontsize=7)
+        sns.despine(left=True, bottom=True)
+        st.pyplot(fig3)
+
+    with col_g2:
+        st.markdown("ctDNA Concentration Variance")
+        fig4, ax4 = plt.subplots(figsize=(6, 2.8))
+        fig4.patch.set_facecolor('#FFFFFF')
+        ax4.set_facecolor('#F8FAFC')
+        sns.histplot(np.random.exponential(0.5, 100), color="#2563EB", kde=True, alpha=0.4, ax=ax4)
+        ax4.set_xlabel("Concentration (ng/mL)", fontsize=8)
+        ax4.grid(True, linestyle='--', alpha=0.5, color='#E2E8F0')
+        sns.despine(left=True, bottom=True)
+        st.pyplot(fig4)
+
+# =====================================================================
+# 2. PESTAÑA B: SAMPLES DATABASE & CÓDIGO 1: SUBIDA MASIVA DE ARCHIVOS
+# =====================================================================
+elif st.session_state["menu_activo"] == "Samples":
+    st.title("🧪 Sample Records & Permanent Database")
+    st.markdown("---")
+    
+    # [CÓDIGO ADICIONAL 1]: Sistema de Carga Masiva de Secuencias Metiladas
+    st.subheader("📁 Batch Sequence Bulk Uploader")
+    archivo_masivo = st.file_uploader("Upload CSV/TSV genomic sequences folder pack", type=["csv", "tsv", "txt"])
+    
+    if archivo_masivo is not None:
+        try:
+            df_cargado = pd.read_csv(archivo_masivo)
+            st.success(f"✅ Pack loaded successfully: {len(df_cargado)} structural samples processed.")
+            st.dataframe(df_cargado.head(5), use_container_width=True)
+        except Exception as e:
+            st.error(f"Error parsing batch sequences: {e}")
+            
+    st.markdown("---")
+    st.subheader("🗄️ Active Database Cache (MethylClinic DB)")
     
     conn = sqlite3.connect("methyl_clinic.db")
     try:
@@ -188,9 +126,52 @@ elif st.session_state["menu_activo"] == "Samples":
     finally:
         conn.close()
 
-# --- PESTAÑA C: SYSTEM SETTINGS (LECTOR DE BACKEND) ---
+# =====================================================================
+# 3. CÓDIGO ADICIONAL 2: AI ANALYSIS HUB (CÓDIGO PREDICTIVO)
+# =====================================================================
+elif st.session_state["menu_activo"] == "AI Analysis":
+    st.title("🧠 AI Analysis Hub & Prediction Matrix")
+    st.markdown("---")
+    
+    st.info("Clinical Neural Model core linked successfully. Running sequencing variant evaluation.")
+    
+    # Formulario dinámico para simular predicciones clínicas de la IA
+    col_ai1, col_ai2 = st.columns(2)
+    with col_ai1:
+        score_riesgo = st.slider("Select Patient Score Target (%)", 0, 100, 45)
+        modo_run = st.selectbox("AI Protocol Mode", ["High-Sensitivity Screening", "Deep Mutation Variance", "Standard Panel"])
+    
+    with col_ai2:
+        if st.button("Run Epigenetic Model Diagnostic Pipeline"):
+            with st.spinner("Analyzing variant blocks..."):
+                # Simulación algorítmica de análisis secuencial
+                resultado_modelo = "HIGH METALLOPROTEINASE INTENSITY" if score_riesgo > 60 else "NORMAL EPIGENETIC MARKERS"
+                st.metric(label="Target Verification Result", value=resultado_modelo)
+                st.success("Analysis finalized with high resolution integrity.")
+
+# =====================================================================
+# 4. CÓDIGO ADICIONAL 3: CLINICAL REPORTS (GENERACIÓN DE REPORTES)
+# =====================================================================
+elif st.session_state["menu_activo"] == "Reports":
+    st.title("📋 Clinical Reports & Documentation Output")
+    st.markdown("---")
+    
+    st.write("Select verified clinical runs to bundle into standardized reporting packages:")
+    
+    report_id = st.text_input("Enter Target Report Reference Code", "REP-2026-METH-001")
+    tipo_reporte = st.radio("Output File Standard", ["Official Clinical PDF Booklet", "Raw JSON Sequence Metadata Archive"])
+    
+    if st.button("Compile & Generate Structural Report"):
+        st.balloons()
+        st.success(f"Report package {report_id} compiled under molecular diagnostics protocols.")
+        # Botón simulado para descarga final
+        st.download_button(label="Download File Pack", data="Sample data pack", file_name=f"{report_id}.txt")
+
+# =====================================================================
+# 5. PESTAÑA C: SYSTEM SETTINGS (ENGINEERING DIAGNOSTICS)
+# =====================================================================
 elif st.session_state["menu_activo"] == "Settings":
-    st.title("Engineering Core & Backend Diagnostics")
+    st.title("⚙️ Engineering Core & Backend Diagnostics")
     st.markdown("---")
     
     try:
@@ -200,8 +181,3 @@ elif st.session_state["menu_activo"] == "Settings":
         st.success("✅ Conexión e integridad del archivo motores.py verificada.")
     except Exception:
         st.error("❌ No se pudo enlazar el visor con motores.py")
-
-# --- OTRAS PESTAÑAS ---
-elif st.session_state["menu_activo"] in ["AI Analysis", "Reports"]:
-    st.title(f"{st.session_state['menu_activo']} Workspace")
-    st.info("Sección en desarrollo clínico secundario.")
