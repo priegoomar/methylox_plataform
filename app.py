@@ -185,10 +185,10 @@ st.sidebar.caption("© 2026 MethylOx™")
 # 4. CONTROL DE PANTALLAS (DASHBOARD MULTI-MODULAR PREMIUM)
 # =====================================================================
 if st.session_state["menu_activo"] == "Dashboard":
-   
+
     # Carga de la lona panorámica expandida
     st.image("1000199352.png", use_container_width=True, output_format="PNG")
-   
+
     # FILA DE ICONOS DE PROCESO MOLECULAR (Estilo NVIDIA BIOTECH / APPLE VISION)
     st.markdown('<div style="margin-left: 40px; margin-right: 40px; margin-bottom: 20px;">', unsafe_allow_html=True)
     bad_1, bad_2, bad_3, bad_4, bad_5 = st.columns(5)
@@ -201,19 +201,19 @@ if st.session_state["menu_activo"] == "Dashboard":
 
     # DISTRIBUCIÓN ESTRUCTURAL PRINCIPAL (Formulario Izquierda | Anillo de IA Derecha)
     col_panel_izq, col_panel_der = st.columns([2, 1])
-    
+
     with col_panel_izq:
         st.markdown('<div class="executive-card" style="margin-left:40px; margin-right:10px; height: 100%;">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">📋 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
-        
+
         # Inputs de datos integrados
         patient_id = st.text_input("Patient Identifier", placeholder="Ej. METH-2026-0X")
         patient_age = st.number_input("Chronological Age (Years)", min_value=18, max_value=100, value=45)
         ctdna_score = st.number_input("ctDNA Concentration (ng/mL)", min_value=0.0, max_value=5.0, value=0.25, format="%.4f")
-        
+
         st.markdown("<br>", unsafe_allow_html=True)
         resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
-       
+
         col_btn1, col_btn2 = st.columns(2)
         with col_btn1:
             if st.button("Commit Data to SQLite3", use_container_width=True):
@@ -225,74 +225,75 @@ if st.session_state["menu_activo"] == "Dashboard":
         with col_btn2:
             reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
             st.download_button(label="📥 Download Clinical Report", data=reporte_pdf_contenido, file_name=f"Report_{patient_id}.pdf", use_container_width=True)
-        
+
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col_panel_der:
         st.markdown('<div class="executive-card" style="margin-left:10px; margin-right:40px; text-align:center; height: 100%;">', unsafe_allow_html=True)
         st.markdown('<p class="card-heading">🧠 AI Core Engine Accuracy</p>', unsafe_allow_html=True)
-        
-# Métrica de Anillo Circular Avanzada usando Matplotlib
-fig_anillo, ax_anillo = plt.subplots(figsize=(3, 3))
-fig_anillo.patch.set_facecolor("none")
-ax_anillo.set_facecolor("none")
 
-# Dibujamos el anillo tecnológico
-colores_anillo = ['#2563EB', '#E2E8F0'] # Azul eléctrico y gris sutil
-ax_anillo.pie([98.7, 1.3], colors=colores_anillo, startangle=90, wedgeprops=dict(width=0.25, edgecolor='none'))
-ax_anillo.text(0, 0, "98.7%\nAccuracy", ha='center', va='center', fontsize=14, fontweight='bold', color='#0F172A')
-ax_anillo.axis('off')
-st.pyplot(fig_anillo)
+        # Métrica de Anillo Circular Avanzada usando Matplotlib
+        fig_anillo, ax_anillo = plt.subplots(figsize=(3, 3))
+        fig_anillo.patch.set_facecolor("none")
+        ax_anillo.set_facecolor("none")
 
-st.markdown("Total Biomarkers Index: 5,248High-Risk Sequence Delta: 89", unsafe_allow_html=True)
-st.markdown('', unsafe_allow_html=True)
+        # Dibujamos el anillo tecnológico
+        colores_anillo = ['#2563EB', '#E2E8F0'] # Azul eléctrico y gris sutil
+        ax_anillo.pie([98.7, 1.3], colors=colores_anillo, startangle=90, wedgeprops=dict(width=0.25, edgecolor='none'))
+        ax_anillo.text(0, 0, "98.7%\nAccuracy", ha='center', va='center', fontsize=14, fontweight='bold', color='#0F172A')
+        ax_anillo.axis('off')
+        st.pyplot(fig_anillo)
 
-# 4.1 ANALÍTICAS INFERIORES PREMIUM EN PARALELO
-st.markdown('', unsafe_allow_html=True)
-st.markdown('📊 Real-Time Analytics Overview', unsafe_allow_html=True)
+        st.markdown("Total Biomarkers Index: 5,248High-Risk Sequence Delta: 89", unsafe_allow_html=True)
+        st.markdown('', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-col_m1, col_m2, col_m3 = st.columns(3)
-with col_m1:
-    st.metric(label="Screening Sensitivity", value="96.4%", delta="Target Verified")
-with col_m2:
-    st.metric(label="Analytical Specificity", value="94.1%", delta="Validated")
-with col_m3:
-    st.metric(label="ctDNA Detection Limit", value="0.01%", delta="High-Resolution")
+    # 4.1 ANALÍTICAS INFERIORES PREMIUM EN PARALELO
+    st.markdown('<div class="executive-card" style="margin-left: 40px; margin-right: 40px; margin-bottom: 25px;">', unsafe_allow_html=True)
+    st.markdown('📊 Real-Time Analytics Overview', unsafe_allow_html=True)
 
-st.markdown("", unsafe_allow_html=True)
+    col_m1, col_m2, col_m3 = st.columns(3)
+    with col_m1:
+        st.metric(label="Screening Sensitivity", value="96.4%", delta="Target Verified")
+    with col_m2:
+        st.metric(label="Analytical Specificity", value="94.1%", delta="Validated")
+    with col_m3:
+        st.metric(label="ctDNA Detection Limit", value="0.01%", delta="High-Resolution")
 
-col_g1, col_g2 = st.columns(2)
-with col_g1:
-    st.markdown("Risk Score Distribution (KDE)")
-    fig3, ax3 = plt.subplots(figsize=(6, 2.8))
-    fig3.patch.set_facecolor('#FFFFFF')
-    ax3.set_facecolor('#F8FAFC')
-    sns.kdeplot(np.random.normal(30, 8, 150), color="#3B82F6", fill=True, alpha=0.15, label="Healthy", ax=ax3)
-    sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
-    ax3.set_xlabel("Risk Score (%)", fontsize=8)
-    ax3.grid(True, linestyle='--', alpha=0.5, color='#E2E8F0')
-    ax3.legend(fontsize=7)
-    sns.despine(left=True, bottom=True)
-    st.pyplot(fig3)
+    st.markdown("", unsafe_allow_html=True)
 
-with col_g2:
-    st.markdown("ctDNA Concentration Variance")
-    fig4, ax4 = plt.subplots(figsize=(6, 2.8))
-    fig4.patch.set_facecolor('#FFFFFF')
-    ax4.set_facecolor('#F8FAFC')
-    sns.histplot(np.random.exponential(0.5, 100), color="#2563EB", kde=True, alpha=0.4, ax=ax4)
-    ax4.set_xlabel("Concentration (ng/mL)", fontsize=8)
-    ax4.grid(True, linestyle='--', alpha=0.5, color='#E2E8F0')
-    sns.despine(left=True, bottom=True)
-    st.pyplot(fig4)
+    col_g1, col_g2 = st.columns(2)
+    with col_g1:
+        st.markdown("Risk Score Distribution (KDE)")
+        fig3, ax3 = plt.subplots(figsize=(6, 2.8))
+        fig3.patch.set_facecolor('#FFFFFF')
+        ax3.set_facecolor('#F8FAFC')
+        sns.kdeplot(np.random.normal(30, 8, 150), color="#3B82F6", fill=True, alpha=0.15, label="Healthy", ax=ax3)
+        sns.kdeplot(np.random.normal(78, 6, 150), color="#EC4899", fill=True, alpha=0.2, label="Early Cancer", ax=ax3)
+        ax3.set_xlabel("Risk Score (%)", fontsize=8)
+        ax3.grid(True, linestyle='--', alpha=0.5, color='#E2E8F0')
+        ax3.legend(fontsize=7)
+        sns.despine(left=True, bottom=True)
+        st.pyplot(fig3)
 
-st.markdown('', unsafe_allow_html=True)
+    with col_g2:
+        st.markdown("ctDNA Concentration Variance")
+        fig4, ax4 = plt.subplots(figsize=(6, 2.8))
+        fig4.patch.set_facecolor('#FFFFFF')
+        ax4.set_facecolor('#F8FAFC')
+        sns.histplot(np.random.exponential(0.5, 100), color="#2563EB", kde=True, alpha=0.4, ax=ax4)
+        ax4.set_xlabel("Concentration (ng/mL)", fontsize=8)
+        ax4.grid(True, linestyle='--', alpha=0.5, color='#E2E8F0')
+        sns.despine(left=True, bottom=True)
+        st.pyplot(fig4)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # =====================================================================
 # 5. PESTAÑA B: SAMPLES DATABASE (TABLAS INTERACTIVAS)
 # =====================================================================
 elif st.session_state["menu_activo"] == "Samples":
-    st.markdown('', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.title("🧪 Sample Records & Permanent Database")
     st.markdown("---")
     
@@ -308,13 +309,13 @@ elif st.session_state["menu_activo"] == "Samples":
     finally:
         conn.close()
         
-    st.markdown('', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # =====================================================================
 # 6. PESTAÑA C: SYSTEM SETTINGS (ENGINEERING DIAGNOSTICS)
 # =====================================================================
 elif st.session_state["menu_activo"] == "Settings":
-    st.markdown('', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.title("⚙️ Engineering Core & Backend Diagnostics")
     st.markdown("---")
     
@@ -326,11 +327,11 @@ elif st.session_state["menu_activo"] == "Settings":
     except Exception:
         st.error("❌ No se pudo enlazar el visor con motores.py")
         
-    st.markdown('', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # PESTAÑAS ADICIONALES PARA EVITAR CONFLICTOS
 elif st.session_state["menu_activo"] in ["AI Analysis", "Reports"]:
-    st.markdown('', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.title(f"🛠️ {st.session_state['menu_activo']} Workspace")
     st.info("Sección en desarrollo clínico secundario.")
-    st.markdown("", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
