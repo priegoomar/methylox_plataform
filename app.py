@@ -236,7 +236,7 @@ with tab_mineria:
 with tab_doe:
     st.title("🧪 Wet Lab Design of Experiments (DoE Matrix)")
     st.caption("Planificación automatizada de 8 corridas experimentales para optimizar las variables in vitro en el laboratorio húmedo.")
-    corridas_doe = {
+        corridas_doe = {
         "Corrida": [f"Run {i}" for i in range(1, 9)],
         "Cas12a-Ultra (nM)":,
         "Temperatura (°C)":,
