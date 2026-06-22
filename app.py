@@ -207,7 +207,7 @@ st.markdown(
 # 2. INICIALIZACIÓN DE DATOS (BACKEND BASE)
 # =====================================================================
 motores.iniciar_base_datos()
-UMBRAL = motores.UMBRAL_GLOBAL
+UMBRAL = 0.5910
 
 # =====================================================================
 # 3. BARRA LATERAL DE NAVEGACIÓN TOTALMENTE UNIFICADA EN BLANCO
