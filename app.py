@@ -71,21 +71,33 @@ st.markdown(
         box-shadow: inset 0 0 0 1px #E2E8F0 !important;
     }
 
-    /* 🎨 EL TRABAJO DE HOY: Banner adaptativo blindado para proteger la lectura */
-    .enterprise-card-banner {
-        background-image: url("static/1000199352.png"); /* 👈 Coloca aquí el nombre exacto de tu nueva imagen si cambió */
-        background-size: contain; /* 👈 Fuerza a que se muestre completa y nítida sin pixelarse */
-        background-position: center top;
-        background-repeat: no-repeat;
-        padding: 0px; 
-        border-radius: 16px; 
-        border: 1px solid #D2E4FF; 
-        margin-bottom: 25px;
-        width: 100%;
-        aspect-ratio: 2 / 1; /* 👈 Congela la proporción estándar para que no se deforme al estirarse */
-        max-height: 420px; /* Límite físico para que luzca elegante en cualquier monitor */
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
+div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: -65px !important;
+    margin-bottom: 35px !important;
+    display: block !important;
+}
+
+div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 2 / 1 !important;
+    
+    /* 🧬 EFECTOS DE PROFUNDIDAD Y REALISMO ALTO TRIDIMENSIONAL 🧬 */
+    object-fit: contain !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(37, 99, 235, 0.25) !important;
+    
+    /* Inyección de sombras volumétricas para simular relieve sobre el fondo gris */
+    box-shadow: 0 10px 30px rgba(10, 17, 40, 0.12), 0 1px 8px rgba(14, 165, 233, 0.2) !important;
+    
+    /* Filtro de nitidez extrema para que las texturas 3D del ADN resalten */
+    filter: contrast(1.04) brightness(1.02) drop-shadow(0 4px 6px rgba(0,0,0,0.02)) !important;
+    image-rendering: -webkit-optimize-contrast !important;
+    display: block !important;
+}
    
     /* 6. TARJETAS MODULARES: Blanco Puro que resalta sobre el fondo gris */
     .executive-card {
