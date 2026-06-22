@@ -71,22 +71,20 @@ st.markdown(
         box-shadow: inset 0 0 0 1px #E2E8F0 !important;
     }
 
-    /* 5. AJUSTE ELÁSTICO DE CABECERA PANORÁMICA COMPLETA */
-    div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        margin-left: calc(50% - 50vw) !important;
-        margin-top: -65px !important;
-        margin-bottom: 30px !important;
-        display: block !important;
-    }
-    div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        height: 240px !important; 
-        object-fit: fill !important; 
-        image-rendering: -webkit-optimize-contrast !important; 
-        display: block !important;
+    /* 🎨 EL TRABAJO DE HOY: Banner adaptativo blindado para proteger la lectura */
+    .enterprise-card-banner {
+        background-image: url("static/1000199352.png"); /* 👈 Coloca aquí el nombre exacto de tu nueva imagen si cambió */
+        background-size: contain; /* 👈 Fuerza a que se muestre completa y nítida sin pixelarse */
+        background-position: center top;
+        background-repeat: no-repeat;
+        padding: 0px; 
+        border-radius: 16px; 
+        border: 1px solid #D2E4FF; 
+        margin-bottom: 25px;
+        width: 100%;
+        aspect-ratio: 2 / 1; /* 👈 Congela la proporción estándar para que no se deforme al estirarse */
+        max-height: 420px; /* Límite físico para que luzca elegante en cualquier monitor */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
    
     /* 6. TARJETAS MODULARES: Blanco Puro que resalta sobre el fondo gris */
