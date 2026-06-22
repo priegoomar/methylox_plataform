@@ -67,7 +67,7 @@ def registrar_paciente_db(patient_id, patient_age, ctdna_score, veredicto, score
                    (str(patient_id), int(patient_age), float(ctdna_score), str(veredicto), float(score_metilacion)))
     conn.commit(); conn.close()
 
-def estimar_energia_gibbs(secuencia):
+def poner_un_del_cgc(secuencia):
     seq = secuencia.upper()
     c_g = seq.count('G') + seq.count('C')
     return round(-0.4 * c_g + 1.2, 2)
@@ -121,7 +121,7 @@ def motor_2_auditor_biofisico_real(candidatos_lista):
         if not (0.35 <= porcentaje_gc <= 0.65) or seq[:5] == seq[-5:][::-1] or bool(patron_poly_g_c.search(seq)):
             continue
         
-        dg_calculado = estimar_energia_gibbs(seq)
+        dg_calculado = poner_un_del_cgc(seq)
         if dg_calculado >= -2.0:
             cand["dG_Auto_Union"] = dg_calculado
             cand["Estatus"] = "GUÍA SUPREMA COMPILADA"
@@ -181,7 +181,6 @@ with st.sidebar:
 tab_clinico, tab_mineria, tab_doe = st.tabs(["📋 Clinical Dashboard", "🔬 Local Discovery Core", "📊 Wet Lab DoE Matrix"])
 
 with tab_clinico:
-    # Tu portada espectacular e idéntica a tu diseño original
     st.markdown("""<div class='enterprise-card-banner'></div>""", unsafe_allow_html=True)
     
     st.markdown("### 🗄️ Inmutable Local Data Management")
@@ -193,7 +192,6 @@ with tab_clinico:
             json.dump({"ENSG00000166922": {"nombre": "CPEB4", "coordenada": 1000500, "secuencia": "TTTTAGCCTAGCTAGCTAGCTAGCTACGATCGATCGATTTAAAAGCTAGCTAGCTA"}}, f)
     st.success("✔️ Local Datasets loaded securely from filesystem.")
     
-    # Reinyectado el Panel Clínico de Avances con tus Botones y Cajas de Texto de simulación
     st.markdown("---")
     st.markdown("### 🩺 Diagnostic Simulation Interface")
     col_p1, col_p2, col_p3 = st.columns(3)
@@ -207,4 +205,44 @@ with tab_clinico:
     if st.button("🔮 Process Epigenetic Diagnostic Veredict", use_container_width=True):
         if score_ctdna < 0.02:
             st.success(f"📋 Veredicto emitido para {id_paciente}: **Low Risk Profile** (ctDNA por debajo de detección analítica)")
-registrar_paciente_db(id_paciente, edad_paciente, score_ctdna, "Low Risk Profile", 0.0)else:# Replicamos el pipeline analítico del Score Ajustado por Edad de tu Colabdb_estadio_i = 0.6200 # Valor base extraído de la guía CPEB4 sobrevivientefactor_edad = (100 - int(edad_paciente)) / 100.0score_ajustado = db_estadio_i * (factor_edad + 0.5)# Clasificación frente al umbral ROC máster de Youden (0.5910)if score_ajustado >= UMBRAL_CLINICO_DELTA_BETA:veredicto = "High Risk"st.error(f"🚨 ALERT - Veredicto Clínico: {veredicto} | Score Promedio Ajustado: {round(score_ajustado, 4)}")else:veredicto = "Low Risk Profile"st.success(f"✅ Veredicto Clínico: {veredicto} | Score Promedio Ajustado: {round(score_ajustado, 4)}")registrar_paciente_db(id_paciente, edad_paciente, score_ctdna, veredicto, round(float(score_ajustado), 4))st.info("💾 Expediente clínico guardado de forma síncrona en la base de datos local SQLite3.")with tab_mineria:st.title("🧬 Autonomous Guide Extraction (GRCh38)")st.caption("Ejecución del pipeline molecular corriendo directo sobre la memoria elástica sin desbordamiento de RAM.")if st.button("🚀 Execute Offline Genomic Discovery Run", use_container_width=True):df_res = ejecutar_descubrimiento_completo_local()if not df_res.empty:st.markdown("##### 🎉 ¡Éxito! Candidatas Certificadas y Aisladas en Local:")st.dataframe(df_res, use_container_width=True, hide_index=True)st.info("💾 Archivo para pedido de síntesis in vitro exportado localmente a: 'guias_prometedoras_finales.csv'")else:st.error("Ninguna secuencia superó los candados de exclusión en los archivos locales.")with tab_doe:st.title("🧪 Wet Lab Design of Experiments (DoE Matrix)")st.caption("Planificación automatizada de 8 corridas experimentales para optimizar las variables in vitro en el laboratorio húmedo.")corridas_doe = {"Corrida": [f"Run {i}" for i in range(1, 9)],"Cas12a-Ultra (nM)":,"Temperatura (°C)":,"Tiempo (min)":,"Sonda Fluorescente (µM)": [0.5, 1.5, 1.5, 0.5, 1.5, 0.5, 0.5, 1.5]}df_doe = pd.DataFrame(corridas_doe)st.markdown("##### 📈 Matriz de Optimización L8 para validación biológica de las Guías Supremas:")st.dataframe(df_doe, use_container_width=True, hide_index=True)
+            registrar_paciente_db(id_paciente, edad_paciente, score_ctdna, "Low Risk Profile", 0.0)
+        else:
+            db_estadio_i = 0.6200  
+            factor_edad = (100 - int(edad_paciente)) / 100.0
+            score_ajustado = db_estadio_i * (factor_edad + 0.5)
+
+            if score_ajustado >= UMBRAL_CLINICO_DELTA_BETA:
+                veredicto = "High Risk"
+                st.error(f"🚨 ALERT - Veredicto Clínico: **{veredicto}** | Score Promedio Ajustado: {round(score_ajustado, 4)}")
+            else:
+                veredicto = "Low Risk Profile"
+                st.success(f"✅ Veredicto Clínico: **{veredicto}** | Score Promedio Ajustado: {round(score_ajustado, 4)}")
+
+            registrar_paciente_db(id_paciente, edad_paciente, score_ctdna, veredicto, round(float(score_ajustado), 4))
+            st.info("💾 Expediente clínico guardado de forma síncrona en la base de datos local SQLite3.")
+
+with tab_mineria:
+    st.title("🧬 Autonomous Guide Extraction (GRCh38)")
+    st.caption("Ejecución del pipeline molecular corriendo directo sobre la memoria elástica sin desbordamiento de RAM.")
+    if st.button("🚀 Execute Offline Genomic Discovery Run", use_container_width=True):
+        df_res = ejecutar_descubrimiento_completo_local()
+        if not df_res.empty:
+            st.markdown("##### 🎉 ¡Éxito! Candidatas Certificadas y Aisladas en Local:")
+            st.dataframe(df_res, use_container_width=True, hide_index=True)
+            st.info("💾 Archivo para pedido de síntesis in vitro exportado localmente a: 'guias_prometedoras_finales.csv'")
+        else:
+            st.error("Ninguna secuencia superó los candados de exclusión en los archivos locales.")
+
+with tab_doe:
+    st.title("🧪 Wet Lab Design of Experiments (DoE Matrix)")
+    st.caption("Planificación automatizada de 8 corridas experimentales para optimizar las variables in vitro en el laboratorio húmedo.")
+    corridas_doe = {
+        "Corrida": [f"Run {i}" for i in range(1, 9)],
+        "Cas12a-Ultra (nM)":,
+        "Temperatura (°C)":,
+        "Tiempo (min)":,
+        "Sonda Fluorescente (µM)": [0.5, 1.5, 1.5, 0.5, 1.5, 0.5, 0.5, 1.5]
+    }
+    df_doe = pd.DataFrame(corridas_doe)
+    st.markdown("##### 📈 Matriz de Optimización L8 para validación biológica de las Guías Supremas:")
+    st.dataframe(df_doe, use_container_width=True, hide_index=True)
