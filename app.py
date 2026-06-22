@@ -236,7 +236,8 @@ with tab_mineria:
 with tab_doe:
     st.title("🧪 Wet Lab Design of Experiments (DoE Matrix)")
     st.caption("Planificación automatizada de 8 corridas experimentales para optimizar las variables in vitro en el laboratorio húmedo.")
-        corridas_doe = {
+    
+    corridas_doe = {
         "Corrida": [f"Run {i}" for i in range(1, 9)],
         "Cas12a-Ultra (nM)":,
         "Temperatura (°C)":,
@@ -246,3 +247,4 @@ with tab_doe:
     df_doe = pd.DataFrame(corridas_doe)
     st.markdown("##### 📈 Matriz de Optimización L8 para validación biológica de las Guías Supremas:")
     st.dataframe(df_doe, use_container_width=True, hide_index=True)
+    st.caption("💡 Tip de Laboratorio: Ejecuta estas 8 combinaciones exactas para mapear la máxima fluorescencia de escisión CRISPR.")
