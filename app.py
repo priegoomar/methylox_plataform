@@ -83,17 +83,17 @@ div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    aspect-ratio: 2 / 1 !important;
     
-    /* 🧬 EFECTOS DE PROFUNDIDAD Y REALISMO ALTO TRIDIMENSIONAL 🧬 */
-    object-fit: contain !important;
+    /* 🔥 EL CAMBIO CLAVE DE HOY: Se expande de extremo a extremo cubriendo los laterales */
+    object-fit: cover !important;
+    object-position: center center !important;
     border-radius: 16px !important;
     border: 1px solid rgba(37, 99, 235, 0.25) !important;
     
-    /* Inyección de sombras volumétricas para simular relieve sobre el fondo gris */
+    /* Inyección de sombras volumétricas y relieve tridimensional */
     box-shadow: 0 10px 30px rgba(10, 17, 40, 0.12), 0 1px 8px rgba(14, 165, 233, 0.2) !important;
     
-    /* Filtro de nitidez extrema para que las texturas 3D del ADN resalten */
+    /* Filtro de nitidez extrema */
     filter: contrast(1.04) brightness(1.02) drop-shadow(0 4px 6px rgba(0,0,0,0.02)) !important;
     image-rendering: -webkit-optimize-contrast !important;
     display: block !important;
