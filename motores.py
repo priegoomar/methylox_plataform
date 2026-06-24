@@ -7,8 +7,8 @@ import numpy as np
 # =====================================================================
 # CONFIGURACIÓN MAESTRA Y CONSTANTES CLÍNICAS REALES (DESDE TU COLAB)
 # =====================================================================
-UNBRAL_CLINICO_DELTA_BETA = 0.5910
-LIMITE_RUIDO_PLASMA = 0.10
+UNBRAL_CLINICO_DELTA_BETA = 0.1000
+LIMITE_RUIDO_PLASMA = 0.02
 
 # Base de datos bioinformática de calibración (TCGA / GEO)
 # Coordenada: (Delta Beta en Estadio I, Ruido en Plasma Sano)
