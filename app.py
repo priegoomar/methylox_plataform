@@ -217,7 +217,7 @@ div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
 # 2. INICIALIZACIÓN DE DATOS (BACKEND BASE)
 # =====================================================================
 motores.iniciar_base_datos()
-UMBRAL = 0.5910
+UMBRAL = 0.1000
 
 # =====================================================================
 # 3. BARRA LATERAL DE NAVEGACIÓN TOTALMENTE UNIFICADA EN BLANCO
