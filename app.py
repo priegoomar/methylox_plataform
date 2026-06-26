@@ -460,52 +460,6 @@ if st.session_state["menu_activo"] == "Dashboard":
             
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # BLOQUE MODULAR 2: ANALÍTICAS EN PARALELO INTERACTIVAS REFORZADAS
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('<p class="card-heading">📊 Real-Time Analytics Overview</p>', unsafe_allow_html=True)
-   
-    col_m1, col_m2, col_m3 = st.columns(3)
-    with col_m1: st.metric(label="Screening Sensitivity", value="96.4%", delta="Target Verified")
-    with col_m2: st.metric(label="Analytical Specificity", value="94.1%", delta="Validated")
-    with col_m3: st.metric(label="ctDNA Detection Limit", value="0.01%", delta="High-Resolution")
-       
-    st.markdown("<hr style='margin: 30px 0; border: 0; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
-
-    col_g1, col_g2 = st.columns(2)
-    with col_g1:
-        st.markdown("<p style='font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 12px;'>PATIENT METRICS VS. CLINICAL TARGET POPULATION</p>", unsafe_allow_html=True)
-        eje_x = np.linspace(0, 100, 60)
-        curva_control = np.exp(-((eje_x - 28) ** 2) / (2 * 11 ** 2)) * 0.035
-        curva_alerta = np.exp(-((eje_x - 72) ** 2) / (2 * 9 ** 2)) * 0.028
-        df_poblacion = pd.DataFrame({
-            "Risk Index (%)": eje_x,
-            "Reference Control Cohort": curva_control,
-            "Oncological Target Cohort": curva_alerta
-        }).set_index("Risk Index (%)")
-        st.area_chart(df_poblacion, color=["#93C5FD", "#1E40AF"], height=240, use_container_width=True)
-        st.caption("🎯 Current case index is automatically mapped against verified tumor shedding distribution profiles.")
-       
-    with col_g2:
-        st.markdown("<p style='font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 12px;'>ctDNA SIGNAL QUANTITATION VS. ASSAY LIMITS</p>", unsafe_allow_html=True)
-        valor_paciente = ctdna_score if patient_id else 0.0
-        df_limites = pd.DataFrame({
-            "Assay Thresholds": ["Sequencer Background Noise", "Analytical Detection Limit", "Current Patient Sample"],
-            "Concentration (ng/mL)": [0.02, 0.10, valor_paciente]
-        }).set_index("Assay Thresholds")
-        st.bar_chart(df_limites, color="#2563EB", height=240, use_container_width=True)
-        st.caption("🛡️ Verified Instrument Status: Signal integrity confirmed above baseline bio-noise thresholds.")
-
-    st.markdown("<br><p style='font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 12px;'>METHYLATION SITE MATRIX ARCHITECTURE (NGS PATTERN DENSITY)</p>", unsafe_allow_html=True)
-    sitios_cpg = [f"CpG Region {i+1}" for i in range(12)]
-    densidad_metilacion = [0.94, 0.88, 0.12, 0.05, 0.91, 0.76, 0.22, 0.09, 0.85, 0.97, 0.14, 0.03]
-    df_heatmap = pd.DataFrame({
-        "Sequence Target Block": sitios_cpg,
-        "Methylation Density (Beta Value)": densidad_metilacion
-    }).set_index("Sequence Target Block")
-    st.bar_chart(df_heatmap, color="#1D4ED8", height=180, use_container_width=True)
-    st.caption("🧬 Digital Epigenetic Signature: Array visualization tracking sample hypomethylation cascades.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
 # =====================================================================
 # 5. SAMPLES DATABASE (TABLAS INTERACTIVAS CON INDEXADOR Y AUDITORÍA)
 # =====================================================================
