@@ -374,6 +374,8 @@ if st.session_state["menu_activo"] == "Dashboard":
     # 🔴 Capa 3: Marcador Dinámico del Paciente Actual (Sigue al slider de CPEB4)
     # Usamos el valor capturado en tu slider g1 para mover el punto rojo en vivo
     patient_y_pos = np.exp(-((g1 - 0.45) ** 2) / (2 * 0.15 ** 2)) if g1 > 0.2 else np.exp(-((g1 - 0.05) ** 2) / (2 * 0.03 ** 2))
+        # 🔴 Capa 3: Marcador Dinámico del Paciente Actual (Corregido)
+    patient_y_pos = np.exp(-((g1 - 0.45) ** 2) / (2 * 0.15 ** 2)) if g1 > 0.2 else np.exp(-((g1 - 0.05) ** 2) / (2 * 0.03 ** 2))
     
     fig_cohort.add_trace(go.Scatter(
         x=[g1], y=[patient_y_pos],
@@ -382,9 +384,8 @@ if st.session_state["menu_activo"] == "Dashboard":
         marker=dict(color='#e74c3c', size=14, symbol='diamond', line=dict(color='white', width=2)),
         text=["🎯 Current Patient"],
         textposition="top center",
-        font=dict(family="Arial", size=12, color="#e74c3c")
-    ))
-
+        textfont=dict(family="Arial", size=12, color="#e74c3c")
+        
     # Configuración estética del layout (Colores oscuros/claros limpios, sin rejillas feas)
     fig_cohort.update_layout(
         xaxis_title="Biomarker Methylation Intensity (Beta Value Range: 0.0 - 1.0)",
