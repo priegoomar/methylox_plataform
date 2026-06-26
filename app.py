@@ -284,22 +284,67 @@ if st.session_state["menu_activo"] == "Dashboard":
         ctdna_score = st.number_input("ctDNA Concentration (ng/mL)", min_value=0.0, max_value=5.0, value=0.25, format="%.4f")
        
     st.markdown("<br>", unsafe_allow_html=True)
-    resultado = motores.procesar_diagnostico_clinico(patient_id, patient_age, ctdna_score)
-   
-    col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
-        if st.button("Commit Diagnostic Data (Save to SQLite3)", use_container_width=True):
-            if patient_id:
-                estatus_db = motores.registrar_paciente_db(patient_id, patient_age, ctdna_score, resultado)
-                if estatus_db == "Éxito": st.success(f"Record secured for ID: {patient_id}")
-                else: st.error("Database status: Identifier already exists.")
-            else: st.warning("Please enter a valid Identifier.")
-    with col_btn2:
-        reporte_pdf_contenido = motores.generar_pdf_clinico(patient_id, patient_age, ctdna_score, resultado)
-        st.download_button(label="Download Personalized Clinical Report", data=reporte_pdf_contenido, file_name=f"Report_{patient_id}.pdf", use_container_width=True)
+        # ==============================================================================
+    # INTERFAZ DE LOGICA PONDERADA (FASE 2) CON CONTENEDOR OCULTABLE
+    # ==============================================================================
+    import os
     
-    st.markdown("<hr style='margin: 35px 0; border: 0; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size: 13px; font-weight: 700; color: #0B0F19; text-transform: uppercase; letter-spacing: 0.5px;'>🗘 Bulk Sample Pipeline (Excel / CSV Upload)</p>", unsafe_allow_html=True)
+    st.write("---")
+    # Pestaña oculta para el especialista técnico u oncólogo
+    with st.expander("🧬 Configuración Avanzada: Panel Genómico Multiplex (15 Sondas CRISPR)"):
+        st.caption("Ajuste los niveles Beta de metilación detectados por el secuenciador.")
+        
+        col_g1, col_g2 = st.columns(2)
+        with col_g1:
+            g1 = st.slider("CPEB4 (Gen ancla | Peso: 1.8)", 0.0, 1.0, 0.05, step=0.01)
+            g2 = st.slider("BRCA1 (Peso: 1.5)", 0.0, 1.0, 0.01, step=0.01)
+            g3 = st.slider("TP53 (Peso: 1.5)", 0.0, 1.0, 0.01, step=0.01)
+            g4 = st.slider("PTEN (Peso: 1.4)", 0.0, 1.0, 0.01, step=0.01)
+            g5 = st.slider("BRCA2 (Peso: 1.3)", 0.0, 1.0, 0.01, step=0.01)
+            g6 = st.slider("RUNX1 (Peso: 1.0)", 0.0, 1.0, 0.01, step=0.01)
+            g7 = st.slider("DYRK1A (Peso: 1.0)", 0.0, 1.0, 0.01, step=0.01)
+            g8 = st.slider("ERG (Peso: 1.0)", 0.0, 1.0, 0.01, step=0.01)
+        with col_g2:
+            g9 = st.slider("ETS2 (Peso: 1.0)", 0.0, 1.0, 0.01, step=0.01)
+            g10 = st.slider("TIAM1 (Peso: 1.0)", 0.0, 1.0, 0.01, step=0.01)
+            g11 = st.slider("SOD1 (Peso: 0.8)", 0.0, 1.0, 0.01, step=0.01)
+            g12 = st.slider("COL18A1 (Peso: 0.8)", 0.0, 1.0, 0.01, step=0.01)
+            g13 = st.slider("OLIG2 (Peso: 0.8)", 0.0, 1.0, 0.01, step=0.01)
+            g14 = st.slider("IFNAR1 (Peso: 0.8)", 0.0, 1.0, 0.01, step=0.01)
+            g15 = st.slider("GART (Peso: 0.8)", 0.0, 1.0, 0.01, step=0.01)
+
+    # Botón principal visible para el médico general
+    if st.button("🚀 Calcular Dictamen Clínico Multiplex", use_container_width=True):
+        datos_paciente = {
+            'CPEB4': g1, 'BRCA1': g2, 'TP53': g3, 'PTEN': g4, 'BRCA2': g5,
+            'RUNX1': g6, 'DYRK1A': g7, 'ERG': g8, 'ETS2': g9, 'TIAM1': g10,
+            'SOD1': g11, 'COL18A1': g12, 'OLIG2': g13, 'IFNAR1': g14, 'GART': g15
+        }
+        
+        # Procesamiento en tu archivo motores.py
+        score_final, votos_activos = motores.calcular_diagnostico_ponderado(datos_paciente)
+        
+        if votos_activos >= 2 or score_final >= 0.1000:
+            st.error(f"🚨 **DICTAMEN: POSITIVO** (Score Ponderado: {score_final:.4f} | Votos Activos: {votos_activos}/15)")
+            st.caption("Alerta molecular: Se detectó firma de ctDNA de Stage I mediante cooperatividad multiplex.")
+        else:
+            st.success(f"🟢 **DICTAMEN: NEGATIVO** (Score Ponderado: {score_final:.4f} | Votos Activos: {votos_activos}/15)")
+            st.caption("Firma biológica normal: Niveles moleculares dentro del umbral de ruido basal seguro.")
+
+    # Descarga del PDF Institucional (96.00%)
+    st.write("---")
+    st.markdown("### 📥 Documentación de Validación Preclínica")
+    
+    ruta_pdf = os.path.join("notebooks", "METHYLOX_Dossier_Clinico_Fase2.pdf")
+    if os.path.exists(ruta_pdf):
+        with open(ruta_pdf, "rb") as f_pdf:
+            st.download_button(
+                label="📄 Descargar METHYLOX_Dossier_Clinico_Fase2.pdf",
+                data=f_pdf,
+                file_name="METHYLOX_Dossier_Clinico_Fase2.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
     
     archivo_cargado = st.file_uploader("Drag and drop your sequencer data matrix here", type=["csv", "xlsx"])
     if archivo_cargado is not None:
