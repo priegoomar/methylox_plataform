@@ -68,7 +68,6 @@ st.markdown("""
         font-weight: 800 !important;
         letter-spacing: -1.5px !important;
         line-height: 1.15 !important;
-        margin-bottom: 15px !important;
     }
     .headline-corporate span {
         background: linear-gradient(135deg, #1E3A8A 0%, #0D9488 100%);
@@ -88,6 +87,16 @@ st.markdown("""
         margin-bottom: 15px;
         border: 1px solid rgba(30, 58, 138, 0.12);
         letter-spacing: 0.5px;
+    }
+    
+    /* Estilización del Pie de Página de la Barra Lateral Centrada */
+    .sidebar-footer-centered {
+        text-align: center !important;
+        width: 100% !important;
+        color: #64748B !important;
+        font-size: 12px !important;
+        margin-top: 40px !important;
+        line-height: 1.5 !important;
     }
     
     /* Botón de Acción Principal en Degradado Institucional */
@@ -113,278 +122,106 @@ st.markdown("""
 if 'access_granted' not in st.session_state:
     st.session_state['access_granted'] = False
 
-# 🚪 CAPA DE DESPLIEGUE EXCLUSIVO DE LA PORTADA
+# 🚪 CAPA 1: PORTAL DE BIENVENIDA SECURE LANDING
 if not st.session_state['access_granted']:
     st.markdown("<style>[data-testid='stSidebar'] {display: none !important; visibility: hidden !important;}</style>", unsafe_allow_html=True)
     st.markdown('<div class="medtech-canvas">', unsafe_allow_html=True)
     
-    # Menú Superior de Navegación con Botones Desplegables Reales (Secreto Industrial)
+    # Menú Superior de Navegación Estilo Apple con Ventanas Emergentes Detalladas Largas
     col_brand, col_nav1, col_nav2, col_nav3, col_user = st.columns([0.8, 0.5, 0.5, 0.5, 0.7])
     with col_brand:
-        st.markdown("<h3 style='color: #0F172A; font-weight: 800; letter-spacing: -0.5px; margin: 0; margin-top:5px;'>🧬 Methylox™</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color: #0F172A; font-weight: 800; letter-spacing: -0.5px; margin: 0; margin-top:5px;'>🧬 METHYLOX™</h3>", unsafe_allow_html=True)
     with col_nav1:
         with st.popover("💻 Platform"):
             st.markdown("**Methylox™ Core Environment**")
-            st.caption("Decentralized algorithmic screening system engineered for high-throughput raw epigenetic data parsing. Operates locally under static execution rules.")
+            st.caption("The Methylox™ pipeline integrates high-throughput sequencing inputs with raw epigenetic signal mapping. Features dynamic data pipeline extraction for sequencing matrix targets, absolute signal normalization to eliminate local background noise, and a low-latency computational core execution framework designed for active data evaluation.")
     with col_nav2:
         with st.popover("🔬 Technology"):
             st.markdown("**Biomarker Mapping Heuristics**")
-            st.caption("Proprietary multi-locus promotor hypermethylation scanning. Analytical signals are continuously calibrated against validated oncological cohorts.")
+            st.caption("Our core assay design targets differential DNA hypermethylation profiles located across specific gene promoters. Features enzymatic cooperativity through high-affinity structural matches designed to anchor fragment clusters with absolute specificity, advanced target enclosure, and continuous dataset validation against open registries.")
     with col_nav3:
         with st.popover("🏢 Intellectual Property"):
-            st.markdown("**IP & Trade Secret Shield**")
-            st.caption("All sequence configurations, weighting indexes, and processing parameters are protected under strict Trade Secret and Industrial laws.")
+            st.markdown("**IP & Prototyping Protection Shield**")
+            st.caption("Methylox™ operates as a pre-clinical asset focused on de-risking early oncological diagnostic technologies. All mathematical formulas, processing heuristics, and algebraic metrics are strictly protected under Trade Secret laws to prevent unauthorized distribution or replication of the protocol code.")
     with col_user:
         st.markdown('<div class="profile-circle-btn profile-circle-loggedout" title="Sign In Required">🔒</div>', unsafe_allow_html=True)
         
     st.write("##")
     
-    # Distribución de Paneles Asimétricos Líquidos
+    # Distribución Asimétrica Líquida Clara
     col_left_panel, col_right_panel = st.columns([1.1, 0.9], gap="large")
     
     with col_left_panel:
         st.markdown("""
         <div class="corporate-clear-card" style="background: #F8FAFC !important; padding: 30px !important;">
-            <span class="capsule-badge-corporate">EPIGENETIC AI INTELLIGENCE</span>
-            <h1 class="headline-corporate">Mapeo Computacional para <span>Detección Temprana</span></h1>
-            <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 0;">
-                Advanced bioinformatic platform optimized for ultra-precise stage I oncology diagnostics through liquid biopsy profiling cascades. Secure standalone architecture.
+            <span class="capsule-badge-corporate">DESARROLLO TECNOLÓGICO PRECLÍNICO</span>
+            <h1 class="headline-corporate">Herramienta Bioinformática para <span>Análisis Epigenético</span></h1>
+            <p style="color: #475569; font-size: 15px; line-height: 1.6; margin-bottom: 0; margin-top: 15px;">
+                Plataforma computacional en fase de prototipado optimizada para la evaluación estadística de alteraciones de metilación multilocus a partir de bases de datos genómicas de acceso abierto.
             </p>
         </div>
         """, unsafe_allow_html=True)
         
-        # Formulario de Acceso Expuesto Visible
-        st.markdown("### 🔐 Clinical Authentication Portal")
-        st.caption("Introduzca su Clave de Suscripción Hospitalaria Autorizada para levantar el escudo de cifrado:")
+        st.markdown("### 🔐 Validación de Acceso al Prototipo")
+        st.caption("Introduzca la clave asignada para activar el backend y los sliders de control computacional:")
         
-        clave_ingreso = st.text_input("Clave de Licencia Médica:", type="password", key="main_password_gate")
-        if st.button("Validar Credencial Corporativa y Acceder", key="btn_validate_access_gate"):
+        clave_ingreso = st.text_input("Clave de Acceso Técnico:", type="password", key="main_password_gate")
+        if st.button("Validar Credencial y Desplegar Consola", key="btn_validate_access_gate"):
             if clave_ingreso == "METHYLOX-2026":
                 st.session_state['access_granted'] = True
                 st.rerun()
             else:
-                st.error("Licencia inválida o revocada por el administrador.")
+                st.error("Credencial inválida o denegada por el sistema.")
 
     with col_right_panel:
-        # Ilustración Médica Real de tu Boceto (ADN HD)
-        st.image("https://pixabay.com", caption="Methylox™ Molecular Targeting Array Model (Protected Layout)", use_container_width=True)
-
-        # ℹ️ SECCIÓN INFORMATIVA DETALLADA CON LA OPCIÓN 3 DE ALTO IMPACTO
+        # Ilustración Médica de ADN de Alta Calidad Style
+        st.image(
+            "https://pixabay.com",
+            caption="Methylox™ Molecular Targeting Array Model (Protected Layout)",
+            use_container_width=True
+        )
+        
         st.markdown("""
         <div class="medtech-canvas" style="margin-top:15px; padding:20px; background:#F8FAFC !important; border-color:#E2E8F0;">
-            <h5 style="color: #0F172A; font-weight:700; margin:0; margin-bottom:5px;">Transformando el Diagnóstico Oncológico</h5>
+            <h5 style="color: #0F172A; font-weight:700; margin:0; margin-bottom:5px;">Modelado y Simulación Computacional</h5>
             <p style="color: #475569; font-size: 13px; line-height: 1.5; margin:0;">
-                Methylox™ actúa como un motor de IA especializado en el mapeo molecular preventivo. Al aislar biomarcadores de metilación específicos en muestras de sangre, la plataforma abre una ventana de oportunidad crítica para el tratamiento temprano, redefiniendo la supervivencia mediante oncología computacional de precisión.
+                Methylox™ opera como un entorno de modelado matemático enfocado en la investigación molecular epigenética. Al analizar patrones de metilación específicos en conjuntos de datos abiertos, el sistema explora la viabilidad de algoritmos de concurrencia para el desarrollo futuro de metodologías analíticas no invasivas.
             </p>
         </div>
         """, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
-    st.stop() # 🛡️ FRENO HERMÉTICO: Detiene el archivo aquí para proteger tu software de abajo
+    st.stop() # 🛡️ CORTINA HERMÉTICA: Protege tu banner y tus sliders originales justo aquí abajo
 
-# Detención estricta para independizar capas
+# ==============================================================================
+# 👨‍⚕️ CAPA VISUAL INTERNA: CONTROL DE PERFIL CLÍNICO ACTIVO POST-ACCESO
+# ==============================================================================
+st.markdown("""
+<div style="background: #FFFFFF; padding: 20px 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04); border: 1px solid #E2E8F0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+    <div>
+# ==============================================================================
+# 👨‍⚕️ CAPA VISUAL INTERNA: CONTROL DE PERFIL CLÍNICO ACTIVO POST-ACCESO
+# ==============================================================================
+st.markdown("""
+<div style="background: #FFFFFF; padding: 20px 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04); border: 1px solid #E2E8F0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+    <div>
+        <h4 style="margin: 0; color: #0F172A; font-weight: 800;">🧬 Methylox™ Prototyping Portal</h4>
+        <span style="color: #64748B; font-size: 13px;">👨‍⚕️ Acceso Concedido: Prototipo Técnico Calibrado</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px; margin-left: auto;">
+        <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #1E3A8A 0%, #0D9488 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; border: 2px solid white; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);" title="Profile Active">DR</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-    # Forzar a Matplotlib/Seaborn residual a usar la paleta unificada de la marca
-    sns.set_theme(style="white")
-    plt.rcParams["text.color"] = "#0F172A"
-    plt.rcParams["axes.labelcolor"] = "#1E293B"
-    plt.rcParams["xtick.color"] = "#64748B"
-    plt.rcParams["ytick.color"] = "#64748B"
+if st.sidebar.button("🔒 Salir de Plataforma / Log Out", key="btn_logout_master_toshiba"):
+    st.session_state['access_granted'] = False
+    st.rerun()
+🧬 Methylox™ Prototyping Portal👨‍⚕️ Acceso Concedido: Prototipo Técnico CalibradoDR""", unsafe_allow_html=True)
 
-st.markdown(
-    """
-    <style>
-    /* Importación de tipografías de alta fidelidad corporativa */
-    @import url('https://googleapis.com');
-
-    /* Fondo general de la plataforma gris clínico satinado para dar contraste */
-    .stApp {
-        background-color: #F1F5F9 !important;
-        font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
-    }
-   
-    /* Reset total de márgenes nativos de Streamlit */
-    .block-container {
-        padding-top: 0rem !important;
-        padding-left: 0rem !important;
-        padding-right: 0rem !important;
-        max-width: 100% !important;
-    }
-   
-    /* 3. BARRA LATERAL: Blanco puro flotante con relieve premium */
-    [data-testid="stSidebar"] {
-        background-color: #FFFFFF !important;
-        border-right: 1px solid #E2E8F0 !important;
-        box-shadow: 6px 0 25px rgba(148, 163, 184, 0.08) !important;
-    }
-   
-    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p, [data-testid="stSidebar"] h2 {
-        color: #0F172A !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-    }
-
-    /* 4. BOTONES DE LA BARRA LATERAL (Minimalist & High-Precision) */
-    [data-testid="stSidebar"] .stButton>button {
-        background-color: transparent !important;
-        color: #64748B !important;
-        border: 1px solid transparent !important;
-        text-align: left !important;
-        justify-content: flex-start !important;
-        padding: 12px 20px !important;
-        border-radius: 10px !important;
-        margin-bottom: 6px !important;
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        transition: all 0.2s ease !important;
-    }
-   
-    [data-testid="stSidebar"] .stButton>button:hover {
-        background-color: #F8FAFC !important;
-        color: #1E40AF !important;
-        box-shadow: inset 0 0 0 1px #E2E8F0 !important;
-    }
-
-div[data-testid="stMainBlockContainer"] div[data-testid="element-container"]:has(img) {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-top: -65px !important;
-    margin-bottom: 35px !important;
-    display: block !important;
-}
-
-div[data-testid="stMainBlockContainer"] [data-testid="stImage"] img {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-    
-    /* 🔥 EL CAMBIO CLAVE DE HOY: Se expande de extremo a extremo cubriendo los laterales */
-    object-fit: cover !important;
-    object-position: center center !important;
-    border-radius: 16px !important;
-    border: 1px solid rgba(37, 99, 235, 0.25) !important;
-    
-    /* Inyección de sombras volumétricas y relieve tridimensional */
-    box-shadow: 0 10px 30px rgba(10, 17, 40, 0.12), 0 1px 8px rgba(14, 165, 233, 0.2) !important;
-    
-    /* Filtro de nitidez extrema */
-    filter: contrast(1.04) brightness(1.02) drop-shadow(0 4px 6px rgba(0,0,0,0.02)) !important;
-    image-rendering: -webkit-optimize-contrast !important;
-    display: block !important;
-}
-   
-    /* 6. TARJETAS MODULARES: Blanco Puro que resalta sobre el fondo gris */
-    .executive-card {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-top: 3px solid #06B6D4 !important; /* Detalle tecnológico en cian neón */
-        border-radius: 16px !important;
-        padding: 35px !important;
-        margin-left: 45px !important;
-        margin-right: 45px !important;
-        margin-bottom: 30px !important;
-        box-shadow: 0 15px 35px -10px rgba(148, 163, 184, 0.12) !important;
-    }
-   
-    .card-heading {
-        color: #1E40AF !important; /* Títulos en Azul Cobalto para mayor fuerza */
-        font-size: 13px !important;
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1.25px !important;
-        margin-bottom: 25px !important;
-        border-bottom: 1px solid #F1F5F9 !important;
-        padding-bottom: 12px !important;
-    }
-
-    /* 7. INPUTS CIENTÍFICOS EN BLANCO NITIDO */
-    .stTextInput input, .stNumberInput input {
-        background-color: #F8FAFC !important;
-        border: 1px solid #CBD5E1 !important;
-        border-radius: 8px !important;
-        color: #0F172A !important;
-        padding: 12px !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-weight: 500 !important;
-    }
-    .stTextInput input:focus, .stNumberInput input:focus {
-        border-color: #1E40AF !important;
-        box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1) !important;
-        background-color: #FFFFFF !important;
-    }
-
-    /* 8. UNIFICACIÓN DE BOTONES EN LA GAMA COBALTO DE LA MARCA */
-    div.stButton > button {
-        background: #1E40AF !important; /* Azul Cobalto */
-        color: #FFFFFF !important;
-        border: none !important;
-        border-radius: 8px !important;
-        padding: 14px 28px !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
-        transition: background 0.2s ease !important;
-        box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1) !important;
-    }
-    div.stButton > button:hover {
-        background: #1D4ED8 !important;
-        transform: translateY(-1px) !important;
-    }
-    
-    div.stDownloadButton > button {
-        background: transparent !important;
-        color: #1E40AF !important; 
-        border: 2px solid #1E40AF !important;
-        border-radius: 8px !important;
-        padding: 12px 28px !important;
-        font-weight: 600 !important;
-        font-size: 14px !important;
-        transition: all 0.2s ease !important;
-    }
-    div.stDownloadButton > button:hover {
-        background: rgba(30, 64, 175, 0.03) !important;
-    }
-
-    /* 9. Píldoras de Proceso Monocromáticas */
-    .process-badge {
-        background-color: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        padding: 12px 16px;
-        border-radius: 10px;
-        text-align: center;
-        font-size: 12px;
-        font-weight: 600;
-        color: #1E40AF;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 6px -1px rgba(148, 163, 184, 0.05);
-    }
-
-    /* 10. Cuadros de Métricas Refinados */
-    div[data-testid="stMetric"] {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        padding: 20px !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 10px rgba(148, 163, 184, 0.02) !important;
-    }
-   
-    /* Sincronización del latido del sistema */
-    @keyframes vitalPulse {
-        0% { transform: scale(0.9); opacity: 0.6; }
-        50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 12px #06B6D4; }
-        100% { transform: scale(0.9); opacity: 0.6; }
-    }
-    .vital-dot {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        background-color: #06B6D4;
-        border-radius: 50%;
-        margin-right: 8px;
-        animation: vitalPulse 1.5s infinite ease-in-out;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+if st.sidebar.button("🔒 Salir de Plataforma / Log Out", key="btn_logout_master_toshiba"):
+    st.session_state['access_granted'] = False
+    st.rerun()
 
 # =====================================================================
 # 2. INICIALIZACIÓN DE DATOS (BACKEND BASE)
