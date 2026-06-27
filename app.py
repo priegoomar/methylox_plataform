@@ -206,7 +206,7 @@ st.markdown("""
 <div style="background: #FFFFFF; padding: 20px 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04); border: 1px solid #E2E8F0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
     <div>
         <h4 style="margin: 0; color: #0F172A; font-weight: 800;"> Methylox Prototyping Portal</h4>
-        <span style="color: #64748B; font-size: 13px;">👨‍⚕️ Acceso Concedido: Prototipo Técnico Calibrado</span>
+        <span style="color: #64748B; font-size: 13px;"> Acceso Concedido: Prototipo Técnico Calibrado</span>
     </div>
     <div style="display: flex; align-items: center; gap: 20px; margin-left: auto;">
         <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #1E3A8A 0%, #0D9488 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; border: 2px solid white; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);" title="Profile Active">DR</div>
