@@ -58,7 +58,8 @@ if not st.session_state['access_granted']:
     with col_right:
         st.markdown('<div class="landing-card" style="text-align: center; padding: 60px 40px;">', unsafe_allow_html=True)
         st.write("### 🖼️ Molecular Structural Model")
-        st.caption("Target Boundary: Chromosome 21 Epigenetic Cascade Mapping (hg38)"
+        st.caption("Target Boundary: Chromosome 21 Epigenetic Cascade Mapping (hg38)")
+                   
         # Generamos la hélice de ADN en 3D idéntica a tu diseño de la derecha
         z_dna = np.linspace(0, 20, 100)
         fig_dna = go.Figure()
