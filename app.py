@@ -208,57 +208,95 @@ if not st.session_state['access_granted']:
         st.write("---")
         st.markdown("The Methylox™ pipeline integrates high-throughput sequencing inputs with raw epigenetic signal mapping.\n- **Data Pipeline:** Direct extraction of sequencing matrix targets.\n- **Signal Normalization:** Elimination of local chemical background noise.\n- **Compute Infrastructure:** Low-latency computational core execution.")
         
+        st.markdown("### 🔬 Advanced Epigenetic Biomarker Technology")
+        st.write("---")
+    with tab_platform:
+        st.markdown("### 💻 Core Bioinformatic Platform Architecture")
+        st.write("---")
+        st.markdown("""
+        <table style="width:100%; border-collapse: collapse; margin-top: 10px;">
+            <tr style="background-color: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A; width: 25%;">⚙️ Data Pipeline</td>
+                <td style="padding: 15px; color: #475569;">Direct extraction of high-throughput sequencing matrix targets.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A;">🧪 Signal Normalization</td>
+                <td style="padding: 15px; color: #475569;">Absolute elimination of local chemical background noise metrics.</td>
+            </tr>
+            <tr style="background-color: #F8FAFC;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A;">🖥️ Compute Core</td>
+                <td style="padding: 15px; color: #475569;">Low-latency algorithmic execution with real-time vector orientation mapping.</td>
+            </tr>
+        </table>
+        """, unsafe_allow_html=True)
+        st.write("##")
+        
     with tab_tech:
         st.markdown("### 🔬 Advanced Epigenetic Biomarker Technology")
         st.write("---")
+        st.markdown("""
+        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Our core assay design targets differential DNA hypermethylation profiles located across specific gene promoters.</p>
+        <table style="width:100%; border-collapse: collapse;">
+            <tr style="background-color: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A; width: 25%;">🧬 Enzymatic Cooperativity</td>
+                <td style="padding: 15px; color: #475569;">High-affinity structural match designed to anchor fragment clusters with absolute specificity.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A;">❄️ Target Enclosure</td>
+                <td style="padding: 15px; color: #475569;">Structural target shielding built to operate under optimal thermodynamic conditions.</td>
+            </tr>
+            <tr style="background-color: #F8FAFC;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A;">📊 Dataset Integration</td>
+                <td style="padding: 15px; color: #475569;">Continuous cross-referencing against the international TCGA-BRCA open cohort registry.</td>
+            </tr>
+        </table>
+        """, unsafe_allow_html=True)
+        st.write("##")
+        
+    with tab_solutions:
+        st.markdown("### 📊 Enterprise Clinical Solutions")
+        st.write("---")
+        st.markdown("""
+        <table style="width:100%; border-collapse: collapse; margin-top: 10px;">
+            <tr style="background-color: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A; width: 25%;">📝 Patient Case Enrollment</td>
+                <td style="padding: 15px; color: #475569;">Standardized interactive wizard for clinical case registration and biomarker quantification.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A;">🤖 Algorithmic Consolidation</td>
+                <td style="padding: 15px; color: #475569;">Weighted risk indexes calculated through independent target concurrent scoring (K=2).</td>
+            </tr>
+            <tr style="background-color: #F8FAFC;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A;">📥 Export Engines</td>
+                <td style="padding: 15px; color: #475569;">Secure generation of clinical validation dossiers in portable layout formats (PDF).</td>
+            </tr>
+        </table>
+        """, unsafe_allow_html=True)
+        st.write("##")
+        
+    with tab_about:
+        st.markdown("### 🏢 Corporate Overview & Intellectual Property")
+        st.write("---")
+        st.markdown("""
+        <table style="width:100%; border-collapse: collapse; margin-top: 10px;">
+            <tr style="background-color: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A; width: 25%;">🛡️ Regulatory Framework</td>
+                <td style="padding: 15px; color: #475569;">Systems designed to align with strict molecular diagnostic compliance standards.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A;">🔐 IP Protection</td>
+                <td style="padding: 15px; color: #475569;">All assay sequences, processing heuristics, and algebraic metrics are protected under Trade Secret laws.</td>
+            </tr>
+            <tr style="background-color: #F8FAFC;">
+                <td style="padding: 15px; font-weight: 700; color: #0F172A;">💻 Hardware Synergy</td>
+                <td style="padding: 15px; color: #475569;">Software uncouplings fully validated for portable execution across standalone local compute units.</td>
+            </tr>
+        </table>
+        """, unsafe_allow_html=True)
+        st.write("##")
 
-st.markdown(
-    "Our core assay design targets differential DNA hypermethylation profiles located across specific gene promoters.\n"
-    "- Enzymatic Cooperativity: High-affinity structural match designed to anchor fragment clusters.\n"
-    "- Target Enclosure: Structural target shielding built to operate under optimal thermodynamic conditions.\n"
-    "- Dataset Integration: Continuous cross-referencing against the international TCGA-BRCA open cohort registry."
-)
-
-with tab_solutions:
-    st.markdown("### 📊 Enterprise Clinical Solutions")
-    st.write("---")
-    st.markdown(
-        "Deploying decentralized algorithmic screenings for modern molecular pathology laboratories and clinical trials.\n"
-        "- Patient Case Enrollment: Standardized interactive wizard for clinical case registration.\n"
-        "- Algorithmic Consolidation: Weighted risk indexes calculated through independent target concurrent scoring.\n"
-        "- Export Engines: Secure generation of clinical validation dossiers."
-    )
-
-with tab_about:
-    st.markdown("### 🏢 Corporate Overview & Intellectual Property")
-    st.write("---")
-    st.markdown(
-        "Methylox™ is a deep-tech pre-clinical asset focused on de-risking early oncological diagnostic technologies.\n"
-        "- Regulatory Framework: Systems designed to align with strict molecular diagnostic compliance standards.\n"
-        "- IP Protection: All assay sequences, processing heuristics, and algebraic metrics are protected under Industrial Trade Secret laws.\n"
-        "- Hardware Synergy: Software uncouplings fully validated for portable execution."
-    )
     st.markdown('</div>', unsafe_allow_html=True)
-    st.stop() # Sella de forma hermética la Landing Page fuera de las pestañas
-
-# 🖥️ CAPA 2: DESPLIEGUE DEL SOFTWARE OPERATIVO (ACCESO CONCEDIDO POST-AUTENTICACIÓN)
-st.markdown('<div class="premium-canvas" style="padding: 20px 40px; margin-bottom: 20px;">', unsafe_allow_html=True)
-c_logo, c_info, c_logout, c_avatar = st.columns([1, 2, 0.8, 0.4])
-with c_logo:
-    st.markdown("#### 🧬 Methylox™ Clinical Portal")
-with c_info:
-    st.caption("👨‍⚕️ Autenticado: Investigador Clínico Autorizado | Licencia Médica Activa")
-with c_logout:
-    if st.button("🔒 Log Out / Exit", key="btn_logout_master_final"):
-        st.session_state['access_granted'] = False
-        st.rerun()
-with c_avatar:
-    st.markdown('<div class="profile-circle-btn" title="Profile Active">DR</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-
-# # El código de tu foto en la línea 144 (# 1. Menú Superior Institucional) arrancará de manera limpia justo aquí abajo...
-# 1. Menú Superior Institucional
-col_logo, col_menu, col_btn_top = st.columns([1, 2, 1])
+    st.stop() # Detención hermética de la Landing Page
 
     # 1. Menú Superior Institucional
     col_logo, col_menu, col_btn_top = st.columns([1, 2, 1])
