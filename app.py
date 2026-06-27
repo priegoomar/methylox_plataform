@@ -78,9 +78,11 @@ st.markdown("""
 
 # 🚪 PANTALLA DE BIENVENIDA (LANDING PAGE)
 if not st.session_state['access_granted']:
-    # Ocultar barra lateral en la Landing Page
-    st.markdown("<style>[data-testid='stSidebar'] {display: none !important;}</style>", unsafe_allow_html=True)
+    # 🛡️ ESCUDO TOTAL: Apaga la barra lateral de raíz para que no ejecute código viejo
+    st.markdown("<style>[data-testid='stSidebar'], [data-testid='stSidebarNav'] {display: none !important; visibility: hidden !important;}</style>", unsafe_allow_html=True)
     
+    import numpy as np
+    import plotly.graph_objects as go
     st.markdown('<div class="main-canvas">', unsafe_allow_html=True)
     
     # 1. Menú Superior Institucional
