@@ -429,15 +429,7 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("<p style='font-size:11px; color:#64748B; margin-bottom:2px; letter-spacing:0.5px;'>SYSTEM STATUS</p>", unsafe_allow_html=True)
 st.sidebar.markdown("<p style='font-size:13px; color:#0F172A; font-weight:600; margin-top:0;'><span class='vital-dot'></span>Core Engine Processing...</p>", unsafe_allow_html=True)
 
-# Latido lineal en cian criogénico sobre la barra blanca
-fig_pulse, ax_pulse = plt.subplots(figsize=(2.5, 0.4))
-x_pulse = np.linspace(0, 10, 50)
-y_pulse = np.sin(x_pulse * 2) * np.exp(-0.05 * x_pulse)
-ax_pulse.plot(x_pulse, y_pulse, color="#06B6D4", lw=1.2)
-ax_pulse.axis("off")
-fig_pulse.patch.set_facecolor("none")
-ax_pulse.set_facecolor("none")
-st.sidebar.pyplot(fig_pulse)
+st.sidebar.markdown("---")
 st.sidebar.caption("© 2026 MethylOx™")
 
 # =====================================================================
