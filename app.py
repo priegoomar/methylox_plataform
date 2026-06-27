@@ -1,4 +1,61 @@
-﻿import streamlit as st
+import streamlit as st
+import os
+
+# ==============================================================================
+# 🎨 REGLAS DE DISEÑO PREMIUM (THEME ACQUISITION)
+# ==============================================================================
+st.set_page_config(page_title="Methylox™ | Epigenetic AI Platform", layout="wide")
+
+st.markdown("""
+<style>
+    .stApp {
+        background-color: #F8FAFC !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    }
+    .main-canvas {
+        background: white;
+        padding: 50px;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(15, 23, 42, 0.03);
+        border: 1px solid #E2E8F0;
+        margin-top: 10px;
+    }
+    .hero-title {
+        color: #0F172A;
+        font-size: 44px;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+        margin-bottom: 20px;
+    }
+    .hero-subtitle {
+        color: #475569;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 35px;
+        max-width: 600px;
+    }
+    .feature-box {
+        background: #F8FAFC;
+        padding: 24px;
+        border-radius: 16px;
+        border: 1px solid #E2E8F0;
+        text-align: center;
+        min-height: 160px;
+    }
+    .feature-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0F172A;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .feature-desc {
+        font-size: 12px;
+        color: #64748B;
+        line-height: 1.4;
+    }
+import streamlit as st
 import os
 import numpy as np
 import pandas as pd
