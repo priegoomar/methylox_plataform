@@ -68,19 +68,7 @@ if not st.session_state['access_granted']:
         st.plotly_chart(fig_dna, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-# 🖥️ SI YA DIÓ CLIC, SE ACTIVA TODO TU CÓDIGO ACTUAL INTACTO
-else:
-    # Agregamos un botón discreto en tu barra lateral para poder cerrar sesión si quieres volver a la Landing Page
-    if st.sidebar.button("🔒 Log Out / Exit Portal"):
-        st.session_state['access_granted'] = False
-        st.rerun()
-        
-    # AQUÍ DEBAJO EMPIEZA TODO TU CÓDIGO VIEJO DE SIEMPRE (No toques nada de lo que sigue en tu archivo)
-# =====================================================================
-# 1. NÚCLEO DE IDENTIDAD VISUAL: BIOTECH CLINICAL MINIMALISM (CLARO PREMIUM)
-# =====================================================================
-st.set_page_config(page_title="MethylOx™ Labs", layout="wide", initial_sidebar_state="expanded")
-
+st.stop()
 # Forzar a Matplotlib/Seaborn residual a usar la paleta unificada de la marca
 sns.set_theme(style="white")
 plt.rcParams["text.color"] = "#0F172A"
