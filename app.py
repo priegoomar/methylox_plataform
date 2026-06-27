@@ -1,146 +1,270 @@
 import streamlit as st
 import os
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
+import motores # Tu motor de cálculo validado de la Fase 2
 
 # ==============================================================================
-# 🎨 REGLAS DE DISEÑO PREMIUM (THEME ACQUISITION)
+# 🏢 INFRAESTRUCTURA VISUAL MEDTECH INSTITUTIONAL (CUSTOM PREMIUM CSS)
 # ==============================================================================
 st.set_page_config(page_title="Methylox™ | Epigenetic AI Platform", layout="wide")
 
 st.markdown("""
 <style>
+    /* Fondo limpio satinado y tipografía nítida libre de borrosidad */
     .stApp {
         background-color: #F8FAFC !important;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     }
-    .main-canvas {
-        background: white;
+    
+    /* Contenedor Unificado sobre Lienzo Blanco */
+    .premium-canvas {
+        background: #FFFFFF;
         padding: 50px;
         border-radius: 24px;
-        box-shadow: 0 10px 40px rgba(15, 23, 42, 0.03);
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.04);
         border: 1px solid #E2E8F0;
-        margin-top: 10px;
+        margin-top: 15px;
     }
-    .hero-title {
+    
+    /* Ocultar bloques de cabecera por defecto de Streamlit */
+    [data-testid="stHeader"], .stDeployButton {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Botón Circular de Perfil Estilo MedTech */
+    .profile-circle-btn {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #1E40AF 0%, #0D9488 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+        box-shadow: 0 4px 10px rgba(30, 64, 175, 0.2);
+        border: 2px solid white;
+        margin-left: auto;
+    }
+    
+    .profile-circle-loggedout {
+        background: #E2E8F0 !important;
+        color: #64748B !important;
+        box-shadow: none !important;
+        border: 2px solid #CBD5E1 !important;
+    }
+    
+    /* Estilización del Pie de Página de la Barra Lateral Centrada */
+    .sidebar-footer-centered {
+        text-align: center !important;
+        width: 100% !important;
+        color: #64748B !important;
+        font-size: 12px !important;
+        margin-top: 40px !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Textos Principales */
+    .hero-title-headline {
         color: #0F172A;
         font-size: 44px;
         font-weight: 800;
-        letter-spacing: -1.5px;
+        letter-spacing: -2px;
         line-height: 1.1;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
-    .hero-subtitle {
+    .hero-subtitle-details {
         color: #475569;
-        font-size: 15px;
+        font-size: 16px;
         line-height: 1.6;
-        margin-bottom: 35px;
-        max-width: 600px;
+        margin-bottom: 40px;
+        max-width: 580px;
     }
-    .feature-box {
-        background: #F8FAFC;
-        padding: 24px;
+    
+    /* Tarjetas Inferiores Asépticas de Grado Diagnóstico */
+    .clinical-feature-card {
+        background: #FFFFFF;
+        padding: 28px 20px;
         border-radius: 16px;
         border: 1px solid #E2E8F0;
         text-align: center;
-        min-height: 160px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.01);
+        min-height: 170px;
     }
-    .feature-title {
+    .icon-vector-placeholder {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: #EFF6FF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px auto;
+        color: #2563EB;
+        font-weight: bold;
         font-size: 14px;
+    }
+    .feature-headline-text {
+        font-size: 15px;
         font-weight: 700;
         color: #0F172A;
-        margin-top: 10px;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
     }
-    .feature-desc {
-        font-size: 12px;
+    .feature-supporting-text {
+        font-size: 13px;
         color: #64748B;
         line-height: 1.4;
+    }
+    
+    /* Pestañas Superiores de Navegación */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 24px;
+        justify-content: center;
+        border-bottom: 1px solid #E2E8F0;
+        margin-bottom: 30px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        color: #475569 !important;
+        padding: 12px 20px !important;
+    }
+    .stTabs [aria-selected="true"] {
+        color: #1E40AF !important;
+        border-bottom-color: #1E40AF !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# 🔑 MEDTECH AUTHENTICATION CONTROL
-if 'access_granted' not in st.session_state:
-    st.session_state['access_granted'] = False
-# ==============================================================================
-# 🎨 LANDING PAGE PREMIUM INSTITUCIONAL (EDICIÓN CALIBRADA DE-RIESGO)
-# ==============================================================================
+# CONTROLADOR DE MEMORIA DE ACCESO
 if 'access_granted' not in st.session_state:
     st.session_state['access_granted'] = False
 
-st.markdown("""
-<style>
-    /* Contenedor unificado estilo Apple MedTech */
-    .stApp {
-        background-color: #F8FAFC !important;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    }
-    .main-canvas {
-        background: white;
-        padding: 50px;
-        border-radius: 24px;
-        box-shadow: 0 10px 40px rgba(15, 23, 42, 0.03);
-        border: 1px solid #E2E8F0;
-        margin-top: 10px;
-    }
-    /* Tipografías de Impacto */
-    .hero-title {
-        color: #0F172A;
-        font-size: 44px;
-        font-weight: 800;
-        letter-spacing: -1.5px;
-        line-height: 1.1;
-        margin-bottom: 20px;
-    }
-    .hero-subtitle {
-        color: #475569;
-        font-size: 15px;
-        line-height: 1.6;
-        margin-bottom: 35px;
-        max-width: 600px;
-    }
-    /* Tarjetas de Características Inferiores */
-    .feature-box {
-        background: #F8FAFC;
-        padding: 24px;
-        border-radius: 16px;
-        border: 1px solid #E2E8F0;
-        text-align: center;
-        min-height: 160px;
-    }
-    .feature-title {
-        font-size: 14px;
-        font-weight: 700;
-        color: #0F172A;
-        margin-top: 10px;
-        margin-bottom: 5px;
-    }
-    .feature-desc {
-        font-size: 12px;
-        color: #64748B;
-        line-height: 1.4;
-    }
-    /* Botón Empezar / Explorar Premium */
-    div.stButton > button:first-child {
-        background: linear-gradient(135deg, #1E3A8A 0%, #0D9488 100%) !important;
-        color: white !important; border: none !important; padding: 12px 28px !important;
-        font-size: 14px !important; font-weight: 700 !important; border-radius: 10px !important;
-        transition: all 0.3s ease !important;
-    }
-    div.stButton > button:first-child:hover {
-        transform: translateY(-1px) !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# 🚪 PANTALLA DE BIENVENIDA (LANDING PAGE)
+# 🚪 CAPA 1: DESPLIEGUE EXCLUSIVO DE LA LANDING PAGE (PORTAL BLOQUEADO)
 if not st.session_state['access_granted']:
-    # 🛡️ ESCUDO TOTAL: Apaga la barra lateral de raíz para que no ejecute código viejo
-    st.markdown("<style>[data-testid='stSidebar'], [data-testid='stSidebarNav'] {display: none !important; visibility: hidden !important;}</style>", unsafe_allow_html=True)
+    # Apagamos por completo el menú izquierdo mientras esté bloqueado
+    st.markdown("<style>[data-testid='stSidebar'] {display: none !important; visibility: hidden !important;}</style>", unsafe_allow_html=True)
     
-    import numpy as np
-    import plotly.graph_objects as go
-    st.markdown('<div class="main-canvas">', unsafe_allow_html=True)
+    st.markdown('<div class="premium-canvas">', unsafe_allow_html=True)
     
+    # 1. Menú Superior con Botón de Perfil Cerrado en la Esquina Derecha
+    col_logo, col_menu, col_profile = st.columns([0.8, 1.4, 0.8])
+    with col_logo:
+        st.markdown("### 🧬 Methylox™")
+    with col_menu:
+        st.markdown("<p style='font-size: 14px; color: #475569; font-weight: 600; text-align: center; margin-top: 12px;'>Platform &bull; Technology &bull; Solutions &bull; About Us</p>", unsafe_allow_html=True)
+    with col_profile:
+        st.markdown('<div class="profile-circle-btn profile-circle-loggedout" title="Sign In Required">🔒</div>', unsafe_allow_html=True)
+        
+    st.write("##")
+    
+    # Expander institucional para la clave de de-riesgo corporativo
+    with st.expander("🔐 Portal de Acceso para Investigadores Clínicos Autorizados"):
+        clave_ingreso = st.text_input("Introduzca su Clave de Licencia Médica (Suscripción Hospitalaria):", type="password")
+        if st.button("Validar Credencial Corporativa"):
+            if clave_ingreso == "METHYLOX-2026":
+                st.session_state['access_granted'] = True
+                st.success("Acceso concedido. Cargando bioinformática...")
+                st.rerun()
+            else:
+                st.error("Clave de licencia inválida o revocada por el administrador.")
+
+    st.write("##")
+    
+    # Pestañas de Navegación del Portal Informativo Detallado Real
+    tab_home, tab_platform, tab_tech, tab_solutions, tab_about = st.tabs([
+        "🏠 Home Portal", "💻 Core Platform", "🔬 Biomarker Technology", "📊 Clinical Solutions", "🏢 Corporate Overview"
+    ])
+    
+    with tab_home:
+        col_content_left, col_graphic_right = st.columns([1.2, 0.8], gap="large")
+        with col_content_left:
+            st.markdown('<h1 class="hero-title-headline">Inteligencia Epigenética<br>Impulsada por IA para la<br>Detección Temprana</h1>', unsafe_allow_html=True)
+            st.markdown('<p class="hero-subtitle-details">Advanced bioinformatic platform optimized for ultra-precise stage I oncology diagnostics through liquid biopsy profiling cascades.</p>', unsafe_allow_html=True)
+            st.caption("🔒 Se requiere autenticación mediante el portal superior de Licencia Médica para interactuar con el backend.")
+        with col_graphic_right:
+            z_vector = np.linspace(0, 10, 200)
+            t_vector = np.linspace(0, 4 * np.pi, 200)
+            fig_helix = go.Figure()
+            fig_helix.add_trace(go.Scatter3d(x=np.sin(t_vector), y=np.cos(t_vector), z=z_vector, mode='lines', line=dict(color='#1E40AF', width=4), showlegend=False))
+            fig_helix.add_trace(go.Scatter3d(x=-np.sin(t_vector), y=-np.cos(t_vector), z=z_vector, mode='lines', line=dict(color='#0D9488', width=4), showlegend=False))
+            fig_helix.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=300, scene=dict(xaxis=dict(visible=False), yaxis=dict(visible=False), zaxis=dict(visible=False), bgcolor='white'))
+            st.plotly_chart(fig_helix, use_container_width=True)
+
+        st.write("---")
+        card1, card2, card3, card4, card5 = st.columns(5, gap="medium")
+        with card1: st.markdown('<div class="clinical-feature-card"><div class="icon-vector-placeholder">AQ</div><p class="feature-headline-text">Alta Especificidad</p><p class="feature-supporting-text">Optimización Térmica<br>Filtro de Ruido Basal</p></div>', unsafe_allow_html=True)
+        with card2: st.markdown('<div class="clinical-feature-card"><div class="icon-vector-placeholder">ED</div><p class="feature-headline-text">Detección Temprana</p><p class="feature-supporting-text">Enfoque Etapa I<br>Señal Molecular ctDNA</p></div>', unsafe_allow_html=True)
+        with card3: st.markdown('<div class="clinical-feature-card"><div class="icon-vector-placeholder">LB</div><p class="feature-headline-text">Biopsia Líquida</p><p class="feature-supporting-text">Captura Dirigida panel<br>CRISPR Target Multiplex</p></div>', unsafe_allow_html=True)
+        with card4: st.markdown('<div class="clinical-feature-card"><div class="icon-vector-placeholder">AI</div><p class="feature-headline-text">Inteligencia de IA</p><p class="feature-supporting-text">Votación Concurrente<br>Algoritmo de Rescate K=2</p></div>', unsafe_allow_html=True)
+        with card5: st.markdown('<div class="clinical-feature-card"><div class="icon-vector-placeholder">OM</div><p class="feature-headline-text">Validación Ómica</p><p class="feature-supporting-text">Firma Molecular Sólida<br>Matriz de Datos TCGA</p></div>', unsafe_allow_html=True)
+
+    with tab_platform:
+        st.markdown("### 💻 Core Bioinformatic Platform Architecture")
+        st.write("---")
+        st.markdown("The Methylox™ pipeline integrates high-throughput sequencing inputs with raw epigenetic signal mapping.\n- **Data Pipeline:** Direct extraction of sequencing matrix targets.\n- **Signal Normalization:** Elimination of local chemical background noise.\n- **Compute Infrastructure:** Low-latency computational core execution.")
+        
+    with tab_tech:
+        st.markdown("### 🔬 Advanced Epigenetic Biomarker Technology")
+        st.write("---")
+
+st.markdown(
+    "Our core assay design targets differential DNA hypermethylation profiles located across specific gene promoters.\n"
+    "- Enzymatic Cooperativity: High-affinity structural match designed to anchor fragment clusters.\n"
+    "- Target Enclosure: Structural target shielding built to operate under optimal thermodynamic conditions.\n"
+    "- Dataset Integration: Continuous cross-referencing against the international TCGA-BRCA open cohort registry."
+)
+
+with tab_solutions:
+    st.markdown("### 📊 Enterprise Clinical Solutions")
+    st.write("---")
+    st.markdown(
+        "Deploying decentralized algorithmic screenings for modern molecular pathology laboratories and clinical trials.\n"
+        "- Patient Case Enrollment: Standardized interactive wizard for clinical case registration.\n"
+        "- Algorithmic Consolidation: Weighted risk indexes calculated through independent target concurrent scoring.\n"
+        "- Export Engines: Secure generation of clinical validation dossiers."
+    )
+
+with tab_about:
+    st.markdown("### 🏢 Corporate Overview & Intellectual Property")
+    st.write("---")
+    st.markdown(
+        "Methylox™ is a deep-tech pre-clinical asset focused on de-risking early oncological diagnostic technologies.\n"
+        "- Regulatory Framework: Systems designed to align with strict molecular diagnostic compliance standards.\n"
+        "- IP Protection: All assay sequences, processing heuristics, and algebraic metrics are protected under Industrial Trade Secret laws.\n"
+        "- Hardware Synergy: Software uncouplings fully validated for portable execution."
+    )
+
+st.markdown('', unsafe_allow_html=True)
+st.stop() # Detención hermética de la Landing Page
+
+# 🖥️ CAPA 2: DESPLIEGUE DEL SOFTWARE OPERATIVO (ACCESO CONCEDIDO POST-AUTENTICACIÓN)
+else:
+    # 1. CABECERA SUPERIOR DEL SOFTWARE CON AVATAR ACTIVO Y CONTROL DE LOG OUT
+    st.markdown('', unsafe_allow_html=True)
+    c_logo, c_info, c_logout, c_avatar = st.columns([1, 2, 0.8, 0.4])
+    
+    with c_logo:
+        st.markdown("#### 🧬 Methylox™ Clinical Portal")
+        
+    with c_info:
+        st.caption("👨‍⚕️ Autenticado: Investigador Clínico Autorizado | Licencia Médica Activa")
+        
+    with c_logout:
+        if st.button("🔒 Log Out / Exit", key="btn_logout_master_final"):
+            st.session_state['access_granted'] = False
+            st.rerun()
+            
+    with c_avatar:
+        st.markdown('DR', unsafe_allow_html=True)
+        
+    st.markdown('', unsafe_allow_html=True)
+    # El código de tu foto en la línea 144 (# 1. Menú Superior Institucional) arrancará de manera limpia justo aquí abajo...
+ 
     # 1. Menú Superior Institucional
     col_logo, col_menu, col_btn_top = st.columns([1, 2, 1])
     with col_logo:
