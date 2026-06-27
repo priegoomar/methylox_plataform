@@ -1,76 +1,152 @@
 ﻿import streamlit as st
-import sqlite3
-import pandas as pd
+import os
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import motores # Tu archivo de lógica de negocio backend
+import pandas as pd
+import plotly.graph_objects as go
+import motores # Tu motor validado de la Fase 2
+
 # ==============================================================================
-# 🔑 MEDTECH AUTHENTICATION CONTROL & PREMIUM THEME
+# 🎨 LANDING PAGE PREMIUM INSTITUCIONAL (EDICIÓN CALIBRADA DE-RIESGO)
 # ==============================================================================
 if 'access_granted' not in st.session_state:
     st.session_state['access_granted'] = False
 
 st.markdown("""
 <style>
-    .stApp { background-color: #F8FAFC !important; font-family: 'Helvetica Neue', Arial, sans-serif !important; }
-    .landing-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04); border: 1px solid #E2E8F0; margin-top: 20px; }
-    .corporate-title { color: #0F172A; font-size: 42px; font-weight: 800; letter-spacing: -1px; line-height: 1.1; }
-    .corporate-subtitle { color: #475569; font-size: 16px; margin-top: 15px; margin-bottom: 30px; }
-    div.stButton > button:first-child {
-        background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%) !important;
-        color: white !important; border: none !important; padding: 14px 32px !important;
-        font-size: 16px !important; font-weight: 700 !important; border-radius: 12px !important;
-        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3) !important; width: 100% !important; transition: all 0.3s ease !important;
+    /* Contenedor unificado estilo Apple MedTech */
+    .stApp {
+        background-color: #F8FAFC !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     }
-    div.stButton > button:first-child:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 22px rgba(79, 70, 229, 0.4) !important; }
+    .main-canvas {
+        background: white;
+        padding: 50px;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(15, 23, 42, 0.03);
+        border: 1px solid #E2E8F0;
+        margin-top: 10px;
+    }
+    /* Tipografías de Impacto */
+    .hero-title {
+        color: #0F172A;
+        font-size: 44px;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+        margin-bottom: 20px;
+    }
+    .hero-subtitle {
+        color: #475569;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 35px;
+        max-width: 600px;
+    }
+    /* Tarjetas de Características Inferiores */
+    .feature-box {
+        background: #F8FAFC;
+        padding: 24px;
+        border-radius: 16px;
+        border: 1px solid #E2E8F0;
+        text-align: center;
+        min-height: 160px;
+    }
+    .feature-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0F172A;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .feature-desc {
+        font-size: 12px;
+        color: #64748B;
+        line-height: 1.4;
+    }
+    /* Botón Empezar / Explorar Premium */
+    div.stButton > button:first-child {
+        background: linear-gradient(135deg, #1E3A8A 0%, #0D9488 100%) !important;
+        color: white !important; border: none !important; padding: 12px 28px !important;
+        font-size: 14px !important; font-weight: 700 !important; border-radius: 10px !important;
+        transition: all 0.3s ease !important;
+    }
+    div.stButton > button:first-child:hover {
+        transform: translateY(-1px) !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# 🚪 SI EL USUARIO NO HA DADO CLIC, MUESTRA LA LANDING PAGE CON EL ADN
+# 🚪 PANTALLA DE BIENVENIDA (LANDING PAGE)
 if not st.session_state['access_granted']:
+    # Ocultar barra lateral en la Landing Page
     st.markdown("<style>[data-testid='stSidebar'] {display: none !important;}</style>", unsafe_allow_html=True)
-    import numpy as np
-    import plotly.graph_objects as go
     
-    col_left, col_right = st.columns([1.1, 0.9], gap="large")
+    st.markdown('<div class="main-canvas">', unsafe_allow_html=True)
     
-    with col_left:
-        st.markdown('<div class="landing-card">', unsafe_allow_html=True)
-        st.write("🧬 **Methylox™** | Epigenetic AI Platform")
-        st.write("##")
-        st.markdown('<p class="corporate-title">AI-Powered Epigenetic Intelligence for Early Cancer Detection</p>', unsafe_allow_html=True)
-        st.markdown('<p class="corporate-subtitle">Advanced epigenetic analysis platform for precise early-stage detection through liquid biopsy and methylation profiling cascades.</p>', unsafe_allow_html=True)
+    # 1. Menú Superior Institucional
+    col_logo, col_menu, col_btn_top = st.columns([1, 2, 1])
+    with col_logo:
+        st.markdown("### 🧬 Methylox™")
+    with col_menu:
+        st.markdown("<p style='font-size: 14px; color: #1E293B; font-weight: 500; text-align: center; margin-top: 8px;'>Plataforma &bull; Tecnología &bull; Soluciones &bull; Sobre nosotros</p>", unsafe_allow_html=True)
+    with col_btn_top:
+        if st.button("Empezar", key="btn_top_empezar"):
+            st.session_state['access_granted'] = True
+            st.rerun()
+
+    st.write("##")
+
+    # 2. Cuerpo Central
+    col_hero_left, col_hero_right = st.columns([1.2, 0.8], gap="large")
+    
+    with col_hero_left:
+        st.markdown('<p class="hero-title">Inteligencia Epigenética<br>Impulsada por IA para la<br>Detección Temprana del Cáncer</p>', unsafe_allow_html=True)
+        st.markdown('<p class="hero-subtitle">Advanced epigenetic analysis platform for precise early-stage detection through liquid biopsy and methylation profiling cascades.</p>', unsafe_allow_html=True)
         
-        st.markdown("##### 🔐 Clinical Researcher Authentication")
-        user_id = st.text_input("Enter Researcher Credentials / Patient ID:", value="METH-2026-0X")
-        research_gate = st.checkbox("I authorize the processing of sample matrices under local Secreto Industrial laws.")
-        st.write("#")
-        
-        if st.button("🚀 Get Started / Explore Platform"):
-            if user_id and research_gate:
+        col_act1, col_act2, _ = st.columns([1.3, 1, 1])
+        with col_act1:
+            if st.button("Explorar Plataforma", key="btn_explorar"):
                 st.session_state['access_granted'] = True
                 st.rerun()
-            else:
-                st.warning("Please verify your ID and accept the data authorization protocol.")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-    with col_right:
-        st.markdown('<div class="landing-card" style="text-align: center; padding: 60px 40px;">', unsafe_allow_html=True)
-        st.write("### 🖼️ Molecular Structural Model")
-        st.caption("Target Boundary: Chromosome 21 Epigenetic Cascade Mapping (hg38)")
-                   
-        # Generamos la hélice de ADN en 3D idéntica a tu diseño de la derecha
+        with col_act2:
+            st.markdown('<a href="#" style="text-decoration:none;"><button style="width:100%; background:white; color:#1E293B; border:1px solid #CBD5E1; padding:12px; border-radius:10px; font-weight:600; font-size:14px; cursor:pointer;">☉ Ver Demo</button></a>', unsafe_allow_html=True)
+
+    with col_hero_right:
+        # Hélice molecular interactiva 3D integrada sin recuadros toscos
         z_dna = np.linspace(0, 20, 100)
         fig_dna = go.Figure()
-        fig_dna.add_trace(go.Scatter3d(x=np.sin(z_dna), y=np.cos(z_dna), z=z_dna, mode='markers+lines', marker=dict(size=4, color='#4F46E5'), line=dict(color='#4F46E5', width=2), name="Strand Alpha"))
-        fig_dna.add_trace(go.Scatter3d(x=-np.sin(z_dna), y=-np.cos(z_dna), z=z_dna, mode='markers+lines', marker=dict(size=4, color='#06B6D4'), line=dict(color='#06B6D4', width=2), name="Strand Beta"))
-        fig_dna.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=380, scene=dict(xaxis=dict(visible=False), yaxis=dict(visible=False), zaxis=dict(visible=False), bgcolor='white'))
+        fig_dna.add_trace(go.Scatter3d(x=np.sin(z_dna), y=np.cos(z_dna), z=z_dna, mode='markers+lines', marker=dict(size=3, color='#1E3A8A'), line=dict(color='#1E3A8A', width=1.5), showlegend=False))
+        fig_dna.add_trace(go.Scatter3d(x=-np.sin(z_dna), y=-np.cos(z_dna), z=z_dna, mode='markers+lines', marker=dict(size=3, color='#0D9488'), line=dict(color='#0D9488', width=1.5), showlegend=False))
+        fig_dna.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=340, scene=dict(xaxis=dict(visible=False), yaxis=dict(visible=False), zaxis=dict(visible=False), bgcolor='white'))
         st.plotly_chart(fig_dna, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-    # 🛡️ LOCK ENVIRONMENT: Prevents the background software from rendering prematurely
-    st.stop()
-        
+
+    st.write("##")
+    st.write("---")
+    st.write("##")
+
+    # 3. Las 5 Tarjetas Calibradas Analíticas
+    f1, f2, f3, f4, f5 = st.columns(5, gap="medium")
+    with f1:
+        st.markdown('<div class="feature-box"><p style="font-size:24px; margin:0;">🎯</p><p class="feature-title">Alta Especificidad</p><p class="feature-desc">Optimización Térmica<br>Filtro de Ruido Basal</p></div>', unsafe_allow_html=True)
+    with f2:
+        st.markdown('<div class="feature-box"><p style="font-size:24px; margin:0;">❄️</p><p class="feature-title">Detección Temprana</p><p class="feature-desc">Enfoque Etapa I<br>Señal Molecular ctDNA</p></div>', unsafe_allow_html=True)
+    with f3:
+        st.markdown('<div class="feature-box"><p style="font-size:24px; margin:0;">💧</p><p class="feature-title">Biopsia Líquida</p><p class="feature-desc">Captura Dirigida<br>15 Guías CRISPR Multiplex</p></div>', unsafe_allow_html=True)
+    with f4:
+        st.markdown('<div class="feature-box"><p style="font-size:24px; margin:0;">🧬</p><p class="feature-title">Inteligencia de IA</p><p class="feature-desc">Votación por Concurrencia<br>Algoritmo de Rescate K=2</p></div>', unsafe_allow_html=True)
+    with f5:
+        st.markdown('<div class="feature-box"><p style="font-size:24px; margin:0;">✔️</p><p class="feature-title">Validación Ómica</p><p class="feature-desc">Firma Molecular Sólida<br>Matriz de Datos TCGA-BRCA</p></div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.stop() # Detención estricta para independizar capas
+
+# 🖥️ SOFTWARE CLÍNICO OPERATIVO (ACCESO CONCEDIDO POST-CLICK)
+else:
+    if st.sidebar.button("🔒 Salir de Plataforma / Log Out"):
+        st.session_state['access_granted'] = False
+        st.rerun()
+
+    # Aquí continúa todo tu código de Dashboard Matrix intacto
 # 🖥️ IF ACCESS IS GRANTED, THE COMPOTATIONAL BACKEND ACTIVATES
 else:
 
