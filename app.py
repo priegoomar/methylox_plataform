@@ -29,6 +29,7 @@ st.markdown("""
 
 # 🚪 SI EL USUARIO NO HA DADO CLIC, MUESTRA LA LANDING PAGE CON EL ADN
 if not st.session_state['access_granted']:
+        st.markdown("<style>#MainMenu, footer, [data-testid='stSidebar'] {display: none;}</style>", unsafe_allow_html=True)
     import numpy as np
     import plotly.graph_objects as go
     
