@@ -67,8 +67,8 @@ if not st.session_state['access_granted']:
         fig_dna.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=380, scene=dict(xaxis=dict(visible=False), yaxis=dict(visible=False), zaxis=dict(visible=False), bgcolor='white'))
         st.plotly_chart(fig_dna, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
-
 st.stop()
+
 # Forzar a Matplotlib/Seaborn residual a usar la paleta unificada de la marca
 sns.set_theme(style="white")
 plt.rcParams["text.color"] = "#0F172A"
