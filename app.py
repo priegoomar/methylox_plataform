@@ -140,16 +140,6 @@ if not st.session_state['access_granted']:
     st.markdown('</div>', unsafe_allow_html=True)
     st.stop() # Detención estricta para independizar capas
 
-# 🖥️ SOFTWARE CLÍNICO OPERATIVO (ACCESO CONCEDIDO POST-CLICK)
-else:
-    if st.sidebar.button("🔒 Salir de Plataforma / Log Out"):
-        st.session_state['access_granted'] = False
-        st.rerun()
-
-    # Aquí continúa todo tu código de Dashboard Matrix intacto
-# 🖥️ IF ACCESS IS GRANTED, THE COMPOTATIONAL BACKEND ACTIVATES
-else:
-
     # Forzar a Matplotlib/Seaborn residual a usar la paleta unificada de la marca
     sns.set_theme(style="white")
     plt.rcParams["text.color"] = "#0F172A"
