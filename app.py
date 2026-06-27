@@ -58,8 +58,7 @@ if not st.session_state['access_granted']:
     with col_right:
         st.markdown('<div class="landing-card" style="text-align: center; padding: 60px 40px;">', unsafe_allow_html=True)
         st.write("### 🖼️ Molecular Structural Model")
-        st.caption("Target Boundary: Chromosome 21 Epigenetic Cascade Mapping (hg38)")
-        
+        st.caption("Target Boundary: Chromosome 21 Epigenetic Cascade Mapping (hg38)"
         # Generamos la hélice de ADN en 3D idéntica a tu diseño de la derecha
         z_dna = np.linspace(0, 20, 100)
         fig_dna = go.Figure()
@@ -68,6 +67,9 @@ if not st.session_state['access_granted']:
         fig_dna.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=380, scene=dict(xaxis=dict(visible=False), yaxis=dict(visible=False), zaxis=dict(visible=False), bgcolor='white'))
         st.plotly_chart(fig_dna, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
+    # 🛡️ LOCK ENVIRONMENT: Prevents the background software from rendering prematurely
+    st.stop()
+        
 # 🖥️ IF ACCESS IS GRANTED, THE COMPOTATIONAL BACKEND ACTIVATES
 else:
 
