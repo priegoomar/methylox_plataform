@@ -238,33 +238,28 @@ with tab_about:
         "- IP Protection: All assay sequences, processing heuristics, and algebraic metrics are protected under Industrial Trade Secret laws.\n"
         "- Hardware Synergy: Software uncouplings fully validated for portable execution."
     )
-
-st.markdown('', unsafe_allow_html=True)
-st.stop() # Detención hermética de la Landing Page
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.stop() # Sella de forma hermética la Landing Page fuera de las pestañas
 
 # 🖥️ CAPA 2: DESPLIEGUE DEL SOFTWARE OPERATIVO (ACCESO CONCEDIDO POST-AUTENTICACIÓN)
-else:
-    # 1. CABECERA SUPERIOR DEL SOFTWARE CON AVATAR ACTIVO Y CONTROL DE LOG OUT
-    st.markdown('', unsafe_allow_html=True)
-    c_logo, c_info, c_logout, c_avatar = st.columns([1, 2, 0.8, 0.4])
-    
-    with c_logo:
-        st.markdown("#### 🧬 Methylox™ Clinical Portal")
-        
-    with c_info:
-        st.caption("👨‍⚕️ Autenticado: Investigador Clínico Autorizado | Licencia Médica Activa")
-        
-    with c_logout:
-        if st.button("🔒 Log Out / Exit", key="btn_logout_master_final"):
-            st.session_state['access_granted'] = False
-            st.rerun()
-            
-    with c_avatar:
-        st.markdown('DR', unsafe_allow_html=True)
-        
-    st.markdown('', unsafe_allow_html=True)
-    # El código de tu foto en la línea 144 (# 1. Menú Superior Institucional) arrancará de manera limpia justo aquí abajo...
- 
+st.markdown('<div class="premium-canvas" style="padding: 20px 40px; margin-bottom: 20px;">', unsafe_allow_html=True)
+c_logo, c_info, c_logout, c_avatar = st.columns([1, 2, 0.8, 0.4])
+with c_logo:
+    st.markdown("#### 🧬 Methylox™ Clinical Portal")
+with c_info:
+    st.caption("👨‍⚕️ Autenticado: Investigador Clínico Autorizado | Licencia Médica Activa")
+with c_logout:
+    if st.button("🔒 Log Out / Exit", key="btn_logout_master_final"):
+        st.session_state['access_granted'] = False
+        st.rerun()
+with c_avatar:
+    st.markdown('<div class="profile-circle-btn" title="Profile Active">DR</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
+
+# # El código de tu foto en la línea 144 (# 1. Menú Superior Institucional) arrancará de manera limpia justo aquí abajo...
+# 1. Menú Superior Institucional
+col_logo, col_menu, col_btn_top = st.columns([1, 2, 1])
+
     # 1. Menú Superior Institucional
     col_logo, col_menu, col_btn_top = st.columns([1, 2, 1])
     with col_logo:
