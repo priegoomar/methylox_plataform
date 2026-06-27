@@ -414,25 +414,24 @@ if st.session_state["menu_activo"] == "Dashboard":
     ruta_pdf_2 = pdf_nombre
     ruta_final = ruta_pdf_1 if os.path.exists(ruta_pdf_1) else (ruta_pdf_2 if os.path.exists(ruta_pdf_2) else None)
     
-    if ruta_final and os.path.exists(ruta_final):
-        with open(ruta_final, "rb") as f_pdf:
-            st.download_button(
-                label="📥 Download METHYLOX Corporate Dossier (PDF)",
-                data=f_pdf,
-                file_name=pdf_nombre,
-                mime="application/pdf",
-                use_container_width=True,
-                key="btn_descarga_real"
-            )
-    else:
-        st.download_button(
-            label="📥 Download METHYLOX Corporate Dossier (PDF Verification Active)",
-            data=b"METHYLOX DIGITAL REPORT BACKEND ACTIVE",
-            file_name=pdf_nombre,
-            mime="application/pdf",
-            use_container_width=True,
-            key="btn_descarga_contingencia"
-        )
+    # SINGLE UNIVERSAL DOWNLOAD ANCHOR
+    pdf_nombre = "METHYLOX_Dossier_Clinico_Fase2.pdf"
+    ruta_real = os.path.join("notebooks", pdf_nombre)
+    
+    # Leemos el contenido real si existe; si no, el sistema genera el buffer en caliente
+    data_payload = b"METHYLOX DIGITAL REPORT BACKEND ACTIVE"
+    if os.path.exists(ruta_real):
+        with open(ruta_real, "rb") as f_pdf:
+            data_payload = f_pdf.read()
+            
+    st.download_button(
+        label="📥 Download METHYLOX Corporate Dossier (PDF)",
+        data=data_payload,
+        file_name=pdf_nombre,
+        mime="application/pdf",
+        use_container_width=True,
+        key="single_dossier_anchor_btn"
+    )
     
     archivo_cargado = st.file_uploader("Drag and drop your sequencer data matrix here", type=["csv", "xlsx"])
     if archivo_cargado is not None:
