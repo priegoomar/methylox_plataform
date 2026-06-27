@@ -169,7 +169,6 @@ if not st.session_state['access_granted']:
         # Ilustración Médica Real de tu Boceto (ADN HD)
         st.image("https://pixabay.com", caption="Methylox™ Molecular Targeting Array Model (Protected Layout)", use_container_width=True)
 
-        
         # ℹ️ SECCIÓN INFORMATIVA DETALLADA CON LA OPCIÓN 3 DE ALTO IMPACTO
         st.markdown("""
         <div class="medtech-canvas" style="margin-top:15px; padding:20px; background:#F8FAFC !important; border-color:#E2E8F0;">
