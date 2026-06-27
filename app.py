@@ -201,7 +201,7 @@ st.markdown("<div style='background: #FFFFFF; padding: 20px 40px; border-radius:
 if st.sidebar.button("Salir de Plataforma / Log Out", key="btn_logout_master_toshiba"):
     st.session_state['access_granted'] = False
     st.rerun()
-Methylox™ Prototyping Portal Acceso Concedido: Prototipo Técnico CalibradoDR""", unsafe_allow_html=True)
+Methylox Prototyping Portal Acceso Concedido: Prototipo Técnico CalibradoDR""", unsafe_allow_html=True)
 
 if st.sidebar.button("🔒 Salir de Plataforma / Log Out", key="btn_logout_master_toshiba"):
     st.session_state['access_granted'] = False
