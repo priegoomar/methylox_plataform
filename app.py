@@ -55,13 +55,12 @@ st.markdown("""
         color: #64748B;
         line-height: 1.4;
     }
-import streamlit as st
-import os
-import numpy as np
-import pandas as pd
-import plotly.graph_objects as go
-import motores # Tu motor validado de la Fase 2
+</style>
+""", unsafe_allow_html=True)
 
+# 🔑 MEDTECH AUTHENTICATION CONTROL
+if 'access_granted' not in st.session_state:
+    st.session_state['access_granted'] = False
 # ==============================================================================
 # 🎨 LANDING PAGE PREMIUM INSTITUCIONAL (EDICIÓN CALIBRADA DE-RIESGO)
 # ==============================================================================
