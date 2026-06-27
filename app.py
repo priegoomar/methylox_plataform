@@ -167,11 +167,8 @@ if not st.session_state['access_granted']:
 
     with col_right_panel:
         # Ilustración Médica Real de tu Boceto (ADN HD)
-        st.image(
-            "https://unsplash.com",
-            caption="Methylox™ Molecular Targeting Array Model (Protected Layout)",
-            use_container_width=True
-        )
+        st.image("https://pixabay.com", caption="Methylox™ Molecular Targeting Array Model (Protected Layout)", use_container_width=True)
+
         
         # ℹ️ SECCIÓN INFORMATIVA DETALLADA CON LA OPCIÓN 3 DE ALTO IMPACTO
         st.markdown("""
