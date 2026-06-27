@@ -5,7 +5,77 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import motores # Tu archivo de lógica de negocio backend
+# ==============================================================================
+# 🔑 MEDTECH AUTHENTICATION CONTROL & PREMIUM THEME
+# ==============================================================================
+if 'access_granted' not in st.session_state:
+    st.session_state['access_granted'] = False
 
+st.markdown("""
+<style>
+    .stApp { background-color: #F8FAFC !important; font-family: 'Helvetica Neue', Arial, sans-serif !important; }
+    .landing-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04); border: 1px solid #E2E8F0; margin-top: 20px; }
+    .corporate-title { color: #0F172A; font-size: 42px; font-weight: 800; letter-spacing: -1px; line-height: 1.1; }
+    .corporate-subtitle { color: #475569; font-size: 16px; margin-top: 15px; margin-bottom: 30px; }
+    div.stButton > button:first-child {
+        background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%) !important;
+        color: white !important; border: none !important; padding: 14px 32px !important;
+        font-size: 16px !important; font-weight: 700 !important; border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3) !important; width: 100% !important; transition: all 0.3s ease !important;
+    }
+    div.stButton > button:first-child:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 22px rgba(79, 70, 229, 0.4) !important; }
+</style>
+""", unsafe_allow_html=True)
+
+# 🚪 SI EL USUARIO NO HA DADO CLIC, MUESTRA LA LANDING PAGE CON EL ADN
+if not st.session_state['access_granted']:
+    import numpy as np
+    import plotly.graph_objects as go
+    
+    col_left, col_right = st.columns([1.1, 0.9], gap="large")
+    
+    with col_left:
+        st.markdown('<div class="landing-card">', unsafe_allow_html=True)
+        st.write("🧬 **Methylox™** | Epigenetic AI Platform")
+        st.write("##")
+        st.markdown('<p class="corporate-title">AI-Powered Epigenetic Intelligence for Early Cancer Detection</p>', unsafe_allow_html=True)
+        st.markdown('<p class="corporate-subtitle">Advanced epigenetic analysis platform for precise early-stage detection through liquid biopsy and methylation profiling cascades.</p>', unsafe_allow_html=True)
+        
+        st.markdown("##### 🔐 Clinical Researcher Authentication")
+        user_id = st.text_input("Enter Researcher Credentials / Patient ID:", value="METH-2026-0X")
+        research_gate = st.checkbox("I authorize the processing of sample matrices under local Secreto Industrial laws.")
+        st.write("#")
+        
+        if st.button("🚀 Get Started / Explore Platform"):
+            if user_id and research_gate:
+                st.session_state['access_granted'] = True
+                st.rerun()
+            else:
+                st.warning("Please verify your ID and accept the data authorization protocol.")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+    with col_right:
+        st.markdown('<div class="landing-card" style="text-align: center; padding: 60px 40px;">', unsafe_allow_html=True)
+        st.write("### 🖼️ Molecular Structural Model")
+        st.caption("Target Boundary: Chromosome 21 Epigenetic Cascade Mapping (hg38)")
+        
+        # Generamos la hélice de ADN en 3D idéntica a tu diseño de la derecha
+        z_dna = np.linspace(0, 20, 100)
+        fig_dna = go.Figure()
+        fig_dna.add_trace(go.Scatter3d(x=np.sin(z_dna), y=np.cos(z_dna), z=z_dna, mode='markers+lines', marker=dict(size=4, color='#4F46E5'), line=dict(color='#4F46E5', width=2), name="Strand Alpha"))
+        fig_dna.add_trace(go.Scatter3d(x=-np.sin(z_dna), y=-np.cos(z_dna), z=z_dna, mode='markers+lines', marker=dict(size=4, color='#06B6D4'), line=dict(color='#06B6D4', width=2), name="Strand Beta"))
+        fig_dna.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=380, scene=dict(xaxis=dict(visible=False), yaxis=dict(visible=False), zaxis=dict(visible=False), bgcolor='white'))
+        st.plotly_chart(fig_dna, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# 🖥️ SI YA DIÓ CLIC, SE ACTIVA TODO TU CÓDIGO ACTUAL INTACTO
+else:
+    # Agregamos un botón discreto en tu barra lateral para poder cerrar sesión si quieres volver a la Landing Page
+    if st.sidebar.button("🔒 Log Out / Exit Portal"):
+        st.session_state['access_granted'] = False
+        st.rerun()
+        
+    # AQUÍ DEBAJO EMPIEZA TODO TU CÓDIGO VIEJO DE SIEMPRE (No toques nada de lo que sigue en tu archivo)
 # =====================================================================
 # 1. NÚCLEO DE IDENTIDAD VISUAL: BIOTECH CLINICAL MINIMALISM (CLARO PREMIUM)
 # =====================================================================
