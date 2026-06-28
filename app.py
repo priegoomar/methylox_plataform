@@ -148,9 +148,9 @@ st.sidebar.markdown("""
 
 st.sidebar.markdown("<p style='font-size: 10px; color: #94A3B8; font-weight: 500;'>© 2026 MethylOx™</p>", unsafe_allow_html=True)
     
-    import pandas as pd
-    import numpy as np
-    import plotly.graph_objects as go
+import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
 
     st.write("---")
     st.markdown("### 📊 Cohort Density Mapping & Patient Positioning")
