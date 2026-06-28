@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 if "menu_active" not in st.session_state:
     st.session_state["menu_active"] = "Dashboard"
-if st.session_state["menu_activo"] == "Dashboard":
+if st.session_state["menu_active"] == "Dashboard":
    
     # Carga de la lona panorámica
     st.image("1000199352.png", use_container_width=True, output_format="PNG")
