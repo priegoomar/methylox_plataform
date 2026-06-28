@@ -2,7 +2,8 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-
+if "menu_active" not in st.session_state:
+    st.session_state["menu_active"] = "Dashboard"
 if st.session_state["menu_activo"] == "Dashboard":
    
     # Carga de la lona panorámica
