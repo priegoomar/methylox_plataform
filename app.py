@@ -106,15 +106,16 @@ st.sidebar.write("##")
 if nav_selection == "Dashboard Matrix":
     st.sidebar.markdown('<p style="font-size:11px; font-weight:700; color:#0F172A; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;">Biomarcadores en Ejecución</p>', unsafe_allow_html=True)
     
-    # Sliders Ómicos Multiplex reales acoplados al Backend
-    ct_dna_val = st.sidebar.slider("Concentración ctDNA Real (ng/mL)", 0.0100, 0.8000, 0.2500, 0.0100, format="%.4f")
-    slider_cpeb4 = st.sidebar.slider("CPEB4 (Gen Ancla Oncológico)", 0.0, 1.0, 0.45)
-    slider_bcl2 = st.sidebar.slider("BCL2 (Densidad Promotora)", 0.0, 1.0, 0.62)
-    slider_tp53 = st.sidebar.slider("TP53 (Región de Supresión)", 0.0, 1.0, 0.18)
-
-    # Lógica Computacional Real: Ponderación de tasas de metilación (Beta-values)
+    # VALORES ÓMICOS EN LÍNEA BASE PROTEGIDOS EN EL BACKEND (COMPLETAMENTE INVISIBLES)
+    ct_dna_val = 0.2500
+    slider_cpeb4 = 0.45
+    slider_bcl2 = 0.62
+    slider_tp53 = 0.18
+    
+    # Lógica Computacional Interna Segura: Ponderación de tasas de metilación (Beta-values)
     beta1 = min(ct_dna_val * 2.82 * (slider_cpeb4 + 0.5), 1.0)
     beta2 = min(ct_dna_val * 0.42 * (slider_bcl2 + 0.5), 1.0)
+
 else:
     # Valores por defecto para evitar errores en el resto del código al cambiar de pestaña
     ct_dna_val, slider_cpeb4, slider_bcl2, slider_tp53 = 0.2500, 0.45, 0.62, 0.18
