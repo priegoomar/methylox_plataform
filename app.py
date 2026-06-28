@@ -338,3 +338,37 @@ elif nav_selection == "System Settings":
     st.title("📈 Clinical Reports Dashboard")
     st.info("Sección en desarrollo clínico secundario.")
     st.markdown("</div>", unsafe_allow_html=True)
+# ==============================================================================
+# 🎛️ RENDERIZADO DINÁMICO DE ÁREAS SEGÚN LA SELECCIÓN LATERAL
+# ==============================================================================
+
+if nav_selection == "Dashboard Matrix":
+    st.write("##")
+
+elif nav_selection == "Samples Database":
+    # 📋 ÁREA 2: BASE DE DATOS DE MUESTRAS
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">📋 METHYLOX™ PERMANENT CLINICAL DATABASE</p>', unsafe_allow_html=True)
+    st.info("Accediendo al repositorio centralizado... Registros indexados en tiempo real.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif nav_selection == "AI Analysis Hub":
+    # ⚙️ ÁREA 3: COMPLEMENTO DE INTELIGENCIA ARTIFICIAL
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">⚙️ AI EPIGENETIC ANALYSIS ENGINE</p>', unsafe_allow_html=True)
+    st.caption("Matriz de alineación molecular y procesamiento de descriptores ómicos en la nube.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif nav_selection == "Clinical Reports":
+    # 📑 ÁREA 4: DOSSIER Y REPORTES EXPEDIDOS
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">📑 REPORTING & DE-RISK DOSSIER LOG</p>', unsafe_allow_html=True)
+    st.success("Módulo de exportación analítica listo. Dossier Técnico disponible para descarga.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif nav_selection == "System Settings":
+    # 🛠️ ÁREA 5: CONFIGURACIÓN AVANZADA
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">🛠️ PLATFORM SECURITY & PARAMETERS</p>', unsafe_allow_html=True)
+    st.warning("Área restringida. Protocolos de encriptación y llaves maestras cifradas.")
+    st.markdown('</div>', unsafe_allow_html=True)
