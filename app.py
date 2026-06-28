@@ -213,7 +213,7 @@ fig_cohort.update_layout(
 )
 
     # Desplegamos el gráfico interactivo de Plotly que reemplaza las barras feas
-    st.plotly_chart(fig_cohort, use_container_width=True)
+st.plotly_chart(fig_cohort, use_container_width=True)
     
     st.markdown("<p style='font-size: 11px; color: #7f8c8d; text-align: center;'>⚠️ Digital Epigenetic Signature Mapping: Real-time tracking of sample hypermethylation cascades over validated clinical boundaries.</p>", unsafe_allow_html=True)
 
