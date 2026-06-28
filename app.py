@@ -166,15 +166,15 @@ tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
     # Creamos el objeto gráfico interactivo con Plotly (Aspecto premium de grado médico)
     fig_cohort = go.Figure()
 
-    # 🟢 Capa 1: Curva de Población Sana Reference Control
-    fig_cohort.add_trace(go.Scatter(
-        x=x_axis, y=healthy_density,
-        mode='lines',
-        name='Healthy Reference Control (TCGA)',
-        line=dict(color='#2ecc71', width=3),
-        fill='tozeroy',
-        fillcolor='rgba(46, 204, 113, 0.15)'
-    ))
+# 🟢 Capa 1: Curva de Población Sana Reference Control
+fig_cohort.add_trace(go.Scatter(
+    x=x_axis, y=healthy_density,
+    mode='lines',
+    name='Healthy Reference Control (TCGA)',
+    line=dict(color='#2ecc71', width=3),
+    fill='tozeroy',
+    fillcolor='rgba(46, 204, 113, 0.15)'
+))
 
     # 🔵 Capa 2: Curva de Población Enferma Oncological Target
     fig_cohort.add_trace(go.Scatter(
