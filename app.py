@@ -221,58 +221,58 @@ st.markdown("<p style='font-size: 11px; color: #7f8c8d; text-align: center;'>⚠
     # 📥 DOWNLOAD EXECUTIVE CLINICAL REPORT (96.00% DE-RISK MODEL)
     # ==============================================================================
 st.write("---")
-    st.markdown("### 📄 Institutional Document Download")
-    st.caption("Obtain the uncompromised clinical validation dossier matching your Toshiba pre-wetlab analytics.")
-    
-    pdf_nombre = "METHYLOX_Dossier_Clinico_Fase2.pdf"
-    ruta_pdf_1 = os.path.join("notebooks", pdf_nombre)
-    ruta_pdf_2 = pdf_nombre
-    ruta_final = ruta_pdf_1 if os.path.exists(ruta_pdf_1) else (ruta_pdf_2 if os.path.exists(ruta_pdf_2) else None)
-    
-    # SINGLE UNIVERSAL DOWNLOAD ANCHOR
-    pdf_nombre = "METHYLOX_Dossier_Clinico_Fase2.pdf"
-    ruta_real = os.path.join("notebooks", pdf_nombre)
-    
-    # Leemos el contenido real si existe; si no, el sistema genera el buffer en caliente
-    data_payload = b"METHYLOX DIGITAL REPORT BACKEND ACTIVE"
-    if os.path.exists(ruta_real):
-        with open(ruta_real, "rb") as f_pdf:
-            data_payload = f_pdf.read()
+st.markdown("### 📄 Institutional Document Download")
+st.caption("Obtain the uncompromised clinical validation dossier matching your Toshiba pre-wetlab analytics.")
+
+pdf_nombre = "METHYLOX_Dossier_Clinico_Fase2.pdf"
+ruta_pdf_1 = os.path.join("notebooks", pdf_nombre)
+ruta_pdf_2 = pdf_nombre
+ruta_final = ruta_pdf_1 if os.path.exists(ruta_pdf_1) else (ruta_pdf_2 if os.path.exists(ruta_pdf_2) else None)
+
+# SINGLE UNIVERSAL DOWNLOAD ANCHOR
+pdf_nombre = "METHYLOX_Dossier_Clinico_Fase2.pdf"
+ruta_real = os.path.join("notebooks", pdf_nombre)
+
+# Leemos el contenido real si existe; si no, el sistema genera el buffer en caliente
+data_payload = b"METHYLOX DIGITAL REPORT BACKEND ACTIVE"
+if os.path.exists(ruta_real):
+    with open(ruta_real, "rb") as f_pdf:
+        data_payload = f_pdf.read()
+        
+st.download_button(
+    label="📥 Download METHYLOX Corporate Dossier (PDF)",
+    data=data_payload,
+    file_name=pdf_nombre,
+    mime="application/pdf",
+    use_container_width=True,
+    key="single_dossier_anchor_btn"
+)
+
+archivo_cargado = st.file_uploader("Drag and drop your sequencer data matrix here", type=["csv", "xlsx"])
+if archivo_cargado is not None:
+    try:
+        if archivo_cargado.name.endswith('.csv'): df_bulk = pd.read_csv(archivo_cargado)
+        else: df_bulk = pd.read_excel(archivo_cargado)
             
-    st.download_button(
-        label="📥 Download METHYLOX Corporate Dossier (PDF)",
-        data=data_payload,
-        file_name=pdf_nombre,
-        mime="application/pdf",
-        use_container_width=True,
-        key="single_dossier_anchor_btn"
-    )
-    
-    archivo_cargado = st.file_uploader("Drag and drop your sequencer data matrix here", type=["csv", "xlsx"])
-    if archivo_cargado is not None:
-        try:
-            if archivo_cargado.name.endswith('.csv'): df_bulk = pd.read_csv(archivo_cargado)
-            else: df_bulk = pd.read_excel(archivo_cargado)
-                
-            columnas_requeridas = ['Patient Identifier', 'Chronological Age', 'ctDNA Concentration']
-            if all(col in df_bulk.columns for col in columnas_requeridas):
-                st.success(f"🧬 Pipeline Active: {len(df_bulk)} samples parsed from file.")
-                if st.button("🚀 Execute Bulk Processing & Secure to Database", use_container_width=True):
-                    registros_exitosos = 0
-                    for _, fila in df_bulk.iterrows():
-                        p_id = str(fila['Patient Identifier'])
-                        p_age = int(fila['Chronological Age'])
-                        p_score = float(fila['ctDNA Concentration'])
-                        res = motores.procesar_diagnostico_clinico(p_id, p_age, p_score)
-                        estatus = motores.registrar_paciente_db(p_id, p_age, p_score, res)
-                        if estatus == "Éxito": registros_exitosos += 1
-                    st.toast(f"💾 Storage secured: {registros_exitosos} records added.", icon="✅")
-            else:
-                st.error("❌ Schema Mismatch: Missing required data columns.")
-        except Exception as e:
-            st.error(f"Error parsing file: {e}")
-            
-    st.markdown('</div>', unsafe_allow_html=True)
+        columnas_requeridas = ['Patient Identifier', 'Chronological Age', 'ctDNA Concentration']
+        if all(col in df_bulk.columns for col in columnas_requeridas):
+            st.success(f"🧬 Pipeline Active: {len(df_bulk)} samples parsed from file.")
+            if st.button("🚀 Execute Bulk Processing & Secure to Database", use_container_width=True):
+                registros_exitosos = 0
+                for _, fila in df_bulk.iterrows():
+                    p_id = str(fila['Patient Identifier'])
+                    p_age = int(fila['Chronological Age'])
+                    p_score = float(fila['ctDNA Concentration'])
+                    res = motores.procesar_diagnostico_clinico(p_id, p_age, p_score)
+                    estatus = motores.registrar_paciente_db(p_id, p_age, p_score, res)
+                    if estatus == "Éxito": registros_exitosos += 1
+                st.toast(f"💾 Storage secured: {registros_exitosos} records added.", icon="✅")
+        else:
+            st.error("❌ Schema Mismatch: Missing required data columns.")
+    except Exception as e:
+        st.error(f"Error parsing file: {e}")
+        
+st.markdown('</div>', unsafe_allow_html=True)
 
 # =====================================================================
 # 5. SAMPLES DATABASE (TABLAS INTERACTIVAS CON INDEXADOR Y AUDITORÍA)
