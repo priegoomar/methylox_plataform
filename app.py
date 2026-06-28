@@ -187,30 +187,30 @@ fig_cohort.add_trace(go.Scatter(
 ))
 
     # Capa 3: Marcador Dinamico del Paciente Actual (Corregido)
-    patient_y_pos = np.exp(-((g1 - 0.45) ** 2) / (2 * 0.15 ** 2)) if g1 > 0.2 else np.exp(-((g1 - 0.05) ** 2) / (2 * 0.03 ** 2))
+patient_y_pos = np.exp(-((g1 - 0.45) ** 2) / (2 * 0.15 ** 2)) if g1 > 0.2 else np.exp(-((g1 - 0.05) ** 2) / (2 * 0.03 ** 2))
+
+fig_cohort.add_trace(go.Scatter(
+    x=[g1], y=[patient_y_pos],
+    mode='markers+text',
+    name='Current Patient Marker',
+    marker=dict(color='#e74c3c', size=14, symbol='diamond', line=dict(color='white', width=2)),
+    text=["🎯 Current Patient"],
+    textposition="top center",
+    textfont=dict(family="Arial", size=12, color="#e74c3c")
+))
     
-    fig_cohort.add_trace(go.Scatter(
-        x=[g1], y=[patient_y_pos],
-        mode='markers+text',
-        name='Current Patient Marker',
-        marker=dict(color='#e74c3c', size=14, symbol='diamond', line=dict(color='white', width=2)),
-        text=["🎯 Current Patient"],
-        textposition="top center",
-        textfont=dict(family="Arial", size=12, color="#e74c3c")
-    ))
-        
-    # Configuración estética del layout (Colores oscuros/claros limpios, sin rejillas feas)
-    fig_cohort.update_layout(
-        xaxis_title="Biomarker Methylation Intensity (Beta Value Range: 0.0 - 1.0)",
-        yaxis_title="Population Density Vector",
-        margin=dict(l=20, r=20, t=20, b=20),
-        height=380,
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        xaxis=dict(showgrid=True, gridcolor='#f1f1f1', range=[0, 0.8]),
-        yaxis=dict(showgrid=False, showticklabels=False)
-    )
+# Configuración estética del layout (Colores oscuros/claros limpios, sin rejillas feas)
+fig_cohort.update_layout(
+    xaxis_title="Biomarker Methylation Intensity (Beta Value Range: 0.0 - 1.0)",
+    yaxis_title="Population Density Vector",
+    margin=dict(l=20, r=20, t=20, b=20),
+    height=380,
+    plot_bgcolor='white',
+    paper_bgcolor='white',
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    xaxis=dict(showgrid=True, gridcolor='#f1f1f1', range=[0, 0.8]),
+    yaxis=dict(showgrid=False, showticklabels=False)
+)
 
     # Desplegamos el gráfico interactivo de Plotly que reemplaza las barras feas
     st.plotly_chart(fig_cohort, use_container_width=True)
