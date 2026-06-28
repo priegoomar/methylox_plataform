@@ -156,12 +156,12 @@ st.write("---")
 st.markdown("### 📊 Cohort Density Mapping & Patient Positioning")
 st.caption("This interactive model projects the current patient's biomarker signal against the verified distribution curves of the TCGA-BRCA international reference dataset.")
 
-    # Generamos curvas reales de densidad matemática simulando el dataset TCGA de 1.82 GB
-    x_axis = np.linspace(0.0, 1.0, 100)
-    # Distribución de población sana (Metilación baja centrada en 0.05)
-    healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
-    # Distribución de población tumoral Stage I (Metilación alta centrada en 0.45)
-    tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
+# Generamos curvas reales de densidad matemática simulando el dataset TCGA de 1.82 GB
+x_axis = np.linspace(0.0, 1.0, 100)
+# Distribución de población sana (Metilación baja centrada en 0.05)
+healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
+# Distribución de población tumoral Stage I (Metilación alta centrada en 0.45)
+tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
 
     # Creamos el objeto gráfico interactivo con Plotly (Aspecto premium de grado médico)
     fig_cohort = go.Figure()
