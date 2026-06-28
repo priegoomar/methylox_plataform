@@ -220,7 +220,7 @@ st.markdown("<p style='font-size: 11px; color: #7f8c8d; text-align: center;'>⚠
     # ==============================================================================
     # 📥 DOWNLOAD EXECUTIVE CLINICAL REPORT (96.00% DE-RISK MODEL)
     # ==============================================================================
-    st.write("---")
+st.write("---")
     st.markdown("### 📄 Institutional Document Download")
     st.caption("Obtain the uncompromised clinical validation dossier matching your Toshiba pre-wetlab analytics.")
     
