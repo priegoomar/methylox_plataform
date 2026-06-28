@@ -81,6 +81,73 @@ if st.session_state["menu_active"] == "Dashboard":
     # ==============================================================================
     # 📊 REAL-TIME POPULATION ANALYTICS OVERVIEW (DYNAMIC GRAPHICS)
     # ==============================================================================
+    # ==============================================================================
+# 🖥️ MÓDULO INTERFAZ LATERAL ORIGINAL (FIEL A TU CAPTURA DE PANTALLA)
+# ==============================================================================
+st.sidebar.markdown("""
+<div style="padding: 10px 0px;">
+    <h3 style="margin: 0; color: #0F172A; font-weight: 900; font-size: 20px; tracking: -0.5px;">MethylOx™</h3>
+    <p style="margin: 0; color: #64748B; font-size: 11px; font-weight: 500; tracking: 0.5px; text-transform: uppercase;">Epigenetic AI Platform</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.sidebar.write("##")
+
+# Reconstrucción exacta de tus 5 botones de navegación premium
+nav_selection = st.sidebar.radio(
+    "Navegación del Sistema",
+    ["Dashboard Matrix", "Samples Database", "AI Analysis Hub", "Clinical Reports", "System Settings"],
+    label_visibility="collapsed"
+)
+
+st.sidebar.write("##")
+
+# 📊 SLIDERS DE BIOMARCADORES (Se acoplan bajo la primera pestaña "Dashboard Matrix")
+if nav_selection == "Dashboard Matrix":
+    st.sidebar.markdown('<p style="font-size:11px; font-weight:700; color:#0F172A; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;">Biomarcadores en Ejecución</p>', unsafe_allow_html=True)
+    
+    # Sliders Ómicos Multiplex reales acoplados al Backend
+    ct_dna_val = st.sidebar.slider("Concentración ctDNA Real (ng/mL)", 0.0100, 0.8000, 0.2500, 0.0100, format="%.4f")
+    slider_cpeb4 = st.sidebar.slider("CPEB4 (Gen Ancla Oncológico)", 0.0, 1.0, 0.45)
+    slider_bcl2 = st.sidebar.slider("BCL2 (Densidad Promotora)", 0.0, 1.0, 0.62)
+    slider_tp53 = st.sidebar.slider("TP53 (Región de Supresión)", 0.0, 1.0, 0.18)
+
+    # Lógica Computacional Real: Ponderación de tasas de metilación (Beta-values)
+    beta1 = min(ct_dna_val * 2.82 * (slider_cpeb4 + 0.5), 1.0)
+    beta2 = min(ct_dna_val * 0.42 * (slider_bcl2 + 0.5), 1.0)
+else:
+    # Valores por defecto para evitar errores en el resto del código al cambiar de pestaña
+    ct_dna_val, slider_cpeb4, slider_bcl2, slider_tp53 = 0.2500, 0.45, 0.62, 0.18
+    beta1, beta2 = 0.3500, 0.1200
+
+# 🌊 DETALLE INFERIOR: TU INDICADOR ANIMADO DE OPERACIÓN (DE TU CAPTURA)
+st.sidebar.markdown("---")
+st.sidebar.markdown("""
+<div style="padding: 5px 0px;">
+    <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>
+    <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+        <span style="height: 8px; width: 8px; background-color: #0D9488; border-radius: 50%; display: inline-block;"></span>
+        <span style="font-size: 12px; font-weight: 600; color: #0F172A;">Core Engine Processing...</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# Tu osciloscopio animado en cian neón nativo por código
+st.sidebar.markdown("""
+<div style="margin-top: 10px; margin-bottom: 20px; opacity: 0.85;">
+    <svg viewBox="0 0 100 20" width="100%" height="25" xmlns="http://w3.org">
+        <path d="M0,10 Q10,0 20,10 T40,10 T60,10 T80,10 T100,10" fill="none" stroke="#0096C7" stroke-width="2">
+            <animate attributeName="d" dur="3s" repeatCount="indefinite"
+                values="M0,10 Q10,0 20,10 T40,10 T60,10 T80,10 T100,10;
+                        M0,10 Q10,20 20,10 T40,10 T60,0 T80,10 T100,10;
+                        M0,10 Q10,0 20,10 T40,10 T60,10 T80,10 T100,10" />
+        </path>
+    </svg>
+</div>
+""", unsafe_allow_html=True)
+
+st.sidebar.markdown("<p style='font-size: 10px; color: #94A3B8; font-weight: 500;'>© 2026 MethylOx™</p>", unsafe_allow_html=True)
+    
     import pandas as pd
     import numpy as np
     import plotly.graph_objects as go
