@@ -319,7 +319,7 @@ if nav_selection == "samples Database":
 
 # =====================================================================
 # 7. SYSTEM SETTINGS (DIAGNÓSTICO DEL CORE BACKEND)
-elif st.session_state["menu_activo"] == "Settings":
+elif nav_selection == "System Settings":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.title("⚙️ Engineering Core & Backend Diagnostics")
     st.markdown("---")
