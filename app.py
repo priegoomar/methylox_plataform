@@ -163,8 +163,8 @@ healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
 # Distribución de población tumoral Stage I (Metilación alta centrada en 0.45)
 tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
 
-    # Creamos el objeto gráfico interactivo con Plotly (Aspecto premium de grado médico)
-    fig_cohort = go.Figure()
+# Creamos el objeto gráfico interactivo con Plotly (Aspecto premium de grado médico)
+fig_cohort = go.Figure()
 
 # 🟢 Capa 1: Curva de Población Sana Reference Control
 fig_cohort.add_trace(go.Scatter(
