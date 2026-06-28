@@ -333,7 +333,7 @@ elif nav_selection == "System Settings":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # EVITAR COLAPSOS EN PESTAÑAS SECUNDARIAS
-elif st.session_state["menu_activo"] == "Reports":
+elif nav_selection == "System Settings":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.title("📈 Clinical Reports Dashboard")
     st.info("Sección en desarrollo clínico secundario.")
