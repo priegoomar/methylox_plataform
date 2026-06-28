@@ -319,7 +319,7 @@ if nav_selection == "samples Database":
 
 # =====================================================================
 # 7. SYSTEM SETTINGS (DIAGNÓSTICO DEL CORE BACKEND)
-elif nav_selection == "System Settings":
+elif nav_selection == "Clinical Reports":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.title("⚙️ Engineering Core & Backend Diagnostics")
     st.markdown("---")
