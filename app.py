@@ -307,7 +307,6 @@ if nav_selection == "samples Database":
 # =====================================================================
 # 6. AI ANALYSIS HUB (CONTROL DE CALIDAD NGS BIOLÓGICO)
 # =====================================================================
-elif st.session_state["menu_activo"] == "AI Analysis":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.title("🔬 AI Analysis Hub & Sequencer Validation")
     st.markdown("---")
