@@ -176,15 +176,15 @@ fig_cohort.add_trace(go.Scatter(
     fillcolor='rgba(46, 204, 113, 0.15)'
 ))
 
-    # 🔵 Capa 2: Curva de Población Enferma Oncological Target
-    fig_cohort.add_trace(go.Scatter(
-        x=x_axis, y=tumor_density,
-        mode='lines',
-        name='Oncological Target Cohort (Stage I)',
-        line=dict(color='#3498db', width=3),
-        fill='tozeroy',
-        fillcolor='rgba(52, 152, 219, 0.15)'
-    ))
+# 🔵 Capa 2: Curva de Población Enferma Oncological Target
+fig_cohort.add_trace(go.Scatter(
+    x=x_axis, y=tumor_density,
+    mode='lines',
+    name='Oncological Target Cohort (Stage I)',
+    line=dict(color='#3498db', width=3),
+    fill='tozeroy',
+    fillcolor='rgba(52, 152, 219, 0.15)'
+))
 
     # Capa 3: Marcador Dinamico del Paciente Actual (Corregido)
     patient_y_pos = np.exp(-((g1 - 0.45) ** 2) / (2 * 0.15 ** 2)) if g1 > 0.2 else np.exp(-((g1 - 0.05) ** 2) / (2 * 0.03 ** 2))
