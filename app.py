@@ -152,9 +152,9 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
-    st.write("---")
-    st.markdown("### 📊 Cohort Density Mapping & Patient Positioning")
-    st.caption("This interactive model projects the current patient's biomarker signal against the verified distribution curves of the TCGA-BRCA international reference dataset.")
+st.write("---")
+st.markdown("### 📊 Cohort Density Mapping & Patient Positioning")
+st.caption("This interactive model projects the current patient's biomarker signal against the verified distribution curves of the TCGA-BRCA international reference dataset.")
 
     # Generamos curvas reales de densidad matemática simulando el dataset TCGA de 1.82 GB
     x_axis = np.linspace(0.0, 1.0, 100)
