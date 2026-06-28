@@ -277,7 +277,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # =====================================================================
 # 5. SAMPLES DATABASE (TABLAS INTERACTIVAS CON INDEXADOR Y AUDITORÍA)
 # =====================================================================
-elif st.session_state["menu_activo"] == "Samples":
+elif nav_selection =="samples Database":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.title("🧪 Sample Records & Permanent Database")
     st.markdown("---")
