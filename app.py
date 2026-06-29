@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 # ==============================================================================
-# CONFIGURACIÓN MAESTRA Y ELIMINACIÓN DE ESPACIOS MUERTOS
+# CONFIGURACIÓN MAESTRA Y REDISEÑO DE UI PREMIUM (SIN CÍRCULOS)
 # ==============================================================================
 st.set_page_config(
     page_title="MethylOx™",
@@ -14,10 +14,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilos globales para la barra lateral y fuentes
+# Inyección de CSS Avanzado para reconstrucción visual de la plataforma
 st.markdown("""
 <style>
-    /* 1. Eliminar por completo la cabecera nativa y el espacio muerto superior */
+    /* 1. Fondo general suavizado para que las tarjetas blancas resalten con elegancia */
+    .stApp {
+        background-color: #F8FAFC !important;
+    }
+
+    /* 2. Reset absoluto de cabeceras nativas de Streamlit */
     [data-testid="stHeader"] {
         display: none !important;
         height: 0px !important;
@@ -32,19 +37,70 @@ st.markdown("""
         padding-top: 0rem !important;
     }
     
-    /* 2. BARRA LATERAL (Color Oscuro Corporativo Original) */
+    /* 3. TRANSREFORMA DE LA BARRA LATERAL (Eliminación de círculos y conversión a botones) */
     [data-testid="stSidebar"] {
         background-color: #0B0F19 !important;
         border-right: 1px solid #1E293B;
     }
-    [data-testid="stSidebar"] * {
-        color: #F1F5F9 !important;
+    
+    /* ASESINO DE CÍRCULOS (Esconde el botón de radio nativo) */
+    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] {
+        display: none !important; /* Quita el título del grupo si existiera */
     }
-    [data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p {
-        color: #94A3B8 !important;
+    [data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] {
+        gap: 6px !important; /* Espaciado uniforme entre botones */
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label {
+        background-color: transparent;
+        border-radius: 8px !important;
+        padding: 10px 14px !important;
+        margin: 0px !important;
+        transition: all 0.2s ease-in-out;
+        width: 100% !important;
+        cursor: pointer !important;
+    }
+    /* Ocultar el círculo interno y el borde del radio button nativo */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label div[data-testid="stMarkdownContainer"]::before {
+        display: none !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label div:first-child {
+        display: none !important; /* Elimina físicamente el círculo de la pantalla */
     }
     
-    /* 3. BLINDAJE DEL BANNER */
+    /* Estilo del texto dentro de las nuevas pestañas del menú */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label p {
+        color: #94A3B8 !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
+        margin: 0px !important;
+    }
+    
+    /* Efecto Hover (Al pasar el mouse por encima de un botón) */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+        background-color: rgba(255, 255, 255, 0.04) !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover p {
+        color: #FFFFFF !important;
+    }
+    
+    /* Efecto Seleccionado (La pestaña activa del sistema) */
+    [data-testid="stSidebar"] [data-testid="stRadio"] div[data-checked="true"] label {
+        background-color: #1E293B !important;
+        border-left: 4px solid #38BDF8 !important; /* Línea de acento digital azul */
+        border-radius: 0px 8px 8px 0px !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] div[data-checked="true"] label p {
+        color: #38BDF8 !important; /* Texto azul brillante cuando está activo */
+        font-weight: 700 !important;
+    }
+    
+    /* Sliders de la barra lateral */
+    [data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p {
+        color: #94A3B8 !important;
+        font-size: 12px !important;
+    }
+
+    /* 4. BLINDAJE E INTEGRACIÓN DEL BANNER */
     button[title="View fullscreen"] {
         visibility: hidden !important;
         display: none !important;
@@ -52,9 +108,33 @@ st.markdown("""
     [data-testid="stImage"] img {
         pointer-events: none !important;
         user-select: none !important;
+        border-radius: 0px 0px 12px 12px !important; /* Redondeado inferior para integrarse al layout */
     }
 
-    /* 4. Estilo para las Tarjetas de las Pestañas Secundarias */
+    /* 5. REFINE DE LOS CONTENEDORES NATIVOS (TARJETAS PRESET) */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+        margin-top: 15px !important;
+        padding: 6px !important;
+    }
+
+    /* 6. PULIDO DE BOTONES DE ACCIÓN */
+    div.stButton > button:first-child {
+        background-color: #0284C7 !important;
+        border: none !important;
+        color: white !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        transition: background-color 0.2s;
+    }
+    div.stButton > button:first-child:hover {
+        background-color: #0369A1 !important;
+    }
+
+    /* Estilo para las Pestañas Secundarias en HTML Puro */
     .executive-card {
         background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
@@ -62,7 +142,7 @@ st.markdown("""
         padding: 24px;
         margin-top: 15px;
         margin-bottom: 20px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -75,7 +155,7 @@ buffer_pdf.write(b"%PDF-1.5\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<</Type/Catalog/Pages 2
 pdf_data = buffer_pdf.getvalue()
 
 # ==============================================================================
-# BARRA LATERAL (DISEÑO PREMIUM ORIGINAL)
+# BARRA LATERAL (CON BRANDING Y MENÚ PREMIUM AUTOMÁTICO)
 # ==============================================================================
 st.sidebar.markdown("""
 <div style="padding: 10px 0px; border-bottom: 1px solid #1E293B; margin-bottom: 20px;">
@@ -93,14 +173,14 @@ nav_selection = st.sidebar.radio(
 st.sidebar.write("##")
 
 if nav_selection == "Dashboard Matrix":
-    st.sidebar.markdown('<p style="font-size:11px; font-weight:700; color:#94A3B8 !important; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;">Monitor de Canales Activos</p>', unsafe_allow_html=True)
+    st.sidebar.markdown('<p style="font-size:11px; font-weight:700; color:#475569 !important; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; padding-left:14px;">Monitor de Canales Activos</p>', unsafe_allow_html=True)
     slider_ch1 = st.sidebar.slider("Canal Ómico CH-01", 0.0, 1.0, 0.45)
     slider_ch2 = st.sidebar.slider("Canal Ómico CH-02", 0.0, 1.0, 0.62)
     slider_ch3 = st.sidebar.slider("Canal Ómico CH-03", 0.0, 1.0, 0.18)
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
-<div style="padding: 5px 0px;">
+<div style="padding: 5px 14px;">
     <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>
     <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
         <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>
@@ -113,7 +193,7 @@ st.sidebar.markdown("""
 # CUERPO DE CONTENIDO PRINCIPAL
 # ==============================================================================
 
-# Banner estático superior
+# Banner estático superior con esquinas redondeadas integradas por CSS
 st.image("1000199352.png", use_container_width=True, output_format="PNG")
 
 # --- CONTROL DE LOGICA DE PESTAÑAS ---
@@ -121,9 +201,8 @@ if nav_selection == "Dashboard Matrix":
     
     col_izquierda, col_derecha = st.columns([12, 12], gap="large")
     
-    # ---- COLUMNA IZQUIERDA: CONTENEDOR NATIVO SEGURO ----
+    # ---- COLUMNA IZQUIERDA ----
     with col_izquierda:
-        # st.container(border=True) crea la tarjeta perfecta sin bugs visuales
         with st.container(border=True):
             st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-top:5px; margin-bottom:15px;">📝 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
             
@@ -146,10 +225,10 @@ if nav_selection == "Dashboard Matrix":
                     g6 = st.slider("Sonda Multiplex Alpha-06", 0.0, 1.0, 0.01, step=0.01)
 
             st.write("##")
-            if st.button("Calcular Dictamen Clínico Multiplex", use_container_width=True, type="primary"):
+            if st.button("Calcular Dictamen Clínico Multiplex", use_container_width=True):
                 st.info("Procesando matriz molecular de manera encriptada y segura...")
 
-    # ---- COLUMNA DERECHA: CONTENEDOR NATIVO SEGURO ----
+    # ---- COLUMNA DERECHA ----
     with col_derecha:
         with st.container(border=True):
             st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-top:5px; margin-bottom:15px;">📊 Cohort Density Mapping & Patient Positioning</p>', unsafe_allow_html=True)
@@ -160,12 +239,12 @@ if nav_selection == "Dashboard Matrix":
 
             fig_cohort = go.Figure()
             fig_cohort.add_trace(go.Scatter(
-                x=x_axis, y=healthy_density, mode='lines', name='Healthy Reference Control',
-                line=dict(color='#0284C7', width=2.5), fill='tozeroy', fillcolor='rgba(2, 132, 199, 0.04)'
+                x=x_axis, y=healthy_density, mode='lines', name='Healthy Control',
+                line=dict(color='#0284C7', width=2.5), fill='tozeroy', fillcolor='rgba(2, 132, 199, 0.02)'
             ))
             fig_cohort.add_trace(go.Scatter(
-                x=x_axis, y=tumor_density, mode='lines', name='Oncological Target Cohort',
-                line=dict(color='#E11D48', width=2.5), fill='tozeroy', fillcolor='rgba(225, 29, 72, 0.04)'
+                x=x_axis, y=tumor_density, mode='lines', name='Oncological Cohort',
+                line=dict(color='#F43F5E', width=2.5), fill='tozeroy', fillcolor='rgba(244, 63, 94, 0.02)'
             ))
 
             fig_cohort.update_layout(
@@ -188,7 +267,7 @@ if nav_selection == "Dashboard Matrix":
                 use_container_width=True
             )
 
-# --- PESTAÑAS SECUNDARIAS (HTML LIMPIO Y AISLADO) ---
+# --- PESTAÑAS SECUNDARIAS (HTML PERFECCIONADO) ---
 elif nav_selection == "Samples Database":
     st.markdown("""
     <div class="executive-card">
