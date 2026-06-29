@@ -410,7 +410,7 @@ Marca de Tiempo de Registro: {datos_caso['Timestamp']}
 
 --------------------------------======================================
 AVISO LEGAL: Prototipo computacional restringido a experimentación académica.
-Protegido bajo Secreto Industrial.  2026 MethylOx Oncology."""
+Protegido bajo Secreto Industrial.  2026 MethylOx Oncology.
 
         st.write("##")
         pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.txt"
