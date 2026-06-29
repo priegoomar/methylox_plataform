@@ -413,7 +413,7 @@ elif menu == "System Settings" and token_hospital == "ROOT-INTERNAL":
     pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
     
         # El botón de Streamlit ahora descarga un PDF legítimo de-riesgo
-        st.download_button(
+    st.download_button(
             label=f"📥 Download Official PDF Dossier for {paciente_seleccionado}",
             data=pdf_output,
             file_name=pdf_nombre,
