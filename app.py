@@ -192,6 +192,7 @@ patient_y_pos = np.exp(-((g1 - 0.45) ** 2) / (2 * 0.15 ** 2)) if g1 > 0.2 else n
 
 fig_cohort.add_trace(go.Scatter(
     x=[g1], y=[patient_y_pos],
+    
     mode='markers+text',
     name='Current Patient Marker',
     marker=dict(color='#e74c3c', size=14, symbol='diamond', line=dict(color='white', width=2)),
@@ -304,20 +305,41 @@ if nav_selection == "samples Database":
         st.warning("Database layout empty or initializing...")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# =====================================================================
-# 6. AI ANALYSIS HUB (CONTROL DE CALIDAD NGS BIOLÓGICO)
-# =====================================================================
+# ==============================================================================
+# 🎛️ RENDERIZADO DINÁMICO DE ÁREAS SEGÚN LA SELECCIÓN LATERAL
+# ==============================================================================
+
+if nav_selection == "Dashboard Matrix":
+    st.write("##")
+
+elif nav_selection == "Samples Database":
+    # 📋 ÁREA 2: BASE DE DATOS DE MUESTRAS
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.title("🔬 AI Analysis Hub & Sequencer Validation")
-    st.markdown("---")
-    col_qc1, col_qc2, col_qc3 = st.columns(3)
-    with col_qc1: st.metric(label="🧬 Bisulfite Conversion Rate", value="99.8%", delta="🟢 Optimal (>99.5%)")
-    with col_qc2: st.metric(label="📊 Mean Sequencing Depth", value="15,420x", delta="🟢 Certified Target")
-    with col_qc3: st.metric(label="🧪 Sample Purity Score", value="1.84", delta="🟢 Pure DNA Range")
-    st.markdown("<br><p style='font-size:13px; color:#1E40AF; font-weight:600;'>✅ RUN VALIDATION STATUS: VALID ASSAY. AI core prediction authorized.</p>", unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">📋 METHYLOX™ PERMANENT CLINICAL DATABASE</p>', unsafe_allow_html=True)
+    st.info("Accediendo al repositorio centralizado... Registros indexados en tiempo real.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# =====================================================================
+elif nav_selection == "AI Analysis Hub":
+    # ⚙️ ÁREA 3: COMPLEMENTO DE INTELIGENCIA ARTIFICIAL
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">⚙️ AI EPIGENETIC ANALYSIS ENGINE</p>', unsafe_allow_html=True)
+    st.caption("Matriz de alineación molecular y procesamiento de descriptores ómicos en la nube.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif nav_selection == "Clinical Reports":
+    # 📑 ÁREA 4: DOSSIER Y REPORTES EXPEDIDOS
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">📑 REPORTING & DE-RISK DOSSIER LOG</p>', unsafe_allow_html=True)
+    st.success("Módulo de exportación analítica listo. Dossier Técnico disponible para descarga.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif nav_selection == "System Settings":
+    # 🛠️ ÁREA 5: CONFIGURACIÓN AVANZADA
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<p class="card-heading">🛠️ PLATFORM SECURITY & PARAMETERS</p>', unsafe_allow_html=True)
+    st.warning("Área restringida. Protocolos de encriptación y llaves maestras cifradas.")
+    st.markdown('</div>', unsafe_allow_html=True)
+    
 # 7. SYSTEM SETTINGS (DIAGNÓSTICO DEL CORE BACKEND)
 elif nav_selection == "Clinical Reports":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
