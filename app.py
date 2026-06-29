@@ -357,9 +357,13 @@ elif nav_selection == "AI Analysis Hub" and token_hospital == "ROOT-INTERNAL":
         st.write("---")
         
         col_qc1, col_qc2, col_qc3 = st.columns(3)
-        with col_qc1: st.metric(label="🧬 Bisulfite Conversion Rate", value="99.8%", delta="🟢 Optimal (>99.5%)")
-        with col_qc2: st.metric(label="📊 Mean Sequencing Depth", value="15,420x", delta="🟢 Certified Target")
-        with col_qc3: st.metric(label="🧪 Sample Purity Score", value="1.84", delta="🟢 Pure DNA Range")
+        with col_qc1: 
+            st.metric(label="🧬 Bisulfite Conversion Rate", value="99.8%", delta="Rango Óptimo: >99.5%")
+        with col_qc2: 
+            st.metric(label="📊 Mean Sequencing Depth", value="15,420x", delta="Certificación: >10,000x")
+        with col_qc3: 
+            st.metric(label="🧪 Sample Purity Score", value="1.84", delta="Rango DNA Puro: 1.8 - 2.0")
+
         st.write("##")
         st.info("✅ RUN VALIDATION STATUS: VALID ASSAY. AI Core prediction authorized over clinical boundaries.")
 
