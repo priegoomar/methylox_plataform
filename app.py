@@ -137,7 +137,7 @@ nav_selection = st.session_state.nav_selection
 st.sidebar.write("##")
 
 if nav_selection == "Dashboard Matrix":
-
+    pass
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
 <div style="padding: 5px 10px;">
