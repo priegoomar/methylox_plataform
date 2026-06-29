@@ -25,6 +25,16 @@ st.markdown("""
         color: #0F172A;
     }
     
+    /* BLINDAJE DEL BANNER: Elimina el botón de pantalla completa y bloquea eventos de mouse */
+    button[title="View fullscreen"] {
+        visibility: hidden !important;
+        display: none !important;
+    }
+    [data-testid="stImage"] img {
+        pointer-events: none !important;
+        user-select: none !important;
+    }
+    
     /* Sidebar Estilizado */
     [data-testid="stSidebar"] {
         background-color: #0B0F19 !important;
@@ -116,7 +126,7 @@ st.sidebar.markdown("""
 
 if nav_selection == "Dashboard Matrix":
     
-    # 1. Recuperación del Banner de Lona Original
+    # 1. Renderizado del Banner Original (con el CSS protector activo arriba)
     st.image("1000199352.png", use_container_width=True, output_format="PNG")
     st.write("##")
     
@@ -205,7 +215,7 @@ if nav_selection == "Dashboard Matrix":
         
         st.markdown("<hr style='margin: 20px 0; border:0; border-top:1px solid #E2E8F0;'>", unsafe_allow_html=True)
         
-        # Integración del pipeline de subida masiva e informe institucional en la misma tarjeta limpia
+        # Integración del pipeline de subida masiva e informe institucional
         st.markdown('<p style="font-size:12px; font-weight:700; color:#334155; margin-bottom:8px;">Sequencer File Ingestion</p>', unsafe_allow_html=True)
         archivo_cargado = st.file_uploader("Upload matrices", label_visibility="collapsed", type=["csv", "xlsx"])
         
