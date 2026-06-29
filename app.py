@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 # ==============================================================================
-# CONFIGURACIÓN MAESTRA Y REDISEÑO DE UI PREMIUM (SIN CÍRCULOS)
+# CONFIGURACIÓN MAESTRA Y BLINDAJE DE CONTRASTE RADICAL
 # ==============================================================================
 st.set_page_config(
     page_title="MethylOx™",
@@ -14,15 +14,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Inyección de CSS Avanzado para reconstrucción visual de la plataforma
+# Inyección de CSS Forzado - Contraste Absoluto
 st.markdown("""
 <style>
-    /* 1. Fondo general suavizado para que las tarjetas blancas resalten con elegancia */
+    /* 1. Fondo de la aplicación */
     .stApp {
         background-color: #F8FAFC !important;
     }
 
-    /* 2. Reset absoluto de cabeceras nativas de Streamlit */
+    /* 2. Reset de cabeceras y márgenes superiores */
     [data-testid="stHeader"] {
         display: none !important;
         height: 0px !important;
@@ -37,61 +37,64 @@ st.markdown("""
         padding-top: 0rem !important;
     }
     
-    /* 3. TRANSREFORMA DE LA BARRA LATERAL (Eliminación de círculos y conversión a botones) */
+    /* 3. BARRA LATERAL - FONDO OSCURO */
     [data-testid="stSidebar"] {
         background-color: #0B0F19 !important;
-        border-right: 1px solid #1E293B;
+        border-right: 2px solid #1E293B;
     }
     
-    /* ASESINO DE CÍRCULOS (Esconde el botón de radio nativo) */
+    /* Remover título nativo invisible y ajustar espacio del menú */
     [data-testid="stSidebar"] [data-testid="stWidgetLabel"] {
-        display: none !important; /* Quita el título del grupo si existiera */
-    }
-    [data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] {
-        gap: 6px !important; /* Espaciado uniforme entre botones */
-    }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label {
-        background-color: transparent;
-        border-radius: 8px !important;
-        padding: 10px 14px !important;
-        margin: 0px !important;
-        transition: all 0.2s ease-in-out;
-        width: 100% !important;
-        cursor: pointer !important;
-    }
-    /* Ocultar el círculo interno y el borde del radio button nativo */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label div[data-testid="stMarkdownContainer"]::before {
         display: none !important;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label div:first-child {
-        display: none !important; /* Elimina físicamente el círculo de la pantalla */
+    [data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] {
+        gap: 12px !important; /* Espacio generoso entre bloques */
+        padding: 0px 10px !important;
     }
     
-    /* Estilo del texto dentro de las nuevas pestañas del menú */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label p {
-        color: #94A3B8 !important;
-        font-weight: 500 !important;
-        font-size: 14px !important;
+    /* DISEÑO DE BOTÓN SÓLIDO INACTIVO (MÁXIMA VISIBILIDAD) */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label {
+        background-color: #1E293B !important; /* Bloque gris claro visible sobre fondo negro */
+        border: 1px solid #475569 !important; /* Borde claro definido */
+        border-radius: 8px !important;
+        padding: 14px 18px !important;
         margin: 0px !important;
+        width: 100% !important;
+        cursor: pointer !important;
+        display: block !important;
+        transition: all 0.15s ease-in-out;
     }
     
-    /* Efecto Hover (Al pasar el mouse por encima de un botón) */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
-        background-color: rgba(255, 255, 255, 0.04) !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover p {
-        color: #FFFFFF !important;
+    /* Eliminar el círculo de selección de raíz */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label div:first-child {
+        display: none !important;
     }
     
-    /* Efecto Seleccionado (La pestaña activa del sistema) */
-    [data-testid="stSidebar"] [data-testid="stRadio"] div[data-checked="true"] label {
-        background-color: #1E293B !important;
-        border-left: 4px solid #38BDF8 !important; /* Línea de acento digital azul */
-        border-radius: 0px 8px 8px 0px !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stRadio"] div[data-checked="true"] label p {
-        color: #38BDF8 !important; /* Texto azul brillante cuando está activo */
+    /* SELECTOR PROFUNDO: Fuerza a cualquier texto interno inactivo a ser BLANCO PURO */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label * {
+        color: #FFFFFF !important; 
         font-weight: 700 !important;
+        font-size: 14px !important;
+        text-decoration: none !important;
+    }
+    
+    /* EFECTO HOVER (Al pasar el cursor por encima) */
+    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+        background-color: #334155 !important;
+        border-color: #38BDF8 !important;
+    }
+    
+    /* BOTÓN SELECCIONADO / ACTIVO (ILUMINACIÓN RADICAL) */
+    [data-testid="stSidebar"] [data-testid="stRadio"] div[data-checked="true"] label {
+        background-color: #0284C7 !important; /* Fondo azul rey brillante */
+        border-color: #38BDF8 !important;
+        box-shadow: 0px 4px 12px rgba(2, 132, 199, 0.4) !important;
+    }
+    
+    /* SELECTOR PROFUNDO ACTIVO: Fuerza al texto seleccionado a mantener brillo e idoneidad */
+    [data-testid="stSidebar"] [data-testid="stRadio"] div[data-checked="true"] label * {
+        color: #FFFFFF !important; /* Texto blanco puro sobre el fondo azul brillante */
+        font-weight: 800 !important;
     }
     
     /* Sliders de la barra lateral */
@@ -100,7 +103,7 @@ st.markdown("""
         font-size: 12px !important;
     }
 
-    /* 4. BLINDAJE E INTEGRACIÓN DEL BANNER */
+    /* 4. PROTECCIÓN DEL BANNER */
     button[title="View fullscreen"] {
         visibility: hidden !important;
         display: none !important;
@@ -108,10 +111,10 @@ st.markdown("""
     [data-testid="stImage"] img {
         pointer-events: none !important;
         user-select: none !important;
-        border-radius: 0px 0px 12px 12px !important; /* Redondeado inferior para integrarse al layout */
+        border-radius: 0px 0px 12px 12px !important;
     }
 
-    /* 5. REFINE DE LOS CONTENEDORES NATIVOS (TARJETAS PRESET) */
+    /* 5. TARJETAS DE CONTENIDO PRINCIPAL */
     [data-testid="stVerticalBlockBorderWrapper"] {
         background-color: #FFFFFF !important;
         border: 1px solid #E2E8F0 !important;
@@ -121,20 +124,19 @@ st.markdown("""
         padding: 6px !important;
     }
 
-    /* 6. PULIDO DE BOTONES DE ACCIÓN */
+    /* 6. BOTONES DE ACCIÓN */
     div.stButton > button:first-child {
         background-color: #0284C7 !important;
         border: none !important;
         color: white !important;
         border-radius: 8px !important;
         font-weight: 600 !important;
-        transition: background-color 0.2s;
     }
     div.stButton > button:first-child:hover {
         background-color: #0369A1 !important;
     }
 
-    /* Estilo para las Pestañas Secundarias en HTML Puro */
+    /* Estilo secundario */
     .executive-card {
         background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
@@ -151,14 +153,14 @@ st.markdown("""
 # GENERACIÓN DE BUFFER DE ARCHIVO COMPATIBLE (PDF EN MEMORIA)
 # ==============================================================================
 buffer_pdf = io.BytesIO()
-buffer_pdf.write(b"%PDF-1.5\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n2 0 obj\n<</Type/Pages/Count 1/Kids[3 0 R]>>\nendobj\n3 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>>\nendobj\n4 0 obj\n<</Length 55>>\nstream\nBT\n/F1 12 Tf\n72 712 Td\n(MethylOx Institutional Analytical Dossier - Protected Content) Tj\nET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f\n0000000015 00000 n\n0000000068 00000 n\n0000000120 00000 n\n0000000219 00000 n\ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n326\n%%EOF")
+buffer_pdf.write(b"%PDF-1.5\n%\xe2\xe3\xcf\xd3\n1 0 obj\n< Badger Catalog >\nendobj\n2 0 obj\n<</Type/Pages/Count 1/Kids[3 0 R]>>\nendobj\n3 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>>\nendobj\n4 0 obj\n<</Length 55>>\nstream\nBT\n/F1 12 Tf\n72 712 Td\n(MethylOx Institutional Analytical Dossier - Protected Content) Tj\nET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f\n0000000015 00000 n\n0000000068 00000 n\n0000000120 00000 n\n0000000219 00000 n\ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n326\n%%EOF")
 pdf_data = buffer_pdf.getvalue()
 
 # ==============================================================================
-# BARRA LATERAL (CON BRANDING Y MENÚ PREMIUM AUTOMÁTICO)
+# BARRA LATERAL (BRANDING CORPORATIVO REFORZADO)
 # ==============================================================================
 st.sidebar.markdown("""
-<div style="padding: 10px 0px; border-bottom: 1px solid #1E293B; margin-bottom: 20px;">
+<div style="padding: 10px 10px; border-bottom: 1px solid #1E293B; margin-bottom: 25px;">
     <h3 style="margin: 0; color: #FFFFFF !important; font-weight: 900; font-size: 22px; letter-spacing: -0.5px;">MethylOx™</h3>
     <p style="margin: 0; color: #38BDF8 !important; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Epigenetic AI Platform</p>
 </div>
@@ -173,14 +175,14 @@ nav_selection = st.sidebar.radio(
 st.sidebar.write("##")
 
 if nav_selection == "Dashboard Matrix":
-    st.sidebar.markdown('<p style="font-size:11px; font-weight:700; color:#475569 !important; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; padding-left:14px;">Monitor de Canales Activos</p>', unsafe_allow_html=True)
+    st.sidebar.markdown('<p style="font-size:11px; font-weight:700; color:#64748B !important; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; padding-left:10px;">Monitor de Canales Activos</p>', unsafe_allow_html=True)
     slider_ch1 = st.sidebar.slider("Canal Ómico CH-01", 0.0, 1.0, 0.45)
     slider_ch2 = st.sidebar.slider("Canal Ómico CH-02", 0.0, 1.0, 0.62)
     slider_ch3 = st.sidebar.slider("Canal Ómico CH-03", 0.0, 1.0, 0.18)
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
-<div style="padding: 5px 14px;">
+<div style="padding: 5px 10px;">
     <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>
     <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
         <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>
@@ -190,18 +192,13 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# CUERPO DE CONTENIDO PRINCIPAL
+# CONTENIDO PRINCIPAL
 # ==============================================================================
-
-# Banner estático superior con esquinas redondeadas integradas por CSS
 st.image("1000199352.png", use_container_width=True, output_format="PNG")
 
-# --- CONTROL DE LOGICA DE PESTAÑAS ---
 if nav_selection == "Dashboard Matrix":
-    
     col_izquierda, col_derecha = st.columns([12, 12], gap="large")
     
-    # ---- COLUMNA IZQUIERDA ----
     with col_izquierda:
         with st.container(border=True):
             st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-top:5px; margin-bottom:15px;">📝 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
@@ -228,7 +225,6 @@ if nav_selection == "Dashboard Matrix":
             if st.button("Calcular Dictamen Clínico Multiplex", use_container_width=True):
                 st.info("Procesando matriz molecular de manera encriptada y segura...")
 
-    # ---- COLUMNA DERECHA ----
     with col_derecha:
         with st.container(border=True):
             st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-top:5px; margin-bottom:15px;">📊 Cohort Density Mapping & Patient Positioning</p>', unsafe_allow_html=True)
@@ -267,7 +263,7 @@ if nav_selection == "Dashboard Matrix":
                 use_container_width=True
             )
 
-# --- PESTAÑAS SECUNDARIAS (HTML PERFECCIONADO) ---
+# --- REPOSITORIO DE PESTAÑAS SECUNDARIAS ---
 elif nav_selection == "Samples Database":
     st.markdown("""
     <div class="executive-card">
