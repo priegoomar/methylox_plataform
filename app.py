@@ -350,34 +350,32 @@ elif menu == "Clinical Reports":
         # Jalamos los datos en tiempo real de la memoria de la sesión
         datos_caso = st.session_state["historical_database"][st.session_state["historical_database"]["Patient ID"] == paciente_seleccionado].iloc[-1]
         
-        # 🧪 CONSTRUCCIÓN DEL PDF BINARIO REAL MEDIANTE EL MOTOR FPDF
+           # 🧪 CONSTRUCCIÓN DEL PDF BINARIO REAL CORREGIDO
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", "B", 16)
         
-        # Encabezado institucional premium
         pdf.cell(190, 10, "METHYLOX ONCOLOGY - CLINICAL DOSSIER", ln=True, align="C")
         pdf.set_font("Arial", "", 10)
         pdf.cell(190, 10, f"Generado de manera automatizada - {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align="C")
         pdf.ln(10)
         
-        # Línea de división estética
         pdf.line(10, 32, 200, 32)
         
-        # Bloque de datos médicos estructurados
         pdf.set_font("Arial", "B", 12)
-        pdf.cell(190, 10, "1. IDENTIFICACIÓN DE LA MUESTRA", ln=True)
+        pdf.cell(190, 10, "1. IDENTIFICACION DE LA MUESTRA", ln=True)
         pdf.set_font("Arial", "", 11)
-        pdf.cell(190, 8, f"Patient Identifier (ID): {datos_caso['Patient ID']}", ln=True)
-        pdf.cell(190, 8, f"Chronological Age: {datos_caso['Age (Years)']} Anos", ln=True)
+        pdf.cell(190, 8, f"Identificador del Caso: {datos_caso['Patient ID']}", ln=True)
+        pdf.cell(190, 8, f"Edad Cronologica: {datos_caso['Age (Years)']} Anos", ln=True)
         pdf.ln(5)
         
         pdf.set_font("Arial", "B", 12)
-        pdf.cell(190, 10, "2. ANÁLISIS DE BIOMARCADORES DE BIOPSIA LÍQUIDA", ln=True)
+        pdf.cell(190, 10, "2. ANALISIS DE BIOMARCADORES DE BIOPSIA LIQUIDA", ln=True)
         pdf.set_font("Arial", "", 11)
-        pdf.cell(190, 8, f"Concentracion ctDNA Detectada: {datos_caso['ctDNA (ng/mL)']} ng/mL", ln=True)
-        pdf.cell(190, 8, f"Estatus Epigenetico Determinado por IA: {datos_caso['Clinical Status']}", ln=True)
+        pdf.cell(190, 8, f"Concentracion ctDNA: {datos_caso['ctDNA (ng/mL)']} ng/mL", ln=True)
+        pdf.cell(190, 8, f"Estatus Epigenetico Molecular: {datos_caso['Clinical Status']}", ln=True)
         pdf.ln(15)
+
         
         # Sello de protección de secreto industrial legal
         pdf.set_font("Arial", "I", 9)
