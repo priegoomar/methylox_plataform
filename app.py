@@ -1,5 +1,7 @@
 import io
 import os
+import sqlite3  # <- AGREGADO PARA TU BASE DE DATOS
+from datetime import datetime  # <- AGREGADO PARA LAS MARCAS DE TIEMPO
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -14,7 +16,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilos globales y diseño del Menú de Navegación Custom de Alta Visibilidad
+# Inicializar bases de datos históricas en memoria si no existen
+if "historical_database" not in st.session_state:
+    st.session_state["historical_database"] = pd.DataFrame(columns=['Patient ID', 'Age (Years)', 'ctDNA (ng/mL)', 'Clinical Status', 'Timestamp'])
+
+# Inyección de CSS de Alta Fidelidad para los botones de la barra lateral
 st.markdown("""
 <style>
     /* 1. Fondo de la aplicación */
@@ -43,39 +49,12 @@ st.markdown("""
         border-right: 2px solid #1E293B;
     }
 
-    /* CONTENEDOR DE NUESTROS NUEVOS BOTONES ULTRA-VISIBLES */
+    /* CONTENEDOR DE NUESTROS BOTONES CUSTOM ULTRA-VISIBLES */
     .custom-nav-container {
         display: flex;
         flex-direction: column;
         gap: 12px;
         padding: 0px 10px;
-    }
-
-    /* BOTÓN TOTALMENTE VISIBLE (Gris claro texturizado sobre fondo negro) */
-    .nav-button {
-        display: block !important;
-        background-color: #1E293B !important;
-        border: 1px solid #334155 !important;
-        border-radius: 8px !important;
-        padding: 14px 18px !important;
-        text-align: left !important;
-        text-decoration: none !important;
-        transition: all 0.2s ease-in-out;
-    }
-
-    /* TEXTO INTEGRADO: Letras blancas puras, gruesas y perfectamente legibles */
-    .nav-button span {
-        color: #FFFFFF !important;
-        font-size: 14px !important;
-        font-weight: 700 !important;
-        font-family: system-ui, -apple-system, sans-serif !important;
-    }
-
-    /* EFECTO HOVER: Resalta cuando el usuario pasa el mouse */
-    .nav-button:hover {
-        background-color: #2D3748 !important;
-        border-color: #38BDF8 !important;
-        transform: translateX(2px);
     }
 
     /* Sliders de la barra lateral */
@@ -116,17 +95,6 @@ st.markdown("""
     div.stButton > button:first-child:hover {
         background-color: #0369A1 !important;
     }
-
-    /* Estilo secundario corporativo */
-    .executive-card {
-        background-color: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 24px;
-        margin-top: 15px;
-        margin-bottom: 20px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -147,11 +115,9 @@ st.sidebar.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Lógica del estado de navegación basada en botones nativos estilizados individualmente
 if "nav_selection" not in st.session_state:
     st.session_state.nav_selection = "Dashboard Matrix"
 
-# MENÚ LATERAL EN HTML DE ALTA VISIBILIDAD (Fuerza letras blancas puras e independientes)
 st.sidebar.markdown('<div class="custom-nav-container">', unsafe_allow_html=True)
 
 col_b1 = st.sidebar.button("📊 Dashboard Matrix", use_container_width=True)
@@ -160,7 +126,6 @@ col_b3 = st.sidebar.button("🧠 AI Analysis Hub", use_container_width=True)
 col_b4 = st.sidebar.button("📋 Clinical Reports", use_container_width=True)
 col_b5 = st.sidebar.button("⚙️ System Settings", use_container_width=True)
 
-# Mapeo de clicks para actualizar la página actual
 if col_b1: st.session_state.nav_selection = "Dashboard Matrix"
 if col_b2: st.session_state.nav_selection = "Samples Database"
 if col_b3: st.session_state.nav_selection = "AI Analysis Hub"
@@ -193,7 +158,7 @@ st.sidebar.markdown("""
 # ==============================================================================
 st.image("1000199352.png", use_container_width=True, output_format="PNG")
 
-# Renderizar vistas condicionales según el botón presionado
+# ---- PESTAÑA 1: DASHBOARD MATRIX ----
 if nav_selection == "Dashboard Matrix":
     col_izquierda, col_derecha = st.columns([12, 12], gap="large")
     
@@ -261,38 +226,89 @@ if nav_selection == "Dashboard Matrix":
                 use_container_width=True
             )
 
+# ---- PESTAÑA 2: SAMPLES DATABASE (TU NUEVO CÓDIGO INTEGRADO) ----
 elif nav_selection == "Samples Database":
-    st.markdown("""
-    <div class="executive-card">
-        <h3 style="margin:0; color:#0F172A; font-size:20px;">🗄️ Sample Records & Permanent Database</h3>
-        <hr style="border:0; border-top:1px solid #E2E8F0; margin:15px 0;">
-        <p style="margin:0; color:#64748B; font-size:14px;">Accediendo de forma limpia y directa al repositorio indexado...</p>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<p style="font-size: 18px; font-weight:700; color:#0F172A; margin-top:5px; margin-bottom:2px;">🗄️ Sample Records & Permanent SQLite Database</p>', unsafe_allow_html=True)
+        st.caption("Repositorio centralizado de muestras biológicas indexadas. Se muestran registros de control clínico pre-cargados para fines de auditoría.")
+        
+        # Intentamos abrir la base de datos física
+        conn = sqlite3.connect("methyl_clinic.db")
+        cursor = conn.cursor()
+        try:
+            # Aseguramos la existencia de la tabla en SQLite con marcas de tiempo reales
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS pacientes (
+                    id TEXT PRIMARY KEY,
+                    edad INTEGER,
+                    ctdna REAL,
+                    resultado TEXT,
+                    fecha TEXT
+                )
+            """)
+            
+            # Consultamos si ya existen datos indexados
+            cursor.execute("SELECT COUNT(*) FROM pacientes")
+            if cursor.fetchone()[0] == 0:
+                # Inyectamos 3 muestras de referencia internacional (TCGA)
+                datos_control = [
+                    ("METH-TCGA-BRCA-01", 45, 0.2500, "Low Risk (Baseline)", datetime.now().strftime("%Y-%m-%d %H:%M")),
+                    ("METH-TCGA-BRCA-02", 62, 1.4800, "High Risk (Hypermethylated)", datetime.now().strftime("%Y-%m-%d %H:%M")),
+                    ("METH-TCGA-BRCA-03", 58, 0.1200, "Low Risk (Baseline)", datetime.now().strftime("%Y-%m-%d %H:%M"))
+                ]
+                cursor.executemany("INSERT INTO pacientes VALUES (?, ?, ?, ?, ?)", datos_control)
+                conn.commit()
+                
+            # Leemos los datos consolidados mediante Pandas DataFrame
+            df_pacientes = pd.read_sql_query("SELECT id AS 'Patient ID', edad AS 'Age (Years)', ctdna AS 'ctDNA (ng/mL)', resultado AS 'Clinical Status', fecha AS 'Timestamp' FROM pacientes", conn)
+            conn.close()
+            
+            # Despliegue de los Filtros de Auditoría Rápida interactivos
+            st.write("##")
+            col_s1, col_s2 = st.columns(2)
+            with col_s1:
+                busqueda = st.text_input("🔍 Quick Audit: Search by Patient Identifier", placeholder="Escriba el ID para buscar...")
+            with col_s2:
+                filtro_riesgo = st.selectbox("🎯 Filter by Clinical Status", ["All Records", "High Risk", "Low Risk"])
+            
+            # Ejecución del filtrado dinámico en caliente
+            df_filtrado = df_pacientes.copy()
+            if busqueda:
+                df_filtrado = df_filtrado[df_filtrado['Patient ID'].astype(str).str.contains(busqueda, case=False)]
+            if filtro_riesgo != "All Records":
+                palabra_clave = "High Risk" if filtro_riesgo == "High Risk" else "Low Risk"
+                df_filtrado = df_filtrado[df_filtrado['Clinical Status'].astype(str).str.contains(palabra_clave, case=False)]
+            
+            # Despliegue de la cuadrícula interactiva premium
+            st.write("##")
+            st.dataframe(df_filtrado, use_container_width=True)
+            
+            # Sumamos la bitácora acumulada provisional generada durante el uso del Dashboard central
+            if not st.session_state["historical_database"].empty:
+                st.write("---")
+                st.markdown("<p style='font-size:12px; font-weight:700; color:#475569; text-transform:uppercase;'>📋 Registros de Muestras Indexadas en esta Sesión</p>", unsafe_allow_html=True)
+                st.dataframe(st.session_state["historical_database"], use_container_width=True)
+                
+        except Exception as e:
+            if 'conn' in locals():
+                conn.close()
+            st.warning(f"Inicializando parámetros del sistema clínico... ({e})")
 
+# ---- RESTO DE PESTAÑAS SECUNDARIAS ----
 elif nav_selection == "AI Analysis Hub":
-    st.markdown("""
-    <div class="executive-card">
-        <h3 style="margin:0; color:#0F172A; font-size:20px;">🧠 AI Epigenetic Analysis Engine</h3>
-        <hr style="border:0; border-top:1px solid #E2E8F0; margin:15px 0;">
-        <p style="margin:0; color:#64748B; font-size:14px;">Matriz analítica lista para procesamiento ómico.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<h3 style="margin:0; color:#0F172A; font-size:20px;">🧠 AI Epigenetic Analysis Engine</h3>', unsafe_allow_html=True)
+        st.write("---")
+        st.write("Matriz analítica lista para procesamiento ómico.")
 
 elif nav_selection == "Clinical Reports":
-    st.markdown("""
-    <div class="executive-card">
-        <h3 style="margin:0; color:#0F172A; font-size:20px;">📋 Reporting & De-Risk Dossier Log</h3>
-        <hr style="border:0; border-top:1px solid #E2E8F0; margin:15px 0;">
-        <p style="margin:0; color:#64748B; font-size:14px;">Dossier Clínico anonimizado disponible para descarga institucional.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<h3 style="margin:0; color:#0F172A; font-size:20px;">📋 Reporting & De-Risk Dossier Log</h3>', unsafe_allow_html=True)
+        st.write("---")
+        st.write("Dossier Clínico anonimizado disponible para descarga institucional.")
 
 elif nav_selection == "System Settings":
-    st.markdown("""
-    <div class="executive-card">
-        <h3 style="margin:0; color:#0F172A; font-size:20px;">⚙️ Platform Security & Parameters</h3>
-        <hr style="border:0; border-top:1px solid #E2E8F0; margin:15px 0;">
-        <p style="margin:0; color:#64748B; font-size:14px;">Área de seguridad restringida y encriptación de credenciales.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<h3 style="margin:0; color:#0F172A; font-size:20px;">⚙️ Platform Security & Parameters</h3>', unsafe_allow_html=True)
+        st.write("---")
+        st.write("Área de seguridad restringida y encriptación de credenciales.")
