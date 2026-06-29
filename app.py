@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 # ==============================================================================
-# CONFIGURACIÓN MAESTRA Y ELIMINACIÓN DE LOS CUADROS BLANCOS FANTASMA
+# CONFIGURACIÓN MAESTRA Y ELIMINACIÓN DE ESPACIOS MUERTOS
 # ==============================================================================
 st.set_page_config(
     page_title="MethylOx™",
@@ -14,21 +14,47 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Base Estática CSS: Elimina cabeceras y limpia el layout general
+# Estilos globales para la barra lateral y fuentes
 st.markdown("""
 <style>
-    [data-testid="stHeader"] { display: none !important; height: 0px !important; }
-    [data-testid="stMainBlockContainer"] { padding-top: 0rem !important; }
-    div.block-container { padding-top: 0rem !important; }
+    /* 1. Eliminar por completo la cabecera nativa y el espacio muerto superior */
+    [data-testid="stHeader"] {
+        display: none !important;
+        height: 0px !important;
+    }
+    [data-testid="stMainBlockContainer"] {
+        padding-top: 0rem !important;
+        padding-bottom: 1rem !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+    div.block-container {
+        padding-top: 0rem !important;
+    }
     
-    /* BARRA LATERAL (Color Oscuro Corporativo Original) */
-    [data-testid="stSidebar"] { background-color: #0B0F19 !important; border-right: 1px solid #1E293B; }
-    [data-testid="stSidebar"] * { color: #F1F5F9 !important; }
-    [data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p { color: #94A3B8 !important; }
+    /* 2. BARRA LATERAL (Color Oscuro Corporativo Original) */
+    [data-testid="stSidebar"] {
+        background-color: #0B0F19 !important;
+        border-right: 1px solid #1E293B;
+    }
+    [data-testid="stSidebar"] * {
+        color: #F1F5F9 !important;
+    }
+    [data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p {
+        color: #94A3B8 !important;
+    }
     
-    button[title="View fullscreen"] { visibility: hidden !important; display: none !important; }
-    [data-testid="stImage"] img { pointer-events: none !important; user-select: none !important; }
+    /* 3. BLINDAJE DEL BANNER */
+    button[title="View fullscreen"] {
+        visibility: hidden !important;
+        display: none !important;
+    }
+    [data-testid="stImage"] img {
+        pointer-events: none !important;
+        user-select: none !important;
+    }
 
+    /* 4. Estilo para las Tarjetas de las Pestañas Secundarias */
     .executive-card {
         background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
@@ -40,35 +66,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
-# Interceptor dinámico JavaScript para cuadros fantasma residuales
-st.components.v1.html("""
-<script>
-    const eliminarBloquesFantasmas = () => {
-        const selectores = [
-            '[data-testid="stVerticalBlockBorderWrapper"]',
-            '.stHorizontalBlock div[data-style="vertical"]',
-            '[data-testid="stBlockSpacing"]'
-        ];
-        selectores.forEach(selector => {
-            document.querySelectorAll(selector).forEach(elemento => {
-                if (!elemento.innerText || elemento.innerText.trim() === "") {
-                    elemento.style.backgroundColor = "transparent";
-                    elemento.style.background = "transparent";
-                    elemento.style.border = "none";
-                    elemento.style.boxShadow = "none";
-                    elemento.style.marginTop = "0px";
-                    elemento.style.paddingTop = "0px";
-                    elemento.style.height = "0px";
-                }
-            });
-        });
-    };
-    eliminarBloquesFantasmas();
-    const observer = new MutationObserver(eliminarBloquesFantasmas);
-    observer.observe(window.parent.document.body, { childList: true, subtree: true });
-</script>
-""", height=0, width=0)
 
 # ==============================================================================
 # GENERACIÓN DE BUFFER DE ARCHIVO COMPATIBLE (PDF EN MEMORIA)
@@ -119,80 +116,79 @@ st.sidebar.markdown("""
 # Banner estático superior
 st.image("1000199352.png", use_container_width=True, output_format="PNG")
 
-# --- CADENA LÓGICA DE PESTAÑAS (IF CENTRALIZADO CORREGIDO) ---
+# --- CONTROL DE LOGICA DE PESTAÑAS ---
 if nav_selection == "Dashboard Matrix":
     
     col_izquierda, col_derecha = st.columns([12, 12], gap="large")
     
-    # ---- COLUMNA IZQUIERDA ----
+    # ---- COLUMNA IZQUIERDA: CONTENEDOR NATIVO SEGURO ----
     with col_izquierda:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:15px;">📝 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
-        
-        patient_id = st.text_input("Patient Identifier", placeholder="Ej. METH-2026-0X")
-        patient_age = st.number_input("Chronological Age (Years)", min_value=18, max_value=100, value=45)
-        ctdna_score = st.number_input("ctDNA Concentration (ng/mL)", min_value=0.0, max_value=5.0, value=0.25, format="%.4f")
-        
-        st.write("---")
-        
-        with st.expander("⚙️ Configuración Avanzada: Panel Genómico Multiplex (15 Sondas CRISPR)"):
-            st.caption("Ajuste de niveles moleculares Beta detectados.")
-            col_g1, col_g2 = st.columns(2)
-            with col_g1:
-                g1 = st.slider("Sonda Multiplex Alpha-01", 0.0, 1.0, 0.05, step=0.01)
-                g2 = st.slider("Sonda Multiplex Alpha-02", 0.0, 1.0, 0.01, step=0.01)
-                g3 = st.slider("Sonda Multiplex Alpha-03", 0.0, 1.0, 0.01, step=0.01)
-            with col_g2:
-                g4 = st.slider("Sonda Multiplex Alpha-04", 0.0, 1.0, 0.01, step=0.01)
-                g5 = st.slider("Sonda Multiplex Alpha-05", 0.0, 1.0, 0.01, step=0.01)
-                g6 = st.slider("Sonda Multiplex Alpha-06", 0.0, 1.0, 0.01, step=0.01)
+        # st.container(border=True) crea la tarjeta perfecta sin bugs visuales
+        with st.container(border=True):
+            st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-top:5px; margin-bottom:15px;">📝 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
+            
+            patient_id = st.text_input("Patient Identifier", placeholder="Ej. METH-2026-0X")
+            patient_age = st.number_input("Chronological Age (Years)", min_value=18, max_value=100, value=45)
+            ctdna_score = st.number_input("ctDNA Concentration (ng/mL)", min_value=0.0, max_value=5.0, value=0.25, format="%.4f")
+            
+            st.write("---")
+            
+            with st.expander("⚙️ Configuración Avanzada: Panel Genómico Multiplex (15 Sondas CRISPR)"):
+                st.caption("Ajuste de niveles moleculares Beta detectados.")
+                col_g1, col_g2 = st.columns(2)
+                with col_g1:
+                    g1 = st.slider("Sonda Multiplex Alpha-01", 0.0, 1.0, 0.05, step=0.01)
+                    g2 = st.slider("Sonda Multiplex Alpha-02", 0.0, 1.0, 0.01, step=0.01)
+                    g3 = st.slider("Sonda Multiplex Alpha-03", 0.0, 1.0, 0.01, step=0.01)
+                with col_g2:
+                    g4 = st.slider("Sonda Multiplex Alpha-04", 0.0, 1.0, 0.01, step=0.01)
+                    g5 = st.slider("Sonda Multiplex Alpha-05", 0.0, 1.0, 0.01, step=0.01)
+                    g6 = st.slider("Sonda Multiplex Alpha-06", 0.0, 1.0, 0.01, step=0.01)
 
-        st.write("##")
-        if st.button("Calcular Dictamen Clínico Multiplex", use_container_width=True, type="primary"):
-            st.info("Procesando matriz molecular de manera encriptada y segura...")
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.write("##")
+            if st.button("Calcular Dictamen Clínico Multiplex", use_container_width=True, type="primary"):
+                st.info("Procesando matriz molecular de manera encriptada y segura...")
 
-    # ---- COLUMNA DERECHA ----
+    # ---- COLUMNA DERECHA: CONTENEDOR NATIVO SEGURO ----
     with col_derecha:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:15px;">📊 Cohort Density Mapping & Patient Positioning</p>', unsafe_allow_html=True)
-        
-        x_axis = np.linspace(0.0, 1.0, 100)
-        healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
-        tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
+        with st.container(border=True):
+            st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-top:5px; margin-bottom:15px;">📊 Cohort Density Mapping & Patient Positioning</p>', unsafe_allow_html=True)
+            
+            x_axis = np.linspace(0.0, 1.0, 100)
+            healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
+            tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
 
-        fig_cohort = go.Figure()
-        fig_cohort.add_trace(go.Scatter(
-            x=x_axis, y=healthy_density, mode='lines', name='Healthy Reference Control',
-            line=dict(color='#0284C7', width=2.5), fill='tozeroy', fillcolor='rgba(2, 132, 199, 0.04)'
-        ))
-        fig_cohort.add_trace(go.Scatter(
-            x=x_axis, y=tumor_density, mode='lines', name='Oncological Target Cohort',
-            line=dict(color='#E11D48', width=2.5), fill='tozeroy', fillcolor='rgba(225, 29, 72, 0.04)'
-        ))
+            fig_cohort = go.Figure()
+            fig_cohort.add_trace(go.Scatter(
+                x=x_axis, y=healthy_density, mode='lines', name='Healthy Reference Control',
+                line=dict(color='#0284C7', width=2.5), fill='tozeroy', fillcolor='rgba(2, 132, 199, 0.04)'
+            ))
+            fig_cohort.add_trace(go.Scatter(
+                x=x_axis, y=tumor_density, mode='lines', name='Oncological Target Cohort',
+                line=dict(color='#E11D48', width=2.5), fill='tozeroy', fillcolor='rgba(225, 29, 72, 0.04)'
+            ))
 
-        fig_cohort.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10), height=260, plot_bgcolor='white', paper_bgcolor='white',
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-            xaxis=dict(showgrid=True, gridcolor='#F1F5F9', range=[0, 0.75]), yaxis=dict(showgrid=False, showticklabels=False)
-        )
-        st.plotly_chart(fig_cohort, use_container_width=True)
+            fig_cohort.update_layout(
+                margin=dict(l=10, r=10, t=10, b=10), height=260, plot_bgcolor='white', paper_bgcolor='white',
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+                xaxis=dict(showgrid=True, gridcolor='#F1F5F9', range=[0, 0.75]), yaxis=dict(showgrid=False, showticklabels=False)
+            )
+            st.plotly_chart(fig_cohort, use_container_width=True)
 
-        st.write("---")
-        st.markdown('<p style="font-size: 13px; font-weight:700; color:#0F172A; margin-bottom:5px;">📥 Data Ingestion & Archiving</p>', unsafe_allow_html=True)
-        archivo_cargado = st.file_uploader("Upload sequencer", type=["csv", "xlsx"], label_visibility="collapsed")
-        
-        st.write("##")
-        st.download_button(
-            label="📄 Download Institutional Analytical Dossier (PDF)",
-            data=pdf_data,
-            file_name="METHYLOX_Dossier_Clinico.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.write("---")
+            st.markdown('<p style="font-size: 13px; font-weight:700; color:#0F172A; margin-bottom:5px;">📥 Data Ingestion & Archiving</p>', unsafe_allow_html=True)
+            archivo_cargado = st.file_uploader("Upload sequencer", type=["csv", "xlsx"], label_visibility="collapsed")
+            
+            st.write("##")
+            st.download_button(
+                label="📄 Download Institutional Analytical Dossier (PDF)",
+                data=pdf_data,
+                file_name="METHYLOX_Dossier_Clinico.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
 
-# ---- PESTAÑAS SECUNDARIAS REESTRUCTURADAS SIN ERROR EN EL ENCADENAMIENTO ELIF ----
+# --- PESTAÑAS SECUNDARIAS (HTML LIMPIO Y AISLADO) ---
 elif nav_selection == "Samples Database":
     st.markdown("""
     <div class="executive-card">
