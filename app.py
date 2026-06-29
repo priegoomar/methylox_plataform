@@ -362,7 +362,7 @@ elif nav_selection == "AI Analysis Hub" and token_hospital == "ROOT-INTERNAL":
         with col_qc2: 
             st.metric(label="📊 Mean Sequencing Depth", value="15,420x", delta="Certificación: >10,000x")
         with col_qc3: 
-            st.metric(label="🧪 Sample Purity Score", value="1.84", delta="Rango DNA Puro: 1.8 - 2.0")
+            st.metric(label="🧪 Sample Purity Score", value="1.84", delta="Rango DNA Puro: 1.9 ± 0.1")
 
         st.write("##")
         st.info("✅ RUN VALIDATION STATUS: VALID ASSAY. AI Core prediction authorized over clinical boundaries.")
