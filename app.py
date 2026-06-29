@@ -326,10 +326,7 @@ elif nav_selection == "AI Analysis Hub":
 # ------------------------------------------------------------------------------
 # PESTAÑA 4: CLINICAL REPORTS (RECUPERACIÓN COMPLETA DE DOSSIER PDF DESDE EL LOG)
 # ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-# PESTAÑA 4: CLINICAL REPORTS (GENERADOR AUTOMATIZADO DE PDF REAL)
-# ------------------------------------------------------------------------------
-elif menu == "Clinical Reports":
+elif menu == "Clinical Reports" and token_hospital == "ROOT-INTERNAL":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown('<p class="card-heading">📈 Clinical Reports & Active Search Audit Log</p>', unsafe_allow_html=True)
     st.caption("Consulte las firmas moleculares indexadas y exporte los reportes en formato PDF institucional.")
@@ -347,10 +344,9 @@ elif menu == "Clinical Reports":
         lista_pacientes = st.session_state["historical_database"]["Patient ID"].unique()
         paciente_seleccionado = st.selectbox("Seleccione el ID del Paciente a exportar:", lista_pacientes)
         
-        # Jalamos los datos en tiempo real de la memoria de la sesión
         datos_caso = st.session_state["historical_database"][st.session_state["historical_database"]["Patient ID"] == paciente_seleccionado].iloc[-1]
         
-           # 🧪 CONSTRUCCIÓN DEL PDF BINARIO REAL CORREGIDO
+        # 🧪 CONSTRUCCIÓN DEL PDF BINARIO REAL CORREGIDO
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", "B", 16)
@@ -375,6 +371,34 @@ elif menu == "Clinical Reports":
         pdf.cell(190, 8, f"Concentracion ctDNA: {datos_caso['ctDNA (ng/mL)']} ng/mL", ln=True)
         pdf.cell(190, 8, f"Estatus Epigenetico Molecular: {datos_caso['Clinical Status']}", ln=True)
         pdf.ln(15)
+        
+        pdf.set_font("Arial", "I", 9)
+        pdf.cell(190, 5, "AVISO LEGAL: Prototipo computacional restringido a experimentacion academica.", ln=True, align="C")
+        pdf.cell(190, 5, "Protegido bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True, align="C")
+        
+        pdf_output = pdf.output(dest="S").encode("latin-1")
+        
+        st.write("##")
+        pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
+        
+        st.download_button(
+            label=f"📥 Download Official PDF Dossier for {paciente_seleccionado}",
+            data=pdf_output,
+            file_name=pdf_nombre,
+            mime="application/pdf",
+            use_container_width=True
+        )
+        
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif menu == "System Settings" and token_hospital == "ROOT-INTERNAL":
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown('<div class="card-title">⚙️ Engineering Core & Backend Code Diagnostics</div>', unsafe_allow_html=True)
+    try:
+        with open("motores.py", "r", encoding="utf-8") as file: codigo_backend = file.read()
+        st.code(codigo_backend, language="python")
+    except Exception: st.error("❌ Archivo de algoritmos protegido.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
         
         # Sello de protección de secreto industrial legal
