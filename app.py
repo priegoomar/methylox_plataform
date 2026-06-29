@@ -137,10 +137,6 @@ nav_selection = st.session_state.nav_selection
 st.sidebar.write("##")
 
 if nav_selection == "Dashboard Matrix":
-    st.sidebar.markdown('<p style="font-size:11px; font-weight:700; color:#64748B !important; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; padding-left:10px;">Monitor de Canales Activos</p>', unsafe_allow_html=True)
-    slider_ch1 = st.sidebar.slider("Canal Ómico CH-01", 0.0, 1.0, 0.45)
-    slider_ch2 = st.sidebar.slider("Canal Ómico CH-02", 0.0, 1.0, 0.62)
-    slider_ch3 = st.sidebar.slider("Canal Ómico CH-03", 0.0, 1.0, 0.18)
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
