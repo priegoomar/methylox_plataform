@@ -406,12 +406,12 @@ elif menu == "System Settings" and token_hospital == "ROOT-INTERNAL":
     pdf.cell(190, 5, "AVISO LEGAL: Prototipo computacional restringido a experimentación academica institucional.", ln=True, align="C")
     pdf.cell(190, 5, "Protegido estrictamente bajo Secreto Industrial. Propiedad de METHYLOX™ Oncology.", ln=True, align="C")
         
-        # Guardamos el archivo binario real en memoria intermedia
-        pdf_output = pdf.output(dest="S").encode("latin-1")
-        
-        st.write("##")
-        pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
-        
+    # Guardamos el archivo binario real en memoria intermedia
+    pdf_output = pdf.output(dest="S").encode("latin-1")
+    
+    st.write("##")
+    pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
+    
         # El botón de Streamlit ahora descarga un PDF legítimo de-riesgo
         st.download_button(
             label=f"📥 Download Official PDF Dossier for {paciente_seleccionado}",
