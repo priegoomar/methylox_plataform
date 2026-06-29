@@ -243,7 +243,7 @@ if nav_selection == "Dashboard Matrix":
                 label="📄 Download Institutional Analytical Dossier (PDF)",
                 data=pdf_data,
                 file_name="METHYLOX_Dossier_Clinico.pdf",
-                mime="application/pdf",
+                mime="text/plain"
                 use_container_width=True
             )
 
