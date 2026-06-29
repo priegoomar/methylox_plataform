@@ -1,3 +1,4 @@
+from fpdf import FPDF
 import io
 import os
 import sqlite3  # <- AGREGADO PARA TU BASE DE DATOS
@@ -325,10 +326,13 @@ elif nav_selection == "AI Analysis Hub":
 # ------------------------------------------------------------------------------
 # PESTAÑA 4: CLINICAL REPORTS (RECUPERACIÓN COMPLETA DE DOSSIER PDF DESDE EL LOG)
 # ------------------------------------------------------------------------------
-elif nav_selection == "Clinical Reports":
+# ------------------------------------------------------------------------------
+# PESTAÑA 4: CLINICAL REPORTS (GENERADOR AUTOMATIZADO DE PDF REAL)
+# ------------------------------------------------------------------------------
+elif menu == "Clinical Reports":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('<p class="card-heading"> Clinical Reports & Active Search Audit Log</p>', unsafe_allow_html=True)
-    st.caption("Consulte las firmas moleculares indexadas y recupere los reportes institucionales expedidos.")
+    st.markdown('<p class="card-heading">📈 Clinical Reports & Active Search Audit Log</p>', unsafe_allow_html=True)
+    st.caption("Consulte las firmas moleculares indexadas y exporte los reportes en formato PDF institucional.")
     
     if st.session_state["historical_database"].empty:
         st.info("La bitácora de auditoría acumulada se encuentra vacía. Calcule dictámenes en la pantalla principal para registrar historiales.")
@@ -337,18 +341,66 @@ elif nav_selection == "Clinical Reports":
         st.dataframe(st.session_state["historical_database"], use_container_width=True)
         
         st.write("---")
-        st.markdown("###  Recuperación de Dossier Clínico Institucional")
-        st.caption("Seleccione el Identificador del paciente registrado en la sesión para re-convocar sus lecturas analíticas y descargar el PDF oficial.")
+        st.markdown("### 📄 Exportación de Dossier Clínico Institucional")
+        st.caption("Seleccione el Identificador del paciente para compilar su PDF oficial en tiempo real.")
         
-        # Selector dinámico que jala los ID reales guardados en la memoria de la sesión
         lista_pacientes = st.session_state["historical_database"]["Patient ID"].unique()
         paciente_seleccionado = st.selectbox("Seleccione el ID del Paciente a exportar:", lista_pacientes)
         
-        # Filtramos los datos del caso elegido en absoluto secreto
+        # Jalamos los datos en tiempo real de la memoria de la sesión
         datos_caso = st.session_state["historical_database"][st.session_state["historical_database"]["Patient ID"] == paciente_seleccionado].iloc[-1]
         
-        # Re-armamos el cuerpo del Dossier en caliente con sus variables reales
-        dossier_dinamico = f"""METHYLOX ONCOLOGY - INSTITUTIONAL CLINICAL REPORT
+        # 🧪 CONSTRUCCIÓN DEL PDF BINARIO REAL MEDIANTE EL MOTOR FPDF
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", "B", 16)
+        
+        # Encabezado institucional premium
+        pdf.cell(190, 10, "METHYLOX ONCOLOGY - CLINICAL DOSSIER", ln=True, align="C")
+        pdf.set_font("Arial", "", 10)
+        pdf.cell(190, 10, f"Generado de manera automatizada - {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align="C")
+        pdf.ln(10)
+        
+        # Línea de división estética
+        pdf.line(10, 32, 200, 32)
+        
+        # Bloque de datos médicos estructurados
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(190, 10, "1. IDENTIFICACIÓN DE LA MUESTRA", ln=True)
+        pdf.set_font("Arial", "", 11)
+        pdf.cell(190, 8, f"Patient Identifier (ID): {datos_caso['Patient ID']}", ln=True)
+        pdf.cell(190, 8, f"Chronological Age: {datos_caso['Age (Years)']} Anos", ln=True)
+        pdf.ln(5)
+        
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(190, 10, "2. ANÁLISIS DE BIOMARCADORES DE BIOPSIA LÍQUIDA", ln=True)
+        pdf.set_font("Arial", "", 11)
+        pdf.cell(190, 8, f"Concentracion ctDNA Detectada: {datos_caso['ctDNA (ng/mL)']} ng/mL", ln=True)
+        pdf.cell(190, 8, f"Estatus Epigenetico Determinado por IA: {datos_caso['Clinical Status']}", ln=True)
+        pdf.ln(15)
+        
+        # Sello de protección de secreto industrial legal
+        pdf.set_font("Arial", "I", 9)
+        pdf.cell(190, 5, "AVISO LEGAL: Prototipo computacional restringido a experimentación academica institucional.", ln=True, align="C")
+        pdf.cell(190, 5, "Protegido estrictamente bajo Secreto Industrial. Propiedad de METHYLOX™ Oncology.", ln=True, align="C")
+        
+        # Guardamos el archivo binario real en memoria intermedia
+        pdf_output = pdf.output(dest="S").encode("latin-1")
+        
+        st.write("##")
+        pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
+        
+        # El botón de Streamlit ahora descarga un PDF legítimo de-riesgo
+        st.download_button(
+            label=f"📥 Download Official PDF Dossier for {paciente_seleccionado}",
+            data=pdf_output,
+            file_name=pdf_nombre,
+            mime="application/pdf",
+            use_container_width=True
+        )
+        
+    st.markdown('</div>', unsafe_allow_html=True)
+
 ======================================================================
 Identificador del Caso: {datos_caso['Patient ID']}
 Edad Cronológica: {datos_caso['Age (Years)']} Años
