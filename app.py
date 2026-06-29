@@ -25,6 +25,11 @@ st.markdown("""
         color: #0F172A;
     }
     
+    /* CORRECCIÓN DE RECTÁNGULOS EN BLANCO: Forzar alineación superior uniforme */
+    [data-testid="stVerticalBlock"] {
+        gap: 0rem !important;
+    }
+    
     /* BLINDAJE DEL BANNER: Elimina el botón de pantalla completa y bloquea eventos de mouse */
     button[title="View fullscreen"] {
         visibility: hidden !important;
@@ -50,6 +55,7 @@ st.markdown("""
         border: 1px solid #E2E8F0;
         border-radius: 14px;
         padding: 28px;
+        margin-top: 10px;
         margin-bottom: 24px;
         box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
     }
@@ -70,7 +76,7 @@ st.markdown("""
     .badge-bar {
         display: flex;
         gap: 10px;
-        margin-top: -10px;
+        margin-top: 15px;
         margin-bottom: 28px;
         flex-wrap: wrap;
     }
@@ -121,14 +127,13 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# ROUTING DE COMPONENTES INTERNOS
+# ROUTING DE COMPONENTES INTERNOS COHERENTES
 # ==============================================================================
 
 if nav_selection == "Dashboard Matrix":
     
-    # 1. Renderizado del Banner Original (con el CSS protector activo arriba)
+    # 1. Renderizado del Banner Original Estático
     st.image("1000199352.png", use_container_width=True, output_format="PNG")
-    st.write("##")
     
     # 2. Badges Clínicos de Control Estilizados
     st.markdown("""
@@ -141,11 +146,10 @@ if nav_selection == "Dashboard Matrix":
     </div>
     """, unsafe_allow_html=True)
     
-    # 3. Distribución Bifurcada del Espacio (Métrica Organizada)
+    # 3. Distribución Bifurcada del Espacio
     col_left, col_right = st.columns([11, 13], gap="large")
     
     with col_left:
-        # CONTENEDOR UNO: ENROLAMIENTO Y CONFIGURACIÓN DE MUESTRA
         st.markdown('<div class="biotech-card-container">', unsafe_allow_html=True)
         st.markdown('<div class="section-title">📝 Sample Demographics & Metadata</div>', unsafe_allow_html=True)
         
@@ -180,11 +184,9 @@ if nav_selection == "Dashboard Matrix":
         st.markdown('</div>', unsafe_allow_html=True)
         
     with col_right:
-        # CONTENEDOR DOS: UNIFICADO PARA EVITAR CUADROS FRAGMENTADOS
         st.markdown('<div class="biotech-card-container">', unsafe_allow_html=True)
         st.markdown('<div class="section-title">📊 Cohort Position & Data Ingestion</div>', unsafe_allow_html=True)
         
-        # Generación de la gráfica de distribución poblacional de referencia
         x_axis = np.linspace(0.0, 1.0, 100)
         healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
         tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
@@ -215,7 +217,6 @@ if nav_selection == "Dashboard Matrix":
         
         st.markdown("<hr style='margin: 20px 0; border:0; border-top:1px solid #E2E8F0;'>", unsafe_allow_html=True)
         
-        # Integración del pipeline de subida masiva e informe institucional
         st.markdown('<p style="font-size:12px; font-weight:700; color:#334155; margin-bottom:8px;">Sequencer File Ingestion</p>', unsafe_allow_html=True)
         archivo_cargado = st.file_uploader("Upload matrices", label_visibility="collapsed", type=["csv", "xlsx"])
         
@@ -229,7 +230,7 @@ if nav_selection == "Dashboard Matrix":
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
-# Pestañas secundarias limpias y corporativas
+# PESTAÑAS SECUNDARIAS TOTALMENTE ALINEADAS AL MARGEN SUPERIOR
 elif nav_selection == "Samples Database":
     st.markdown('<div class="biotech-card-container">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🗄️ System Permanent Clinical Database</div>', unsafe_allow_html=True)
