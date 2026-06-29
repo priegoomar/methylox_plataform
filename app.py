@@ -401,7 +401,6 @@ elif menu == "Clinical Reports":
         
     st.markdown('</div>', unsafe_allow_html=True)
 
-======================================================================
 Identificador del Caso: {datos_caso['Patient ID']}
 Edad Cronológica: {datos_caso['Age (Years)']} Años
 Concentración ctDNA: {datos_caso['ctDNA (ng/mL)']} ng/mL
