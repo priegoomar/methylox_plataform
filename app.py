@@ -363,7 +363,7 @@ elif nav_selection == "AI Analysis Hub" and token_hospital == "ROOT-INTERNAL":
         st.write("##")
         st.info("✅ RUN VALIDATION STATUS: VALID ASSAY. AI Core prediction authorized over clinical boundaries.")
 
-# ---- PESTAÑA 4: CLINICAL REPORTS ----
+# ---- PESTAÑA 4: CLINICAL REPORTS (CANDADO DE EXPORTACIÓN REFORZADO) ----
 elif nav_selection == "Clinical Reports" and token_hospital == "ROOT-INTERNAL":
     with st.container(border=True):
         st.markdown('<p style="font-size: 18px; font-weight:700; color:#0F172A; margin-top:5px; margin-bottom:2px;">📈 Clinical Reports & Active Search Audit Log</p>', unsafe_allow_html=True)
@@ -387,7 +387,7 @@ elif nav_selection == "Clinical Reports" and token_hospital == "ROOT-INTERNAL":
             # 🧪 CONSTRUCCIÓN INTERNA DEL PDF BINARIO REAL DE ADOBE COMPILADO CON PERMISOS
             pdf = FPDF()
             pdf.add_page()
-            pdf.set_font("Arial", "B", 16)
+            pdf.set_font("Arial", "B", 12)
            
             pdf.cell(190, 10, "METHYLOX ONCOLOGY - CLINICAL DOSSIER", ln=True, align="C")
             pdf.set_font("Arial", "", 10)
@@ -395,36 +395,37 @@ elif nav_selection == "Clinical Reports" and token_hospital == "ROOT-INTERNAL":
             pdf.ln(10)
            
             pdf.line(10, 32, 200, 32)
-        pdf.set_font("Arial", "B", 12)
-        pdf.cell(190, 10, "1. IDENTIFICACION DE LA MUESTRA", ln=True)
-        pdf.set_font("Arial", "", 11)
-        pdf.cell(190, 8, f"Identificador del Caso: {datos_caso['Patient ID']}", ln=True)
-        pdf.cell(190, 8, f"Edad Cronologica: {datos_caso['Age (Years)']} Anos", ln=True)
-        pdf.ln(5)
-       
-        pdf.set_font("Arial", "B", 12)
-        pdf.cell(190, 10, "2. ANALISIS DE BIOMARCADORES DE BIOPSIA LIQUIDA", ln=True)
-        pdf.set_font("Arial", "", 11)
-        pdf.cell(190, 8, f"Concentracion ctDNA: {datos_caso['ctDNA (ng/mL)']} ng/mL", ln=True)
-        pdf.cell(190, 8, f"Estatus Epigenetico Molecular: {datos_caso['Clinical Status']}", ln=True)
-        pdf.ln(15)
-       
-        pdf.set_font("Arial", "I", 9)
-        pdf.cell(190, 5, "AVISO LEGAL: Prototipo computacional restringido a experimentacion academica.", ln=True, align="C")
-        pdf.cell(190, 5, "Protegido bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True, align="C")
-       
-        pdf_output = pdf.output(dest="S").encode("latin-1")
-       
-        st.write("##")
-        pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
-       
-        st.download_button(
-            label=f"📥 Download Official PDF Dossier for {paciente_seleccionado}",
-            data=pdf_output,
-            file_name=pdf_nombre,
-            mime="application/pdf",
-            use_container_width=True
-        )
+           
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(190, 10, "1. IDENTIFICACION DE LA MUESTRA", ln=True)
+            pdf.set_font("Arial", "", 11)
+            pdf.cell(190, 8, f"Identificador del Caso: {datos_caso['Patient ID']}", ln=True)
+            pdf.cell(190, 8, f"Edad Cronologica: {datos_caso['Age (Years)']} Anos", ln=True)
+            pdf.ln(5)
+           
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(190, 10, "2. ANALISIS DE BIOMARCADORES DE BIOPSIA LIQUIDA", ln=True)
+            pdf.set_font("Arial", "", 11)
+            pdf.cell(190, 8, f"Concentracion ctDNA: {datos_caso['ctDNA (ng/mL)']} ng/mL", ln=True)
+            pdf.cell(190, 8, f"Estatus Epigenetico Molecular: {datos_caso['Clinical Status']}", ln=True)
+            pdf.ln(15)
+           
+            pdf.set_font("Arial", "I", 9)
+            pdf.cell(190, 5, "AVISO LEGAL: Prototipo computacional restringido a experimentacion academica.", ln=True, align="C")
+            pdf.cell(190, 5, "Protegido bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True, align="C")
+           
+            pdf_output = pdf.output()
+           
+            st.write("##")
+            pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
+           
+            st.download_button(
+                label=f"📥 Download Official PDF Dossier for {paciente_seleccionado}",
+                data=pdf_output,
+                file_name=pdf_nombre,
+                mime="application/pdf",
+                use_container_width=True
+            )
 
 # ---- PESTAÑA 5: SYSTEM SETTINGS ----
 elif nav_selection == "System Settings" and token_hospital == "ROOT-INTERNAL":
