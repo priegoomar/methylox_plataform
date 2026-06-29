@@ -288,7 +288,7 @@ elif nav_selection == "Dashboard Matrix":
             pdf_default.ln(10)
             pdf_default.cell(190, 8, "Prototipo computacional restringido a experimentacion academica.", ln=True)
             pdf_default.cell(190, 8, "Protegido estrictamente bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True)
-            pdf_default_bytes = pdf_default.output(dest="S").encode("latin-1")
+            pdf_default_bytes = pdf_default.output
 
             st.download_button(
                 label="📄 Download Institutional Analytical Dossier (PDF)",
