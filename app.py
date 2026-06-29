@@ -401,10 +401,10 @@ elif menu == "System Settings" and token_hospital == "ROOT-INTERNAL":
     st.markdown('</div>', unsafe_allow_html=True)
 
         
-        # Sello de protección de secreto industrial legal
-        pdf.set_font("Arial", "I", 9)
-        pdf.cell(190, 5, "AVISO LEGAL: Prototipo computacional restringido a experimentación academica institucional.", ln=True, align="C")
-        pdf.cell(190, 5, "Protegido estrictamente bajo Secreto Industrial. Propiedad de METHYLOX™ Oncology.", ln=True, align="C")
+    # Sello de protección de secreto industrial legal
+    pdf.set_font("Arial", "I", 9)
+    pdf.cell(190, 5, "AVISO LEGAL: Prototipo computacional restringido a experimentación academica institucional.", ln=True, align="C")
+    pdf.cell(190, 5, "Protegido estrictamente bajo Secreto Industrial. Propiedad de METHYLOX™ Oncology.", ln=True, align="C")
         
         # Guardamos el archivo binario real en memoria intermedia
         pdf_output = pdf.output(dest="S").encode("latin-1")
