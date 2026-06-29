@@ -69,7 +69,7 @@ st.markdown("""
         border: 1px solid #E2E8F0;
         border-radius: 12px;
         padding: 24px;
-        margin-top: 0px; /* Pegadas al ras del banner */
+        margin-top: 0px; 
         margin-bottom: 20px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
@@ -84,7 +84,7 @@ buffer_pdf.write(b"%PDF-1.5\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<</Type/Catalog/Pages 2
 pdf_data = buffer_pdf.getvalue()
 
 # ==============================================================================
-# BARRA LATERAL (DISEÑO PREMIUM ORIGINAL)
+# BARRA LATERAL (DISEÑO PREMIUM ORIGINAL CORREGIDO)
 # ==============================================================================
 st.sidebar.markdown("""
 <div style="padding: 10px 0px; border-bottom: 1px solid #1E293B; margin-bottom: 20px;">
@@ -101,112 +101,11 @@ nav_selection = st.sidebar.radio(
 
 st.sidebar.write("##")
 
+# Corregido el cierre lógico de las condicionales internas del Sidebar
 if nav_selection == "Dashboard Matrix":
     st.sidebar.markdown('<p style="font-size:11px; font-weight:700; color:#94A3B8 !important; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;">Monitor de Canales Activos</p>', unsafe_allow_html=True)
     slider_ch1 = st.sidebar.slider("Canal Ómico CH-01", 0.0, 1.0, 0.45)
     slider_ch2 = st.sidebar.slider("Canal Ómico CH-02", 0.0, 1.0, 0.62)
     slider_ch3 = st.sidebar.slider("Canal Ómico CH-03", 0.0, 1.0, 0.18)
 
-st.sidebar.markdown("---")
-st.sidebar.markdown("""
-<div style="padding: 5px 0px;">
-    <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>
-    <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
-        <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>
-        <span style="font-size: 12px; font-weight: 600; color: #E2E8F0 !important;">Core Engine Active</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ==============================================================================
-# CUERPO DE CONTENIDO PRINCIPAL (COLUMNAS DESMANTELADAS DE MÁRGENES)
-# ==============================================================================
-
-# Banner estático superior indestructible
-st.image("1000199352.png", use_container_width=True, output_format="PNG")
-
-# --- PESTAÑA 1: DASHBOARD MATRIX ---
-if nav_selection == "Dashboard Matrix":
-    
-    # Columnas forzadas a margen cero superior
-    col_izquierda, col_derecha = st.columns([12, 12], gap="large")
-    
-    # ---- COLUMNA IZQUIERDA: INGRESO DE DATOS DEL PACIENTE ----
-    with col_izquierda:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:15px;">📝 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
-        
-        patient_id = st.text_input("Patient Identifier", placeholder="Ej. METH-2026-0X")
-        patient_age = st.number_input("Chronological Age (Years)", min_value=18, max_value=100, value=45)
-        ctdna_score = st.number_input("ctDNA Concentration (ng/mL)", min_value=0.0, max_value=5.0, value=0.25, format="%.4f")
-        
-        st.write("---")
-        
-        with st.expander("⚙️ Configuración Avanzada: Panel Genómico Multiplex (15 Sondas CRISPR)"):
-            st.caption("Ajuste de niveles moleculares Beta detectados.")
-            col_g1, col_g2 = st.columns(2)
-            with col_g1:
-                g1 = st.slider("Sonda Multiplex Alpha-01", 0.0, 1.0, 0.05, step=0.01)
-                g2 = st.slider("Sonda Multiplex Alpha-02", 0.0, 1.0, 0.01, step=0.01)
-                g3 = st.slider("Sonda Multiplex Alpha-03", 0.0, 1.0, 0.01, step=0.01)
-            with col_g2:
-                g4 = st.slider("Sonda Multiplex Alpha-04", 0.0, 1.0, 0.01, step=0.01)
-                g5 = st.slider("Sonda Multiplex Alpha-05", 0.0, 1.0, 0.01, step=0.01)
-                g6 = st.slider("Sonda Multiplex Alpha-06", 0.0, 1.0, 0.01, step=0.01)
-
-        st.write("##")
-        if st.button("Calcular Dictamen Clínico Multiplex", use_container_width=True, type="primary"):
-            st.info("Procesando matriz molecular de manera encriptada y segura...")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # ---- COLUMNA DERECHA: GRÁFICOS Y CARGA DE ARCHIVOS ----
-    with col_derecha:
-        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:15px;">📊 Cohort Density Mapping & Patient Positioning</p>', unsafe_allow_html=True)
-        
-        x_axis = np.linspace(0.0, 1.0, 100)
-        healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
-        tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
-
-        fig_cohort = go.Figure()
-        fig_cohort.add_trace(go.Scatter(
-            x=x_axis, y=healthy_density, mode='lines', name='Healthy Reference Control',
-            line=dict(color='#0284C7', width=2.5), fill='tozeroy', fillcolor='rgba(2, 132, 199, 0.04)'
-        ))
-        fig_cohort.add_trace(go.Scatter(
-            x=x_axis, y=tumor_density, mode='lines', name='Oncological Target Cohort',
-            line=dict(color='#E11D48', width=2.5), fill='tozeroy', fillcolor='rgba(225, 29, 72, 0.04)'
-        ))
-
-        fig_cohort.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10), height=260, plot_bgcolor='white', paper_bgcolor='white',
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-            xaxis=dict(showgrid=True, gridcolor='#F1F5F9', range=[0, 0.75]), yaxis=dict(showgrid=False, showticklabels=False)
-        )
-        st.plotly_chart(fig_cohort, use_container_width=True)
-
-        st.write("---")
-        st.markdown('<p style="font-size: 13px; font-weight:700; color:#0F172A; margin-bottom:5px;">📥 Data Ingestion & Archiving</p>', unsafe_allow_html=True)
-        archivo_cargado = st.file_uploader("Upload sequencer", type=["csv", "xlsx"], label_visibility="collapsed")
-        
-        st.write("##")
-        
-        # Botón con PDF funcional
-        st.download_button(
-            label="📄 Download Institutional Analytical Dossier (PDF)",
-            data=pdf_data,
-            file_name="METHYLOX_Dossier_Clinico.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# --- CONFIGURACIÓN DE LAS DEMÁS PÁGINAS ---
-elif nav_selection == "Samples Database":
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('### 🗄️ Sample Records & Permanent Database', unsafe_allow_html=True)
-    st.write("---")
-    st.info("Accediendo de forma limpia y directa al repositorio indexado...")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-elif nav_selection ==
+st.sidebar.markdown("
