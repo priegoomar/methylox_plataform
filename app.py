@@ -14,75 +14,68 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Reset quirúrgico absoluto y forzado de toda la estructura de bloques de Streamlit
+# 1. Base Estática CSS
 st.markdown("""
 <style>
-    /* 1. ELIMINACIÓN TOTAL DE CABECERAS Y CONTENEDORES INTERMEDIOS */
-    [data-testid="stHeader"], 
-    [data-testid="stHeader"] *, 
-    .stAppHeader {
-        display: none !important;
-        height: 0px !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    /* 2. FORZAR APILAMIENTO SUPERIOR AL RAS DEL BANNER */
-    [data-testid="stMainBlockContainer"],
-    div.block-container,
-    [data-testid="stMain"] {
-        padding-top: 0rem !important;
-        margin-top: 0rem !important;
-    }
-
-    /* 3. ASESINO DEFINITIVO DE LOS RECUADROS BLANCOS INTERNOS (Bordes de wrappers) */
-    [data-testid="stVerticalBlockBorderWrapper"],
-    [data-testid="stVerticalBlock"],
-    [data-testid="stColumn"],
-    div[data-style="vertical"] {
-        background-color: transparent !important;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        margin-top: 0rem !important;
-        padding-top: 0rem !important;
-        gap: 0rem !important;
-    }
+    [data-testid="stHeader"] { display: none !important; height: 0px !important; }
+    [data-testid="stMainBlockContainer"] { padding-top: 0rem !important; }
+    div.block-container { padding-top: 0rem !important; }
     
-    /* 4. BARRA LATERAL (Color Oscuro Corporativo Original) */
-    [data-testid="stSidebar"] {
-        background-color: #0B0F19 !important;
-        border-right: 1px solid #1E293B;
-    }
-    [data-testid="stSidebar"] * {
-        color: #F1F5F9 !important;
-    }
-    [data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p {
-        color: #94A3B8 !important;
-    }
+    /* BARRA LATERAL (Color Oscuro Corporativo Original) */
+    [data-testid="stSidebar"] { background-color: #0B0F19 !important; border-right: 1px solid #1E293B; }
+    [data-testid="stSidebar"] * { color: #F1F5F9 !important; }
+    [data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p { color: #94A3B8 !important; }
     
-    /* 5. BLINDAJE DEL BANNER */
-    button[title="View fullscreen"] {
-        visibility: hidden !important;
-        display: none !important;
-    }
-    [data-testid="stImage"] img {
-        pointer-events: none !important;
-        user-select: none !important;
-    }
+    button[title="View fullscreen"] { visibility: hidden !important; display: none !important; }
+    [data-testid="stImage"] img { pointer-events: none !important; user-select: none !important; }
 
-    /* 6. Tarjetas Ejecutivas */
     .executive-card {
         background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
         padding: 24px;
-        margin-top: 15px; /* Un pequeño respiro estético debajo del banner */
+        margin-top: 15px;
         margin-bottom: 20px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
 </style>
 """, unsafe_allow_html=True)
+
+# 2. ESTRATEGIA INTERCEPTORA (JavaScript): Mata los bloques blancos residuales dinámicamente
+st.components.v1.html("""
+<script>
+    const eliminarBloquesFantasmas = () => {
+        // Busca cualquier contenedor de borde, bloque vertical vacío o espaciador superior de columna
+        const selectores = [
+            '[data-testid="stVerticalBlockBorderWrapper"]',
+            '.stHorizontalBlock div[data-style="vertical"]',
+            '[data-testid="stBlockSpacing"]'
+        ];
+        
+        selectores.forEach(selector => {
+            document.querySelectorAll(selector).forEach(elemento => {
+                // Si el elemento no tiene texto y está metiendo fondo blanco o márgenes raros, lo neutralizamos
+                if (!elemento.innerText || elemento.innerText.trim() === "") {
+                    elemento.style.backgroundColor = "transparent";
+                    elemento.style.background = "transparent";
+                    elemento.style.border = "none";
+                    elemento.style.boxShadow = "none";
+                    elemento.style.marginTop = "0px";
+                    elemento.style.paddingTop = "0px";
+                    elemento.style.height = "0px";
+                }
+            });
+        });
+    };
+
+    // Ejecutar inmediatamente al cargar
+    eliminarBloquesFantasmas();
+    
+    // Dejar un observador activo por si Streamlit los vuelve a dibujar al mover sliders
+    const observer = new MutationObserver(eliminarBloquesFantasmas);
+    observer.observe(window.parent.document.body, { childList: true, subtree: true });
+</script>
+""", height=0, width=0)
 
 # ==============================================================================
 # GENERACIÓN DE BUFFER DE ARCHIVO COMPATIBLE (PDF EN MEMORIA)
@@ -127,7 +120,7 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# CUERPO DE CONTENIDO PRINCIPAL 
+# CUERPO DE CONTENIDO PRINCIPAL
 # ==============================================================================
 
 # Banner estático superior
