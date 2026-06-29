@@ -14,34 +14,42 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Remoción absoluta de los tres niveles de headers y contenedores de columnas
+# Reset quirúrgico absoluto y forzado de toda la estructura de bloques de Streamlit
 st.markdown("""
 <style>
-    /* 1. Eliminar por completo la cabecera nativa y el espacio muerto superior */
-    [data-testid="stHeader"] {
+    /* 1. ELIMINACIÓN TOTAL DE CABECERAS Y CONTENEDORES INTERMEDIOS */
+    [data-testid="stHeader"], 
+    [data-testid="stHeader"] *, 
+    .stAppHeader {
         display: none !important;
         height: 0px !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
-    [data-testid="stMainBlockContainer"] {
-        padding-top: 0rem !important;
-        padding-bottom: 1rem !important;
-        padding-left: 1.5rem !important;
-        padding-right: 1.5rem !important;
-    }
-    div.block-container {
-        padding-top: 0rem !important;
-    }
-    
-    /* 2. ASESINO DE LOS DOS RECUADROS BLANCOS EN COLUMNAS */
-    [data-testid="stColumn"] {
+
+    /* 2. FORZAR APILAMIENTO SUPERIOR AL RAS DEL BANNER */
+    [data-testid="stMainBlockContainer"],
+    div.block-container,
+    [data-testid="stMain"] {
         padding-top: 0rem !important;
         margin-top: 0rem !important;
     }
-    [data-testid="stVerticalBlock"] {
+
+    /* 3. ASESINO DEFINITIVO DE LOS RECUADROS BLANCOS INTERNOS (Bordes de wrappers) */
+    [data-testid="stVerticalBlockBorderWrapper"],
+    [data-testid="stVerticalBlock"],
+    [data-testid="stColumn"],
+    div[data-style="vertical"] {
+        background-color: transparent !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        margin-top: 0rem !important;
+        padding-top: 0rem !important;
         gap: 0rem !important;
     }
     
-    /* 3. BARRA LATERAL (Color Oscuro Corporativo Original) */
+    /* 4. BARRA LATERAL (Color Oscuro Corporativo Original) */
     [data-testid="stSidebar"] {
         background-color: #0B0F19 !important;
         border-right: 1px solid #1E293B;
@@ -53,7 +61,7 @@ st.markdown("""
         color: #94A3B8 !important;
     }
     
-    /* 4. BLINDAJE DEL BANNER */
+    /* 5. BLINDAJE DEL BANNER */
     button[title="View fullscreen"] {
         visibility: hidden !important;
         display: none !important;
@@ -63,13 +71,13 @@ st.markdown("""
         user-select: none !important;
     }
 
-    /* 5. Tarjetas Ejecutivas */
+    /* 6. Tarjetas Ejecutivas */
     .executive-card {
         background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
         padding: 24px;
-        margin-top: 0px; 
+        margin-top: 15px; /* Un pequeño respiro estético debajo del banner */
         margin-bottom: 20px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
@@ -77,14 +85,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# GENERACIÓN DE BUFFER DE ARCHIVO COMPATIBLE (PDF COMPILADO EN MEMORIA)
+# GENERACIÓN DE BUFFER DE ARCHIVO COMPATIBLE (PDF EN MEMORIA)
 # ==============================================================================
 buffer_pdf = io.BytesIO()
 buffer_pdf.write(b"%PDF-1.5\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n2 0 obj\n<</Type/Pages/Count 1/Kids[3 0 R]>>\nendobj\n3 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>>\nendobj\n4 0 obj\n<</Length 55>>\nstream\nBT\n/F1 12 Tf\n72 712 Td\n(MethylOx Institutional Analytical Dossier - Protected Content) Tj\nET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f\n0000000015 00000 n\n0000000068 00000 n\n0000000120 00000 n\n0000000219 00000 n\ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n326\n%%EOF")
 pdf_data = buffer_pdf.getvalue()
 
 # ==============================================================================
-# BARRA LATERAL (DISEÑO PREMIUM ORIGINAL CORREGIDO DE RAÍZ)
+# BARRA LATERAL (DISEÑO PREMIUM ORIGINAL)
 # ==============================================================================
 st.sidebar.markdown("""
 <div style="padding: 10px 0px; border-bottom: 1px solid #1E293B; margin-bottom: 20px;">
@@ -108,8 +116,6 @@ if nav_selection == "Dashboard Matrix":
     slider_ch3 = st.sidebar.slider("Canal Ómico CH-03", 0.0, 1.0, 0.18)
 
 st.sidebar.markdown("---")
-
-# CORREGIDO AQUÍ: Se cambiaron las comillas simples por comillas triples para evitar el SyntaxError
 st.sidebar.markdown("""
 <div style="padding: 5px 0px;">
     <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>
@@ -121,7 +127,7 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# CUERPO DE CONTENIDO PRINCIPAL
+# CUERPO DE CONTENIDO PRINCIPAL 
 # ==============================================================================
 
 # Banner estático superior
@@ -200,31 +206,15 @@ if nav_selection == "Dashboard Matrix":
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
-# --- CONFIGURACIÓN DE LAS DEMÁS PÁGINAS ---
+# --- PESTAÑAS SECUNDARIAS ---
 elif nav_selection == "Samples Database":
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('### 🗄️ Sample Records & Permanent Database', unsafe_allow_html=True)
-    st.write("---")
-    st.info("Accediendo de forma limpia y directa al repositorio indexado...")
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">### 🗄️ Sample Records & Permanent Database<hr><span style="color:#64748B;">Accediendo de forma limpia al repositorio indexado...</span></div>', unsafe_allow_html=True)
 
 elif nav_selection == "AI Analysis Hub":
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('### 🧠 AI Epigenetic Analysis Engine', unsafe_allow_html=True)
-    st.write("---")
-    st.caption("Matriz analítica lista para procesamiento ómico.")
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">### 🧠 AI Epigenetic Analysis Engine<hr><span style="color:#64748B;">Matriz analítica lista para procesamiento ómico.</span></div>', unsafe_allow_html=True)
 
 elif nav_selection == "Clinical Reports":
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('### 📋 Reporting & De-Risk Dossier Log', unsafe_allow_html=True)
-    st.write("---")
-    st.success("Dossier Clínico anonimizado disponible para descarga institucional.")
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">### 📋 Reporting & De-Risk Dossier Log<hr><span style="color:#64748B;">Dossier Clínico anonimizado disponible para descarga institucional.</span></div>', unsafe_allow_html=True)
 
 elif nav_selection == "System Settings":
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('### ⚙️ Platform Security & Parameters', unsafe_allow_html=True)
-    st.write("---")
-    st.warning("Área de seguridad restringida y encriptación de credenciales.")
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="executive-card">### ⚙️ Platform Security & Parameters<hr><span style="color:#64748B;">Área de seguridad restringida y encriptación de credenciales.</span></div>', unsafe_allow_html=True)
