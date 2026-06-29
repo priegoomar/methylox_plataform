@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 # ==============================================================================
-# CONFIGURACIÓN MAESTRA Y BLINDAJE DE CONTRASTE RADICAL
+# CONFIGURACIÓN MAESTRA Y ESTILIZACIÓN DE LA PLATAFORMA
 # ==============================================================================
 st.set_page_config(
     page_title="MethylOx™",
@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Inyección de CSS Forzado - Contraste Absoluto
+# Estilos globales y diseño del Menú de Navegación Custom de Alta Visibilidad
 st.markdown("""
 <style>
     /* 1. Fondo de la aplicación */
@@ -42,61 +42,42 @@ st.markdown("""
         background-color: #0B0F19 !important;
         border-right: 2px solid #1E293B;
     }
-    
-    /* Remover título nativo invisible y ajustar espacio del menú */
-    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] {
-        display: none !important;
+
+    /* CONTENEDOR DE NUESTROS NUEVOS BOTONES ULTRA-VISIBLES */
+    .custom-nav-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0px 10px;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] div[role="radiogroup"] {
-        gap: 12px !important; /* Espacio generoso entre bloques */
-        padding: 0px 10px !important;
-    }
-    
-    /* DISEÑO DE BOTÓN SÓLIDO INACTIVO (MÁXIMA VISIBILIDAD) */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label {
-        background-color: #1E293B !important; /* Bloque gris claro visible sobre fondo negro */
-        border: 1px solid #475569 !important; /* Borde claro definido */
+
+    /* BOTÓN TOTALMENTE VISIBLE (Gris claro texturizado sobre fondo negro) */
+    .nav-button {
+        display: block !important;
+        background-color: #1E293B !important;
+        border: 1px solid #334155 !important;
         border-radius: 8px !important;
         padding: 14px 18px !important;
-        margin: 0px !important;
-        width: 100% !important;
-        cursor: pointer !important;
-        display: block !important;
-        transition: all 0.15s ease-in-out;
-    }
-    
-    /* Eliminar el círculo de selección de raíz */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label div:first-child {
-        display: none !important;
-    }
-    
-    /* SELECTOR PROFUNDO: Fuerza a cualquier texto interno inactivo a ser BLANCO PURO */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label * {
-        color: #FFFFFF !important; 
-        font-weight: 700 !important;
-        font-size: 14px !important;
+        text-align: left !important;
         text-decoration: none !important;
+        transition: all 0.2s ease-in-out;
     }
-    
-    /* EFECTO HOVER (Al pasar el cursor por encima) */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
-        background-color: #334155 !important;
+
+    /* TEXTO INTEGRADO: Letras blancas puras, gruesas y perfectamente legibles */
+    .nav-button span {
+        color: #FFFFFF !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        font-family: system-ui, -apple-system, sans-serif !important;
+    }
+
+    /* EFECTO HOVER: Resalta cuando el usuario pasa el mouse */
+    .nav-button:hover {
+        background-color: #2D3748 !important;
         border-color: #38BDF8 !important;
+        transform: translateX(2px);
     }
-    
-    /* BOTÓN SELECCIONADO / ACTIVO (ILUMINACIÓN RADICAL) */
-    [data-testid="stSidebar"] [data-testid="stRadio"] div[data-checked="true"] label {
-        background-color: #0284C7 !important; /* Fondo azul rey brillante */
-        border-color: #38BDF8 !important;
-        box-shadow: 0px 4px 12px rgba(2, 132, 199, 0.4) !important;
-    }
-    
-    /* SELECTOR PROFUNDO ACTIVO: Fuerza al texto seleccionado a mantener brillo e idoneidad */
-    [data-testid="stSidebar"] [data-testid="stRadio"] div[data-checked="true"] label * {
-        color: #FFFFFF !important; /* Texto blanco puro sobre el fondo azul brillante */
-        font-weight: 800 !important;
-    }
-    
+
     /* Sliders de la barra lateral */
     [data-testid="stSidebar"] div[data-testid="stWidgetLabel"] p {
         color: #94A3B8 !important;
@@ -136,7 +117,7 @@ st.markdown("""
         background-color: #0369A1 !important;
     }
 
-    /* Estilo secundario */
+    /* Estilo secundario corporativo */
     .executive-card {
         background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
@@ -153,7 +134,7 @@ st.markdown("""
 # GENERACIÓN DE BUFFER DE ARCHIVO COMPATIBLE (PDF EN MEMORIA)
 # ==============================================================================
 buffer_pdf = io.BytesIO()
-buffer_pdf.write(b"%PDF-1.5\n%\xe2\xe3\xcf\xd3\n1 0 obj\n< Badger Catalog >\nendobj\n2 0 obj\n<</Type/Pages/Count 1/Kids[3 0 R]>>\nendobj\n3 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>>\nendobj\n4 0 obj\n<</Length 55>>\nstream\nBT\n/F1 12 Tf\n72 712 Td\n(MethylOx Institutional Analytical Dossier - Protected Content) Tj\nET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f\n0000000015 00000 n\n0000000068 00000 n\n0000000120 00000 n\n0000000219 00000 n\ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n326\n%%EOF")
+buffer_pdf.write(b"%PDF-1.5\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n2 0 obj\n<</Type/Pages/Count 1/Kids[3 0 R]>>\nendobj\n3 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R>>\nendobj\n4 0 obj\n<</Length 55>>\nstream\nBT\n/F1 12 Tf\n72 712 Td\n(MethylOx Institutional Analytical Dossier - Protected Content) Tj\nET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f\n0000000015 00000 n\n0000000068 00000 n\n0000000120 00000 n\n0000000219 00000 n\ntrailer\n<</Size 5/Root 1 0 R>>\nstartxref\n326\n%%EOF")
 pdf_data = buffer_pdf.getvalue()
 
 # ==============================================================================
@@ -166,11 +147,27 @@ st.sidebar.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-nav_selection = st.sidebar.radio(
-    "Navegación del Sistema",
-    ["Dashboard Matrix", "Samples Database", "AI Analysis Hub", "Clinical Reports", "System Settings"],
-    label_visibility="collapsed"
-)
+# Lógica del estado de navegación basada en botones nativos estilizados individualmente
+if "nav_selection" not in st.session_state:
+    st.session_state.nav_selection = "Dashboard Matrix"
+
+# MENÚ LATERAL EN HTML DE ALTA VISIBILIDAD (Fuerza letras blancas puras e independientes)
+st.sidebar.markdown('<div class="custom-nav-container">', unsafe_allow_html=True)
+
+col_b1 = st.sidebar.button("📊 Dashboard Matrix", use_container_width=True)
+col_b2 = st.sidebar.button("🗄️ Samples Database", use_container_width=True)
+col_b3 = st.sidebar.button("🧠 AI Analysis Hub", use_container_width=True)
+col_b4 = st.sidebar.button("📋 Clinical Reports", use_container_width=True)
+col_b5 = st.sidebar.button("⚙️ System Settings", use_container_width=True)
+
+# Mapeo de clicks para actualizar la página actual
+if col_b1: st.session_state.nav_selection = "Dashboard Matrix"
+if col_b2: st.session_state.nav_selection = "Samples Database"
+if col_b3: st.session_state.nav_selection = "AI Analysis Hub"
+if col_b4: st.session_state.nav_selection = "Clinical Reports"
+if col_b5: st.session_state.nav_selection = "System Settings"
+
+nav_selection = st.session_state.nav_selection
 
 st.sidebar.write("##")
 
@@ -196,6 +193,7 @@ st.sidebar.markdown("""
 # ==============================================================================
 st.image("1000199352.png", use_container_width=True, output_format="PNG")
 
+# Renderizar vistas condicionales según el botón presionado
 if nav_selection == "Dashboard Matrix":
     col_izquierda, col_derecha = st.columns([12, 12], gap="large")
     
@@ -263,7 +261,6 @@ if nav_selection == "Dashboard Matrix":
                 use_container_width=True
             )
 
-# --- REPOSITORIO DE PESTAÑAS SECUNDARIAS ---
 elif nav_selection == "Samples Database":
     st.markdown("""
     <div class="executive-card">
