@@ -4,22 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>METHYLOX™ | Pre-clinical Epigenetic AI Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://googleapis.com" rel="stylesheet">
     <style>
         .font-serif { font-family: 'Fraunces', serif; }
         .font-sans { font-family: 'Inter', sans-serif; }
-        @keyframes spin-slow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin-slow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .animate-spin-slow { animation: spin-slow 3s linear infinite; }
     </style>
 </head>
 <body class="font-sans text-[#1E293B] bg-[#F8FAFC]">
 
-    <!-- 1. CABECERA -->
-    <header class="w-full py-6 px-12 flex justify-between items-center bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
+    <header class="w-full py-6 px-8 md:px-12 flex justify-between items-center bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
         <div class="flex items-baseline gap-2">
             <div class="text-2xl font-sans font-black tracking-tight text-[#0F172A]">
                 METHYLO<span class="text-[#0096C7]">X</span>™
@@ -28,21 +24,20 @@
                 Fase<br>Preclínica
             </div>
         </div>
-        <nav class="flex gap-10 items-center font-semibold text-sm text-[#475569]">
+        <nav class="hidden md:flex gap-10 items-center font-semibold text-sm text-[#475569]">
             <a href="#protocolo" class="hover:text-[#0096C7] transition">Estrategia Molecular</a>
             <a href="#metricas" class="hover:text-[#0096C7] transition">Validación Estadística</a>
-            <button class="bg-[#0F172A] text-white px-8 py-3 rounded-full hover:bg-[#0096C7] transition-all shadow-sm font-bold uppercase tracking-widest text-[10px]">
-               Acceso Técnico
+            <button class="bg-[#0F172A] text-white px-6 py-2 rounded-full hover:bg-[#0096C7] transition-all shadow-sm font-bold uppercase tracking-widest text-[10px]">
+                Acceso Técnico
             </button>
         </nav>
     </header>
 
-    <!-- 2. HERO -->
-    <main id="mision" class="max-w-7xl mx-auto px-12 py-24">
+    <main id="mision" class="max-w-7xl mx-auto px-8 py-20 md:py-24">
         <div class="grid lg:grid-cols-12 gap-16 items-center">
             <div class="lg:col-span-7 space-y-6">
                 <span class="text-[#0096C7] font-bold tracking-[0.25em] uppercase text-xs block">PLATAFORMA PRECLÍNICA DE IA ÓMICA</span>
-                <h1 class="text-5xl lg:text-6xl font-serif text-[#0F172A] leading-[1.1] font-bold tracking-tight">
+                <h1 class="text-4xl md:text-6xl font-serif text-[#0F172A] leading-[1.1] font-bold tracking-tight">
                     El futuro de la oncología es la detección en Stage I.
                 </h1>
                 <p class="text-base text-[#475569] leading-relaxed font-light">
@@ -55,7 +50,6 @@
                 </div>
             </div>
             
-            <!-- PANEL DERECHO: INTERFAZ PROTEGIDA / REEMPLAZO DE IMAGEN ROTA -->
             <div class="lg:col-span-5 bg-[#0B0F19] p-8 rounded-3xl shadow-[0_20px_50px_rgba(15,23,42,0.3)] border border-[#1E293B] flex flex-col items-center justify-center min-h-[350px] text-center">
                 <div class="w-12 h-12 border-4 border-[#38BDF8] border-t-transparent rounded-full animate-spin-slow mb-6"></div>
                 <span class="text-[#38BDF8] font-mono text-xs tracking-[0.2em] font-bold block mb-2">[ PIPELINE GRÁFICO PROTEGIDO ]</span>
@@ -66,44 +60,39 @@
         </div>
     </main>
 
-    <!-- 3. PROTOCOLO TÉCNICO -->
     <section id="protocolo" class="bg-white py-24 border-t border-[#E2E8F0]">
-        <div class="max-w-7xl mx-auto px-12">
+        <div class="max-w-7xl mx-auto px-8">
             <div class="max-w-3xl mb-16">
                 <span class="text-[#0096C7] font-bold tracking-[0.2em] uppercase text-xs block mb-2">METODOLOGÍA BIOINFORMÁTICA</span>
                 <h2 class="text-4xl font-serif text-[#0F172A] font-bold">Nuestro Protocolo Técnico</h2>
                 <div class="w-12 h-1 bg-[#0096C7] mt-4 rounded-full"></div>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
-                <!-- Tarjeta 1 -->
-                <div class="p-10 bg-white rounded-[32px] border border-gray-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.02)] space-y-4">
+                <div class="p-10 bg-white rounded-[32px] border border-gray-200 shadow-sm space-y-4">
                     <div class="text-xs font-bold text-[#0096C7] tracking-widest uppercase">FASE 01 // ENTRADA ÓMICA</div>
                     <h4 class="text-xl font-bold text-[#0F172A]">Biopsia Líquida</h4>
-                    <p class="text-[#475569] font-light text-sm leading-relaxed">Aislamiento ultrapreciso de fracciones traza de ctDNA en plasma periférico, optimizado para la captura de señales moleculares tempranas en Etapa I.</p>
+                    <p class="text-[#475569] font-light text-sm leading-relaxed">Aislamiento ultrapreciso de fracciones traza de ctDNA en plasma periférico, optimizado para la captura de señales moleculares tempranas.</p>
                 </div>
-                <!-- Tarjeta 2 -->
-                <div class="p-10 bg-white rounded-[32px] border border-gray-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.02)] space-y-4">
+                <div class="p-10 bg-white rounded-[32px] border border-gray-200 shadow-sm space-y-4">
                     <div class="text-xs font-bold text-[#0096C7] tracking-widest uppercase">FASE 02 // ESPECIFICIDAD</div>
                     <h4 class="text-xl font-bold text-[#0F172A]">Detección CRISPR Multiplex</h4>
-                    <p class="text-[#475569] font-light text-sm leading-relaxed">Interrogación dirigida mediante un panel cooperativo de 15 sondas in silico diseñado para el reconocimiento de epimutaciones críticas sin PCR previa.</p>
+                    <p class="text-[#475569] font-light text-sm leading-relaxed">Interrogación dirigida mediante un panel cooperativo de 15 sondas in silico diseñado para el reconocimiento de epimutaciones sin PCR.</p>
                 </div>
-                <!-- Tarjeta 3 -->
-                <div class="p-10 bg-white rounded-[32px] border border-gray-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.02)] space-y-4">
+                <div class="p-10 bg-white rounded-[32px] border border-gray-200 shadow-sm space-y-4">
                     <div class="text-xs font-bold text-[#0096C7] tracking-widest uppercase">FASE 03 // DECONVOLUCIÓN</div>
                     <h4 class="text-xl font-bold text-[#0F172A]">Análisis Epigenético IA</h4>
-                    <p class="text-[#475569] font-light text-sm leading-relaxed">Clasificación algorítmica probabilística orientada a la eliminación del ruido biológico subyacente y cálculo instantáneo de la firma de riesgo.</p>
+                    <p class="text-[#475569] font-light text-sm leading-relaxed">Clasificación algorítmica probabilística orientada a la eliminación del ruido biológico subyacente.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 4. VALIDACIÓN -->
     <section id="metricas" class="bg-[#F1F5F9] py-24 border-t border-[#E2E8F0]">
-        <div class="max-w-7xl mx-auto px-12">
+        <div class="max-w-7xl mx-auto px-8">
             <div class="grid lg:grid-cols-12 gap-16 items-center">
                 <div class="lg:col-span-5 space-y-4">
                     <span class="text-[#0096C7] font-bold tracking-[0.2em] uppercase text-xs block">RIGOR ESTADÍSTICO</span>
-                    <p class="text-base text-[#475569] font-light leading-relaxed">Calibración matemática de la firma epigenética entrenada y validada rigurosamente frente a cohortes experimentales masivas de la base de datos global TCGA.</p>
+                    <p class="text-base text-[#475569] font-light leading-relaxed">Calibración matemática de la firma epigenética entrenada y validada rigurosamente frente a cohortes experimentales masivas.</p>
                 </div>
                 <div class="lg:col-span-7 flex flex-col sm:flex-row gap-6">
                     <div class="bg-[#0F172A] text-white p-10 rounded-[32px] shadow-lg text-center flex-1 space-y-2">
@@ -119,33 +108,34 @@
         </div>
     </section>
 
-    <!-- 5. FOOTER -->
-    <footer class="bg-[#0B0F19] border-t border-[#1E293B] text-gray-400 py-20 px-12">
+    <footer class="bg-[#0B0F19] border-t border-[#1E293B] text-gray-400 py-20 px-8">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-[11px] font-sans">
-            <!-- Columna Identidad -->
             <div class="space-y-3">
                 <div class="text-xl font-serif font-bold text-white tracking-wider">METHYLOX™</div>
-                <p class="leading-relaxed text-[#64748B]">Plataforma bioinformática avanzada para la deconvolución de firmas de metilación aberrantes en ctDNA. Innovación preclínica protegida para detección automatizada en Stage I.</p>
+                <p class="leading-relaxed text-[#64748B]">Plataforma bioinformática avanzada para la deconvolución de firmas de metilación aberrantes.</p>
             </div>
-            <!-- Columna Entorno -->
             <div>
                 <h5 class="text-[#38BDF8] font-bold mb-4 uppercase tracking-widest text-[12px]">Entorno Técnico</h5>
                 <ul class="space-y-2 text-[#94A3B8]">
                     <li>• Pipeline de Alineación NGS</li>
                     <li>• Panel Multiplex de 15 Sondas</li>
-                    <li>• Motores Bayesiano Cooperativos</li>
                 </ul>
             </div>
-            <!-- Columna Documentación -->
             <div>
                 <h5 class="text-[#38BDF8] font-bold mb-4 uppercase tracking-widest text-[12px]">Documentación</h5>
                 <ul class="space-y-2 text-[#94A3B8]">
                     <li>• Mapeo de Sitios CpG Diana</li>
                     <li>• Línea Base TCGA Multi-Cohorte</li>
-                    <li>• Protocolo de De-riesgo IP</li>
                 </ul>
             </div>
-            <!-- Columna Autenticación -->
             <div>
                 <h5 class="text-[#EF4444] font-bold mb-4 uppercase tracking-widest text-[12px]">Acceso Institutional</h5>
-Portal Cifrado Habilitado[ ENLACE DE DATOS SECURE ]© 2026 METHYLOX™ Project. Todos los derechos reservados
+                <p>Portal Cifrado Habilitado</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-[#1E293B] text-center text-[10px] text-[#475569]">
+            <p>© 2026 METHYLOX™ Project. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
