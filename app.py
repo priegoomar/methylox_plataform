@@ -242,9 +242,9 @@ elif nav_selection == "Dashboard Matrix":
             else:
                 st.success(f"🟢 **NEGATIVE MOLECULAR SIGNATURE** (Score Ponderado: {score_final:.4f})")
 
-    with col_derecha:
-    # Eliminamos el contenedor con borde para que se integre al fondo de la app
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+# Aquí eliminamos el 'with st.container(border=True)' que causaba el recuadro 
+        # y mantenemos el contenido directamente alineado bajo el 'with'
+        st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A;">📊 Cohort Density Mapping</p>', unsafe_allow_html=True)
        
            
             x_axis = np.linspace(0.0, 1.0, 100)
