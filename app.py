@@ -121,7 +121,7 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 if "nav_selection" not in st.session_state:
-    st.session_state.nav_selection = "Dashboard Matrix"
+    st.session_state.nav_selection = "Dasboard Matrix"
 
 # 🔑 REGLA DE SEGURIDAD INDUSTRIAL: MÓDULO DE AUTENTICACIÓN
 access_key = st.sidebar.text_input("Llave de Acceso Institucional Cifrada", type="password", help="Ingrese su API Key asignada para validar permisos.")
