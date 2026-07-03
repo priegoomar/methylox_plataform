@@ -262,23 +262,23 @@ fig_cohort.add_trace(go.Scatter(
 ))
             
             # Marcador dinámico del diamante del paciente en ejecución
-            patient_y_pos = np.exp(-((ctdna_score - 0.45) ** 2) / (2 * 0.15 ** 2)) if ctdna_score > 0.2 else np.exp(-((ctdna_score - 0.05) ** 2) / (2 * 0.03 ** 2))
-            fig_cohort.add_trace(go.Scatter(
-                x=[ctdna_score], y=[patient_y_pos], mode='markers+text', name='Patient Marker',
-                marker=dict(color='#EF4444', size=12, symbol='diamond', line=dict(color='white', width=1.5)),
-                text=["🎯 Current Patient"], textposition="top center", textfont=dict(size=11, color="#EF4444")
-            ))
+patient_y_pos = np.exp(-((ctdna_score - 0.45) ** 2) / (2 * 0.15 ** 2)) if ctdna_score > 0.2 else np.exp(-((ctdna_score - 0.05) ** 2) / (2 * 0.03 ** 2))
+fig_cohort.add_trace(go.Scatter(
+    x=[ctdna_score], y=[patient_y_pos], mode='markers+text', name='Patient Marker',
+    marker=dict(color='#EF4444', size=12, symbol='diamond', line=dict(color='white', width=1.5)),
+    text=["🎯 Current Patient"], textposition="top center", textfont=dict(size=11, color="#EF4444")
+))
 
-            fig_cohort.update_layout(
-                margin=dict(l=10, r=10, t=10, b=10), height=260, plot_bgcolor='white', paper_bgcolor='white',
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-                xaxis=dict(showgrid=True, gridcolor='#F1F5F9', range=[0, 0.75]), yaxis=dict(showgrid=False, showticklabels=False)
-            )
-            st.plotly_chart(fig_cohort, use_container_width=True)
+fig_cohort.update_layout(
+    margin=dict(l=10, r=10, t=10, b=10), height=260, plot_bgcolor='white', paper_bgcolor='white',
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+    xaxis=dict(showgrid=True, gridcolor='#F1F5F9', range=[0, 0.75]), yaxis=dict(showgrid=False, showticklabels=False)
+)
+st.plotly_chart(fig_cohort, use_container_width=True)
 
-            st.write("---")
-            st.markdown('<p style="font-size: 13px; font-weight:700; color:#0F172A; margin-bottom:5px;">📥 Data Ingestion & Archiving</p>', unsafe_allow_html=True)
-            archivo_cargado = st.file_uploader("Upload sequencer", type=["csv", "xlsx"], label_visibility="collapsed")
+st.write("---")
+st.markdown('<p style="font-size: 13px; font-weight:700; color:#0F172A; margin-bottom:5px;">📥 Data Ingestion & Archiving</p>', unsafe_allow_html=True)
+archivo_cargado = st.file_uploader("Upload sequencer", type=["csv", "xlsx"], label_visibility="collapsed")
            
             # CONSTRUCCIÓN PRE-COMPILADA RÁPIDA CON FPDF PARA EL BOTÓN DE LA PORTADA
             pdf_default = FPDF()
