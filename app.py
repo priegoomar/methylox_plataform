@@ -244,7 +244,7 @@ elif nav_selection == "Dashboard Matrix":
 
     with col_derecha:
     # Eliminamos el contenedor con borde para que se integre al fondo de la app
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+st.markdown('<div class="executive-card">', unsafe_allow_html=True)
        
            
             x_axis = np.linspace(0.0, 1.0, 100)
