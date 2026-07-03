@@ -420,7 +420,10 @@ elif nav_selection == "Clinical Reports" and token_hospital == "ROOT-INTERNAL":
             pdf.cell(190, 5, "AVISO LEGAL: Prototipo computacional restringido a experimentacion academica.", ln=True, align="C")
             pdf.cell(190, 5, "Protegido bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True, align="C")
            
-            pdf_bytes = pdf.output()
+            # 🧪 CONSTRUCCIÓN FORZADA A BYTES
+            raw_pdf = pdf.output()
+            # Si fpdf2 devuelve bytes, los usamos. Si devuelve algo más, lo convertimos.
+            pdf_bytes = bytes(raw_pdf) if isinstance(raw_pdf, (bytearray, list)) else raw_pdf
             
             st.write("##")
             pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
