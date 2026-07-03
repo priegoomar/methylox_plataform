@@ -193,7 +193,7 @@ elif nav_selection == "Dashboard Matrix":
     st.image("1000199352.png", use_container_width=True, output_format="PNG")
     st.write("##")
 
-    col_izquierda, col_derecha = st.columns([5, 7], gap="small")
+    col_izquierda, col_derecha = st.columns([12, 12], gap="large")
 
     with col_izquierda:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
