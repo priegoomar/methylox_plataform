@@ -353,31 +353,31 @@
             err.classList.remove('hidden');
         }
     }
-</script>
+<script>
+    function toggleModal() {
+        const modal = document.getElementById('secureModal');
+        modal.classList.toggle('hidden');
+        modal.classList.toggle('flex');
+    }
 
-        function verifyToken() {
-            const token = document.getElementById('accessKeyInput').value.trim();
-            const err = document.getElementById('errorMessage');
-            const success = document.getElementById('successMessage');
-            const btnRedirect = document.getElementById('redirectStreamlitBtn');
+    function verifyToken() {
+        const token = document.getElementById('accessKeyInput').value.trim();
+        const err = document.getElementById('errorMessage');
+        const success = document.getElementById('successMessage');
+        const btnRedirect = document.getElementById('redirectStreamlitBtn');
 
-            if (token === "METHYLOX-ROOT-2026" || token.startsWith("METH-HOSPITAL-")) {
-                err.classList.add('hidden');
-                success.classList.remove('hidden');
-                btnRedirect.classList.remove('hidden');
-                btnRedirect.classList.add('flex');
-            if (token === "METHYLOX-ROOT-2026" || token.startsWith("METH-HOSPITAL-")) {
-                err.classList.add('hidden');
-                success.classList.remove('hidden');
-                btnRedirect.classList.remove('hidden');
-                btnRedirect.classList.add('flex');
-            } else {
-                btnRedirect.classList.add('hidden');
-                btnRedirect.classList.remove('flex');
-                success.classList.add('hidden');
-                err.classList.remove('hidden');
-            }
+        if (token === "METHYLOX-ROOT-2026" || token.startsWith("METH-HOSPITAL-")) {
+            err.classList.add('hidden');
+            success.classList.remove('hidden');
+            btnRedirect.classList.remove('hidden');
+            btnRedirect.classList.add('flex');
+        } else {
+            btnRedirect.classList.add('hidden');
+            btnRedirect.classList.remove('flex');
+            success.classList.add('hidden');
+            err.classList.remove('hidden');
         }
-    </script>
+    }
+</script>
 </body>
 </html>
