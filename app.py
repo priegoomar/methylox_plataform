@@ -429,7 +429,7 @@ elif nav_selection == "Clinical Reports" and token_hospital == "ROOT-INTERNAL":
                 label=f"📥 Download Official PDF Dossier for {paciente_seleccionado}",
                 data=pdf_output,
                 file_name=pdf_nombre,
-                mime="application/pdf"
+                mime="application/pdf",
                 use_container_width=True
             )
 
