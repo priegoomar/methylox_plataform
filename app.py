@@ -21,6 +21,16 @@ st.set_page_config(
 # Inyección de diseño de interfaz UI/UX aséptico (Estilo laboratorio de vanguardia)
 st.markdown("""
 <style>
+/* Forzar la eliminación de espacios masivos y barras divisorias en móviles */
+div[block-container] {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+.stHorizontalBlock {
+    gap: 0.5rem !important;
+}
     /* 1. Fondo de la aplicación criogénico */
     .stApp {
         background-color: #F8FAFC !important;
