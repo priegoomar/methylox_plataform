@@ -427,7 +427,7 @@ elif nav_selection == "Clinical Reports" and token_hospital == "ROOT-INTERNAL":
            
             st.download_button(
                 label=f"🔬 Download Official PDF Dossier for {paciente_seleccionado}",
-                data=pdf_output,
+                data=pdf_bytes,
                 file_name=pdf_nombre,
                 mime="application/pdf"
             )
