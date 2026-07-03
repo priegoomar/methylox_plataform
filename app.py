@@ -281,23 +281,23 @@ st.markdown('<p style="font-size: 13px; font-weight:700; color:#0F172A; margin-b
 archivo_cargado = st.file_uploader("Upload sequencer", type=["csv", "xlsx"], label_visibility="collapsed")
            
             # CONSTRUCCIÓN PRE-COMPILADA RÁPIDA CON FPDF PARA EL BOTÓN DE LA PORTADA
-            pdf_default = FPDF()
-            pdf_default.add_page()
-            pdf_default.set_font("Arial", "B", 14)
-            pdf_default.cell(190, 10, "METHYLOX ONCOLOGY - INSTITUTIONAL ANALYTICAL DOSSIER", ln=True, align="C")
-            pdf_default.set_font("Arial", "", 11)
-            pdf_default.ln(10)
-            pdf_default.cell(190, 8, "Prototipo computacional restringido a experimentacion academica.", ln=True)
-            pdf_default.cell(190, 8, "Protegido estrictamente bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True)
-            pdf_default_bytes = pdf_default.output
+pdf_default = FPDF()
+pdf_default.add_page()
+pdf_default.set_font("Arial", "B", 14)
+pdf_default.cell(190, 10, "METHYLOX ONCOLOGY - INSTITUTIONAL ANALYTICAL DOSSIER", ln=True, align="C")
+pdf_default.set_font("Arial", "", 11)
+pdf_default.ln(10)
+pdf_default.cell(190, 8, "Prototipo computacional restringido a experimentacion academica.", ln=True)
+pdf_default.cell(190, 8, "Protegido estrictamente bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True)
+pdf_default_bytes = pdf_default.output
 
-            st.download_button(
-                label="📄 Download Institutional Analytical Dossier (PDF)",
-                data=pdf_default_bytes, # <- AQUÍ QUEDA CORREGIDA LA VARIABLE
-                file_name="METHYLOX_Dossier_Clinico.pdf",
-                mime="application/pdf", # <- ASEGURAMOS FORMATO PDF REAL
-                use_container_width=True
-            )
+st.download_button(
+    label="📄 Download Institutional Analytical Dossier (PDF)",
+    data=pdf_default_bytes, # <- AQUÍ QUEDA CORREGIDA LA VARIABLE
+    file_name="METHYLOX_Dossier_Clinico.pdf",
+    mime="application/pdf", # <- ASEGURAMOS FORMATO PDF REAL
+    use_container_width=True
+)
 
 # ---- PESTAÑA 2: SAMPLES DATABASE ----
 elif nav_selection == "Samples Database":
