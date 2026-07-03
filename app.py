@@ -129,7 +129,7 @@ st.sidebar.markdown('<div class="custom-nav-container">', unsafe_allow_html=True
 
 # MÓDULO DE PERMISOS INSTITUCIONALES AUTOMATIZADOS
 if access_key == "METHYLOX-ROOT-2026":
-    # Tu cuenta de desarrollador: Despliega tus 5 botones completos ante el comité
+    # Tu cuanta de desarrollador: Despliega tus 5 botones cpmpletos ante el comité
     col_b1 = st.sidebar.button("📊 Dashboard Matrix", use_container_width=True)
     col_b2 = st.sidebar.button("📋 Samples Database", use_container_width=True)
     col_b3 = st.sidebar.button("🔬 AI Analysis Hub", use_container_width=True)
