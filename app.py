@@ -248,8 +248,8 @@ with col_derecha:
        
            
 x_axis = np.linspace(0.0, 1.0, 100)
-            healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
-            tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
+healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
+tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
 
             fig_cohort = go.Figure()
             fig_cohort.add_trace(go.Scatter(
