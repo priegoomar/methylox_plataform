@@ -298,6 +298,7 @@ elif nav_selection == "Dashboard Matrix":
             mime="application/pdf", # <- ASEGURAMOS FORMATO PDF REAL
             use_container_width=True
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ---- PESTAÑA 2: SAMPLES DATABASE ----
 elif nav_selection == "Samples Database":
