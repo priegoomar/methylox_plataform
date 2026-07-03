@@ -108,7 +108,7 @@ st.markdown("""
 
 # Inicializar bases de datos históricas en memoria si no existen
 if "historical_database" not in st.session_state:
-    st.session_state["historical_database"] = pd.DataFrame(columns=["Timestamp", "patient ID", !Age (Years)", "ctDNA (ng/mL)", "Clinical Status"])
+    st.session_state["historical_database"] = pd.DataFrame(columns=["Timestamp", "patient ID", "Age (Years)", "ctDNA (ng/mL)", "Clinical Status"])
 
 # ==============================================================================
 # BARRA LATERAL (BRANDING CORPORATIVO REFORZADO)
