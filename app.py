@@ -192,9 +192,9 @@ if nav_selection == "🔒 Acceso Restringido":
 elif nav_selection == "Dashboard Matrix":
     st.image("1000199352.png", use_container_width=True, output_format="PNG")
     st.write("##")
-    
+
     col_izquierda, col_derecha = st.columns([12, 12], gap="large")
-   
+
     with col_izquierda:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<p class="card-title">📝 Patient Case Enrollment Matrix</p>', unsafe_allow_html=True)
@@ -242,62 +242,62 @@ elif nav_selection == "Dashboard Matrix":
             else:
                 st.success(f"🟢 **NEGATIVE MOLECULAR SIGNATURE** (Score Ponderado: {score_final:.4f})")
 
-with col_derecha:
-    # Eliminamos el contenedor con borde para que se integre al fondo de la app
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-       
+    with col_derecha:
+        # Eliminamos el contenedor con borde para que se integre al fondo de la app
+        st.markdown('<div class="executive-card">', unsafe_allow_html=True)
            
-x_axis = np.linspace(0.0, 1.0, 100)
-healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
-tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
-
-fig_cohort = go.Figure()
-fig_cohort.add_trace(go.Scatter(
-    x=x_axis, y=healthy_density, mode='lines', name='Healthy Control',
-    line=dict(color='#0284C7', width=2.5), fill='tozeroy', fillcolor='rgba(2, 132, 199, 0.02)'
-))
-fig_cohort.add_trace(go.Scatter(
-    x=x_axis, y=tumor_density, mode='lines', name='Oncological Cohort',
-    line=dict(color='#F43F5E', width=2.5), fill='tozeroy', fillcolor='rgba(244, 63, 94, 0.02)'
-))
-            
-            # Marcador dinámico del diamante del paciente en ejecución
-patient_y_pos = np.exp(-((ctdna_score - 0.45) ** 2) / (2 * 0.15 ** 2)) if ctdna_score > 0.2 else np.exp(-((ctdna_score - 0.05) ** 2) / (2 * 0.03 ** 2))
-fig_cohort.add_trace(go.Scatter(
-    x=[ctdna_score], y=[patient_y_pos], mode='markers+text', name='Patient Marker',
-    marker=dict(color='#EF4444', size=12, symbol='diamond', line=dict(color='white', width=1.5)),
-    text=["🎯 Current Patient"], textposition="top center", textfont=dict(size=11, color="#EF4444")
-))
-
-fig_cohort.update_layout(
-    margin=dict(l=10, r=10, t=10, b=10), height=260, plot_bgcolor='white', paper_bgcolor='white',
-    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-    xaxis=dict(showgrid=True, gridcolor='#F1F5F9', range=[0, 0.75]), yaxis=dict(showgrid=False, showticklabels=False)
-)
-st.plotly_chart(fig_cohort, use_container_width=True)
-
-st.write("---")
-st.markdown('<p style="font-size: 13px; font-weight:700; color:#0F172A; margin-bottom:5px;">📥 Data Ingestion & Archiving</p>', unsafe_allow_html=True)
-archivo_cargado = st.file_uploader("Upload sequencer", type=["csv", "xlsx"], label_visibility="collapsed")
            
-            # CONSTRUCCIÓN PRE-COMPILADA RÁPIDA CON FPDF PARA EL BOTÓN DE LA PORTADA
-pdf_default = FPDF()
-pdf_default.add_page()
-pdf_default.set_font("Arial", "B", 14)
-pdf_default.cell(190, 10, "METHYLOX ONCOLOGY - INSTITUTIONAL ANALYTICAL DOSSIER", ln=True, align="C")
-pdf_default.set_font("Arial", "", 11)
-pdf_default.ln(10)
-pdf_default.cell(190, 8, "Prototipo computacional restringido a experimentacion academica.", ln=True)
-pdf_default.cell(190, 8, "Protegido estrictamente bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True)
-pdf_default_bytes = pdf_default.output
+        x_axis = np.linspace(0.0, 1.0, 100)
+        healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
+        tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
 
-st.download_button(
-    label="📄 Download Institutional Analytical Dossier (PDF)",
-    data=pdf_default_bytes, # <- AQUÍ QUEDA CORREGIDA LA VARIABLE
-    file_name="METHYLOX_Dossier_Clinico.pdf",
-    mime="application/pdf", # <- ASEGURAMOS FORMATO PDF REAL
-    use_container_width=True
-)
+        fig_cohort = go.Figure()
+        fig_cohort.add_trace(go.Scatter(
+            x=x_axis, y=healthy_density, mode='lines', name='Healthy Control',
+            line=dict(color='#0284C7', width=2.5), fill='tozeroy', fillcolor='rgba(2, 132, 199, 0.02)'
+        ))
+        fig_cohort.add_trace(go.Scatter(
+            x=x_axis, y=tumor_density, mode='lines', name='Oncological Cohort',
+            line=dict(color='#F43F5E', width=2.5), fill='tozeroy', fillcolor='rgba(244, 63, 94, 0.02)'
+        ))
+                    
+                    # Marcador dinámico del diamante del paciente en ejecución
+        patient_y_pos = np.exp(-((ctdna_score - 0.45) ** 2) / (2 * 0.15 ** 2)) if ctdna_score > 0.2 else np.exp(-((ctdna_score - 0.05) ** 2) / (2 * 0.03 ** 2))
+        fig_cohort.add_trace(go.Scatter(
+            x=[ctdna_score], y=[patient_y_pos], mode='markers+text', name='Patient Marker',
+            marker=dict(color='#EF4444', size=12, symbol='diamond', line=dict(color='white', width=1.5)),
+            text=["🎯 Current Patient"], textposition="top center", textfont=dict(size=11, color="#EF4444")
+        ))
+
+        fig_cohort.update_layout(
+            margin=dict(l=10, r=10, t=10, b=10), height=260, plot_bgcolor='white', paper_bgcolor='white',
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+            xaxis=dict(showgrid=True, gridcolor='#F1F5F9', range=[0, 0.75]), yaxis=dict(showgrid=False, showticklabels=False)
+        )
+        st.plotly_chart(fig_cohort, use_container_width=True)
+
+        st.write("---")
+        st.markdown('<p style="font-size: 13px; font-weight:700; color:#0F172A; margin-bottom:5px;">📥 Data Ingestion & Archiving</p>', unsafe_allow_html=True)
+        archivo_cargado = st.file_uploader("Upload sequencer", type=["csv", "xlsx"], label_visibility="collapsed")
+                   
+                    # CONSTRUCCIÓN PRE-COMPILADA RÁPIDA CON FPDF PARA EL BOTÓN DE LA PORTADA
+        pdf_default = FPDF()
+        pdf_default.add_page()
+        pdf_default.set_font("Arial", "B", 14)
+        pdf_default.cell(190, 10, "METHYLOX ONCOLOGY - INSTITUTIONAL ANALYTICAL DOSSIER", ln=True, align="C")
+        pdf_default.set_font("Arial", "", 11)
+        pdf_default.ln(10)
+        pdf_default.cell(190, 8, "Prototipo computacional restringido a experimentacion academica.", ln=True)
+        pdf_default.cell(190, 8, "Protegido estrictamente bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True)
+        pdf_default_bytes = pdf_default.output
+
+        st.download_button(
+            label="📄 Download Institutional Analytical Dossier (PDF)",
+            data=pdf_default_bytes, # <- AQUÍ QUEDA CORREGIDA LA VARIABLE
+            file_name="METHYLOX_Dossier_Clinico.pdf",
+            mime="application/pdf", # <- ASEGURAMOS FORMATO PDF REAL
+            use_container_width=True
+        )
 
 # ---- PESTAÑA 2: SAMPLES DATABASE ----
 elif nav_selection == "Samples Database":
@@ -313,7 +313,8 @@ elif nav_selection == "Samples Database":
                 CREATE TABLE IF NOT EXISTS pacientes (
                     id TEXT PRIMARY KEY, edad INTEGER, ctdna REAL, resultado TEXT, fecha TEXT
                 )
-            """)
+            """
+            )
            
             cursor.execute("SELECT COUNT(*) FROM pacientes")
             if cursor.fetchone()[0] == 0 and token_hospital == "ROOT-INTERNAL":
