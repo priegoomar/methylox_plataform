@@ -328,13 +328,7 @@
 
     <!-- SCRIPTS DE CONTROL LÓGICO MULTI-TENANCY -->
     <script>
-document.addEventListener("DOMContentLoaded", function() {
-        const topNavBtn = document.querySelector("header nav button");
-        if(topNavBtn) {
-            topNavBtn.setAttribute("onclick", "toggleModal()");
-        }
-    });
-
+<script>
     function toggleModal() {
         const modal = document.getElementById('secureModal');
         modal.classList.toggle('hidden');
@@ -359,6 +353,7 @@ document.addEventListener("DOMContentLoaded", function() {
             err.classList.remove('hidden');
         }
     }
+</script>
 
         function verifyToken() {
             const token = document.getElementById('accessKeyInput').value.trim();
