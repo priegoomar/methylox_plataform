@@ -251,15 +251,15 @@ x_axis = np.linspace(0.0, 1.0, 100)
 healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
 tumor_density = np.exp(-((x_axis - 0.45) ** 2) / (2 * 0.15 ** 2))
 
-            fig_cohort = go.Figure()
-            fig_cohort.add_trace(go.Scatter(
-                x=x_axis, y=healthy_density, mode='lines', name='Healthy Control',
-                line=dict(color='#0284C7', width=2.5), fill='tozeroy', fillcolor='rgba(2, 132, 199, 0.02)'
-            ))
-            fig_cohort.add_trace(go.Scatter(
-                x=x_axis, y=tumor_density, mode='lines', name='Oncological Cohort',
-                line=dict(color='#F43F5E', width=2.5), fill='tozeroy', fillcolor='rgba(244, 63, 94, 0.02)'
-            ))
+fig_cohort = go.Figure()
+fig_cohort.add_trace(go.Scatter(
+    x=x_axis, y=healthy_density, mode='lines', name='Healthy Control',
+    line=dict(color='#0284C7', width=2.5), fill='tozeroy', fillcolor='rgba(2, 132, 199, 0.02)'
+))
+fig_cohort.add_trace(go.Scatter(
+    x=x_axis, y=tumor_density, mode='lines', name='Oncological Cohort',
+    line=dict(color='#F43F5E', width=2.5), fill='tozeroy', fillcolor='rgba(244, 63, 94, 0.02)'
+))
             
             # Marcador dinámico del diamante del paciente en ejecución
             patient_y_pos = np.exp(-((ctdna_score - 0.45) ** 2) / (2 * 0.15 ** 2)) if ctdna_score > 0.2 else np.exp(-((ctdna_score - 0.05) ** 2) / (2 * 0.03 ** 2))
