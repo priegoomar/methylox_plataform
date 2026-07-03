@@ -7,7 +7,7 @@
     <!-- CDN Oficial de Tailwind CSS para renderizado fluido en vivo -->
     <script src="https://tailwindcss.com"></script>
     <!-- Importación estricta de Google Fonts -->
-    <link href="https://googleapis.com" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         .font-serif { font-family: 'Fraunces', serif !important; }
         .font-sans { font-family: 'Inter', sans-serif !important; }
@@ -328,34 +328,37 @@
 
     <!-- SCRIPTS DE CONTROL LÓGICO MULTI-TENANCY -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const topNavBtn = document.querySelector("header nav button");
-            if(topNavBtn) {
-                topNavBtn.setAttribute("onclick", "toggleModal()");
-                topNavBtn.classList.add("cursor-pointer");
-            }
-        });
-
-        function toggleModal() {
-            const modal = document.getElementById('secureModal');
-            const input = document.getElementById('accessKeyInput');
-            const err = document.getElementById('errorMessage');
-            const success = document.getElementById('successMessage');
-            const btnRedirect = document.getElementById('redirectStreamlitBtn');
-            
-            if(modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                input.value = '';
-                err.classList.add('hidden');
-                success.classList.add('hidden');
-                btnRedirect.classList.add('hidden');
-                btnRedirect.classList.remove('flex');
-            } else {
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-            }
+document.addEventListener("DOMContentLoaded", function() {
+        const topNavBtn = document.querySelector("header nav button");
+        if(topNavBtn) {
+            topNavBtn.setAttribute("onclick", "toggleModal()");
         }
+    });
+
+    function toggleModal() {
+        const modal = document.getElementById('secureModal');
+        modal.classList.toggle('hidden');
+        modal.classList.toggle('flex');
+    }
+
+    function verifyToken() {
+        const token = document.getElementById('accessKeyInput').value.trim();
+        const err = document.getElementById('errorMessage');
+        const success = document.getElementById('successMessage');
+        const btnRedirect = document.getElementById('redirectStreamlitBtn');
+
+        if (token === "METHYLOX-ROOT-2026" || token.startsWith("METH-HOSPITAL-")) {
+            err.classList.add('hidden');
+            success.classList.remove('hidden');
+            btnRedirect.classList.remove('hidden');
+            btnRedirect.classList.add('flex');
+        } else {
+            btnRedirect.classList.add('hidden');
+            btnRedirect.classList.remove('flex');
+            success.classList.add('hidden');
+            err.classList.remove('hidden');
+        }
+    }
 
         function verifyToken() {
             const token = document.getElementById('accessKeyInput').value.trim();
