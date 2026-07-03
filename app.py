@@ -420,7 +420,7 @@ elif nav_selection == "Clinical Reports" and token_hospital == "ROOT-INTERNAL":
             pdf.cell(190, 5, "AVISO LEGAL: Prototipo computacional restringido a experimentacion academica.", ln=True, align="C")
             pdf.cell(190, 5, "Protegido bajo Secreto Industrial. Propiedad de METHYLOX Oncology.", ln=True, align="C")
            
-            pdf_bytes = pdf.output(dest='S').encode('latin-1')
+            pdf_bytes = pdf.output()
             
             st.write("##")
             pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
