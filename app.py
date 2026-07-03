@@ -425,12 +425,12 @@ elif nav_selection == "Clinical Reports" and token_hospital == "ROOT-INTERNAL":
             st.write("##")
             pdf_nombre = f"METHYLOX_Reporte_{paciente_seleccionado}.pdf"
            
-st.download_button(
-    label=f"🔬 Download Official PDF Dossier for {paciente_seleccionado}",
-    data=pdf_bytes,
-    file_name=pdf_nombre,
-    mime="application/pdf"
-)
+            st.download_button(
+                label=f"🔬 Download Official PDF Dossier for {paciente_seleccionado}",
+                data=pdf_bytes,
+                file_name=pdf_nombre,
+                mime="application/pdf"
+            )
 
 # ---- PESTAÑA 5: SYSTEM SETTINGS ----
 elif nav_selection == "System Settings" and token_hospital == "ROOT-INTERNAL":
