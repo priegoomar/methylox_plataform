@@ -243,8 +243,9 @@ elif nav_selection == "Dashboard Matrix":
                 st.success(f"🟢 **NEGATIVE MOLECULAR SIGNATURE** (Score Ponderado: {score_final:.4f})")
 
     with col_derecha:
-        with st.container(border=True):
-            st.markdown('<p style="font-size: 15px; font-weight:700; color:#0F172A; text-transform:uppercase; letter-spacing:0.5px; margin-top:5px; margin-bottom:15px;">📊 Cohort Density Mapping & Patient Positioning</p>', unsafe_allow_html=True)
+    # Eliminamos el contenedor con borde para que se integre al fondo de la app
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+       
            
             x_axis = np.linspace(0.0, 1.0, 100)
             healthy_density = np.exp(-((x_axis - 0.05) ** 2) / (2 * 0.03 ** 2))
