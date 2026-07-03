@@ -12,7 +12,7 @@ from fpdf import FPDF
 # 📊 CONFIGURACIÓN GENERAL E IDENTIDAD VISUAL EXECUTIVE DE ALTA GAMA
 # ==============================================================================
 st.set_page_config(
-    page_title="MethylOx™ | Epigenetic AI Platform",
+    page_title="MethylOx | Epigenetic AI Platform",
     page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded"
