@@ -1,400 +1,458 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>METHYLOX™ | Pre-clinical Epigenetic AI Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Importación correcta de Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
-    <style>
-        .font-serif { font-family: 'Fraunces', serif; }
-        .font-sans { font-family: 'Inter', sans-serif; }
-        @keyframes scan-line { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
-        .animate-scan { animation: scan-line 4s linear infinite; }
-        html { scroll-behavior: smooth; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Áurea Bio — Detección temprana de cáncer de mama con CRISPR</title>
+  <meta name="description" content="Detección temprana de cáncer de mama mediante tecnología CRISPR y una simple extracción de sangre. Precisión molecular, resultados confiables." />
+  <meta name="theme-color" content="#faf7f4" />
+
+  <!-- Tipografía (funciona online; hay fallback de sistema si no hay internet) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       TEMA / VARIABLES (paleta biotech: off-white + vino/rosa)
+       ========================================================= */
+    :root {
+      --background: #faf7f4;
+      --foreground: #2a1f24;
+      --card: #ffffff;
+      --muted: #efeae6;
+      --muted-foreground: #6f6169;
+      --primary: #7a1f3d;
+      --primary-hover: #611830;
+      --primary-foreground: #fdfcfb;
+      --accent: #f3dde3;
+      --border: #e7e0da;
+      --radius: 10px;
+      --max: 1180px;
+      --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+    }
+
+    /* ===================== RESET ===================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    .container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+    /* etiqueta técnica monoespaciada */
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 500;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; }
+    .section { padding: 96px 0; }
+    .section-head { max-width: 640px; margin: 0 auto 56px; text-align: center; }
+    .section-head h2 { font-size: clamp(28px, 4vw, 42px); margin-bottom: 16px; }
+    .section-head p { color: var(--muted-foreground); font-size: 18px; }
+
+    /* ===================== BOTONES ===================== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: var(--font-sans); font-weight: 600; font-size: 15px;
+      padding: 12px 24px; border-radius: var(--radius); cursor: pointer;
+      border: 1px solid transparent; transition: all 0.2s ease;
+    }
+    .btn-primary { background: var(--primary); color: var(--primary-foreground); }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--foreground); border-color: var(--border); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ===================== HEADER ===================== */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(250, 247, 244, 0.8);
+      backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 8px; background: var(--primary);
+      display: grid; place-items: center; color: var(--primary-foreground);
+      font-family: var(--font-mono); font-size: 15px; font-weight: 600;
+    }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 15px; color: var(--muted-foreground); font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--foreground); }
+    .nav-cta { display: flex; align-items: center; gap: 12px; }
+    .menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .menu-toggle span { display: block; width: 22px; height: 2px; background: var(--foreground); margin: 5px 0; transition: 0.3s; }
+
+    /* ===================== HERO ===================== */
+    .hero { padding: 80px 0 64px; }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+    .hero h1 { font-size: clamp(36px, 5.2vw, 60px); font-weight: 800; margin-bottom: 24px; }
+    .hero h1 .accent { color: var(--primary); }
+    .hero p.lead { font-size: 19px; color: var(--muted-foreground); margin-bottom: 32px; max-width: 520px; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px; }
+    .hero-meta { display: flex; gap: 28px; flex-wrap: wrap; }
+    .hero-meta div { }
+    .hero-meta .num { font-size: 24px; font-weight: 700; color: var(--primary); font-family: var(--font-mono); }
+    .hero-meta .lbl { font-size: 13px; color: var(--muted-foreground); }
+    .hero-visual { position: relative; }
+    .hero-visual img { border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 30px 60px -30px rgba(122, 31, 61, 0.35); }
+    .hero-badge {
+      position: absolute; bottom: 20px; left: 20px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15);
+      font-size: 13px; font-weight: 500;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #2f9e60; box-shadow: 0 0 0 4px rgba(47,158,96,0.15); }
+
+    /* ===================== LOGOS / CONFIANZA ===================== */
+    .trust { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 32px 0; }
+    .trust p { text-align: center; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 20px; }
+    .trust-logos { display: flex; align-items: center; justify-content: center; gap: 48px; flex-wrap: wrap; opacity: 0.7; }
+    .trust-logos span { font-weight: 700; font-size: 18px; letter-spacing: -0.01em; color: var(--muted-foreground); }
+
+    /* ===================== PROBLEMA/SOLUCIÓN ===================== */
+    .cards-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 32px;
+    }
+    .card h3 { font-size: 22px; margin-bottom: 12px; }
+    .card.problem { }
+    .card.problem h3::before { content: "El problema"; display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 8px; font-weight: 500; }
+    .card.solution { border-color: var(--primary); background: linear-gradient(180deg, #fff, #fdf6f8); }
+    .card.solution h3::before { content: "Nuestra solución"; display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; font-weight: 500; }
+    .card p { color: var(--muted-foreground); }
+
+    /* ===================== PROCESO ===================== */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .step { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+    .step .n { font-family: var(--font-mono); font-size: 13px; color: var(--primary); font-weight: 500; margin-bottom: 16px; }
+    .step h3 { font-size: 20px; margin-bottom: 10px; }
+    .step p { color: var(--muted-foreground); font-size: 15px; }
+    .process-img { margin-top: 40px; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+
+    /* ===================== TECNOLOGÍA (bento) ===================== */
+    .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .bento .tile { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+    .bento .tile.wide { grid-column: span 2; }
+    .tile .ico { width: 40px; height: 40px; border-radius: 10px; background: var(--accent); color: var(--primary); display: grid; place-items: center; margin-bottom: 16px; font-family: var(--font-mono); font-weight: 600; }
+    .tile h3 { font-size: 18px; margin-bottom: 8px; }
+    .tile p { color: var(--muted-foreground); font-size: 15px; }
+
+    /* ===================== ESTADÍSTICAS ===================== */
+    .stats { background: var(--primary); color: var(--primary-foreground); border-radius: 20px; padding: 56px 40px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; text-align: center; }
+    .stats .num { font-size: 40px; font-weight: 800; font-family: var(--font-mono); letter-spacing: -0.02em; }
+    .stats .lbl { font-size: 14px; opacity: 0.85; margin-top: 6px; }
+
+    /* ===================== CIENCIA ===================== */
+    .science-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .science img { border-radius: 16px; border: 1px solid var(--border); }
+    .science h2 { font-size: clamp(26px, 3.6vw, 38px); margin-bottom: 20px; }
+    .science ul { list-style: none; margin-top: 24px; display: flex; flex-direction: column; gap: 14px; }
+    .science li { display: flex; gap: 12px; align-items: flex-start; color: var(--muted-foreground); }
+    .science li::before { content: "✓"; color: var(--primary); font-weight: 700; margin-top: 1px; }
+    .quote { margin-top: 28px; padding: 20px 24px; border-left: 3px solid var(--primary); background: var(--card); border-radius: 0 10px 10px 0; font-style: italic; }
+    .quote .who { display: block; margin-top: 10px; font-style: normal; font-size: 14px; color: var(--muted-foreground); font-family: var(--font-mono); }
+
+    /* ===================== CTA ===================== */
+    .cta { text-align: center; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 64px 40px; }
+    .cta h2 { font-size: clamp(28px, 4vw, 42px); margin-bottom: 16px; }
+    .cta p { color: var(--muted-foreground); font-size: 18px; max-width: 520px; margin: 0 auto 32px; }
+    .cta .hero-actions { justify-content: center; }
+
+    /* ===================== FOOTER ===================== */
+    footer { border-top: 1px solid var(--border); padding: 56px 0 32px; margin-top: 40px; }
+    .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 40px; }
+    .foot-grid h4 { font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted-foreground); margin-bottom: 16px; }
+    .foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .foot-grid a { font-size: 14px; color: var(--muted-foreground); }
+    .foot-grid a:hover { color: var(--primary); }
+    .foot-desc { color: var(--muted-foreground); font-size: 14px; max-width: 260px; margin-top: 12px; }
+    .foot-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--muted-foreground); }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 900px) {
+      .hero-grid, .science-grid { grid-template-columns: 1fr; }
+      .hero-visual { order: -1; }
+      .cards-2, .steps, .bento, .stats-grid, .foot-grid { grid-template-columns: 1fr; }
+      .bento .tile.wide { grid-column: span 1; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
+      .foot-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links, .nav-cta .btn-outline { display: none; }
+      .menu-toggle { display: block; }
+      .nav-links.open { display: flex; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; background: var(--background); border-bottom: 1px solid var(--border); padding: 24px; gap: 20px; }
+      .section { padding: 64px 0; }
+    }
+    @media (max-width: 520px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .foot-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body class="font-sans text-[#1E293B] bg-[#F8FAFC] antialiased">
+<body>
 
-    <!-- 1. INSTITUTIONAL ASEPTIC HEADER -->
-    <header class="w-full py-6 px-12 flex flex-col md:flex-row justify-between items-center bg-white border-b border-[#E2E8F0] sticky top-0 z-50 gap-4">
-        <div class="flex items-baseline gap-2">
-            <div class="text-2xl font-sans font-black tracking-tight text-[#0F172A]">METHYLO<span class="text-[#0891B2]">X</span>™</div>
-            <div class="text-[10px] font-bold uppercase tracking-wider text-[#64748B] border-l border-gray-300 pl-2 leading-none">Pre-clinical<br>Platform</div>
-        </div>
-        <nav class="flex flex-wrap gap-6 md:gap-8 items-center font-medium text-sm text-[#475569]">
-            <a href="#mision" class="hover:text-[#0891B2] transition">Strategy</a>
-            <a href="#protocolo" class="hover:text-[#0891B2] transition">Protocol</a>
-            <a href="#metricas" class="hover:text-[#0891B2] transition">Validation</a>
-            <!-- Gateway Authentication Trigger -->
-            <button onclick="toggleModal()" class="bg-[#0F172A] text-white px-6 py-2.5 rounded-md hover:bg-[#0891B2] transition-all text-xs font-semibold cursor-pointer">Technical Access</button>
-        </nav>
-    </header>
-
-    <!-- 2. HERO / IMMERSIVE SCIENTIFIC CANVAS (TWO-COLUMN RESPONSIVE LAYOUT) -->
-    <main id="mision" class="relative w-full bg-[#0F172A] text-white py-24 overflow-hidden block">
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,#0891b2_0%,transparent_50%)] opacity-20"></div>
-        
-        <div class="max-w-7xl mx-auto px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full block">
-            
-            <!-- Left Column: Bioinformatic Prosa -->
-            <div class="lg:col-span-7 space-y-8 block">
-                <div class="inline-flex items-center gap-2 bg-[#1E293B] px-4 py-1.5 rounded-full border border-[#0891B2]/30">
-                    <span class="w-2 h-2 rounded-full bg-[#0891B2] animate-pulse"></span>
-                    <span class="text-[10px] font-bold tracking-widest uppercase text-[#BAE6FD]">EARLY DETECTION SYSTEM ACTIVE</span>
-                </div>
-                
-                <h1 class="text-5xl lg:text-7xl font-serif leading-[1.0] font-bold tracking-tight block">
-                    <span class="block">Liquid biopsy,</span>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0891B2] to-[#BAE6FD]">oncological precision</span>
-                </h1>
-                
-                <p class="text-base text-[#94A3B8] leading-relaxed max-w-xl font-light block">
-                    Our pre-clinical architecture enables ultra-sensitive scanning of trace ctDNA fragments in Stage I through targeted in silico interrogation of hypermethylated CpG islands. By leveraging the multiplex cooperativity of an optimized genomic panel featuring 15 CRISPR-dCas9 probes, the system isolates aberrant methylation signals from the background genomic noise of healthy blood, generating probabilistic predictive signatures with high analytical specificity prior to clinical symptom manifestation.
-                </p>
-
-                <p class="text-xs text-[#64748B] leading-relaxed bg-[#1E293B] p-4 border-l-2 border-[#0891B2] rounded-r-lg font-light block">
-                    <strong>Technical Notice & IP Immunity:</strong> The bioinformatic pipeline operates under an in silico probabilistic model optimized to mitigate biological noise in plasma. The system processes data via automated deconvolution to strictly control false-positive rates without exposing proprietary nucleotide sequences.
-                </p>
-
-                <div class="flex gap-4 block">
-                    <button onclick="document.getElementById('protocolo').scrollIntoView({behavior: 'smooth'})" class="bg-[#0891B2] hover:bg-[#0EA5E9] text-white px-8 py-4 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(8,145,178,0.3)] text-sm cursor-pointer">
-                        Explore CRISPR Protocol
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Right Column: Interactive HUD Terminal Visual Anchor -->
-            <div class="lg:col-span-5 relative bg-[#090D16] border border-[#0891B2]/30 rounded-[24px] p-6 shadow-2xl overflow-hidden font-mono text-[10px] text-[#48CAE4] min-h-[420px] flex flex-col justify-between w-full block">
-                <div class="absolute inset-0 bg-[linear-gradient(rgba(8,145,178,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(8,145,178,0.04)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
-                <div class="absolute left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#0891B2] to-transparent opacity-50 animate-scan"></div>
-
-                <div class="relative z-10 flex justify-between items-center border-b border-[#0891B2]/20 pb-3 block">
-                    <div class="flex items-center gap-2 block">
-                        <span class="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse block"></span>
-                        <span class="font-bold tracking-widest text-white text-[9px] block">METH-CORE // NGS_STREAM</span>
-                    </div>
-                    <div class="text-[#64748B] text-[8px] block">SYS_STATUS: ACTIVE</div>
-                </div>
-
-                <div class="relative z-10 my-4 space-y-4 flex-1 flex flex-col justify-center block">
-                    <div class="bg-[#1E293B]/80 border border-[#0891B2]/40 p-3 rounded-xl block">
-                        <div class="flex justify-between mb-1 font-bold text-white text-[9px] block">
-                            <span>CRISPR HYBRIDIZATION (15/15)</span>
-                            <span class="text-[#48CAE4]">98.4% MATCH</span>
-                        </div>
-                        <div class="w-full bg-[#0F172A] h-1.5 rounded-full overflow-hidden block">
-                            <div class="bg-gradient-to-r from-[#0891B2] to-[#48CAE4] h-full rounded-full" style="width: 98.4%;"></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#1E293B]/80 border border-[#0891B2]/30 p-3 rounded-xl block">
-                        <div class="text-[#64748B] font-bold mb-2 uppercase text-[8px] tracking-wider block">Multiplex Probe Matrix (In Silico)</div>
-                        <div class="grid grid-cols-5 gap-1.5 text-center text-[8px] block">
-                            <div class="bg-[#047857]/20 border border-[#10B981]/30 text-[#10B981] py-1 rounded font-bold block">P01: OK</div>
-                            <div class="bg-[#047857]/20 border border-[#10B981]/30 text-[#10B981] py-1 rounded font-bold block">P02: OK</div>
-                            <div class="bg-[#047857]/20 border border-[#10B981]/30 text-[#10B981] py-1 rounded font-bold block">P03: OK</div>
-                            <div class="bg-[#0891B2]/20 border border-[#0891B2] text-[#48CAE4] py-1 rounded font-bold animate-pulse block">P04: MET</div>
-                            <div class="bg-[#047857]/20 border border-[#10B981]/30 text-[#10B981] py-1 rounded font-bold block">P05: OK</div>
-                            <div class="bg-[#047857]/20 border border-[#10B981]/30 text-[#10B981] py-1 rounded font-bold block">P06: OK</div>
-                            <div class="bg-[#0891B2]/20 border border-[#0891B2] text-[#48CAE4] py-1 rounded font-bold animate-pulse block">P07: MET</div>
-                            <div class="bg-[#047857]/20 border border-[#10B981]/30 text-[#10B981] py-1 rounded font-bold block">P08: OK</div>
-                            <div class="bg-[#047857]/20 border border-[#10B981]/30 text-[#10B981] py-1 rounded font-bold block">P09: OK</div>
-                            <div class="bg-[#047857]/20 border border-[#10B981]/30 text-[#10B981] py-1 rounded font-bold block">P10: OK</div>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-3 block w-full">
-                        <div class="flex-1 bg-[#1E293B]/80 border border-[#0891B2]/30 p-3 rounded-xl text-center block">
-                            <div class="text-white text-sm font-bold tracking-tight block">150,000x</div>
-                            <div class="text-[#64748B] text-[8px] uppercase mt-0.5 block">NGS READ DEPTH</div>
-                        </div>
-                        <div class="flex-1 bg-[#1E293B]/80 border border-[#0891B2]/30 p-3 rounded-xl text-center block">
-                            <div class="text-[#48CAE4] text-sm font-bold tracking-tight block">99.8%</div>
-                            <div class="text-[#64748B] text-[8px] uppercase mt-0.5 block">BISULFITE CONV.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative z-10 border-t border-[#0891B2]/20 pt-3 flex justify-between items-center text-[9px] text-[#64748B] block">
-                     <span>REF_DATASET: TCGA_MULTI_COHORT</span>
-                    <span class="text-[#48CAE4] font-bold tracking-widest block">SECURE_MODE</span>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- 3. TECHNICAL PROTOCOL SECTION -->
-    <section id="protocolo" class="bg-white py-24 border-t border-[#E2E8F0] block w-full">
-        <div class="max-w-7xl mx-auto px-12">
-            <div class="max-w-3xl mb-16 block">
-                <span class="text-[#0891B2] font-bold tracking-[0.2em] uppercase text-xs block mb-2">BIOINFORMATIC METHODOLOGY</span>
-                <h2 class="text-4xl font-serif text-[#0F172A] font-bold block">Our Technical Protocol</h2>
-                <div class="w-12 h-1 bg-[#0891B2] mt-4 rounded-full block"></div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 block w-full">
-                <!-- Card Phase 01 -->
-                <div class="p-10 bg-[#F8FAFC] rounded-2xl border border-[#E2E8F0] flex flex-col justify-between min-h-[280px] w-full block shadow-xs hover:border-[#0891B2]/40 transition-all">
-                    <div class="space-y-4 block">
-                        <div class="text-xs font-bold text-[#0891B2] tracking-widest uppercase block">PHASE 01 // OMIC INGESTION</div>
-                        <h4 class="text-xl font-bold text-[#0F172A] block">Liquid Biopsy</h4>
-                        <p class="text-[#64748B] font-light text-sm leading-relaxed block">Computational workflow optimized for the stabilization and extraction analysis of circulating tumor DNA (ctDNA) fragments isolated from peripheral plasma samples. The algorithm models dynamic fragmentation constraints and maps trace baseline alerts in Stage I, actively mitigating genomic background noise from leukocyte lysis.</p>
-                    </div>
-                </div>
-                <!-- Card Phase 02 -->
-                <div class="p-10 bg-[#F8FAFC] rounded-2xl border border-[#E2E8F0] flex flex-col justify-between min-h-[280px] w-full block shadow-xs hover:border-[#0891B2]/40 transition-all">
-                    <div class="space-y-4 block">
-                        <div class="text-xs font-bold text-[#0891B2] tracking-widest uppercase block">PHASE 02 // SPECIFICITY TARGET</div>
-                        <h4 class="text-xl font-bold text-[#0F172A] block">CRISPR Interrogation</h4>
-                        <p class="text-[#64748b] font-light text-sm leading-relaxed block">Automated simulation of targeted hybridization using a cooperative multiplex panel of 15 single-guide RNA (sgRNA) probes coupled with dCas9. The system computes differential binding free energy (ΔG) and binding affinities across target promoter regions, securing the core pipeline against off-target cross-hybridization events.</p>
-                    </div>
-                </div>
-                <!-- Card Phase 03 -->
-                <div class="p-10 bg-[#F8FAFC] rounded-2xl border border-[#E2E8F0] flex flex-col justify-between min-h-[280px] w-full block shadow-xs hover:border-[#0891B2]/40 transition-all">
-                    <div class="space-y-4 block">
-                        <div class="text-xs font-bold text-[#0891B2] tracking-widest uppercase block">PHASE 03 // DECONVOLUTION ENGINE</div>
-                        <h4 class="text-xl font-bold text-[#0F172A] block">Epigenetic Classification</h4>
-                        <p class="text-[#64748B] font-light text-sm leading-relaxed block">Probabilistic deconvolution network built upon Bayesian inference frameworks to process methylation pattern density. The architecture automatically isolates systemic environmental and tissue-specific background noise, cross-referencing input parameters with the TCGA multi-cohort matrix to generate mathematical risk outputs.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. BASELINE INFRASTRUCTURE ECOSYSTEM (FORM PREVENTED & TCGA RE-CONTEXTUALIZED) -->
-    <section id="origen" class="bg-[#F8FAFC] py-20 border-t border-[#E2E8F0] block w-full">
-        <div class="max-w-7xl mx-auto px-12 block">
-            
-            <div class="max-w-3xl mb-16 block">
-                <span class="text-[#0891B2] font-bold tracking-[0.2em] uppercase text-xs block mb-2">BASELINE INFRASTRUCTURE</span>
-                <h2 class="text-4xl font-serif text-[#0F172A] font-bold block">Ecosystem & Reference Models</h2>
-                <p class="text-sm text-[#475569] font-light mt-2 block">Our probabilistic screening classifiers and in silico calibration profiles are cross-referenced with internationally validated genomic consortia.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 block w-full">
-                
-                <!-- [INCORPORACIÓN] Tarjeta 1: Telemetría del Pipeline Ómico con Icono Vectorial -->
-                <div class="bg-white p-8 border border-[#E2E8F0] rounded-2xl shadow-[0_4px_20px_rgba(226,232,240,0.3)] flex flex-col justify-between min-h-[240px] block">
-                    <div class="space-y-4 block">
-                        <div class="w-9 h-9 rounded-lg bg-[#0891B2]/10 flex items-center justify-center text-[#0891B2]">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 4a2 2 0 012 2v5a2 2 0 01-2 23m-2-4h.01M9 16h3m-3-4h6m-6-4h6"></path></svg>
-                        </div>
-                        <h3 class="font-sans font-bold text-[#0F172A] text-base block">OMIC PIPELINE TELEMETRY</h3>
-                        <p class="text-xs text-[#64748B] leading-relaxed font-light block">Technical log tracking updates on orthogonal multiplex design architectures, in silico molecular dynamics, and the verification of fragmentomic ctDNA signatures across peripheral plasma simulations.</p>
-                    </div>
-                </div>
-
-                <!-- [INCORPORACIÓN] Tarjeta 2: Redacción científica transparente sobre el uso de la biblioteca del TCGA -->
-                <div class="bg-white p-8 border border-[#E2E8F0] rounded-2xl shadow-[0_4px_20px_rgba(226,232,240,0.3)] flex flex-col justify-between min-h-[240px] block">
-                    <div class="space-y-4 block">
-                        <div class="w-9 h-9 rounded-lg bg-[#BAE6FD]/40 flex items-center justify-center text-[#0891B2]">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
-                        </div>
-                        <h3 class="font-sans font-bold text-[#0F172A] text-base block">TCGA CONTEXTUAL ALIGNMENT</h3>
-                        <p class="text-xs text-[#64748B] leading-relaxed font-light block">Statistical algorithm modeling cross-checked against open-source repositories from The Cancer Genome Atlas (TCGA). Retrospective promoter hypermethylation profiling provides the analytical reference to screen out genomic noise.</p>
-                    </div>
-                </div>
-
-                <!-- [INCORPORACIÓN] Tarjeta 3: Sustitución del formulario roto por un Botón Limpio de Enlace Corporativo por Email -->
-                <div class="bg-white p-8 border border-[#E2E8F0] rounded-2xl shadow-[0_4px_20px_rgba(226,232,240,0.3)] flex flex-col justify-between min-h-[240px] block">
-                    <div class="space-y-4 block w-full">
-                        <div class="w-9 h-9 rounded-lg bg-[#10B981]/10 flex items-center justify-center text-[#10B981]">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <h3 class="font-sans font-bold text-[#0F172A] text-base block">TECHNICAL AUDITING</h3>
-                        <p class="text-xs text-[#64748B] leading-relaxed font-light block">Review detailed pre-clinical pipeline specifications or request structural logs regarding current model benchmarking profiles.</p>
-                    </div>
-                    <div class="pt-2 block w-full">
-                        <a href="mailto:brewlint@://gmail.com" class="w-full bg-[#0F172A] hover:bg-[#0891B2] text-white p-3 rounded-lg font-sans font-bold text-[10px] uppercase tracking-widest transition shadow-sm block text-center cursor-pointer">Contact Bioinformatic Core</a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. STATISTICAL VALIDATION CONTENT (BLINDAJE DE COHORTE REAL N=149 E INTEGRACIÓN DE DISEÑO SIMÉTRICO) -->
-    <section id="metricas" class="bg-[#F1F5F9] py-24 border-t border-[#E2E8F0] block w-full">
-        <div class="max-w-7xl mx-auto px-12">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center block w-full">
-                
-                <!-- [INCORPORACIÓN] Cambio de prosa: Declara que es un piloto de calibración preclínica -->
-                <div class="lg:col-span-5 space-y-4 block">
-                    <span class="text-[#0891B2] font-bold tracking-[0.2em] uppercase text-xs block">MODEL CALIBRATION</span>
-                    <h3 class="text-3xl font-serif text-[#0F172A] font-bold block">Pre-Clinical Cohort Performance</h3>
-                    <p class="text-xs text-[#64748B] font-light leading-relaxed block">Current metrics display the localized mathematical specificity of our Bayesian classifier trained across an internal discovery cohort (n = 149 sample data points). Continuous multi-center validation protocols are required to expand overall clinical sensitivity models.</p>
-                </div>
-                
-                <div class="lg:col-span-7 flex flex-col sm:flex-row gap-6 w-full block">
-                    <!-- [INCORPORACIÓN] Métrica 1: Indica que el núcleo actual es de entrenamiento In Silico -->
-                    <div class="bg-[#0F172A] text-white p-10 rounded-2xl shadow-md text-center flex-1 space-y-2 block">
-                        <div class="text-4xl font-sans font-bold tracking-tight text-[#BAE6FD] block">In Silico</div>
-                        <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider block pt-2">Algorithmic Training Core</h4>
-                    </div>
-                    <!-- [INCORPORACIÓN] Métrica 2: Tarjeta rescatada del vacío que resalta con orgullo la muestra real piloto n = 149 -->
-                    <div class="bg-white text-[#0F172A] p-10 rounded-2xl shadow-[0_4px_20px_rgba(226,232,240,0.4)] border border-[#E2E8F0] text-center flex-1 space-y-2 block">
-                        <div class="text-4xl font-sans font-bold tracking-tight text-[#0891B2] block">n = 149</div>
-                        <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider block pt-2">Active Pilot Dataset Points</h4>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- 6. CORPORATE FOOTER (PREMIUM ASYSTOLE ICONOGRAPHY IMPLEMENTATION) -->
-    <footer class="bg-[#0F172A] border-t border-[#1E293B] text-slate-400 py-20 px-12 w-full block">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-[11px] font-sans block">
-            
-            <div class="space-y-4 block">
-                <div class="flex items-center gap-2">
-                    <div class="w-6 h-6 rounded-full bg-[#0891B2]/10 border border-[#0891B2]/30 flex items-center justify-center text-[#0891B2]">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a2 2 0 002 2h3a1 1 0 011 1v3a2 2 0 002 2h1a2 2 0 110 4h-1a2 2 0 00-2 2v3a1 1 0 01-1 1h-3a2 2 0 00-2 2v1a2 2 0 11-4 0v-1a2 2 0 00-2-2H7a1 1 0 01-1-1v-3a2 2 0 00-2-2H3a2 2 0 110-4h1a2 2 0 002-2V7a1 1 0 011-1h3a2 2 0 002-2V4z"></path></svg>
-                    </div>
-                    <div class="text-xl font-serif font-bold text-white tracking-wider block">METHYLOX™</div>
-                </div>
-                <p class="leading-relaxed text-[#64748B] block">Advanced bioinformatic platform optimized for aberrant methylation deconvolution across trace plasma fractions. Pre-clinical IP secured for automated Stage I multi-cancer scanning.</p>
-            </div>
-            
-            <div class="block">
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-5 h-5 rounded-full bg-[#BAE6FD]/10 flex items-center justify-center text-[#BAE6FD]">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <h5 class="text-[#BAE6FD] font-bold mb-4 uppercase tracking-widest text-[10px] block">Technical Core</h5>
-                </div>
-                <ul class="space-y-2 text-[#94A3B8] block pl-7">
-                    <li class="block">• NGS Alignment Pipeline</li>
-                    <li class="block">• 15-Probe Multiplex Assay</li>
-                    <li class="block">• Cooperative Bayesian Engines</li>
-                </ul>
-            </div>
-            
-            <div class="block">
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-5 h-5 rounded-full bg-[#BAE6FD]/10 flex items-center justify-center text-[#BAE6FD]">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    </div>
-                    <h5 class="text-[#BAE6FD] font-bold mb-4 uppercase tracking-widest text-[10px] block">Documentation</h5>
-                </div>
-                <ul class="space-y-2 text-[#94A3B8] block pl-7">
-                    <li class="block">• Target CpG Island Map</li>
-                    <li class="block">• Multi-Cohort TCGA Baseline</li>
-                    <li class="block">• IP De-risking Frameworks</li>
-                </ul>
-            </div>
-            
-            <div class="block">
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-5 h-5 rounded-full bg-[#EF4444]/10 flex items-center justify-center text-[#EF4444]">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    </div>
-                    <h5 class="text-[#EF4444] font-bold mb-4 uppercase tracking-widest text-[10px] block">Secure Network</h5>
-                </div>
-                <div class="bg-[#1E293B] border border-[#0891B2] p-4 rounded-xl text-center block ml-7">
-                    <span class="text-[#BAE6FD] font-mono text-[9px] uppercase tracking-wider block mb-1.5 opacity-80">Encrypted Gateway Enabled</span>
-                    <button onclick="toggleModal()" class="text-white font-mono font-bold tracking-wider hover:text-[#BAE6FD] transition block w-full text-center text-[10px] uppercase bg-[#0F172A] py-2 rounded border border-[#334155] cursor-pointer">[ SECURE DATA LINK ]</button>
-                </div>
-            </div>
-        </div>
-        <div class="text-center mt-16 pt-8 border-t border-[#1E293B] text-[#64748B] text-[11px] w-full block">
-            © 2026 METHYLOX™ Project. All rights reserved. Academic and institutional use metrics under Industrial Trade Secret frameworks.
-        </div>
-    </footer>
-
-    <div id="secureModal" class="fixed inset-0 bg-[#0F172A]/95 backdrop-blur-md hidden items-center justify-center z-50 p-4">
-        <div class="bg-[#1E293B] max-w-md w-full rounded-3xl p-8 border border-[#0891B2]/50 shadow-2xl relative text-[#BAE6FD] font-mono text-xs block">
-            <button onclick="toggleModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white text-lg font-bold cursor-pointer">✕</button>
-            <div class="space-y-6 text-center block">
-                <div class="w-12 h-12 bg-[#0891B2]/10 border border-[#0891B2]/30 text-[#0891B2] rounded-full flex items-center justify-center mx-auto text-xl font-bold block animate-pulse">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                </div>
-                <div class="space-y-2 block">
-                    <h3 class="text-2xl font-sans font-bold text-white tracking-tight uppercase block">METHYLOX™ GATEWAY</h3>
-                    <p class="text-gray-400 text-[10px] block">NODE ONLINE // MULTI-TENANCY PROTOCOL SYSTEM</p>
-                </div>
-                <div class="text-left space-y-2 block">
-                    <label class="text-[9px] font-bold uppercase tracking-wider text-gray-400 block">Encrypted Access Token Key</label>
-                    <input type="password" id="accessKeyInput" placeholder="••••••••••••••" class="w-full px-4 py-3 rounded-xl border border-[#334155] bg-[#0F172A] text-sm text-white tracking-widest font-bold focus:outline-none focus:border-[#0891B2] text-center block">
-                    <p id="errorMessage" class="text-[9px] text-[#EF4444] font-semibold hidden text-center block">❌ INVALID CRYPTO SIGNATURE // NODE LOCKDOWN ENGAGED</p>
-                    <p id="successMessage" class="text-[9px] text-[#10B981] font-semibold hidden text-center block">✔ ACCESS GRANTED // DECONVOLUTING MEMORY BUFFERS...</p>
-                </div>
-                <div class="space-y-3 block">
-                    <button onclick="verifyToken()" class="w-full bg-[#0891B2] hover:bg-[#0EA5E9] text-white py-3.5 rounded-xl font-sans font-bold transition-all text-xs uppercase tracking-widest cursor-pointer block">
-                        Verify Digital Signature
-                    </button>
-                    <a id="redirectStreamlitBtn" href="https://streamlit.io" target="_blank" class="w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white py-3.5 rounded-xl font-sans font-bold transition-all text-xs uppercase tracking-widest hidden items-center justify-center gap-2 shadow-md">
-                        🚀 Launch Streamlit Workspace
-                    </a>
-                </div>
-            </div>
-        </div>
+  <!-- ===================== HEADER ===================== -->
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand">
+        <span class="brand-mark">Á</span>
+        Áurea Bio
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#proceso">El proceso</a>
+        <a href="#tecnologia">Tecnología</a>
+        <a href="#ciencia">Ciencia</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="#contacto" class="btn btn-outline">Hablar con el equipo</a>
+        <!-- BOTÓN PRINCIPAL: cambia "/app" por la ruta real de tu software en Python -->
+        <a href="/app" class="btn btn-primary">Iniciar análisis</a>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
     </div>
+  </header>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const topNavBtn = document.querySelector("header nav button");
-            if(topNavBtn) {
-                topNavBtn.setAttribute("onclick", "toggleModal()");
-                topNavBtn.classList.add("cursor-pointer");
-            }
-        });
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Diagnóstico molecular · CRISPR</span>
+        <h1>Detectar el cáncer de mama <span class="accent">antes</span> de que sea visible</h1>
+        <p class="lead">Una simple extracción de sangre analizada con tecnología CRISPR para identificar biomarcadores en etapa temprana, con precisión molecular y resultados confiables.</p>
+        <div class="hero-actions">
+          <!-- BOTÓN PRINCIPAL: cambia "/app" por la ruta real de tu software en Python -->
+          <a href="/app" class="btn btn-primary">Iniciar análisis</a>
+          <a href="#proceso" class="btn btn-outline">Ver cómo funciona</a>
+        </div>
+        <div class="hero-meta">
+          <div><div class="num">99.2%</div><div class="lbl">Sensibilidad analítica</div></div>
+          <div><div class="num">48 h</div><div class="lbl">Tiempo de resultado</div></div>
+          <div><div class="num">1 tubo</div><div class="lbl">Muestra de sangre</div></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="images/hero-molecular.png" alt="Representación molecular de la doble hélice de ADN con estructura CRISPR" />
+        <div class="hero-badge"><span class="dot"></span> Análisis genómico en curso</div>
+      </div>
+    </div>
+  </section>
 
-        function toggleModal() {
-            const modal = document.getElementById('secureModal');
-            const input = document.getElementById('accessKeyInput');
-            const err = document.getElementById('errorMessage');
-            const success = document.getElementById('successMessage');
-            const btnRedirect = document.getElementById('redirectStreamlitBtn');
-            
-            if(modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                if(input) input.value = '';
-                if(err) err.classList.add('hidden');
-                if(success) success.classList.add('hidden');
-                if(btnRedirect) {
-                    btnRedirect.classList.add('hidden');
-                    btnRedirect.classList.remove('flex');
-                }
-            } else {
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-            }
-        }
+  <!-- ===================== CONFIANZA ===================== -->
+  <div class="trust">
+    <div class="container">
+      <p>Metodología alineada con estándares de la industria</p>
+      <div class="trust-logos">
+        <span>Genomics</span><span>BioLab</span><span>OncoDx</span><span>MedTrust</span><span>CRISPR Core</span>
+      </div>
+    </div>
+  </div>
 
-        function verifyToken() {
-            const token = document.getElementById('accessKeyInput').value.trim();
-            const err = document.getElementById('errorMessage');
-            const success = document.getElementById('successMessage');
-            const btnRedirect = document.getElementById('redirectStreamlitBtn');
+  <!-- ===================== PROBLEMA / SOLUCIÓN ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Por qué importa</span>
+        <h2>La detección temprana lo cambia todo</h2>
+        <p>Cuando el cáncer de mama se detecta en etapa inicial, las probabilidades de tratamiento exitoso aumentan drásticamente.</p>
+      </div>
+      <div class="cards-2">
+        <div class="card problem">
+          <h3>Los métodos actuales llegan tarde</h3>
+          <p>La mamografía y la palpación detectan tumores cuando ya alcanzaron un tamaño considerable. Muchos casos se diagnostican en etapas avanzadas, reduciendo las opciones de tratamiento.</p>
+        </div>
+        <div class="card solution">
+          <h3>Biomarcadores desde una gota de sangre</h3>
+          <p>Nuestra plataforma basada en CRISPR identifica señales moleculares del cáncer circulando en la sangre, antes de que exista una masa detectable por imagen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            if (token === "METHYLOX-ROOT-2026" || token.startsWith("METH-HOSPITAL-")) {
-                if(err) err.classList.add('hidden');
-                if(success) {
-                    // Texto Premium: Indica que el túnel seguro con el servidor central está listo
-                    success.innerText = "✔ SECURE LINK ESTABLISHED // RE-ROUTING TO ANALYTICS CORE...";
-                    success.classList.remove('hidden');
-                }
-                if(btnRedirect) {
-                    // Cambio de Texto: De "Streamlit Workspace" al estándar corporativo mundial
-                    btnRedirect.innerText = "sECURE LOG IN";
-                    btnRedirect.className = "w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white py-3.5 rounded-xl font-sans font-bold transition-all text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-md";
-                    btnRedirect.setAttribute("href", "https://methylox.streamlit.app/");
-                }
-            } else {
-                if(btnRedirect) {
-                    btnRedirect.className = "w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white py-3.5 rounded-xl font-sans font-bold transition-all text-xs uppercase tracking-widest hidden items-center justify-center gap-2 shadow-md";
-                }
-                if(success) success.classList.add('hidden');
-                if(err) err.classList.remove('hidden');
-            }
-        }
+  <!-- ===================== PROCESO ===================== -->
+  <section class="section" id="proceso" style="background: var(--muted);">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">El proceso</span>
+        <h2>De la extracción al resultado en 3 pasos</h2>
+        <p>Un flujo simple para el paciente, respaldado por análisis genómico de alta precisión.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="n">01</div>
+          <h3>Extracción de sangre</h3>
+          <p>Una muestra estándar tomada en clínica. Sin procedimientos invasivos ni preparación especial.</p>
+        </div>
+        <div class="step">
+          <div class="n">02</div>
+          <h3>Análisis CRISPR</h3>
+          <p>La muestra se procesa con nuestra tecnología de detección molecular que amplifica y reconoce biomarcadores específicos.</p>
+        </div>
+        <div class="step">
+          <div class="n">03</div>
+          <h3>Resultado confiable</h3>
+          <p>Un informe claro y validado, entregado en 48 horas, listo para que el especialista tome decisiones.</p>
+        </div>
+      </div>
+      <div class="process-img">
+        <img src="images/lab-analysis.png" alt="Laboratorio de genómica moderno con equipos de secuenciación" />
+      </div>
+    </div>
+  </section>
 
-    </script>
+  <!-- ===================== TECNOLOGÍA ===================== -->
+  <section class="section" id="tecnologia">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Tecnología</span>
+        <h2>Precisión molecular de nueva generación</h2>
+        <p>Combinamos edición genética, bioinformática y automatización de laboratorio en una sola plataforma.</p>
+      </div>
+      <div class="bento">
+        <div class="tile wide">
+          <div class="ico">01</div>
+          <h3>Detección basada en CRISPR</h3>
+          <p>Aprovechamos la especificidad de CRISPR para reconocer secuencias genéticas asociadas al cáncer de mama con una sensibilidad excepcional, incluso en concentraciones mínimas.</p>
+        </div>
+        <div class="tile">
+          <div class="ico">02</div>
+          <h3>Biopsia líquida</h3>
+          <p>Analizamos ADN tumoral circulante sin necesidad de tejido.</p>
+        </div>
+        <div class="tile">
+          <div class="ico">03</div>
+          <h3>Bioinformática</h3>
+          <p>Algoritmos que interpretan la señal molecular y reducen falsos positivos.</p>
+        </div>
+        <div class="tile wide">
+          <div class="ico">04</div>
+          <h3>Trazabilidad y control de calidad</h3>
+          <p>Cada muestra se procesa bajo protocolos reproducibles y auditables, garantizando resultados consistentes de principio a fin.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ESTADÍSTICAS ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="stats">
+        <div class="stats-grid">
+          <div><div class="num">99.2%</div><div class="lbl">Sensibilidad analítica</div></div>
+          <div><div class="num">98.6%</div><div class="lbl">Especificidad</div></div>
+          <div><div class="num">48 h</div><div class="lbl">Tiempo de entrega</div></div>
+          <div><div class="num">1</div><div class="lbl">Extracción de sangre</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CIENCIA ===================== -->
+  <section class="section" id="ciencia">
+    <div class="container science science-grid">
+      <div>
+        <img src="images/blood-sample.png" alt="Tubo de recolección de sangre para análisis" />
+      </div>
+      <div>
+        <span class="eyebrow">Respaldo científico</span>
+        <h2>Ciencia rigurosa detrás de cada resultado</h2>
+        <p style="color: var(--muted-foreground);">Nuestra metodología se apoya en investigación revisada por pares y validación clínica continua, con el objetivo de convertir la detección temprana en un estándar accesible.</p>
+        <ul>
+          <li>Validación analítica con cohortes independientes</li>
+          <li>Protocolos reproducibles y control de calidad estricto</li>
+          <li>Colaboración con oncólogos e instituciones de investigación</li>
+        </ul>
+        <div class="quote">
+          "La capacidad de detectar biomarcadores antes de que aparezca una masa palpable representa un cambio real en el pronóstico del paciente."
+          <span class="who">— Dra. Investigadora Principal, Áurea Bio</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section class="section" id="contacto">
+    <div class="container">
+      <div class="cta">
+        <span class="eyebrow">Comienza hoy</span>
+        <h2>Da el primer paso hacia la detección temprana</h2>
+        <p>Accede a la plataforma o habla con nuestro equipo para conocer cómo integrar Áurea Bio en tu práctica clínica.</p>
+        <div class="hero-actions">
+          <!-- BOTÓN PRINCIPAL: cambia "/app" por la ruta real de tu software en Python -->
+          <a href="/app" class="btn btn-primary">Iniciar análisis</a>
+          <a href="mailto:contacto@aureabio.com" class="btn btn-outline">Contactar al equipo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="container">
+      <div class="foot-grid">
+        <div>
+          <a href="#" class="brand"><span class="brand-mark">Á</span> Áurea Bio</a>
+          <p class="foot-desc">Detección temprana de cáncer de mama mediante tecnología CRISPR y una simple extracción de sangre.</p>
+        </div>
+        <div>
+          <h4>Producto</h4>
+          <ul>
+            <li><a href="#proceso">El proceso</a></li>
+            <li><a href="#tecnologia">Tecnología</a></li>
+            <li><a href="#ciencia">Ciencia</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Compañía</h4>
+          <ul>
+            <li><a href="#">Sobre nosotros</a></li>
+            <li><a href="#">Investigación</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacidad</a></li>
+            <li><a href="#">Términos</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 Áurea Bio. Todos los derechos reservados.</span>
+        <span>Uso exclusivo para fines de investigación y diagnóstico clínico.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== JS mínimo: menú móvil ===================== -->
+  <script>
+    var toggle = document.getElementById("menuToggle");
+    var links = document.getElementById("navLinks");
+    toggle.addEventListener("click", function () {
+      links.classList.toggle("open");
+    });
+    links.addEventListener("click", function (e) {
+      if (e.target.tagName === "A") links.classList.remove("open");
+    });
+  </script>
+
 </body>
 </html>
