@@ -3,19 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Áurea Bio — Detección temprana de cáncer de mama con CRISPR</title>
-  <meta name="description" content="Detección temprana de cáncer de mama mediante tecnología CRISPR y una simple extracción de sangre. Precisión molecular, resultados confiables." />
+  <title>MethylOx™ | Epigenetic AI Platform</title>
+  <meta name="description" content="Plataforma de Inteligencia Epigenética para la detección temprana en Stage I mediante biopsia líquida." />
   <meta name="theme-color" content="#faf7f4" />
 
-  <!-- Tipografía (funciona online; hay fallback de sistema si no hay internet) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Tipografía -->
+  <link rel="preconnect" href="https://googleapis.com" />
+  <link rel="preconnect" href="https://gstatic.com" crossorigin />
+  <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
-    /* =========================================================
-       TEMA / VARIABLES (paleta biotech: off-white + vino/rosa)
-       ========================================================= */
+    /* VARIABLES (Off-white + Vino Biotech original) */
     :root {
       --background: #faf7f4;
       --foreground: #2a1f24;
@@ -28,524 +26,268 @@
       --accent: #f3dde3;
       --border: #e7e0da;
       --radius: 10px;
-      --max: 1180px;
-      --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      --font-mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+      --max: 1100px;
+      --font-sans: "Inter", sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
     }
 
-    /* ===================== RESET ===================== */
+    /* RESET */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--font-sans);
-      background-color: var(--background);
-      color: var(--foreground);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
+    body { font-family: var(--font-sans); background-color: var(--background); color: var(--foreground); line-height: 1.5; -webkit-font-smoothing: antialiased; }
     img { max-width: 100%; display: block; }
     a { text-decoration: none; color: inherit; }
     .container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 24px; }
 
-    /* etiqueta técnica monoespaciada */
-    .eyebrow {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--primary);
-      font-weight: 500;
-      margin-bottom: 16px;
-      display: inline-block;
-    }
+    .eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary); font-weight: 600; margin-bottom: 12px; display: inline-block; }
+    h1, h2, h3 { line-height: 1.1; letter-spacing: -0.03em; font-weight: 700; }
+    .section { padding: 72px 0; }
+    .section-head { max-width: 580px; margin: 0 auto 40px; text-align: center; }
+    .section-head h2 { font-size: 32px; margin-bottom: 10px; color: var(--foreground); }
+    .section-head p { color: var(--muted-foreground); font-size: 15px; }
 
-    h1, h2, h3 { line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; }
-    .section { padding: 96px 0; }
-    .section-head { max-width: 640px; margin: 0 auto 56px; text-align: center; }
-    .section-head h2 { font-size: clamp(28px, 4vw, 42px); margin-bottom: 16px; }
-    .section-head p { color: var(--muted-foreground); font-size: 18px; }
-
-    /* ===================== BOTONES ===================== */
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      font-family: var(--font-sans); font-weight: 600; font-size: 15px;
-      padding: 12px 24px; border-radius: var(--radius); cursor: pointer;
-      border: 1px solid transparent; transition: all 0.2s ease;
-    }
+    /* BOTONES */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-sans); font-weight: 600; font-size: 14px; padding: 10px 20px; border-radius: var(--radius); cursor: pointer; border: 1px solid transparent; transition: all 0.2s ease; }
     .btn-primary { background: var(--primary); color: var(--primary-foreground); }
     .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
     .btn-outline { background: transparent; color: var(--foreground); border-color: var(--border); }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 
-    /* ===================== HEADER ===================== */
-    header {
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(250, 247, 244, 0.8);
-      backdrop-filter: saturate(180%) blur(12px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
-    .brand-mark {
-      width: 30px; height: 30px; border-radius: 8px; background: var(--primary);
-      display: grid; place-items: center; color: var(--primary-foreground);
-      font-family: var(--font-mono); font-size: 15px; font-weight: 600;
-    }
-    .nav-links { display: flex; align-items: center; gap: 32px; }
-    .nav-links a { font-size: 15px; color: var(--muted-foreground); font-weight: 500; transition: color 0.2s; }
+    /* HEADER */
+    header { position: sticky; top: 0; z-index: 50; background: rgba(250, 247, 244, 0.8); backdrop-filter: saturate(180%) blur(12px); border-bottom: 1px solid var(--border); }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; color: var(--foreground); }
+    .brand-mark { width: 28px; height: 28px; border-radius: 6px; background: var(--primary); display: grid; place-items: center; color: var(--primary-foreground); font-family: var(--font-mono); font-size: 13px; font-weight: 700; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 13.5px; color: var(--muted-foreground); font-weight: 500; transition: color 0.2s; }
     .nav-links a:hover { color: var(--foreground); }
-    .nav-cta { display: flex; align-items: center; gap: 12px; }
-    .menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
-    .menu-toggle span { display: block; width: 22px; height: 2px; background: var(--foreground); margin: 5px 0; transition: 0.3s; }
 
-    /* ===================== HERO ===================== */
-    .hero { padding: 80px 0 64px; }
-    .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
-    .hero h1 { font-size: clamp(36px, 5.2vw, 60px); font-weight: 800; margin-bottom: 24px; }
+    /* HERO */
+    .hero { padding: 56px 0; }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 40px; align-items: center; }
+    .hero h1 { font-size: 46px; margin-bottom: 16px; color: var(--foreground); }
     .hero h1 .accent { color: var(--primary); }
-    .hero p.lead { font-size: 19px; color: var(--muted-foreground); margin-bottom: 32px; max-width: 520px; }
-    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px; }
-    .hero-meta { display: flex; gap: 28px; flex-wrap: wrap; }
-    .hero-meta div { }
-    .hero-meta .num { font-size: 24px; font-weight: 700; color: var(--primary); font-family: var(--font-mono); }
-    .hero-meta .lbl { font-size: 13px; color: var(--muted-foreground); }
+    .hero p.lead { font-size: 16px; color: var(--muted-foreground); margin-bottom: 24px; max-width: 460px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+    .hero-meta { display: flex; gap: 28px; }
+    .hero-meta .num { font-size: 20px; font-weight: 700; color: var(--primary); font-family: var(--font-mono); }
+    .hero-meta .lbl { font-size: 11px; color: var(--muted-foreground); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
     .hero-visual { position: relative; }
-    .hero-visual img { border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 30px 60px -30px rgba(122, 31, 61, 0.35); }
-    .hero-badge {
-      position: absolute; bottom: 20px; left: 20px; background: var(--card);
-      border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px;
-      display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15);
-      font-size: 13px; font-weight: 500;
-    }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #2f9e60; box-shadow: 0 0 0 4px rgba(47,158,96,0.15); }
+    .hero-visual img { border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 15px 30px rgba(122,31,61,0.05); }
+    .hero-badge { position: absolute; bottom: 16px; left: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); font-size: 12px; font-weight: 600; color: var(--foreground); }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: #10B981; }
 
-    /* ===================== LOGOS / CONFIANZA ===================== */
-    .trust { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 32px 0; }
-    .trust p { text-align: center; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 20px; }
-    .trust-logos { display: flex; align-items: center; justify-content: center; gap: 48px; flex-wrap: wrap; opacity: 0.7; }
-    .trust-logos span { font-weight: 700; font-size: 18px; letter-spacing: -0.01em; color: var(--muted-foreground); }
+    /* CARD GRID & BENTO */
+    .cards-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 28px; }
+    .card h3 { font-size: 18px; margin-bottom: 8px; color: var(--foreground); }
+    .card.problem h3::before { content: "EL APARTADO CLÍNICO"; display: block; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 4px; }
+    .card.solution { border-color: var(--accent); background: linear-gradient(180deg, #ffffff, #fdf8f9); }
+    .card.solution h3::before { content: "NUESTRO ARREGLO SISTÉMICO"; display: block; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary); margin-bottom: 4px; }
+    .card p { color: var(--muted-foreground); font-size: 13.5px; }
 
-    /* ===================== PROBLEMA/SOLUCIÓN ===================== */
-    .cards-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 32px;
-    }
-    .card h3 { font-size: 22px; margin-bottom: 12px; }
-    .card.problem { }
-    .card.problem h3::before { content: "El problema"; display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 8px; font-weight: 500; }
-    .card.solution { border-color: var(--primary); background: linear-gradient(180deg, #fff, #fdf6f8); }
-    .card.solution h3::before { content: "Nuestra solución"; display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; font-weight: 500; }
-    .card p { color: var(--muted-foreground); }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .step { background: var(--card); border: 1px solid var(--border); padding: 24px; border-radius: var(--radius); }
+    .step .n { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--border); margin-bottom: 8px; }
+    .step h3 { font-size: 16px; margin-bottom: 4px; color: var(--foreground); }
+    .step p { color: var(--muted-foreground); font-size: 13px; }
+    
+    .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .tile { background: var(--card); border: 1px solid var(--border); padding: 24px; border-radius: var(--radius); }
+    .tile.wide { grid-column: span 2; }
+    .tile h3 { font-size: 16px; margin-bottom: 4px; color: var(--foreground); }
+    .tile p { color: var(--muted-foreground); font-size: 13px; }
+    .tile .ico { font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
 
-    /* ===================== PROCESO ===================== */
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .step { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
-    .step .n { font-family: var(--font-mono); font-size: 13px; color: var(--primary); font-weight: 500; margin-bottom: 16px; }
-    .step h3 { font-size: 20px; margin-bottom: 10px; }
-    .step p { color: var(--muted-foreground); font-size: 15px; }
-    .process-img { margin-top: 40px; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+    /* INTERACTIVE PIPELINE ZONE */
+    .pipeline-card { background: var(--card); border: 2px dashed var(--border); padding: 40px; border-radius: 12px; text-align: center; position: relative; cursor: pointer; transition: 0.2s; }
+    .pipeline-card:hover { border-color: var(--primary); background: #fdfafb; }
+    .file-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .pipeline-status { margin-top: 16px; padding: 10px; border-radius: 6px; font-size: 13px; font-family: var(--font-mono); display: none; }
+    .status-success { background: #E6F4EA; color: #137333; border: 1px solid #CEEAD6; }
 
-    /* ===================== TECNOLOGÍA (bento) ===================== */
-    .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .bento .tile { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
-    .bento .tile.wide { grid-column: span 2; }
-    .tile .ico { width: 40px; height: 40px; border-radius: 10px; background: var(--accent); color: var(--primary); display: grid; place-items: center; margin-bottom: 16px; font-family: var(--font-mono); font-weight: 600; }
-    .tile h3 { font-size: 18px; margin-bottom: 8px; }
-    .tile p { color: var(--muted-foreground); font-size: 15px; }
+    .stats { background: var(--card); padding: 32px; border-radius: 12px; border: 1px solid var(--border); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; text-align: center; }
+    .stats .num { font-size: 26px; font-weight: 700; color: var(--primary); font-family: var(--font-mono); }
+    .stats .lbl { font-size: 11px; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
-    /* ===================== ESTADÍSTICAS ===================== */
-    .stats { background: var(--primary); color: var(--primary-foreground); border-radius: 20px; padding: 56px 40px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; text-align: center; }
-    .stats .num { font-size: 40px; font-weight: 800; font-family: var(--font-mono); letter-spacing: -0.02em; }
-    .stats .lbl { font-size: 14px; opacity: 0.85; margin-top: 6px; }
+    .cta { background: var(--card); border: 1px solid var(--border); padding: 48px; border-radius: 14px; text-align: center; }
+    .cta h2 { font-size: 26px; margin-bottom: 8px; color: var(--foreground); }
+    .cta p { max-width: 440px; margin: 0 auto 16px; color: var(--muted-foreground); font-size: 14.5px; }
 
-    /* ===================== CIENCIA ===================== */
-    .science-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-    .science img { border-radius: 16px; border: 1px solid var(--border); }
-    .science h2 { font-size: clamp(26px, 3.6vw, 38px); margin-bottom: 20px; }
-    .science ul { list-style: none; margin-top: 24px; display: flex; flex-direction: column; gap: 14px; }
-    .science li { display: flex; gap: 12px; align-items: flex-start; color: var(--muted-foreground); }
-    .science li::before { content: "✓"; color: var(--primary); font-weight: 700; margin-top: 1px; }
-    .quote { margin-top: 28px; padding: 20px 24px; border-left: 3px solid var(--primary); background: var(--card); border-radius: 0 10px 10px 0; font-style: italic; }
-    .quote .who { display: block; margin-top: 10px; font-style: normal; font-size: 14px; color: var(--muted-foreground); font-family: var(--font-mono); }
+    footer { border-top: 1px solid var(--border); padding: 40px 0 24px; font-size: 13px; color: var(--muted-foreground); background: #ffffff; }
+    .foot-grid { display: grid; grid-template-columns: 1.5fr repeat(3, 1fr); gap: 32px; margin-bottom: 32px; }
+    .foot-desc { font-size: 13px; color: var(--muted-foreground); margin-top: 8px; max-width: 240px; }
+    footer h4 { color: var(--foreground); font-size: 11px; font-family: var(--font-mono); text-transform: uppercase; margin-bottom: 12px; }
+    footer ul { list-style: none; }
+    footer ul li { margin-bottom: 6px; }
+    .foot-bottom { border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: space-between; font-size: 11px; }
 
-    /* ===================== CTA ===================== */
-    .cta { text-align: center; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 64px 40px; }
-    .cta h2 { font-size: clamp(28px, 4vw, 42px); margin-bottom: 16px; }
-    .cta p { color: var(--muted-foreground); font-size: 18px; max-width: 520px; margin: 0 auto 32px; }
-    .cta .hero-actions { justify-content: center; }
-
-    /* ===================== FOOTER ===================== */
-    footer { border-top: 1px solid var(--border); padding: 56px 0 32px; margin-top: 40px; }
-    .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 40px; }
-    .foot-grid h4 { font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted-foreground); margin-bottom: 16px; }
-    .foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .foot-grid a { font-size: 14px; color: var(--muted-foreground); }
-    .foot-grid a:hover { color: var(--primary); }
-    .foot-desc { color: var(--muted-foreground); font-size: 14px; max-width: 260px; margin-top: 12px; }
-    .foot-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--muted-foreground); }
-
-    /* ===================== RESPONSIVE ===================== */
-    @media (max-width: 900px) {
-      .hero-grid, .science-grid { grid-template-columns: 1fr; }
-      .hero-visual { order: -1; }
-      .cards-2, .steps, .bento, .stats-grid, .foot-grid { grid-template-columns: 1fr; }
-      .bento .tile.wide { grid-column: span 1; }
-      .stats-grid { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
-      .foot-grid { grid-template-columns: 1fr 1fr; }
-      .nav-links, .nav-cta .btn-outline { display: none; }
-      .menu-toggle { display: block; }
-      .nav-links.open { display: flex; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; background: var(--background); border-bottom: 1px solid var(--border); padding: 24px; gap: 20px; }
-      .section { padding: 64px 0; }
-    }
-    @media (max-width: 520px) {
-      .stats-grid { grid-template-columns: 1fr; }
-      .foot-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 768px) { .hero-grid, .cards-2, .steps, .bento, .stats-grid, .foot-grid { grid-template-columns: 1fr !important; } .tile.wide { grid-column: span 1 !important; } .section { padding: 40px 0; } }
   </style>
 </head>
 <body>
 
-  <!-- ===================== HEADER ===================== -->
+  <!-- NAV -->
   <header>
     <div class="container nav">
-      <a href="#" class="brand">
-        <span class="brand-mark">Á</span>
-        Áurea Bio
-      </a>
-      <nav class="nav-links" id="navLinks">
-        <a href="#proceso">El proceso</a>
-        <a href="#tecnologia">Tecnología</a>
-        <a href="#ciencia">Ciencia</a>
-        <a href="#contacto">Contacto</a>
+      <div class="brand"><div class="brand-mark">M</div>MethylOx™</div>
+      <nav class="nav-links">
+        <a href="#features">Módulos</a>
+        <a href="#workflow">Flujo</a>
+        <a href="#ingestion">Explorar Ingestión</a>
       </nav>
       <div class="nav-cta">
-        <a href="#contacto" class="btn btn-outline">Hablar con el equipo</a>
-        <!-- BOTÓN PRINCIPAL: cambia "/app" por la ruta real de tu software en Python -->
-        <a href="/app" class="btn btn-primary">Iniciar análisis</a>
+        <a href="#contacto" class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;">Acceso Consola</a>
       </div>
-      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
-        <span></span><span></span><span></span>
-      </button>
     </div>
   </header>
 
-<!-- ===================== HERO ===================== -->
-<section class="hero">
-  <div class="container hero-grid">
-
-    <!-- TEXTO -->
-    <div>
-      <span class="eyebrow">Pre-clinical Epigenetic AI Platform</span>
-
-      <h1>
-        Engineering the Future of
-        <span class="accent">Ultra-Early Cancer Detection</span>
-      </h1>
-
-      <p class="lead">
-        METHYLOX™ integrates CRISPR-Cas12 molecular sensing,
-        epigenetic biomarkers, fragmentomics and artificial
-        intelligence into a unified computational platform
-        designed to support pre-clinical cancer research.
-      </p>
-
-      <div class="hero-actions">
-        <a href="/app" class="btn btn-primary">
-          Launch Platform
-        </a>
-
-        <a href="#technology" class="btn btn-outline">
-          Explore Technology
-        </a>
+    <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">EPIGENETIC ANALYTICAL LOGIC</span>
+        <h1>Escrutinio Molecular en <span class="accent">Stage I</span></h1>
+        <p class="lead">Identificación de firmas epigenéticas del ctDNA mediante vectores probabilísticos y cooperatividad multiplex en entornos cerrados.</p>
+        <div class="hero-actions">
+          <a href="#contacto" class="btn btn-primary">Ejecutar Consola</a>
+          <a href="#features" class="btn btn-outline">Ver Arquitectura</a>
+        </div>
+        <div class="hero-meta">
+          <div><p class="num">96.0%</p><p class="lbl">Sensibilidad</p></div>
+          <div><p class="num">100%</p><p class="lbl">Especificidad</p></div>
+          <div><p class="num">1.9</p><p class="lbl">DNA Purity Std</p></div>
+        </div>
       </div>
-
-      <div class="hero-meta">
-
-        <div>
-          <div class="num">15</div>
-          <div class="lbl">
-            CRISPR Guides
-          </div>
-        </div>
-
-        <div>
-          <div class="num">149</div>
-          <div class="lbl">
-            Pilot Samples
-          </div>
-        </div>
-
-        <div>
-          <div class="num">TCGA + GEO</div>
-          <div class="lbl">
-            Public Datasets
-          </div>
-        </div>
-
+      <div class="hero-visual">
+        <img src="1000199352.png" alt="Platform Matrix View" />
+        <div class="hero-badge"><span class="dot"></span>Entorno Operativo Validado</div>
       </div>
     </div>
+  </section>
 
-    <!-- IMAGEN -->
-    <div class="hero-visual">
-
-      <img
-        src="images/hero-molecular.png"
-        alt="3D molecular visualization of DNA, epigenetic biomarkers and CRISPR technology">
-
-      <div class="hero-badge">
-
-        <span class="dot"></span>
-
-        <div>
-          <strong>Research Environment Active</strong><br>
-          <span style="font-size:12px;color:var(--muted-foreground);">
-            Pre-clinical AI Platform
-          </span>
-        </div>
-
-      </div>
-
+  <section class="section" style="background: var(--muted); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container section-head">
+      <span class="eyebrow">Mapeo de Integración</span>
+      <h2>Aislamiento de Carga Descentralizado</h2>
+      <p>Unificación de datos ómicos en visualizaciones dinámicas de Gauss listas para el consultorio.</p>
     </div>
-
-  </div>
-</section>
-<!-- ===================== SCIENTIFIC RESOURCES ===================== -->
-<div class="trust">
-  <div class="container">
-
-    <p>Scientific Resources & Research Infrastructure</p>
-
-    <div class="trust-logos">
-      <span>TCGA</span>
-      <span>NCBI GEO</span>
-      <span>COSMIC</span>
-      <span>ClinVar</span>
-      <span>Benchling</span>
-      <span>GitHub</span>
-    </div>
-
-  </div>
-</div>
- <!-- ===================== PROBLEM / SOLUTION ===================== -->
-<section class="section">
-  <div class="container">
-
-    <div class="section-head">
-      <span class="eyebrow">Scientific Challenge</span>
-
-      <h2>Moving Beyond Conventional Detection Paradigms</h2>
-
-      <p>
-        METHYLOX™ explores computational and molecular approaches
-        that aim to identify cancer-associated epigenetic signals
-        before structural abnormalities become clinically observable.
-      </p>
-    </div>
-
-    <div class="cards-2">
-
-      <!-- PROBLEM -->
+    <div class="container cards-2">
       <div class="card problem">
-
-        <h3>Current Detection Limitations</h3>
-
-        <p>
-          Conventional screening methods primarily rely on imaging
-          or tissue abnormalities that become detectable after
-          biological changes have progressed. Earlier molecular
-          alterations may remain difficult to observe using
-          morphology-based approaches alone.
-        </p>
-
+        <h3>Barreras Físicas y Costos de Infraestructura</h3>
+        <p>Los esquemas tradicionales exigen inversiones masivas en equipamiento local, limitando el acceso periférico a herramientas de resolución molecular temprana.</p>
       </div>
-
-      <!-- SOLUTION -->
       <div class="card solution">
-
-        <h3>Computational Epigenetic Framework</h3>
-
-        <p>
-          METHYLOX™ combines CRISPR-Cas12 molecular sensing,
-          DNA methylation biomarkers candidates, fragmentomics and artificial
-          intelligence within a unified pre-clinical research
-          platform "designed to discover and evaluate cancer-associated
-          molecular signals, including ultra-low abundance circulating tumor DNA (ctDNA) features,
-          using computational analysis and public genomic datasets."
-        </p>
-
+        <h3>Procesamiento Central y Despliegue SaaS</h3>
+        <p>Aislamiento logístico completo. El centro médico interactúa con las campanas probabilísticas de forma remota, eliminando cualquier requerimiento de capital operativo.</p>
       </div>
-
     </div>
+  </section>
 
-  </div>
-</section>
-
-  <!-- ===================== PROCESO ===================== -->
-  <section class="section" id="proceso" style="background: var(--muted);">
+  <section class="section" id="workflow">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">El proceso</span>
-        <h2>De la extracción al resultado en 3 pasos</h2>
-        <p>Un flujo simple para el paciente, respaldado por análisis genómico de alta precisión.</p>
+        <span class="eyebrow">PASOS OPERATIVOS</span>
+        <h2>Ciclo de Sincronización</h2>
+        <p>Trazabilidad automatizada desde la captación analítica hasta el dictamen en pantalla.</p>
       </div>
       <div class="steps">
-        <div class="step">
-          <div class="n">01</div>
-          <h3>Extracción de sangre</h3>
-          <p>Una muestra estándar tomada en clínica. Sin procedimientos invasivos ni preparación especial.</p>
-        </div>
-        <div class="step">
-          <div class="n">02</div>
-          <h3>Análisis CRISPR</h3>
-          <p>La muestra se procesa con nuestra tecnología de detección molecular que amplifica y reconoce biomarcadores específicos.</p>
-        </div>
-        <div class="step">
-          <div class="n">03</div>
-          <h3>Resultado confiable</h3>
-          <p>Un informe claro y validado, entregado en 48 horas, listo para que el especialista tome decisiones.</p>
-        </div>
-      </div>
-      <div class="process-img">
-        <img src="images/lab-analysis.png" alt="Laboratorio de genómica moderno con equipos de secuenciación" />
+        <div class="step"><div class="n">01</div><h3>Remisión</h3><p>Indexación de la muestra biológica periférica y envío directo hacia el nodo central.</p></div>
+        <div class="step"><div class="n">02</div><h3>Escrutinio</h3><p>Procesamiento automatizado mediante el panel maestro de 15 sondas de alta resolución.</p></div>
+        <div class="step"><div class="n">03</div><h3>Despliegue</h3><p>Acceso cifrado instantáneo para evaluar vectores clínicos y exportar reportes legibles.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== TECNOLOGÍA ===================== -->
-  <section class="section" id="tecnologia">
+  <section class="section" id="features" style="background: var(--muted); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">Tecnología</span>
-        <h2>Precisión molecular de nueva generación</h2>
-        <p>Combinamos edición genética, bioinformática y automatización de laboratorio en una sola plataforma.</p>
+        <span class="eyebrow">SISTEMA MODULAR MVP</span>
+        <h2>Componentes Consolidados</h2>
+        <p>Estructura modular diseñada bajo las directrices del secreto industrial de-riesgo.</p>
       </div>
       <div class="bento">
-        <div class="tile wide">
-          <div class="ico">01</div>
-          <h3>Detección basada en CRISPR</h3>
-          <p>Aprovechamos la especificidad de CRISPR para reconocer secuencias genéticas asociadas al cáncer de mama con una sensibilidad excepcional, incluso en concentraciones mínimas.</p>
-        </div>
-        <div class="tile">
-          <div class="ico">02</div>
-          <h3>Biopsia líquida</h3>
-          <p>Analizamos ADN tumoral circulante sin necesidad de tejido.</p>
-        </div>
-        <div class="tile">
-          <div class="ico">03</div>
-          <h3>Bioinformática</h3>
-          <p>Algoritmos que interpretan la señal molecular y reducen falsos positivos.</p>
-        </div>
-        <div class="tile wide">
-          <div class="ico">04</div>
-          <h3>Trazabilidad y control de calidad</h3>
-          <p>Cada muestra se procesa bajo protocolos reproducibles y auditables, garantizando resultados consistentes de principio a fin.</p>
-        </div>
+        <div class="tile wide"><h3>Lienzo de Posicionamiento de Gauss</h3><p>Modelado dinámico interactivo que posiciona el vector del paciente actual frente a las densidades poblacionales de referencia internacional.</p></div>
+        <div class="tile"><h3>Aislamiento Multi-Inquilino</h3><p>Separación de repositorios institucionales mediante llaves de acceso cifradas individuales y archivos cerrados de base de datos.</p></div>
+        <div class="tile"><h3>Compilación de Reportes</h3><p>Generación automatizada de reportes formales en tiempo de ejecución protegidos y compatibles con lectores externos estandarizados.</p></div>
+        <div class="tile wide"><h3>Consola Analítica de Control de Calidad</h3><p>Métricas integradas en el flujo operativo para certificar conversión química, profundidad analítica y pureza estructural de la muestra.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== ESTADÍSTICAS ===================== -->
-  <section class="section">
+  <section class="section" id="ingestion">
+    <div class="container section-head">
+      <span class="eyebrow">DATA INGESTION PIPELINE</span>
+      <h2>Simulador de Carga Analítica</h2>
+      <p>Explore la capacidad de respuesta y validación del receptor ómico en tiempo de ejecución.</p>
+    </div>
+    <div class="container" style="max-width: 600px;">
+      <div class="pipeline-card">
+        <input type="file" class="file-input" id="sequencerUpload" accept=".csv, .xlsx" />
+        <div style="font-size: 32px; margin-bottom: 8px;">📥</div>
+        <h4 style="font-size: 15px; margin-bottom: 4px; color: var(--foreground);">Upload sequencer matrix</h4>
+        <p style="font-size: 12px; color: var(--muted-foreground);">Drag and drop or click to browse (.csv, .xlsx)</p>
+        <div class="pipeline-status" id="statusMessage"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0;">
     <div class="container">
       <div class="stats">
         <div class="stats-grid">
-          <div><div class="num">99.2%</div><div class="lbl">Sensibilidad analítica</div></div>
-          <div><div class="num">98.6%</div><div class="lbl">Especificidad</div></div>
-          <div><div class="num">48 h</div><div class="lbl">Tiempo de entrega</div></div>
-          <div><div class="num">1</div><div class="lbl">Extracción de sangre</div></div>
+          <div><div class="num">96.0%</div><div class="lbl">Sensibilidad Mapeada</div></div>
+          <div><div class="num">100%</div><div class="lbl">Especificidad Base</div></div>
+          <div><div class="num">>10,000x</div><div class="lbl">Profundidad Mínima</div></div>
+          <div><div class="num">1.9 ± 0.1</div><div class="lbl">Tolerancia Pureza</div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== CIENCIA ===================== -->
-  <section class="section" id="ciencia">
-    <div class="container science science-grid">
-      <div>
-        <img src="images/blood-sample.png" alt="Tubo de recolección de sangre para análisis" />
-      </div>
-      <div>
-        <span class="eyebrow">Respaldo científico</span>
-        <h2>Ciencia rigurosa detrás de cada resultado</h2>
-        <p style="color: var(--muted-foreground);">Nuestra metodología se apoya en investigación revisada por pares y validación clínica continua, con el objetivo de convertir la detección temprana en un estándar accesible.</p>
-        <ul>
-          <li>Validación analítica con cohortes independientes</li>
-          <li>Protocolos reproducibles y control de calidad estricto</li>
-          <li>Colaboración con oncólogos e instituciones de investigación</li>
-        </ul>
-        <div class="quote">
-          "La capacidad de detectar biomarcadores antes de que aparezca una masa palpable representa un cambio real en el pronóstico del paciente."
-          <span class="who">— Dra. Investigadora Principal, Áurea Bio</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== CTA ===================== -->
-  <section class="section" id="contacto">
+  <section class="section" id="contacto" style="background: var(--muted); border-top: 1px solid var(--border);">
     <div class="container">
       <div class="cta">
-        <span class="eyebrow">Comienza hoy</span>
-        <h2>Da el primer paso hacia la detección temprana</h2>
-        <p>Accede a la plataforma o habla con nuestro equipo para conocer cómo integrar Áurea Bio en tu práctica clínica.</p>
-        <div class="hero-actions">
-          <!-- BOTÓN PRINCIPAL: cambia "/app" por la ruta real de tu software en Python -->
-          <a href="/app" class="btn btn-primary">Iniciar análisis</a>
-          <a href="mailto:contacto@aureabio.com" class="btn btn-outline">Contactar al equipo</a>
+        <span class="eyebrow">ACCESO CONTROLADO</span>
+        <h2>Ejecución de la Consola Epigenética</h2>
+        <p>Valide las capacidades de la interfaz SaaS o explore los módulos autorizados utilizando sus credenciales institucionales cifradas.</p>
+        <div class="hero-actions" style="justify-content: center;">
+          <a href="https://streamlit.app" target="_blank" class="btn btn-primary">Iniciar Software</a>
+          <a href="#workflow" class="btn btn-outline">Ver Flujo Clínico</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== FOOTER ===================== -->
   <footer>
     <div class="container">
       <div class="foot-grid">
         <div>
-          <a href="#" class="brand"><span class="brand-mark">Á</span> Áurea Bio</a>
-          <p class="foot-desc">Detección temprana de cáncer de mama mediante tecnología CRISPR y una simple extracción de sangre.</p>
+          <div class="brand"><div class="brand-mark">M</div>MethylOx™</div>
+          <p class="foot-desc">Inteligencia Epigenética computacional para la evaluación de firmas moleculares en Stage I mediante biopsia líquida.</p>
         </div>
-        <div>
-          <h4>Producto</h4>
-          <ul>
-            <li><a href="#proceso">El proceso</a></li>
-            <li><a href="#tecnologia">Tecnología</a></li>
-            <li><a href="#ciencia">Ciencia</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Compañía</h4>
-          <ul>
-            <li><a href="#">Sobre nosotros</a></li>
-            <li><a href="#">Investigación</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Legal</h4>
-          <ul>
-            <li><a href="#">Privacidad</a></li>
-            <li><a href="#">Términos</a></li>
-          </ul>
-        </div>
+        <div><h4>Arquitectura</h4><ul><li><a href="#workflow">Flujo Operativo</a></li><li><a href="#features">Módulos MVP</a></li></ul></div>
+        <div><h4>Credenciales</h4><ul><li><a href="#">METHYLOX-ROOT-2026</a></li><li><a href="#">METH-HOSPITAL-ABC</a></li></ul></div>
+        <div><h4>Seguridad</h4><ul><li><a href="#">Secreto Industrial</a></li><li><a href="#">Aislamiento SQLite</a></li></ul></div>
       </div>
       <div class="foot-bottom">
-        <span>© 2026 Áurea Bio. Todos los derechos reservados.</span>
-        <span>Uso exclusivo para fines de investigación y diagnóstico clínico.</span>
+        <span>© 2026 MethylOx™ Oncology. Todos los derechos reservados.</span>
+        <span>Prototipo de experimentación académica e institucional restringida.</span>
       </div>
     </div>
   </footer>
 
-  <!-- ===================== JS mínimo: menú móvil ===================== -->
   <script>
-    var toggle = document.getElementById("menuToggle");
-    var links = document.getElementById("navLinks");
-    toggle.addEventListener("click", function () {
-      links.classList.toggle("open");
-    });
-    links.addEventListener("click", function (e) {
-      if (e.target.tagName === "A") links.classList.remove("open");
+    document.getElementById('sequencerUpload').addEventListener('change', function(e) {
+      var files = e.target.files;
+      var statusDiv = document.getElementById('statusMessage');
+      if(files && files.length > 0) {
+        var fileName = files[0].name;
+        statusDiv.className = "pipeline-status status-success";
+        statusDiv.style.display = "block";
+        statusDiv.innerHTML = "🧬 Matrix loaded successfully inside sequencer cache: " + fileName;
+      }
     });
   </script>
 
