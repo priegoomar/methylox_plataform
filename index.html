@@ -100,7 +100,7 @@
 
     /* ===================== HERO ===================== */
     .hero { padding: 80px 0 64px; }
-    .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+    .hero-grid { display: grid; grid-template-columns: 1fr 0.9fr; gap: 90px; align-items: center; }
     .hero h1 { font-size: clamp(36px, 5.2vw, 60px); font-weight: 800; margin-bottom: 24px; }
     .hero h1 .accent { color: var(--primary); }
     .hero p.lead { font-size: 19px; color: var(--muted-foreground); margin-bottom: 32px; max-width: 520px; }
@@ -110,6 +110,22 @@
     .hero-meta .num { font-size: 24px; font-weight: 700; color: var(--primary); font-family: var(--font-mono); }
     .hero-meta .lbl { font-size: 13px; color: var(--muted-foreground); }
     .hero-visual { position: relative; }
+    .molecular-frame {
+      min-height:430px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+      radial-gradient(circle,
+      rgba(122,31,61,0.12),
+      transparent 65%);
+     }
+    .molecular-frame img {
+      width:100%;
+      max-width:520px;
+      border:none;
+      box-shadow:none;
+     }
     .hero-visual img { border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 30px 60px -30px rgba(122, 31, 61, 0.35); }
     .hero-badge {
       position: absolute; bottom: 20px; left: 20px; background: var(--card);
@@ -233,61 +249,88 @@
 <section class="hero">
   <div class="container hero-grid">
 
-    <!-- TEXT -->
-    <div>
+  <!-- TEXT -->
+  <div class="hero-content">
 
-      <span class="eyebrow">
-        PRE-CLINICAL Breast Cancer Research Platform
-      </span>
+    <span class="eyebrow">
+      PRE-CLINICAL Breast Cancer Research Platform
+    </span>
 
-      <h1>
-        Engineering the Future of
-        <span class="accent">Early Breast Cancer Detection</span>
-      </h1>
+    <h1>
+      Engineering the Future of
+      <span class="accent">Early Breast Cancer Detection</span>
+    </h1>
 
-      <p class="lead">
-       METHYLOX™ integrates DNA methylation biomarkers,
-       CRISPR-Cas12 sensing, fragmentomics and computational
-       analysis into a pre-clinical platform focused on early
-       breast cancer research..
-      </p>
+    <p class="lead">
+      METHYLOX™ integrates DNA methylation biomarkers,
+      CRISPR-Cas12 sensing and computational analysis
+      into a pre-clinical research platform.
+    </p>
 
-      <div class="hero-actions">
+    <div class="hero-actions">
 
-        <a href="/app" class="btn btn-primary">
-          Launch Platform
-        </a>
+      <a href="/app" class="btn btn-primary">
+        Launch Platform
+      </a>
 
-        <a href="#technology" class="btn btn-outline">
-          Explore Technology
-        </a>
+      <a href="#tecnologia" class="btn btn-outline">
+        Explore Technology
+      </a>
+
+    </div>
+
+
+    <div class="hero-meta">
+
+      <div>
+        <div class="num">15+</div>
+        <div class="lbl">CRISPR Candidate Guides</div>
+      </div>
+
+      <div>
+        <div class="num">TCGA</div>
+        <div class="lbl">Genomic Dataset Analysis</div>
+      </div>
+
+      <div>
+        <div class="num">AI</div>
+        <div class="lbl">Bioinformatics Platform</div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- VISUAL PLACEHOLDER -->
+  <div class="hero-visual">
+
+    <div class="molecular-frame">
+
+      <img 
+      src="images/hero-molecular.png"
+      alt="Molecular visualization of METHYLOX platform">
+
+    </div>
+
+
+    <div class="hero-badge">
+
+      <span class="dot"></span>
+
+      <div>
+        <strong>Research Platform</strong><br>
+
+        <span style="font-size:12px;color:var(--muted-foreground);">
+          Computational Discovery Environment
+        </span>
 
       </div>
 
-      <div class="hero-meta">
-
-  <div>
-    <div class="num">15</div>
-    <div class="lbl">
-      CRISPR Candidate Guides
     </div>
+
   </div>
 
-
-  <div>
-    <div class="num">149</div>
-    <div class="lbl">
-      Reference Samples Analyzed
-    </div>
-  </div>
-
-
-  <div>
-    <div class="num">TCGA + GEO</div>
-    <div class="lbl">
-      Public Genomic Datasets
-    </div>
-  </div>
 
 </div>
 
