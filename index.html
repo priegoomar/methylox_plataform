@@ -7,14 +7,14 @@
   <meta name="description" content="METHYLOX integrates DNA methylation biomarkers, CRISPR-Cas12 sensing and computational analysis into a pre-clinical research platform." />
   <meta name="theme-color" content="#ffffff" />
 
-  <!-- Tipografía premium de alta tecnología -->
+  <!-- Tipografía (funciona online; hay fallback de sistema si no hay internet) -->
   <link rel="preconnect" href="https://googleapis.com" />
   <link rel="preconnect" href="https://gstatic.com" crossorigin />
-  <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
     /* =========================================================
-       TEMA / VARIABLES (Estilo Clínico Tecnológico Limpio y Agradable)
+       TEMA / VARIABLES (Paleta limpia, tecnológica y agradable)
        ========================================================= */
     :root {
       --background: #ffffff; /* Blanco puro: máxima limpieza */
@@ -22,7 +22,7 @@
       --card: #f8fafc; /* Gris ultra claro para las tarjetas bento y pasos */
       --muted: #f1f5f9; /* Gris suave para separar secciones */
       --muted-foreground: #64748b; /* Gris medio para textos secundarios e iconos */
-      --primary: #0284c7; /* Azul celeste tecnológico: transmite confianza y ciencia */
+      --primary: #0284c7; /* Azul celeste tecnológico: transmite ciencia y precisión */
       --primary-hover: #0369a1; /* Azul más profundo para interacciones */
       --primary-foreground: #ffffff; /* Texto sobre botones principales */
       --accent: rgba(2, 132, 199, 0.06); /* Destellos sutiles de fondo */
@@ -47,7 +47,7 @@
     a { text-decoration: none; color: inherit; }
     .container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 24px; }
 
-    /* Etiqueta técnica monoespaciada */
+    /* etiqueta técnica monoespaciada */
     .eyebrow {
       font-family: var(--font-mono);
       font-size: 11px;
@@ -108,24 +108,20 @@
 
     /* ===================== HERO ===================== */
     .hero { padding: 96px 0 80px; position: relative; overflow: hidden; }
-    .hero::before {
-      content: ""; position: absolute; top: -10%; right: -5%; width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(2, 132, 199, 0.08) 0%, transparent 70%); z-index: -1;
-    }
     .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: center; }
     .hero h1 { font-size: clamp(36px, 4.8vw, 56px); font-weight: 800; margin-bottom: 24px; color: #0f172a; line-height: 1.1; }
-    .hero h1 .accent { color: var(--primary); position: relative; }
+    .hero h1 .accent { color: var(--primary); }
     .hero p.lead { font-size: 18px; color: var(--muted-foreground); margin-bottom: 36px; max-width: 540px; }
     .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 36px; }
     .hero-meta { display: flex; gap: 32px; flex-wrap: wrap; border-top: 1px solid var(--border); padding-top: 24px; }
     .hero-meta .num { font-size: 24px; font-weight: 700; color: var(--foreground); font-family: var(--font-mono); }
     .hero-meta .lbl { font-size: 13px; color: var(--muted-foreground); margin-top: 2px; }
     
-    /* Contenedor visual del Hero transparente */
+    /* Espacio transparente para la imagen del Hero */
     .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; background: transparent; }
     .molecular-frame {
       width: 100%; min-height: 420px; display: flex; align-items: center; justify-content: center;
-      border: 2px dashed #cbd5e1; border-radius: 16px; position: relative; background: transparent; 
+      background: transparent; 
     }
     .molecular-frame img { width: 100%; height: auto; object-fit: contain; border-radius: 14px; }
     .hero-badge {
@@ -136,34 +132,19 @@
     }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: #0ea5e9; box-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
 
-    /* ===================== SCIENTIFIC RESOURCES ===================== */
-    .trust { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 0; background: #f8fafc; }
-    .trust p { text-align: center; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 16px; }
-    .trust-logos { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
-    .trust-logos span { font-weight: 600; font-size: 14px; color: #475569; display: flex; align-items: center; gap: 6px; background: #ffffff; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); }
-    .trust-logos svg { color: var(--primary); }
-
-    /* ===================== CHALLENGE / CARDS ===================== */
-    .cards-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 32px; transition: transform 0.2s, box-shadow 0.2s; }
-    .card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.03); }
-    .card h3 { font-size: 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-    .card p { color: var(--muted-foreground); font-size: 15px; }
-    .card.solution { border-color: rgba(2, 132, 199, 0.3); background: linear-gradient(180deg, #f8fafc, rgba(2, 132, 199, 0.02)); }
-
-    /* ===================== PIPELINE / STEPS ===================== */
+    /* ===================== PROCESO / STEPS ===================== */
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
     .step { background: #ffffff; border: 1px solid var(--border); border-radius: 14px; padding: 28px; box-shadow: 0 4px 6px rgba(15, 23, 42, 0.01); }
     .step .n { font-family: var(--font-mono); font-size: 12px; color: var(--primary); font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; background: var(--accent); padding: 4px 10px; border-radius: 20px; width: fit-content; }
     .step h3 { font-size: 19px; margin-bottom: 10px; }
     .step p { color: var(--muted-foreground); font-size: 14px; }
-    .process-img { margin-top: 40px; border-radius: 16px; border: 2px dashed #cbd5e1; overflow: hidden; background: transparent; min-height: 220px; display: grid; place-items: center; }
+    .process-img { margin-top: 40px; border-radius: 16px; overflow: hidden; background: transparent; display: grid; place-items: center; }
 
     /* ===================== TECNOLOGÍA (bento) ===================== */
     .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .bento .tile { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
     .bento .tile.wide { grid-column: span 2; }
-    .tile .ico { width: 42px; height: 42px; border-radius: 10px; background: #ffffff; color: var(--primary); display: grid; place-items: center; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(15, 23, 42, 0.02); }
+    .tile .ico { width: 42px; height: 42px; border-radius: 10px; background: #ffffff; color: var(--primary); display: grid; place-items: center; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(15, 23, 42, 0.02); font-family: var(--font-mono); font-weight: 600; }
     .tile .ico svg { width: 20px; height: 20px; }
     .tile h3 { font-size: 18px; margin-bottom: 8px; }
     .tile p { color: var(--muted-foreground); font-size: 14.5px; }
@@ -176,202 +157,56 @@
     .stats .lbl { font-size: 13px; opacity: 0.9; margin-top: 6px; font-weight: 500; }
 
     /* ===================== CTA ===================== */
-    .cta { text-align: center; background: #ffffff; border: 1px solid var(--border); border-radius: 20px; padding: 64px 40px; box-shadow: 0 10px 40px rgba(15, 23, 42, 0.04); position: relative; overflow: hidden; }
-    .cta::before { content: ""; position: absolute; bottom: -50%; left: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(2, 132, 199, 0.05) 0%, transparent 70%); }
-    .cta h2 { font-size: clamp(28px, 4vw, 38px); margin-bottom: 16px; }
-    .cta p { color: var(--muted-foreground); font-size: 17px; max-width: 560px; margin: 0 auto 32px; }
-    .cta .hero-actions { justify-content: center; margin-bottom: 0; }
+    .cta { text-align: center; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 64px 40px; }
+    .cta h2 { font-size: clamp(28px, 4vw, 42px); margin-bottom: 16px; }
+    .cta p { color: var(--muted-foreground); font-size: 18px; max-width: 520px; margin: 0 auto 32px; }
+    .cta .hero-actions { justify-content: center; }
 
     /* ===================== FOOTER ===================== */
-    footer { border-top: 1px solid var(--border); padding: 64px 0 32px; background: #f8fafc; }
-    .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 48px; }
-    .foot-grid h4 { font-size: 12px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: #475569; margin-bottom: 16px; }
-    .foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-    .foot-grid a { font-size: 14px; color: var(--muted-foreground); transition: color 0.2s; }
+    footer { border-top: 1px solid var(--border); padding: 56px 0 32px; margin-top: 40px; }
+    .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 40px; }
+    .foot-grid h4 { font-size: 13px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted-foreground); margin-bottom: 16px; }
+    .foot-grid ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .foot-grid a { font-size: 14px; color: var(--muted-foreground); }
     .foot-grid a:hover { color: var(--primary); }
-    .foot-desc { color: var(--muted-foreground); font-size: 14px; max-width: 280px; margin-top: 12px; }
+    .foot-desc { color: var(--muted-foreground); font-size: 14px; max-width: 260px; margin-top: 12px; }
     .foot-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--muted-foreground); }
 
-    /* ===================== RESPONSIVE ===================== */
-    @media (max-width: 900px) {
-      .steps, .bento, .stats-grid, .foot-grid { grid-template-columns: 1fr; gap: 32px; }
+    /* Forzar visibilidad en resoluciones medianas y de escritorio */
+    @media (min-width: 769px) {
+      .nav-links { display: flex !important; }
+      .nav-cta { display: flex !important; }
+    }
+
+    /* ===================== RESPONSIVE CORREGIDO ===================== */
+    @media (max-width: 768px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+      .hero-visual { order: -1; }
+      .steps, .bento, .stats-grid, .foot-grid, .cards-2 { grid-template-columns: 1fr; gap: 32px; }
       .bento .tile.wide { grid-column: span 1; }
       .stats-grid { grid-template-columns: 1fr 1fr; }
-      .nav-links, .nav-cta .btn-outline { display: none; }
+      .nav-links, .nav-cta { display: none !important; }
       .menu-toggle { display: block; }
-      .nav-links.open { display: flex; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; background: #ffffff; border-bottom: 1px solid var(--border); padding: 24px; gap: 20px; z-index: 100; box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
+      .nav-links.open { display: flex !important; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; background: #ffffff; border-bottom: 1px solid var(--border); padding: 24px; gap: 20px; z-index: 100; box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
       .section { padding: 64px 0; }
-    }
-    @media (max-width: 520px) {
-      .stats-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Nota: Cabecera y Hero van arriba según tu estructura inicial -->
-
-  <!-- ===================== SCIENTIFIC RESOURCES ===================== */
-  <div class="trust">
-    <div class="container">
-      <p>Public Scientific Resources & Computational Tools</p>
-      <div class="trust-logos">
-        <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg> TCGA</span>
-        <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg> NCBI GEO</span>
-        <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> COSMIC</span>
-        <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> ClinVar</span>
-        <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg> Benchling</span>
-        <span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg> GitHub</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== SCIENTIFIC CHALLENGE ===================== -->
-  <section class="section">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-          Scientific Challenge
-        </span>
-        <h2>Detecting Breast Cancer Biology Before Structural Changes</h2>
-        <p>METHYLOX™ explores molecular and computational approaches to identify early epigenetic signals associated with breast cancer biology.</p>
-      </div>
-
-      <div class="cards-2">
-        <div class="card problem">
-          <h3>
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--muted-foreground);"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            Limitations of Current Screening Approaches
-          </h3>
-          <p>Many current detection methods rely on anatomical changes that may appear after underlying molecular alterations have already occurred.</p>
-        </div>
-        <div class="card solution">
-          <h3>
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--primary);"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-            Epigenetic Biomarker Research Framework
-          </h3>
-          <p>METHYLOX™ combines DNA methylation analysis, CRISPR-Cas12 sensing concepts and computational workflows to investigate early breast cancer biomarkers.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== COMPUTATIONAL PIPELINE ===================== -->
-  <section class="section" id="proceso" style="background: var(--card);">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-          Computational Pipeline
-        </span>
-        <h2>From Public Genomic Data to Candidate Biomarkers</h2>
-        <p>METHYLOX™ applies computational workflows to analyze breast cancer genomic data and evaluate candidate molecular biomarkers.</p>
-      </div>
-
-      <div class="steps">
-        <div class="step">
-          <div class="n">01</div>
-          <h3>Public Dataset Analysis</h3>
-          <p>Analysis of breast cancer datasets from public genomic resources such as TCGA and GEO.</p>
-        </div>
-        <div class="step">
-          <div class="n">02</div>
-          <h3>Biomarker Identification</h3>
-          <p>Computational exploration of DNA methylation patterns associated with cancer biology.</p>
-        </div>
-        <div class="step">
-          <div class="n">03</div>
-          <h3>CRISPR Guide Evaluation</h3>
-          <p>In-silico evaluation of candidate CRISPR-Cas12 detection guides for molecular research applications.</p>
-        </div>
-      </div>
-
-      <div class="process-img">
-        <img src="images/pipeline.png" alt="Computational pipeline for early breast cancer biomarker research" onerror="this.parentNode.style.padding='40px 0'; this.parentNode.innerText='[ Pipeline Diagram Placeholder - Transparent Background ]'; this.parentNode.style.fontFamily='var(--font-mono)'; this.parentNode.style.color='var(--muted-foreground)';">
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== TECHNOLOGY ===================== -->
-  <section class="section" id="tecnologia">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-          Technology
-        </span>
-        <h2>Molecular Technologies Behind METHYLOX™</h2>
-        <p>A computational framework combining epigenetic biomarkers, CRISPR-based sensing concepts and genomic analysis for early breast cancer research.</p>
-      </div>
-
-      <div class="bento">
-        <div class="tile wide">
-          <div class="ico">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
-          </div>
-          <h3>DNA Methylation Biomarkers</h3>
-          <p>Identification and analysis of epigenetic patterns associated with breast cancer biology.</p>
-        </div>
-        <div class="tile">
-          <div class="ico">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h10M7 12h10m-8 5h6"/></svg>
-          </div>
-          <h3>CRISPR-Cas12 Sensing</h3>
-          <p>Computational evaluation of candidate molecular detection guides.</p>
-        </div>
-        <div class="tile">
-          <div class="ico">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
-          </div>
-          <h3>ctDNA & Fragmentomics</h3>
-          <p>Exploration of circulating tumor DNA signals and genomic fragmentation patterns.</p>
-        </div>
-        <div class="tile wide">
-          <div class="ico">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-          </div>
-          <h3>Computational Bioinformatics</h3>
-          <p>Integrated workflows for genomic analysis, biomarker evaluation and research interpretation.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== RESEARCH PROGRESS ===================== -->
-  <section class="section">
-    <div class="container">
-      <div class="stats">
-        <div class="stats-grid">
-          <div><div class="num">15+</div><div class="lbl">CRISPR Candidate Guides</div></div>
-          <div><div class="num">TCGA</div><div class="lbl">Breast Cancer Dataset Analysis</div></div>
-          <div><div class="num">GEO</div><div class="lbl">Public Genomic Resources</div></div>
-          <div><div class="num">v1.0</div><div class="lbl">Computational Platform Prototype</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Nota: Tu cabecera, hero y demás secciones originales van en esta parte superior -->
 
   <!-- ===================== CTA ===================== -->
   <section class="section" id="contacto">
     <div class="container">
       <div class="cta">
-        <span class="eyebrow">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-          Explore METHYLOX™
-        </span>
+        <span class="eyebrow">Explore METHYLOX™</span>
         <h2>Advancing the Future of Early Breast Cancer Research</h2>
         <p>Discover our computational platform and explore how epigenetic biomarkers, CRISPR-Cas12 and genomic analysis are shaping new approaches for early cancer detection.</p>
         
         <div class="hero-actions">
-          <a href="/app" class="btn btn-primary">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            Launch Platform
-          </a>
-          <a href="mailto:contact@methylox.com" class="btn btn-outline">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            Contact Research Team
-          </a>
+          <a href="/app" class="btn btn-primary">Launch Platform</a>
+          <a href="mailto:contact@methylox.com" class="btn btn-outline">Contact Research Team</a>
         </div>
       </div>
     </div>
@@ -383,7 +218,7 @@
       <div class="foot-grid">
         <div>
           <a href="#" class="brand">
-            <div class="brand-mark">M</div>
+            <span class="brand-mark">M</span>
             METHYLOX™
           </a>
           <p class="foot-desc">Pre-clinical computational platform exploring epigenetic biomarkers and CRISPR-based approaches for early breast cancer research.</p>
@@ -409,6 +244,7 @@
           </ul>
         </div>
       </div>
+
       <div class="foot-bottom">
         <span>© 2026 METHYLOX™. All rights reserved.</span>
         <span>Pre-clinical research platform.</span>
@@ -416,6 +252,7 @@
     </div>
   </footer>
 
+  <!-- ===================== JS mínimo: menú móvil ===================== -->
   <script>
     var toggle = document.getElementById("menuToggle");
     var links = document.getElementById("navLinks");
@@ -426,5 +263,6 @@
       if (e.target.tagName === "A") links.classList.remove("open");
     });
   </script>
+
 </body>
 </html>
