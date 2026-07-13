@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Methylox — Detección temprana de cáncer de mama con CRISPR</title>
-  <meta name="description" content="Detección temprana de cáncer de mama mediante tecnología CRISPR y una simple extracción de sangre. Precisión molecular, resultados confiables." />
-  <meta name="theme-color" content="#faf7f4" />
+  <title>METHYLOX™ — Early Breast Cancer Detection Research Platform</title>
+  <meta
+  name="description"
+  content="Pre-clinical research platform integrating DNA methylation biomarkers, CRISPR-Cas12 sensing and computational bioinformatics for early breast cancer research.">
+  <meta name="theme-color" content="#F8FBFD">
 
   <!-- Tipografía (funciona online; hay fallback de sistema si no hay internet) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -51,14 +53,48 @@
 
   --success:#10B981;
 
-  --shadow-sm:
-  0 2px 8px rgba(15,23,42,.05);
+  --shadow-sm:0 2px 8px rgba(15,23,42,.05);
+  --shadow-md:0 12px 40px rgba(15,23,42,.08);
+  --shadow-lg:0 24px 70px rgba(15,23,42,.12);
 
-  --shadow-md:
-  0 12px 40px rgba(15,23,42,.08);
+}
+/* ==========================================================
+   TYPOGRAPHY
+========================================================== */
 
-  --shadow-lg:
-  0 24px 70px rgba(15,23,42,.12);
+h1,
+h2,
+h3{
+
+font-weight:800;
+letter-spacing:-.03em;
+line-height:1.08;
+color:var(--foreground);
+
+}
+
+h1{
+
+font-size:clamp(42px,5vw,68px);
+
+}
+
+h2{
+
+font-size:clamp(34px,4vw,48px);
+
+}
+
+h3{
+
+font-size:24px;
+
+}
+
+p{
+
+font-size:17px;
+color:var(--muted-foreground);
 
 }
 
