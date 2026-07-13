@@ -7,7 +7,7 @@
   <meta name="description" content="METHYLOX integrates DNA methylation biomarkers, CRISPR-Cas12 sensing and computational analysis into a pre-clinical research platform." />
   <meta name="theme-color" content="#ffffff" />
 
-  <!-- Tipografía (funciona online; hay fallback de sistema si no hay internet) -->
+  <!-- Tipografía Premium (Estilo clínico y legible) -->
   <link rel="preconnect" href="https://googleapis.com" />
   <link rel="preconnect" href="https://gstatic.com" crossorigin />
   <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -33,7 +33,7 @@
       --font-mono: "JetBrains Mono", monospace;
     }
 
-    /* ===================== RESET ===================== */
+    /* ===================== RESET GENERAL ===================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
@@ -71,7 +71,7 @@
     .section-head h2 { font-size: clamp(28px, 4vw, 40px); margin-bottom: 16px; }
     .section-head p { color: var(--muted-foreground); font-size: 17px; }
 
-    /* ===================== BOTONES ===================== */
+    /* ===================== BOTONES INTERACTIVOS ===================== */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       font-family: var(--font-sans); font-weight: 600; font-size: 14px;
@@ -79,11 +79,11 @@
       border: 1px solid transparent; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .btn-primary { background: var(--primary); color: var(--primary-foreground); box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15); }
-9, 0.25); }
-    .btn-outline { background: transparent; color: var(--foreground); border-color: var(--border); }    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(2, 132, 19
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(2, 132, 199, 0.25); }
+    .btn-outline { background: transparent; color: var(--foreground); border-color: var(--border); }
     .btn-outline:hover { border-color: var(--primary); background: var(--accent); color: var(--primary); }
 
-    /* ===================== HEADER ===================== */
+    /* ===================== BARRA SUPERIOR (HEADER FIJO) ===================== */
     header {
       position: sticky; top: 0; z-index: 50;
       background: rgba(255, 255, 255, 0.8);
@@ -105,7 +105,7 @@
     .menu-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
     .menu-toggle span { display: block; width: 22px; height: 2px; background: var(--foreground); margin: 5px 0; transition: 0.3s; }
 
-    /* ===================== HERO ===================== */
+    /* ===================== HERO (SECCIÓN PRINCIPAL) ===================== */
     .hero { padding: 96px 0 80px; position: relative; overflow: hidden; }
     .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: center; }
     .hero h1 { font-size: clamp(36px, 4.8vw, 56px); font-weight: 800; margin-bottom: 24px; color: #0f172a; line-height: 1.1; }
@@ -116,7 +116,7 @@
     .hero-meta .num { font-size: 24px; font-weight: 700; color: var(--foreground); font-family: var(--font-mono); }
     .hero-meta .lbl { font-size: 13px; color: var(--muted-foreground); margin-top: 2px; }
     
-    /* Espacio transparente para la imagen del Hero */
+    /* Espacio transparente para la imagen molecular del Hero */
     .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; background: transparent; }
     .molecular-frame {
       width: 100%; min-height: 420px; display: flex; align-items: center; justify-content: center;
@@ -131,7 +131,7 @@
     }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: #0ea5e9; box-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
 
-    /* ===================== PROCESO / STEPS ===================== */
+    /* ===================== PROCESO / PASOS PIPELINE ===================== */
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
     .step { background: #ffffff; border: 1px solid var(--border); border-radius: 14px; padding: 28px; box-shadow: 0 4px 6px rgba(15, 23, 42, 0.01); }
     .step .n { font-family: var(--font-mono); font-size: 12px; color: var(--primary); font-weight: 600; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; background: var(--accent); padding: 4px 10px; border-radius: 20px; width: fit-content; }
@@ -139,7 +139,7 @@
     .step p { color: var(--muted-foreground); font-size: 14px; }
     .process-img { margin-top: 40px; border-radius: 16px; overflow: hidden; background: transparent; display: grid; place-items: center; }
 
-    /* ===================== TECNOLOGÍA (bento) ===================== */
+    /* ===================== TECNOLOGÍA (DISEÑO BENTO) ===================== */
     .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     .bento .tile { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
     .bento .tile.wide { grid-column: span 2; }
@@ -147,14 +147,14 @@
     .tile h3 { font-size: 18px; margin-bottom: 8px; }
     .tile p { color: var(--muted-foreground); font-size: 14.5px; }
 
-    /* ===================== ESTADÍSTICAS ===================== */
+    /* ===================== ESTADÍSTICAS DEL PROYECTO ===================== */
     .stats { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 20px; padding: 56px 40px; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2); }
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; text-align: center; }
     .stats h3 { color: #ffffff; }
     .stats .num { font-size: 38px; font-weight: 800; font-family: var(--font-mono); letter-spacing: -0.02em; }
     .stats .lbl { font-size: 13px; opacity: 0.9; margin-top: 6px; font-weight: 500; }
 
-    /* ===================== CIENCIA ===================== */
+    /* ===================== VALIDACIÓN CIENTÍFICA ===================== */
     .science-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
     .science img { border-radius: 16px; border: 1px solid var(--border); }
     .science h2 { font-size: clamp(26px, 3.6vw, 38px); margin-bottom: 20px; }
@@ -164,13 +164,13 @@
     .quote { margin-top: 28px; padding: 20px 24px; border-left: 3px solid var(--primary); background: var(--card); border-radius: 0 10px 10px 0; font-style: italic; }
     .quote .who { display: block; margin-top: 10px; font-style: normal; font-size: 14px; color: var(--muted-foreground); font-family: var(--font-mono); }
 
-    /* ===================== CTA ===================== */
+    /* ===================== SECCIÓN LLAMADA A LA ACCIÓN (CTA) ===================== */
     .cta { text-align: center; background: #ffffff; border: 1px solid var(--border); border-radius: 20px; padding: 64px 40px; box-shadow: 0 10px 40px rgba(15, 23, 42, 0.04); position: relative; overflow: hidden; }
     .cta h2 { font-size: clamp(28px, 4vw, 38px); margin-bottom: 16px; }
     .cta p { color: var(--muted-foreground); font-size: 17px; max-width: 560px; margin: 0 auto 32px; }
     .cta .hero-actions { justify-content: center; margin-bottom: 0; }
 
-    /* ===================== FOOTER ===================== */
+    /* ===================== PIE DE PÁGINA (FOOTER) ===================== */
     footer { border-top: 1px solid var(--border); padding: 64px 0 32px; background: #f8fafc; }
     .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 48px; }
     .foot-grid h4 { font-size: 12px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: #475569; margin-bottom: 16px; }
@@ -180,13 +180,26 @@
     .foot-desc { color: var(--muted-foreground); font-size: 14px; max-width: 280px; margin-top: 12px; }
     .foot-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--muted-foreground); }
 
+    /* ===================== RECURSOS CIENTÍFICOS (TRUST) ===================== */
+    .trust { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 0; background: #f8fafc; }
+    .trust p { text-align: center; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 16px; }
+    .trust-logos { display: flex; align-items: center; justify-content: center; gap: 48px; flex-wrap: wrap; }
+    .trust-logos span { font-weight: 700; font-size: 18px; letter-spacing: -0.01em; color: var(--muted-foreground); }
+
+    /* ===================== GRID SECCIÓN RETO CIENTÍFICO ===================== */
+    .cards-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 32px; }
+    .card h3 { font-size: 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+    .card p { color: var(--muted-foreground); font-size: 15px; }
+    .card.solution { border-color: rgba(2, 132, 199, 0.3); background: linear-gradient(180deg, #f8fafc, rgba(2, 132, 199, 0.02)); }
+
     /* Forzar visibilidad de botones superiores en resoluciones medianas y de escritorio */
     @media (min-width: 769px) {
       .nav-links { display: flex !important; }
       .nav-cta { display: flex !important; }
     }
 
-    /* ===================== RESPONSIVE CORREGIDO ===================== */
+    /* ===================== CONTROL RESPONSIVO MÓVIL ===================== */
     @media (max-width: 768px) {
       .hero-grid { grid-template-columns: 1fr; gap: 48px; }
       .hero-visual { order: -1; }
@@ -202,9 +215,9 @@
 </head>
 <body>
 
-  <!-- Nota: Cabecera, Hero, Proceso y Tecnología deben estar arriba en tu archivo HTML -->
+  <!-- Nota: Cabecera fija, Hero, Pipeline y Bento de Tecnología van en la sección de arriba -->
 
-  <!-- ===================== SCIENTIFIC RESOURCES ===================== -->
+  <!-- ===================== RECURSOS CIENTÍFICOS ===================== -->
   <div class="trust">
     <div class="container">
       <p>Public Scientific Resources & Computational Tools</p>
@@ -219,69 +232,28 @@
     </div>
   </div>
 
-<!-- ===================== SCIENTIFIC CHALLENGE ===================== -->
-<section class="section">
+  <!-- ===================== SCIENTIFIC CHALLENGE ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Scientific Challenge</span>
+        <h2>Detecting Breast Cancer Biology Before Structural Changes</h2>
+        <p>METHYLOX™ explores molecular and computational approaches to identify early epigenetic signals associated with breast cancer biology.</p>
+      </div>
 
-  <div class="container">
-
-    <div class="section-head">
-
-      <span class="eyebrow">
-        Scientific Challenge
-      </span>
-
-      <h2>
-        Detecting Breast Cancer Biology Before Structural Changes
-      </h2>
-
-      <p>
-        METHYLOX™ explores molecular and computational approaches
-        to identify early epigenetic signals associated with breast
-        cancer biology.
-      </p>
-
+      <div class="cards-2">
+        <div class="card problem">
+          <h3>Limitations of Current Screening Approaches</h3>
+          <p>Many current detection methods rely on anatomical changes that may appear after underlying molecular alterations have already occurred.</p>
+        </div>
+        <div class="card solution">
+          <h3>Epigenetic Biomarker Research Framework</h3>
+          <p>METHYLOX™ combines DNA methylation analysis, CRISPR-Cas12 sensing concepts and computational workflows to investigate early breast cancer biomarkers.</p>
+        </div>
+      </div>
     </div>
+  </section>
 
-
-    <!-- AQUÍ ESTÁ EL CAMBIO: Separación limpia en 2 columnas -->
-    <div class="cards-2">
-
-      <!-- Caja 1: Problema -->
-      <div class="card problem">
-
-        <h3>
-          Limitations of Current Screening Approaches
-        </h3>
-
-        <p>
-          Many current detection methods rely on anatomical changes
-          that may appear after underlying molecular alterations
-          have already occurred.
-        </p>
-
-      </div> <!-- Cierre correcto de la primera caja -->
-
-
-      <!-- Caja 2: Solución -->
-      <div class="card solution">
-
-        <h3>
-          Epigenetic Biomarker Research Framework
-        </h3>
-
-        <p>
-          METHYLOX™ combines DNA methylation analysis,
-          CRISPR-Cas12 sensing concepts and computational workflows
-          to investigate early breast cancer biomarkers.
-        </p>
-
-      </div> <!-- Cierre correcto de la segunda caja -->
-
-    </div>
-
-  </div>
-
-</section>
   <!-- ===================== COMPUTATIONAL PIPELINE ===================== -->
   <section class="section" id="proceso" style="background: var(--muted);">
     <div class="container">
@@ -349,6 +321,7 @@
     </div>
   </section>
 
+  <!-- ===================== RESEARCH PROGRESS ===================== -->
   <section class="section">
     <div class="container">
       <div class="stats">
@@ -431,3 +404,5 @@
 
 </body>
 </html>
+
+
