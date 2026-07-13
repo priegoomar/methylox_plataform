@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -154,9 +154,8 @@
     .stats .num { font-size: 38px; font-weight: 800; font-family: var(--font-mono); letter-spacing: -0.02em; }
     .stats .lbl { font-size: 13px; opacity: 0.9; margin-top: 6px; font-weight: 500; }
 
- /* ===================== CIENCIA ===================== */
-    .scien
-ce-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    /* ===================== CIENCIA ===================== */
+    .science-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
     .science img { border-radius: 16px; border: 1px solid var(--border); }
     .science h2 { font-size: clamp(26px, 3.6vw, 38px); margin-bottom: 20px; }
     .science ul { list-style: none; margin-top: 24px; display: flex; flex-direction: column; gap: 14px; }
@@ -181,7 +180,7 @@ ce-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items:
     .foot-desc { color: var(--muted-foreground); font-size: 14px; max-width: 280px; margin-top: 12px; }
     .foot-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; color: var(--muted-foreground); }
 
-    /* Forzar visibilidad en resoluciones medianas y de escritorio */
+    /* Forzar visibilidad de botones superiores en resoluciones medianas y de escritorio */
     @media (min-width: 769px) {
       .nav-links { display: flex !important; }
       .nav-cta { display: flex !important; }
@@ -203,7 +202,7 @@ ce-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items:
 </head>
 <body>
 
-  <!-- Nota: Cabecera fija y sección Hero quedan arriba en el archivo index.html -->
+  <!-- Nota: Cabecera, Hero, Proceso y Tecnología deben estar arriba en tu archivo HTML -->
 
   <!-- ===================== SCIENTIFIC RESOURCES ===================== -->
   <div class="trust">
@@ -309,7 +308,6 @@ ce-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items:
     </div>
   </section>
 
-  <!-- ===================== RESEARCH PROGRESS ===================== -->
   <section class="section">
     <div class="container">
       <div class="stats">
@@ -323,27 +321,6 @@ ce-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items:
     </div>
   </section>
 
-  <!-- ===================== CIENCIA ===================== -->
-  <section class="section science" id="ciencia">
-    <div class="container science-grid">
-      <div>
-        <h2>Scientific Validation & Genomic Discovery</h2>
-        <p>Our computational models extract high-fidelity epigenetic signals, bridging public global resources with precise laboratory targets.</p>
-        <ul>
-          <li>Advanced alignment of target sequences within cancer-specific cell populations.</li>
-          <li>Biomarker validation protocols optimized under scalable server clusters.</li>
-        </ul>
-        <div class="quote">
-          "The integration of computational data sets opens new doors for pre-clinical cancer diagnostics."
-          <span class="who">— METHYLOX Bioinformatic Core</span>
-        </div>
-      </div>
-      <div>
-        <img src="images/science-validation.png" alt="Bioinformatics validation and computational science data charts">
-      </div>
-    </div>
-  </section>
-  
   <!-- ===================== CTA ===================== -->
   <section class="section" id="contacto">
     <div class="container">
