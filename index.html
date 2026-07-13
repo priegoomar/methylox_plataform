@@ -70,6 +70,35 @@
     .section-head { max-width: 680px; margin: 0 auto 64px; text-align: center; }
     .section-head h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; margin-bottom: 16px; }
     .section-head p { color: var(--muted-foreground); font-size: 17px; font-weight: 400; }
+    .cards-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+    align-items:start;
+}
+
+.card{
+    background:transparent;
+    border:none;
+    border-radius:0;
+    padding:0;
+    box-shadow:none;
+}
+
+.card h3{
+    font-size:24px;
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.card p{
+    font-size:17px;
+    line-height:1.8;
+    color:var(--muted-foreground);
+    max-width:520px;
+}
 
     /* ===================== COMPONENTES DE BOTONES ===================== */
     .btn {
@@ -116,7 +145,7 @@
     .hero-meta { display: flex; gap: 40px; flex-wrap: wrap; border-top: 1px solid var(--border); padding-top: 28px; }
     .hero-meta .num { font-size: 26px; font-weight: 700; color: var(--foreground); font-family: var(--font-mono); }
     .hero-meta .lbl { font-size: 13px; color: var(--muted-foreground); margin-top: 2px; }
-    
+
     /* Contenedor derecho transparente reservado para tu imagen molecular */
     .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; background: transparent; }
     .molecular-frame { width: 100%; min-height: 420px; display: flex; align-items: center; justify-content: center; background: transparent; }
@@ -132,7 +161,9 @@
     /* ===================== PIPELINE / STEPS ===================== */
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
     .step { background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
-    .step .n { font-family: var(--font-mono); font-size: 12px; color: var(--primary); font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: var(--accent); padding: 4px 12px; border-radius: 20px; width: fit-content; }
+    .step .n {
+      font-family: var(--font-mono); font-size: 12px; color: var(--primary); font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: var(--accent); padding: 4px 12px; border-radius: 20px; width: fit-content;
+    }
     .step h3 { font-size: 18px; margin-bottom: 12px; font-weight: 700; }
     .step p { color: var(--muted-foreground); font-size: 14px; }
     .process-img { margin-top: 48px; border-radius: 16px; overflow: hidden; background: transparent; display: grid; place-items: center; }
@@ -261,14 +292,6 @@
         <div class="molecular-frame">
           <img src="hero-dna.png" alt="DNA molecule and red blood cells">
         </div>
-        <div class="hero-badge">
-          <span class="dot"></span>
-          <div>
-            <strong>Research Platform</strong><br>
-            <span style="font-size:11px;color:var(--muted-foreground); font-family: var(--font-mono);">Computational Discovery Environment</span>
-          </div>
-        </div>
-      </div>
 
     </div>
   </section>
