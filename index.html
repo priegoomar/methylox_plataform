@@ -200,7 +200,164 @@
 </head>
 <body>
 
-  <!-- Nota: Tu Header, sección Hero, Recursos científicos, Challenge y Pipeline se ubican arriba en tu archivo -->
+  <!-- ===================== HEADER ===================== -->
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand">
+        <div class="brand-mark">M</div>
+        METHYLOX™
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#proceso">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+          Pipeline
+        </a>
+        <a href="#tecnologia">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+          Technology
+        </a>
+        <a href="#contacto">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Contact
+        </a>
+      </nav>
+      <div class="nav-cta">
+        <a href="#contacto" class="btn btn-outline">Hablar con el equipo</a>
+        <a href="/app" class="btn btn-primary">Launch Platform</a>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="container hero-grid">
+      
+      <!-- COLUMNA IZQUIERDA: TEXTO Y DATOS -->
+      <div class="hero-content">
+        <span class="eyebrow">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+          PRE-CLINICAL Breast Cancer Research Platform
+        </span>
+        <h1>Engineering the Future of <span class="accent">Early Breast Cancer Detection</span></h1>
+        <p class="lead">METHYLOX™ integrates DNA methylation biomarkers, CRISPR-Cas12 sensing and computational analysis into a pre-clinical research platform.</p>
+        
+        <div class="hero-actions">
+          <a href="/app" class="btn btn-primary">Launch Platform</a>
+          <a href="#tecnologia" class="btn btn-outline">Explore Technology</a>
+        </div>
+
+        <div class="hero-meta">
+          <div><div class="num">15+</div><div class="lbl">CRISPR Candidate Guides</div></div>
+          <div><div class="num">TCGA</div><div class="lbl">Genomic Dataset Analysis</div></div>
+          <div><div class="num">AI</div><div class="lbl">Bioinformatics Platform</div></div>
+        </div>
+      </div>
+
+      <!-- COLUMNA DERECHA: ESPACIO PARA TU IMAGEN MOLECULAR -->
+      <div class="hero-visual">
+        <div class="molecular-frame">
+          <img src="images/hero-molecular.png" alt="Molecular visualization of METHYLOX platform">
+        </div>
+        <div class="hero-badge">
+          <span class="dot"></span>
+          <div>
+            <strong>Research Platform</strong><br>
+            <span style="font-size:11px;color:var(--muted-foreground); font-family: var(--font-mono);">Computational Discovery Environment</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== SCIENTIFIC RESOURCES ===================== -->
+  <div class="trust">
+    <div class="container">
+      <p>Public Scientific Resources & Computational Tools</p>
+      <div class="trust-logos">
+        <span>TCGA</span>
+        <span>NCBI GEO</span>
+        <span>COSMIC</span>
+        <span>ClinVar</span>
+        <span>Benchling</span>
+        <span>GitHub</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SCIENTIFIC CHALLENGE ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Scientific Challenge</span>
+        <h2>Detecting Breast Cancer Biology Before Structural Changes</h2>
+        <p>METHYLOX™ explores molecular and computational approaches to identify early epigenetic signals associated with breast cancer biology.</p>
+      </div>
+
+      <div class="cards-2">
+        <div class="card problem">
+          <h3>
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--muted-foreground);"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            Limitations of Current Screening Approaches
+          </h3>
+          <p>Many current detection methods rely on anatomical changes that may appear after underlying molecular alterations have already occurred.</p>
+        </div>
+        <div class="card solution">
+          <h3>
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--primary);"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            Epigenetic Biomarker Research Framework
+          </h3>
+          <p>METHYLOX™ combines DNA methylation analysis, CRISPR-Cas12 sensing concepts and computational workflows to investigate early breast cancer biomarkers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMPUTATIONAL PIPELINE ===================== -->
+  <section class="section" id="proceso" style="background: #ffffff;">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Computational Pipeline</span>
+        <h2>From Public Genomic Data to Candidate Biomarkers</h2>
+        <p>METHYLOX™ applies computational workflows to analyze breast cancer genomic data and evaluate candidate molecular biomarkers.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="n">
+            <span>01</span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+          </div>
+          <h3>Public Dataset Analysis</h3>
+          <p>Analysis of breast cancer datasets from public genomic resources such as TCGA and GEO.</p>
+        </div>
+        <div class="step">
+          <div class="n">
+            <span>02</span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          </div>
+          <h3>Biomarker Identification</h3>
+          <p>Computational exploration of DNA methylation patterns associated with cancer biology.</p>
+        </div>
+        <div class="step">
+          <div class="n">
+            <span>03</span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          </div>
+          <h3>CRISPR Guide Evaluation</h3>
+          <p>In-silico evaluation of candidate CRISPR-Cas12 detection guides for molecular research applications.</p>
+        </div>
+      </div>
+
+      <div class="process-img">
+        <img src="images/pipeline.png" alt="Computational pipeline for early breast cancer biomarker research">
+      </div>
+    </div>
+  </section>
+
 
   <!-- ===================== TECHNOLOGY ===================== -->
   <section class="section" id="tecnologia">
