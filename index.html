@@ -168,14 +168,60 @@
     .step p { color: var(--muted-foreground); font-size: 14px; }
     .process-img { margin-top: 48px; border-radius: 16px; overflow: hidden; background: transparent; display: grid; place-items: center; }
 
-    /* ===================== BENTO RECUADROS LIMPIOS ===================== */
-    .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .bento .tile { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
-    .bento .tile.wide { grid-column: span 2; }
-    .tile .ico { width: 40px; height: 40px; border-radius: 10px; background: #ffffff; color: var(--primary); display: grid; place-items: center; margin-bottom: 20px; border: 1px solid var(--border); }
-    .tile .ico svg { width: 18px; height: 18px; }
-    .tile h3 { font-size: 18px; margin-bottom: 10px; font-weight: 700; }
-    .tile p { color: var(--muted-foreground); font-size: 14.5px; }
+    /* ===================== TECHNOLOGY CLEAN LAYOUT ===================== */
+
+.tech-list{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:50px;
+  margin-top:40px;
+}
+
+.tech-item{
+  display:flex;
+  gap:18px;
+  align-items:flex-start;
+}
+
+.tech-icon{
+  width:42px;
+  height:42px;
+  flex-shrink:0;
+  border-radius:12px;
+  background:var(--accent);
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(2,132,199,0.12);
+}
+
+.tech-icon svg{
+  width:22px;
+  height:22px;
+}
+
+.tech-item h3{
+  font-size:18px;
+  margin-bottom:8px;
+  font-weight:700;
+}
+
+.tech-item p{
+  color:var(--muted-foreground);
+  font-size:14.5px;
+  line-height:1.6;
+}
+
+
+/* Responsive */
+@media(max-width:768px){
+
+  .tech-list{
+    grid-template-columns:1fr;
+    gap:32px;
+  }
+
+}
 
     /* ===================== ESTADÍSTICAS METHYLOX ===================== */
     .stats { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border-radius: 20px; padding: 60px 40px; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.15); }
