@@ -245,6 +245,79 @@
     .cta p { color: var(--muted-foreground); font-size: 17px; max-width: 580px; margin: 0 auto 32px; }
     .cta .hero-actions { justify-content: center; margin-bottom: 0; }
 
+    .contact-modal{
+
+display:none;
+position:fixed;
+inset:0;
+background:rgba(15,23,42,.45);
+backdrop-filter:blur(8px);
+z-index:200;
+align-items:center;
+justify-content:center;
+
+}
+
+
+.contact-modal.active{
+
+display:flex;
+
+}
+
+
+.contact-box{
+
+background:white;
+width:min(600px,90%);
+padding:40px;
+border-radius:20px;
+box-shadow:0 20px 60px rgba(0,0,0,.15);
+position:relative;
+
+}
+
+
+.close-btn{
+
+position:absolute;
+right:20px;
+top:15px;
+border:none;
+background:none;
+font-size:30px;
+cursor:pointer;
+
+}
+
+
+.contact-form{
+
+display:flex;
+flex-direction:column;
+gap:16px;
+margin-top:25px;
+
+}
+
+
+.contact-form input,
+.contact-form textarea{
+
+padding:14px;
+border:1px solid var(--border);
+border-radius:12px;
+font-family:var(--font-sans);
+
+}
+
+
+.contact-form textarea{
+
+height:120px;
+
+}
+
     /* ===================== PIE DE PÁGINA REORDENADO ===================== */
     footer { border-top: 1px solid var(--border); padding: 72px 0 32px; background: #f8fafc; }
     .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; margin-bottom: 56px; }
@@ -633,100 +706,22 @@ border-color:var(--primary);
 
       <p>
         Researchers, healthcare institutions, investors and strategic partners
-        are welcome to contact our team to explore collaboration opportunities.
+        are welcome to contact our team to explore collaboration opportunities
+        and learn more about our research platform.
       </p>
 
 
-      <form class="contact-form">
-
-
-        <div class="form-group">
-
-          <label for="name">
-            Full Name
-          </label>
-
-          <input 
-          type="text" 
-          id="name"
-          placeholder="Enter your full name"
-          required>
-
-        </div>
-
-
-
-        <div class="form-group">
-
-          <label for="organization">
-            Organization (Optional)
-          </label>
-
-          <input 
-          type="text"
-          id="organization"
-          placeholder="Company, institution or research group">
-
-        </div>
-
-
-
-        <div class="form-group">
-
-          <label for="email">
-            Email Address
-          </label>
-
-          <input 
-          type="email"
-          id="email"
-          placeholder="name@organization.com"
-          required>
-
-        </div>
-
-
-
-        <div class="form-group">
-
-          <label for="subject">
-            Subject
-          </label>
-
-          <input 
-          type="text"
-          id="subject"
-          placeholder="How can we help?">
-
-        </div>
-
-
-
-        <div class="form-group">
-
-          <label for="message">
-            Message
-          </label>
-
-          <textarea 
-          id="message"
-          placeholder="Tell us about your collaboration interest..."
-          required></textarea>
-
-        </div>
-
-
+      <div class="hero-actions">
 
         <button 
-        type="submit"
-        class="btn btn-primary">
+        class="btn btn-primary"
+        onclick="openContact()">
 
-          Send Message
+          Contact Research Team
 
         </button>
 
-
-      </form>
+      </div>
 
 
     </div>
@@ -734,6 +729,7 @@ border-color:var(--primary);
   </div>
 
 </section>
+
   
   <!-- ===================== FOOTER ===================== -->
   <footer>
@@ -771,15 +767,93 @@ border-color:var(--primary);
   </footer>
 
   <script>
-    var toggle = document.getElementById("menuToggle");
-    var links = document.getElementById("navLinks");
-    toggle.addEventListener("click", function () {
-      links.classList.toggle("open");
-    });
-    links.addEventListener("click", function (e) {
-      if (e.target.tagName === "A") links.classList.remove("open");
-    });
-  </script>
 
+  var toggle = document.getElementById("menuToggle");
+  var links = document.getElementById("navLinks");
+
+  toggle.addEventListener("click", function () {
+    links.classList.toggle("open");
+  });
+
+  links.addEventListener("click", function (e) {
+    if (e.target.tagName === "A") {
+      links.classList.remove("open");
+    }
+  });
+
+
+  function openContact(){
+
+    document.getElementById("contactModal")
+    .classList.add("active");
+
+  }
+
+
+  function closeContact(){
+
+    document.getElementById("contactModal")
+    .classList.remove("active");
+
+  }
+
+
+</script>
+
+
+<!-- CONTACT MODAL -->
+
+<div class="contact-modal" id="contactModal">
+
+
+<div class="contact-box">
+
+
+<button class="close-btn" onclick="closeContact()">
+×
+</button>
+
+
+<h2>
+Contact METHYLOX™
+</h2>
+
+
+<p>
+Tell us about your collaboration interest.
+</p>
+
+
+<form class="contact-form">
+
+
+<input type="text" placeholder="Full Name">
+
+
+<input type="text" placeholder="Organization">
+
+
+<input type="email" placeholder="Email Address">
+
+
+<input type="text" placeholder="Subject">
+
+
+<textarea placeholder="Message"></textarea>
+
+
+<button class="btn btn-primary">
+Send Message
+</button>
+
+
+</form>
+
+
+</div>
+
+
+</div>
+  
 </body>
 </html>
