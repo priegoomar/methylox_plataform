@@ -438,7 +438,8 @@ border-color:var(--primary);
         </a>
       </nav>
       <div class="nav-cta">
-        <a href="/app" class="btn btn-primary">Request Access</a>
+        <a href="#" class="btn btn-primary"onclick="openContact()">
+          Request Access</a>
       </div>
       <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
         <span></span><span></span><span></span>
@@ -460,7 +461,7 @@ border-color:var(--primary);
         <p class="lead">Breast cancer begins with molecular alterations before clinical manifestation. METHYLOX™ explores epigenetic biomarkers, CRISPR-Cas12 and computational biology to investigate these early molecular signals.</p>
 
         <div class="hero-actions">
-          <a href="/app" class="btn btn-primary">Launch Platform</a>
+          <a href="#" class="btn btn-primary"onclick="openContact()">Request Access</a>
           <a href="#tecnologia" class="btn btn-outline">Explore Technology</a>
         </div>
 
@@ -824,26 +825,50 @@ Tell us about your collaboration interest.
 </p>
 
 
-<form class="contact-form">
+<form 
+class="contact-form"
+action="https://formspree.io/f/xbdnlblb"
+method="POST">
 
 
-<input type="text" placeholder="Full Name">
+<input 
+type="text" 
+name="name"
+placeholder="Full Name"
+required>
 
 
-<input type="text" placeholder="Organization">
+<input 
+type="text"
+name="organization"
+placeholder="Organization">
 
 
-<input type="email" placeholder="Email Address">
+<input 
+type="email"
+name="email"
+placeholder="Email Address"
+required>
 
 
-<input type="text" placeholder="Subject">
+<input 
+type="text"
+name="subject"
+placeholder="Subject">
 
 
-<textarea placeholder="Message"></textarea>
+<textarea 
+name="message"
+placeholder="Message">
+</textarea>
 
 
-<button class="btn btn-primary">
+<button 
+type="submit"
+class="btn btn-primary">
+
 Send Message
+
 </button>
 
 
