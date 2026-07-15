@@ -962,217 +962,101 @@ Submit Request
   });
 
 
-  function openAccess(){
+  function openContact() {
+  document.getElementById("contactModal").classList.add("active");
+}
 
-    document.getElementById("contactModal")
-    .classList.add("active");
+function closeContact() {
+  document.getElementById("contactModal").classList.remove("active");
+}
 
-  }
+function openAccess() {
+  document.getElementById("accessModal").classList.add("active");
+}
 
-
-  function closeContact(){
-
-    document.getElementById("contactModal")
-    .classList.remove("active");
-
-  }
+function closeAccess() {
+  document.getElementById("accessModal").classList.remove("active");
+}
 
 
 </script>
 
 
-<!-- CONTACT MODAL -->
+<!-- ===================== CONTACT MODAL ===================== -->
 
 <div class="contact-modal" id="contactModal">
 
+  <div class="contact-box">
 
-<div class="contact-box">
+    <button class="close-btn" onclick="closeContact()">
+      ×
+    </button>
 
+    <h2>Contact METHYLOX™</h2>
 
-<button class="close-btn" onclick="closeContact()">
-×
-</button>
+    <p>
+      Tell us about your collaboration interest.
+    </p>
 
+    <form
+      class="contact-form"
+      action="https://formspree.io/f/xbdnlblb"
+      method="POST">
 
-<h2>
-Contact METHYLOX™
-</h2>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          required>
+      </div>
 
+      <div class="form-group">
+        <label>Organization</label>
+        <input
+          type="text"
+          name="organization"
+          placeholder="Organization">
+      </div>
 
-<p>
-Tell us about your collaboration interest.
-</p>
+      <div class="form-group">
+        <label>Work Email</label>
+        <input
+          type="email"
+          name="email"
+          placeholder="Work Email"
+          required>
+      </div>
 
+      <div class="form-group">
+        <label>Subject</label>
+        <input
+          type="text"
+          name="subject"
+          placeholder="Subject">
+      </div>
 
-<form 
-class="contact-form"
-action="https://formspree.io/f/xbdnlblb"
-method="POST">
+      <div class="form-group">
+        <label>Message</label>
+        <textarea
+          name="message"
+          placeholder="Tell us about your collaboration interest..."
+          required></textarea>
+      </div>
 
+      <button
+        type="submit"
+        class="btn btn-primary">
+        Send Message
+      </button>
 
-<!-- Full Name -->
-<div class="form-group">
-  <label>Full Name</label>
-  <input 
-    type="text" 
-    name="name" 
-    placeholder="Full Name"
-    required>
-</div>
+    </form>
 
-
-<!-- Work Email -->
-<div class="form-group">
-  <label>Work Email</label>
-  <input 
-    type="email" 
-    name="email" 
-    placeholder="Work Email"
-    required>
-</div>
-
-
-<!-- Organization -->
-<div class="form-group">
-  <label>Organization</label>
-  <input 
-    type="text" 
-    name="organization" 
-    placeholder="Organization"
-    required>
-</div>
-
-
-<!-- Institution Type -->
-<div class="form-group">
-  <label>Institution Type</label>
-
-  <select name="institution_type" required>
-
-    <option value="" disabled selected>
-      Select institution type
-    </option>
-
-    <option>Hospital</option>
-    <option>Clinical Laboratory</option>
-    <option>Research Institute</option>
-    <option>University</option>
-    <option>Biotechnology Company</option>
-    <option>Pharmaceutical Company</option>
-    <option>Government Institution</option>
-    <option>Other (Please specify)</option>
-
-  </select>
+  </div>
 
 </div>
 
-
-<!-- Role / Position -->
-<div class="form-group">
-  <label>Role / Position</label>
-
-  <select name="role" required>
-
-    <option value="" disabled selected>
-      Select your role
-    </option>
-
-    <option>Research Scientist</option>
-    <option>Physician</option>
-    <option>Laboratory Director</option>
-    <option>Principal Investigator</option>
-    <option>Professor / Academic Researcher</option>
-    <option>Biotechnology Professional</option>
-    <option>Business Development</option>
-    <option>Investor</option>
-    <option>Other (Please specify)</option>
-
-  </select>
-
-</div>
-
-
-<!-- Reason for Requesting Access -->
-<div class="form-group">
-  <label>Reason for Requesting Access</label>
-
-  <select name="reason" required>
-
-    <option value="" disabled selected>
-      Select a reason
-    </option>
-
-    <option>Explore the platform</option>
-    <option>Research collaboration</option>
-    <option>Institutional evaluation</option>
-    <option>Partnership opportunities</option>
-    <option>Clinical research interest</option>
-    <option>Investment inquiry</option>
-    <option>Other (Please specify)</option>
-
-  </select>
-
-</div>
-
-
-<!-- Additional Information -->
-<div class="form-group">
-  <label>Additional Information</label>
-
-  <textarea 
-    name="message"
-    placeholder="Tell us more about your interest">
-  </textarea  
-
-  
-<input 
-type="text" 
-name="name"
-placeholder="Full Name"
-required>
-
-
-<input 
-type="text"
-name="organization"
-placeholder="Organization">
-
-
-<input 
-type="email"
-name="email"
-placeholder="Email Address"
-required>
-
-
-<input 
-type="text"
-name="subject"
-placeholder="Subject">
-
-
-<textarea 
-name="message"
-placeholder="Message">
-</textarea>
-
-
-<button 
-type="submit"
-class="btn btn-primary">
-
-Send Message
-
-</button>
-
-
-</form>
-
-
-</div>
-
-
-</div>
 
 <!-- REQUEST ACCESS MODAL -->
 
@@ -1197,7 +1081,7 @@ Complete the information below to request access to the METHYLOX™ platform.
 
 <form
 class="access-form"
-action="https://formspree.io/f/TU_NUEVO_ID"
+action="https://formspree.io/f/xbdnddqd"
 method="POST">
 
 
