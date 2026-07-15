@@ -157,8 +157,64 @@
       font-size: 13px; font-weight: 500; text-align: left;
     }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: #0ea5e9; box-shadow: 0 0 10px rgba(14, 165, 233, 0.6); }
+  </style>
+</head>
+<body>
 
-    /* ===================== PIPELINE / STEPS ===================== */
+  <!-- HEADER -->
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand">
+        <div class="brand-mark">M</div>
+        METHYLOX™
+      </a>
+      <nav class="nav-links">
+        <a href="#features">Tecnología</a>
+        <a href="#pipeline">Evidencia</a>
+        <a href="#access">Acceso Piloto</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="#access" class="btn btn-primary" style="padding: 9px 18px; border-radius: 10px; font-size: 13px;">Solicitar Demo</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-text">
+        <div class="eyebrow">
+          <span class="dot"></span> Pre-clinical Research Platform
+        </div>
+        <h1>Next-Generation <br/><span class="accent">Epigenetic Sensing</span></h1>
+        <p class="lead">Integrating ultra-sensitive DNA methylation biomarkers, CRISPR-Cas12 execution and computational analysis into a unified pre-clinical research engine.</p>
+        <div class="hero-actions">
+          <a href="#access" class="btn btn-primary">Request Platform Access</a>
+          <a href="#features" class="btn btn-outline">Explore Technical Specs</a>
+        </div>
+        <div class="hero-meta">
+          <div>
+            <div class="num">99.2%</div>
+            <div class="lbl">Sensing Specificity</div>
+          </div>
+          <div>
+            <div class="num">&lt;2.5h</div>
+            <div class="lbl">Execution Window</div>
+          </div>
+          <div>
+            <div class="num">5a</div>
+            <div class="lbl">Cohort Validation</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="molecular-frame">
+          <img src="images/hero-dna.png" alt="DNA molecule and red blood cells">
+        </div>
+      </div>
+    </div>
+  </section>
+/* ===================== PIPELINE / STEPS ===================== */
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
     .step { background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
     .step .n {
@@ -347,7 +403,8 @@ height:120px;
       .nav-links.open { display: flex !important; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; background: #ffffff; border-bottom: 1px solid var(--border); padding: 24px; gap: 20px; z-index: 100; box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
       .section { padding: 64px 0; }
     }
-   /* ===================== FORMS ===================== */
+
+    /* ===================== FORMS ===================== */
 
      .contact-form,
      .access-form{
@@ -459,7 +516,7 @@ border-color:var(--primary);
         </a>
       </nav>
       <div class="nav-cta">
-        <a href="#" class="btn btn-primary"onclick="openAccess()">
+        <a href="#" class="btn btn-primary" onclick="openAccess()">
           Request Access</a>
       </div>
       <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
@@ -482,7 +539,7 @@ border-color:var(--primary);
         <p class="lead">Breast cancer begins with molecular alterations before clinical manifestation. METHYLOX™ explores epigenetic biomarkers, CRISPR-Cas12 and computational biology to investigate these early molecular signals.</p>
 
         <div class="hero-actions">
-          <a href="#" class="btn btn-primary"onclick="openAccess()">Request Access</a>
+          <a href="#" class="btn btn-primary" onclick="openAccess()">Request Access</a>
           <a href="#tecnologia" class="btn btn-outline">Explore Technology</a>
         </div>
 
@@ -496,9 +553,9 @@ border-color:var(--primary);
       <!-- COLUMNA DERECHA: ESPACIO PARA TU IMAGEN MOLECULAR -->
       <div class="hero-visual">
         <div class="molecular-frame">
-          <img src="hero-dna.png" alt="DNA molecule and red blood cells">
+          <img src="images/hero-dna.png" alt="DNA molecule and red blood cells">
         </div>
-
+      </div>
     </div>
   </section>
 
@@ -544,8 +601,7 @@ border-color:var(--primary);
       </div>
     </div>
   </section>
-
-  <!-- ===================== COMPUTATIONAL PIPELINE ===================== -->
+<!-- ===================== COMPUTATIONAL PIPELINE ===================== -->
   <section class="section" id="proceso" style="background: #ffffff;">
     <div class="container">
       <div class="section-head">
@@ -730,7 +786,7 @@ border-color:var(--primary);
 
       <div class="hero-actions">
 
-        <button 
+        <button
         class="btn btn-primary"
         onclick="openContact()">
 
@@ -747,7 +803,7 @@ border-color:var(--primary);
 
 </section>
 
-  
+ 
   <!-- ===================== FOOTER ===================== -->
   <footer>
     <div class="container">
@@ -773,12 +829,11 @@ border-color:var(--primary);
             <li><a href="#">Publications</a></li>
           </ul>
         </div>
+      </div> <!-- fin foot-grid -->
 
       <div class="foot-bottom">
         <span>© 2026 METHYLOX™. All rights reserved.</span>
-        <span>Pre-clinical re
-
-          search platform.</span>
+        <span>Pre-clinical research platform.</span>
       </div>
     </div>
   </footer>
@@ -817,7 +872,6 @@ function closeAccess() {
 
 
 </script>
-
 
 <!-- ===================== CONTACT MODAL ===================== -->
 
@@ -899,160 +953,109 @@ function closeAccess() {
 
 <div class="contact-modal" id="accessModal">
 
-<div class="contact-box">
+  <div class="contact-box">
 
-<button class="close-btn" onclick="closeAccess()">
-×
-</button>
+    <button class="close-btn" onclick="closeAccess()">
+      ×
+    </button>
 
+    <h2>
+      Request Access
+    </h2>
 
-<h2>
-Request Access
-</h2>
+    <p>
+      Complete the information below to request access to the METHYLOX™ platform.
+    </p>
 
+    <form
+      class="access-form"
+      action="https://formspree.io/f/xbdnddqd"
+      method="POST">
 
-<p>
-Complete the information below to request access to the METHYLOX™ platform.
-</p>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input
+          type="text"
+          name="name"
+          required>
+      </div>
 
+      <div class="form-group">
+        <label>Work Email</label>
+        <input
+          type="email"
+          name="email"
+          required>
+      </div>
 
-<form
-class="access-form"
-action="https://formspree.io/f/xbdnddqd"
-method="POST">
+      <div class="form-group">
+        <label>Organization</label>
+        <input
+          type="text"
+          name="organization">
+      </div>
 
+      <div class="form-group">
+        <label>Institution Type</label>
+        <select name="institution_type" required>
+          <option value="" selected disabled>Select institution type</option>
+          <option>Hospital</option>
+          <option>Clinical Laboratory</option>
+          <option>Research Institute</option>
+          <option>University</option>
+          <option>Biotechnology Company</option>
+          <option>Pharmaceutical Company</option>
+          <option>Government Institution</option>
+          <option>Other (Please specify)</option>
+        </select>
+      </div>
 
-<div class="form-group">
+      <div class="form-group">
+        <label>Role / Position</label>
+        <select name="role" required>
+          <option value="" selected disabled>Select your role</option>
+          <option>Research Scientist</option>
+          <option>Physician</option>
+          <option>Laboratory Director</option>
+          <option>Principal Investigator</option>
+          <option>Professor / Academic Researcher</option>
+          <option>Biotechnology Professional</option>
+          <option>Business Development</option>
+          <option>Investor</option>
+          <option>Other (Please specify)</option>
+        </select>
+      </div>
 
-<label>Full Name</label>
+      <div class="form-group">
+        <label>Reason for Requesting Access</label>
+        <select name="reason" required>
+          <option value="" selected disabled>Select a reason</option>
+          <option>Explore the platform</option>
+          <option>Research collaboration</option>
+          <option>Institutional evaluation</option>
+          <option>Partnership opportunities</option>
+          <option>Clinical research interest</option>
+          <option>Investment inquiry</option>
+          <option>Other (Please specify)</option>
+        </select>
+      </div>
 
-<input 
-type="text"
-name="name"
-required>
+      <div class="form-group">
+        <label>Additional Information</label>
+        <textarea name="message" placeholder="Additional information"></textarea>
+      </div>
 
-</div>
+      <button
+        type="submit"
+        class="btn btn-primary">
+        Submit Request
+      </button>
 
+    </form>
 
-<div class="form-group">
-
-<label>Work Email</label>
-
-<input 
-type="email"
-name="email"
-required>
-
-</div>
-
-
-<div class="form-group">
-
-<label>Organization</label>
-
-<input 
-type="text"
-name="organization">
-
-</div>
-
-
-<div class="form-group">
-
-<label>Institution Type</label>
-
-<select name="institution_type">
-
-<option>Select institution type</option>
-
-<option>Hospital</option>
-<option>Clinical Laboratory</option>
-<option>Research Institute</option>
-<option>University</option>
-<option>Biotechnology Company</option>
-<option>Pharmaceutical Company</option>
-<option>Government Institution</option>
-<option>Other (Please specify)</option>
-
-</select>
-
-</div>
-
-
-
-<div class="form-group">
-
-<label>Role / Position</label>
-
-<select name="role">
-
-<option>Select your role</option>
-
-<option>Research Scientist</option>
-<option>Physician</option>
-<option>Laboratory Director</option>
-<option>Principal Investigator</option>
-<option>Professor / Academic Researcher</option>
-<option>Biotechnology Professional</option>
-<option>Business Development</option>
-<option>Investor</option>
-<option>Other (Please specify)</option>
-
-</select>
-
-</div>
-
-
-
-<div class="form-group">
-
-<label>Reason for Requesting Access</label>
-
-<select name="reason">
-
-<option>Select a reason</option>
-
-<option>Explore the platform</option>
-<option>Research collaboration</option>
-<option>Institutional evaluation</option>
-<option>Partnership opportunities</option>
-<option>Clinical research interest</option>
-<option>Investment inquiry</option>
-<option>Other (Please specify)</option>
-
-</select>
+  </div>
 
 </div>
-
-
-
-<div class="form-group">
-
-<label>Additional Information</label>
-
-<textarea 
-name="message">
-</textarea>
-
-</div>
-
-
-
-<button 
-type="submit"
-class="btn btn-primary">
-
-Submit Request
-
-</button>
-
-
-</form>
-
-
-</div>
-
-</div>
-  
+ 
 </body>
 </html>
