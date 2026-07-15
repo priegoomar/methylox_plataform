@@ -459,7 +459,7 @@ border-color:var(--primary);
         </a>
       </nav>
       <div class="nav-cta">
-        <a href="#" class="btn btn-primary"onclick="openContact()">
+        <a href="#" class="btn btn-primary"onclick="openAccess()">
           Request Access</a>
       </div>
       <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
@@ -482,7 +482,7 @@ border-color:var(--primary);
         <p class="lead">Breast cancer begins with molecular alterations before clinical manifestation. METHYLOX™ explores epigenetic biomarkers, CRISPR-Cas12 and computational biology to investigate these early molecular signals.</p>
 
         <div class="hero-actions">
-          <a href="#" class="btn btn-primary"onclick="openContact()">Request Access</a>
+          <a href="#" class="btn btn-primary"onclick="openAccess()">Request Access</a>
           <a href="#tecnologia" class="btn btn-outline">Explore Technology</a>
         </div>
 
@@ -705,8 +705,166 @@ border-color:var(--primary);
   <!-- ===================== REQUEST ACCESS ===================== -->
 
 <section class="section" id="access">
-...
+
+<div class="container">
+
+<div class="section-head">
+
+<span class="eyebrow">Request Access</span>
+
+<h2>Access METHYLOX™ Research Platform</h2>
+
+<p>
+Request access to explore our computational research platform and collaboration opportunities.
+</p>
+
+</div>
+
+
+<form 
+class="access-form"
+action="https://formspree.io/f/TU_ID_DE_FORMSPREE"
+method="POST">
+
+
+<div class="form-group">
+
+<label>Full Name</label>
+
+<input 
+type="text"
+name="name"
+placeholder="Full Name"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Work Email</label>
+
+<input 
+type="email"
+name="email"
+placeholder="Work Email"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Organization</label>
+
+<input 
+type="text"
+name="organization"
+placeholder="Organization"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Institution Type</label>
+
+<select name="institution_type" required>
+
+<option value="" disabled selected>
+Select institution type
+</option>
+
+<option>Hospital</option>
+<option>Clinical Laboratory</option>
+<option>Research Institute</option>
+<option>University</option>
+<option>Biotechnology Company</option>
+<option>Pharmaceutical Company</option>
+<option>Government Institution</option>
+<option>Other (Please specify)</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Role / Position</label>
+
+<select name="role" required>
+
+<option value="" disabled selected>
+Select your role
+</option>
+
+<option>Research Scientist</option>
+<option>Physician</option>
+<option>Principal Investigator</option>
+<option>Professor / Academic Researcher</option>
+<option>Biotechnology Professional</option>
+<option>Business Development</option>
+<option>Investor</option>
+<option>Other (Please specify)</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Reason for Requesting Access</label>
+
+<select name="reason" required>
+
+<option value="" disabled selected>
+Select a reason
+</option>
+
+<option>Explore the platform</option>
+<option>Research collaboration</option>
+<option>Institutional evaluation</option>
+<option>Partnership opportunities</option>
+<option>Clinical research interest</option>
+<option>Investment inquiry</option>
+<option>Other (Please specify)</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Additional Information</label>
+
+<textarea 
+name="message"
+placeholder="Tell us more about your interest">
+</textarea>
+
+</div>
+
+
+<button 
+type="submit"
+class="btn btn-primary">
+
+Submit Request
+
+</button>
+
+
+</form>
+
+
+</div>
+
 </section>
+
 
 <!-- ===================== CONTACT CTA ===================== -->
 
@@ -804,7 +962,7 @@ border-color:var(--primary);
   });
 
 
-  function openContact(){
+  function openAccess(){
 
     document.getElementById("contactModal")
     .classList.add("active");
@@ -1016,7 +1174,164 @@ Send Message
 
 </div>
 
+<!-- REQUEST ACCESS MODAL -->
 
+<div class="contact-modal" id="accessModal">
+
+<div class="contact-box">
+
+<button class="close-btn" onclick="closeAccess()">
+×
+</button>
+
+
+<h2>
+Request Access
+</h2>
+
+
+<p>
+Complete the information below to request access to the METHYLOX™ platform.
+</p>
+
+
+<form
+class="access-form"
+action="https://formspree.io/f/TU_NUEVO_ID"
+method="POST">
+
+
+<div class="form-group">
+
+<label>Full Name</label>
+
+<input 
+type="text"
+name="name"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Work Email</label>
+
+<input 
+type="email"
+name="email"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Organization</label>
+
+<input 
+type="text"
+name="organization">
+
+</div>
+
+
+<div class="form-group">
+
+<label>Institution Type</label>
+
+<select name="institution_type">
+
+<option>Select institution type</option>
+
+<option>Hospital</option>
+<option>Clinical Laboratory</option>
+<option>Research Institute</option>
+<option>University</option>
+<option>Biotechnology Company</option>
+<option>Pharmaceutical Company</option>
+<option>Government Institution</option>
+<option>Other (Please specify)</option>
+
+</select>
+
+</div>
+
+
+
+<div class="form-group">
+
+<label>Role / Position</label>
+
+<select name="role">
+
+<option>Select your role</option>
+
+<option>Research Scientist</option>
+<option>Physician</option>
+<option>Laboratory Director</option>
+<option>Principal Investigator</option>
+<option>Professor / Academic Researcher</option>
+<option>Biotechnology Professional</option>
+<option>Business Development</option>
+<option>Investor</option>
+<option>Other (Please specify)</option>
+
+</select>
+
+</div>
+
+
+
+<div class="form-group">
+
+<label>Reason for Requesting Access</label>
+
+<select name="reason">
+
+<option>Select a reason</option>
+
+<option>Explore the platform</option>
+<option>Research collaboration</option>
+<option>Institutional evaluation</option>
+<option>Partnership opportunities</option>
+<option>Clinical research interest</option>
+<option>Investment inquiry</option>
+<option>Other (Please specify)</option>
+
+</select>
+
+</div>
+
+
+
+<div class="form-group">
+
+<label>Additional Information</label>
+
+<textarea 
+name="message">
+</textarea>
+
+</div>
+
+
+
+<button 
+type="submit"
+class="btn btn-primary">
+
+Submit Request
+
+</button>
+
+
+</form>
+
+
+</div>
+
+</div>
   
 </body>
 </html>
