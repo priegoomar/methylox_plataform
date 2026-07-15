@@ -831,6 +831,121 @@ action="https://formspree.io/f/xbdnlblb"
 method="POST">
 
 
+<!-- Full Name -->
+<div class="form-group">
+  <label>Full Name</label>
+  <input 
+    type="text" 
+    name="name" 
+    placeholder="Full Name"
+    required>
+</div>
+
+
+<!-- Work Email -->
+<div class="form-group">
+  <label>Work Email</label>
+  <input 
+    type="email" 
+    name="email" 
+    placeholder="Work Email"
+    required>
+</div>
+
+
+<!-- Organization -->
+<div class="form-group">
+  <label>Organization</label>
+  <input 
+    type="text" 
+    name="organization" 
+    placeholder="Organization"
+    required>
+</div>
+
+
+<!-- Institution Type -->
+<div class="form-group">
+  <label>Institution Type</label>
+
+  <select name="institution_type" required>
+
+    <option value="" disabled selected>
+      Select institution type
+    </option>
+
+    <option>Hospital</option>
+    <option>Clinical Laboratory</option>
+    <option>Research Institute</option>
+    <option>University</option>
+    <option>Biotechnology Company</option>
+    <option>Pharmaceutical Company</option>
+    <option>Government Institution</option>
+    <option>Other (Please specify)</option>
+
+  </select>
+
+</div>
+
+
+<!-- Role / Position -->
+<div class="form-group">
+  <label>Role / Position</label>
+
+  <select name="role" required>
+
+    <option value="" disabled selected>
+      Select your role
+    </option>
+
+    <option>Research Scientist</option>
+    <option>Physician</option>
+    <option>Laboratory Director</option>
+    <option>Principal Investigator</option>
+    <option>Professor / Academic Researcher</option>
+    <option>Biotechnology Professional</option>
+    <option>Business Development</option>
+    <option>Investor</option>
+    <option>Other (Please specify)</option>
+
+  </select>
+
+</div>
+
+
+<!-- Reason for Requesting Access -->
+<div class="form-group">
+  <label>Reason for Requesting Access</label>
+
+  <select name="reason" required>
+
+    <option value="" disabled selected>
+      Select a reason
+    </option>
+
+    <option>Explore the platform</option>
+    <option>Research collaboration</option>
+    <option>Institutional evaluation</option>
+    <option>Partnership opportunities</option>
+    <option>Clinical research interest</option>
+    <option>Investment inquiry</option>
+    <option>Other (Please specify)</option>
+
+  </select>
+
+</div>
+
+
+<!-- Additional Information -->
+<div class="form-group">
+  <label>Additional Information</label>
+
+  <textarea 
+    name="message"
+    placeholder="Tell us more about your interest">
+  </textarea  
+
+  
 <input 
 type="text" 
 name="name"
@@ -879,6 +994,8 @@ Send Message
 
 
 </div>
+
+
   
 </body>
 </html>
