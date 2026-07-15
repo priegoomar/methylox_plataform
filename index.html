@@ -269,14 +269,15 @@ display:flex;
 .contact-box{
 
 background:white;
-width:min(600px,90%);
+width:min(560px,90%);
+max-height:85vh;
+overflow-y:auto;
 padding:40px;
 border-radius:20px;
 box-shadow:0 20px 60px rgba(0,0,0,.15);
 position:relative;
 
 }
-
 
 .close-btn{
 
@@ -346,18 +347,18 @@ height:120px;
       .nav-links.open { display: flex !important; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; background: #ffffff; border-bottom: 1px solid var(--border); padding: 24px; gap: 20px; z-index: 100; box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
       .section { padding: 64px 0; }
     }
-/* ===================== FORMS ===================== */
+   /* ===================== FORMS ===================== */
 
-.contact-form,
-.access-form{
+     .contact-form,
+     .access-form{
 
-max-width:650px;
-margin:40px auto 0;
-display:flex;
-flex-direction:column;
-gap:20px;
+     max-width:650px;
+     margin:40px auto 0;
+     display:flex;
+     flex-direction:column;
+     gap:20px;
 
-}
+    }
 
 
 .form-group{
@@ -411,7 +412,27 @@ resize:vertical;
 outline:none;
 border-color:var(--primary);
 
-}    
+}
+.form-group select{
+
+width:100%;
+padding:14px 16px;
+border:1px solid var(--border);
+border-radius:12px;
+font-family:var(--font-sans);
+font-size:15px;
+background:white;
+cursor:pointer;
+
+}
+
+
+.form-group select:focus{
+
+outline:none;
+border-color:var(--primary);
+
+}
   </style>
 </head>
 <body>
