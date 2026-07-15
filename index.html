@@ -273,6 +273,72 @@
       .nav-links.open { display: flex !important; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; background: #ffffff; border-bottom: 1px solid var(--border); padding: 24px; gap: 20px; z-index: 100; box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
       .section { padding: 64px 0; }
     }
+/* ===================== FORMS ===================== */
+
+.contact-form,
+.access-form{
+
+max-width:650px;
+margin:40px auto 0;
+display:flex;
+flex-direction:column;
+gap:20px;
+
+}
+
+
+.form-group{
+
+display:flex;
+flex-direction:column;
+gap:8px;
+
+}
+
+
+.form-group label{
+
+font-size:14px;
+font-weight:600;
+color:var(--foreground);
+
+}
+
+
+.form-group input,
+.form-group textarea{
+
+width:100%;
+padding:14px 16px;
+
+border:1px solid var(--border);
+
+border-radius:12px;
+
+font-family:var(--font-sans);
+
+font-size:15px;
+
+background:white;
+
+}
+
+
+.form-group textarea{
+
+min-height:130px;
+resize:vertical;
+
+}
+
+
+.form-group input:focus,
+.form-group textarea:focus{
+
+outline:none;
+border-color:var(--primary);
+
+}    
   </style>
 </head>
 <body>
@@ -299,7 +365,7 @@
         </a>
       </nav>
       <div class="nav-cta">
-        <a href="/app" class="btn btn-primary">Request</a>
+        <a href="/app" class="btn btn-primary">Request Access</a>
       </div>
       <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
         <span></span><span></span><span></span>
