@@ -498,8 +498,8 @@ border-color:var(--primary);
         <div class="molecular-frame">
           <img src="hero-dna.png" alt="DNA molecule and red blood cells">
         </div>
-
-    </div>
+  </div>
+  </div>
   </section>
 
   <!-- ===================== SCIENTIFIC RESOURCES ===================== -->
@@ -775,10 +775,9 @@ border-color:var(--primary);
         </div>
 
       <div class="foot-bottom">
+      </div>
         <span>© 2026 METHYLOX™. All rights reserved.</span>
-        <span>Pre-clinical re
-
-          search platform.</span>
+        <span>Pre-clinical research platform.</span>
       </div>
     </div>
   </footer>
@@ -961,9 +960,9 @@ name="organization">
 
 <label>Institution Type</label>
 
-<select name="institution_type">
+<select name="institution_type" required>
 
-<option>Select institution type</option>
+<option value=""selected disabled>Select institution type</option>
 
 <option>Hospital</option>
 <option>Clinical Laboratory</option>
@@ -984,9 +983,11 @@ name="organization">
 
 <label>Role / Position</label>
 
-<select name="role">
+<select name="role" required>
 
-<option>Select your role</option>
+<option value="" selected disabled>
+  Select your role
+</option>
 
 <option>Research Scientist</option>
 <option>Physician</option>
@@ -1008,9 +1009,11 @@ name="organization">
 
 <label>Reason for Requesting Access</label>
 
-<select name="reason">
+<select name="reason" required>
 
-<option>Select a reason</option>
+<option value="" selected disabled>
+  Select a reason
+</option>
 
 <option>Explore the platform</option>
 <option>Research collaboration</option>
@@ -1031,8 +1034,9 @@ name="organization">
 <label>Additional Information</label>
 
 <textarea
-name="message">
-</textarea>
+name="message"
+placeholder="Additional
+information"></textarea>
 
 </div>
 
