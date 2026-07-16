@@ -433,6 +433,21 @@ outline:none;
 border-color:var(--primary);
 
 }
+.success-message{
+  display:none;
+  margin-top:20px;
+  padding:14px 18px;
+  border-radius:12px;
+  background:#ecfdf3;
+  border:1px solid #16a34a;
+  color:#166534;
+  font-size:14px;
+  font-weight:600;
+}
+
+.success-message.show{
+  display:block;
+}
   </style>
 </head>
 <body>
@@ -903,7 +918,9 @@ window.addEventListener("click", function (e) {
         class="btn btn-primary">
         Send Message
       </button>
-
+      <div class="success-message">
+         ✓ Thank you! Your message has been sent successfully.
+</div>
     </form>
 
   </div>
@@ -1060,14 +1077,14 @@ information"></textarea>
 
 
 <button
-type="submit"
-class="btn btn-primary">
-
-Submit Request
-
+  type="submit"
+  class="btn btn-primary">
+  Submit Request
 </button>
 
-
+<div class="success-message">
+✓ Thank you! Your message has been sent successfully.
+</div>
 </form>
 
 
