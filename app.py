@@ -497,8 +497,17 @@ elif nav_selection == "Reportes" and token_hospital in ["ROOT-INTERNAL", "CHIEF-
                 # Alternativa de respaldo genérica
                 pdf_c_bytes = bytes(pdf_c.output())
         st.write("##")
-        st.download_button(label=f"🔬 Sign & Download PDF Dossier for {caso_seleccionado}", data=pdf_c_bytes, file_name=f"METHYLOX_Dossier_{caso_seleccionado}.pdf", mime="application/pdf", use_container_width=True)
-
+            # Aseguramos la transformación final a bytes puros antes de entregar a Streamlit
+            final_bytes = bytes(pdf_c_bytes) if isinstance(pdf_c_bytes, (bytearray, str, list)) else pdf_c_bytes
+            
+            st.write("##")
+            st.download_button(
+                label=f"🔬 Sign & Download PDF Dossier for {caso_seleccionado}",
+                data=final_bytes,
+                file_name=f"METHYLOX_Dossier_{caso_seleccionado}.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
 # ---- PESTAÑA 5: SYSTEM SETTINGS (CONSOLA DE AUDITORÍA CIENTÍFICA DEL CÓDIGO) ----
 elif nav_selection == "Configuración" and token_hospital == "ROOT-INTERNAL":
     with st.container(border=True):
@@ -529,6 +538,3 @@ else:
     st.markdown("<h3 style='color:#0F172A; font-weight:700;'>Módulo No Sincronizado</h3>", unsafe_allow_html=True)
     st.caption("El apartado solicitado no se encuentra indexado en su nivel de cuenta institucional o requiere una actualización de credenciales.")
     st.markdown('</div>', unsafe_allow_html=True)
-
-
-
