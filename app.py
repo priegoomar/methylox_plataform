@@ -1,16 +1,3 @@
-
-
-Ir al contenido
-Cómo usar Gmail con lectores de pantalla
-Ya no se admite esta versión. Actualiza a un navegador admitido.
-1 de 947
-(sin asunto)
-Recibidos
-
-Lint Brew <brewlint@gmail.com>
-8:30 p.m. (hace 55 minutos)
-para mí
-
 import io
 import os
 import sqlite3
