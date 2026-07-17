@@ -300,7 +300,11 @@ elif nav_selection == "Dashboard":
     with col_derecha:
         st.markdown('<div class="executive-card" style="min-height:390px;"><p class="card-title">Resumen de análisis</p>', unsafe_allow_html=True)
         fig_donut = go.Figure(data=[go.Pie(labels=['Resultados positivos', 'Resultados negativos', 'En análisis', 'Inconclusos'], values=[total_p_db, total_n_db, 5, 1], hole=.68, marker_colors=['#EF4444', '#10B981', '#3B82F6', '#F59E0B'], textinfo='none')])
-        fig_donut.update_layout(margin=dict(l=10, r=10, t=10, b=10), height=240, showlegend=True, legend=dict(orientation="v", verticalalignment="middle", x=1.05), annotations=[dict(text=f'<b>{total_m_db + 6}</b><br>Total', x=0.5, y=0.5, font_size=18, showarrow=False, align="center", font_family="-apple-system")])
+        fig_donut.update_layout(
+            margin=dict(l=10, r=10, t=10, b=10), height=240, showlegend=True,
+            legend=dict(orientation="v", yanchor="middle", y=0.5, x=1.05),
+            annotations=[dict(text=f'<b>{total_m_db + 6}</b><br>Total', x=0.5, y=0.5, font_size=18, showarrow=False, align="center", font_family="-apple-system")]
+        )
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("<a style='font-size:12px; color:#2563EB; font-weight:600; text-decoration:none;' href='#'>Ver estadísticas completas →</a>", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
