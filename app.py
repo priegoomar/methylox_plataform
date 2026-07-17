@@ -486,7 +486,16 @@ elif nav_selection == "Reportes" and token_hospital in ["ROOT-INTERNAL", "CHIEF-
         pdf_c.set_font("Arial", "I", 8)
         pdf_c.set_text_color(148, 163, 184)
         pdf_c.cell(190, 4, "Documento cifrado bajo estricto Secreto Industrial. Propiedad de METHYLOX Platform 2026.", ln=True, align="C")
-        pdf_c_bytes = pdf_c.output(dest="S").encode("latin1")
+            try:
+                # Intento estándar para fpdf clásica
+                pdf_c_bytes = pdf_c.output(dest="S").encode("latin1")
+            except (AttributeError, TypeError):
+                try:
+                    # Intento estándar para fpdf2 moderna (ya devuelve bytes)
+                    pdf_c_bytes = pdf_c.output()
+                except Exception:
+                    # Alternativa de respaldo genérica
+                    pdf_c_bytes = bytes(pdf_c.output())
         st.write("##")
         st.download_button(label=f"🔬 Sign & Download PDF Dossier for {caso_seleccionado}", data=pdf_c_bytes, file_name=f"METHYLOX_Dossier_{caso_seleccionado}.pdf", mime="application/pdf", use_container_width=True)
 
