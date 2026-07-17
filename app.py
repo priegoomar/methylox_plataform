@@ -230,12 +230,9 @@ if nav_selection == "🔒 Acceso Restringido":
     st.caption("Ingrese una Llave Institucional válida para desplegar los módulos autorizados.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-elif nav_selection == "Dashboard":
-# ==============================================================================
-# 💻 4. ENTORNO CENTRAL DE SECCIONES (SISTEMA INTEGRADO)
-# ==============================================================================
-if nav_selection == "🔒 Acceso Restringido":
-    st.markdown('<div class="executive-card" style="text-align:center; padding:60px 40px;">', unsafe_allow_html=True)
+elif nav_selection == "Dashboard Matrix":
+    st.markdown("<h2 style='color:#0F172A; font-weight:700; margin-bottom:0px; font-size: 24px;'>Bienvenida, Lucía Martínez</h2>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:#64748B; font-size:13px; margin-bottom:25px;'>Resumen de actividad del laboratorio - {datetime.now().strftime('%d de %B de %Y')}</p>", unsafe_allow_html=True)
     st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:10px;'>Lienzo Bloqueado</h2>", unsafe_allow_html=True)
     st.caption("Ingrese una Llave Institucional válida para desplegar los módulos autorizados.")
     st.markdown('</div>', unsafe_allow_html=True)
