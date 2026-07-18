@@ -744,14 +744,11 @@ elif nav_selection == "Motor METHYLOX":
                 # A) FILTRADO ESTRICTO: Solo se toman las filas que correspondan a tu panel de 15 guías MOX
                 df_filtrado = df_input[df_input["Probe_ID"].isin(PANEL_MOX)].copy()
                 
-                if df_filtrado.empty:
-                    st.warning("⚠️ El archivo cargado no contiene las sondas del panel MOX-SG. Usando matriz base de control.")
-                    # 🔒 CORRECCIÓN SINTÁCTICA: Se inyectan los datos faltantes en la lista para evitar errores de compilación
-                    df_filtrado = pd.DataFrame({
-                # El frontend público de GitHub ya no muestra números ni fórmulas:
-                df_filtrado = pd.DataFrame(columns=["Probe_ID", "Methylated_Intensity", "Unmethylated_Intensity"])        
-                    })
-                
+        if df_filtrado.empty:
+            st.warning("⚠️ El archivo cargado no contiene las sondas del panel MOX-SG. Usando matriz base de control.")
+            df_filtrado = pd.DataFrame(columns=["Probe_ID", "Methylated_Intensity", "Unmethylated_Intensity"])
+            
+        # B) CÁLCULO MATEMÁTICO REAL: Beta = M / (M + U + 100)             
                 # B) CÁLCULO MATEMÁTICO REAL: Beta = M / (M + U + 100)
                 df_filtrado["Beta"] = df_filtrado["Methylated_Intensity"] / (df_filtrado["Methylated_Intensity"] + df_filtrado["Unmethylated_Intensity"] + 100)
                 df_filtrado["Beta"] = df_filtrado["Beta"].round(4)
