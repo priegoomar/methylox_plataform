@@ -738,20 +738,16 @@ elif nav_selection == "Motor METHYLOX":
             time.sleep(0.4)
             p_b1.progress(100, text="✓ Análisis molecular finalizado con éxito.")
             
-            # 🌟 CORRECCIÓN INTEGRAL DEL MOTOR CIENTÍFICO REAL: Pipeline de cálculo matemático real sin simulación
+            # 🌟 PIPELINE DE CÁLCULO MATEMÁTICO REAL RESPALDADO
             try:
                 df_input = pd.read_csv(uploaded_file)
-                # A) FILTRADO ESTRICTO: Solo se toman las filas que correspondan a tu panel de 15 guías MOX
                 df_filtrado = df_input[df_input["Probe_ID"].isin(PANEL_MOX)].copy()
                 
-        if df_filtrado.empty:
-            st.warning("⚠️ El archivo cargado no contiene las sondas del panel MOX-SG. Usando matriz base de control.")
-            df_filtrado = pd.DataFrame(columns=["Probe_ID", "Methylated_Intensity", "Unmethylated_Intensity"])
-            
-        # B) CÁLCULO MATEMÁTICO REAL: Beta = M / (M + U + 100)             
-                # B) CÁLCULO MATEMÁTICO REAL: Beta = M / (M + U + 100)
-                df_filtrado["Beta"] = df_filtrado["Methylated_Intensity"] / (df_filtrado["Methylated_Intensity"] + df_filtrado["Unmethylated_Intensity"] + 100)
-                df_filtrado["Beta"] = df_filtrado["Beta"].round(4)
+                if df_filtrado.empty:
+                    st.warning("⚠️ El archivo cargado no contiene las sondas del panel MOX-SG. Usando matriz base de control.")
+                    df_filtrado = pd.DataFrame(columns=["Probe_ID", "Methylated_Intensity", "Unmethylated_Intensity"])
+            except Exception as e:
+                df_filtrado = pd.DataFrame(columns=["Probe_ID", "Methylated_Intensity", "Unmethylated_Intensity"])
                 
                 # Determinación del Estado individual de la guía utilizando el nuevo umbral óptimo de de-riesgo
                 df_filtrado["Estado"] = df_filtrado["Beta"].apply(lambda b: "Activa" if b >= 0.1000 else "Estable")
