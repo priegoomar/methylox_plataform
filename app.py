@@ -750,7 +750,7 @@ elif nav_selection == "Motor METHYLOX":
                     df_filtrado = pd.DataFrame({
                         "Probe_ID": ["MOX-SG-01", "MOX-SG-07", "MOX-SG-12"],
                         "Methylated_Intensity":,
-                        "Unmethylated_Intensity": [100, 140, 20]
+                        "Unmethylated_Intensity": [820, 760, 910]
                     })
                 
                 # B) CÁLCULO MATEMÁTICO REAL: Beta = M / (M + U + 100)
