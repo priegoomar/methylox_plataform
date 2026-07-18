@@ -749,8 +749,8 @@ elif nav_selection == "Motor METHYLOX":
                     # 🔒 CORRECCIÓN SINTÁCTICA: Se inyectan los datos faltantes en la lista para evitar errores de compilación
                     df_filtrado = pd.DataFrame({
                         "Probe_ID": ["MOX-SG-01", "MOX-SG-07", "MOX-SG-12"],
-                        "Methylated_Intensity":,
-                        "Unmethylated_Intensity": [820, 760, 910]
+                        "Methylated_Intensity":, [820, 760, 910]
+                        "Unmethylated_Intensity": [100, 140, 20]
                     })
                 
                 # B) CÁLCULO MATEMÁTICO REAL: Beta = M / (M + U + 100)
