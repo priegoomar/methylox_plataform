@@ -749,7 +749,7 @@ elif nav_selection == "Motor METHYLOX":
                     # 🔒 CORRECCIÓN SINTÁCTICA: Se inyectan los datos faltantes en la lista para evitar errores de compilación
                     df_filtrado = pd.DataFrame({
                 # El frontend público de GitHub ya no muestra números ni fórmulas:
-                df_filtrado = pd.DataFrame(columns=["Probe_ID", "Methylated_Intensity", "Unmethylated_Intensity"])
+                df_filtrado = pd.DataFrame(columns=["Probe_ID", "Methylated_Intensity", "Unmethylated_Intensity"])        
                     })
                 
                 # B) CÁLCULO MATEMÁTICO REAL: Beta = M / (M + U + 100)
