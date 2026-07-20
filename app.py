@@ -900,7 +900,7 @@ elif nav_selection == "Reports":
             "guias_activas": ["None", "MOX-SG-01;MOX-SG-07;MOX-SG-12"],
             "fecha_analisis": ["2026-01-11 11:15", "2026-04-16 14:32"],
             "operador": ["Authorized Operator Alpha", "Authorized Operator Alpha"],
-            "hash_seguridad": ["HSH-10294", "HSH-89291"], "edad":,
+            "hash_seguridad": ["HSH-10294", "HSH-89291"], "age":[45, 52],
             "sexo": ["Female", "Female"], "institucion": ["Centro Medico ABC", "Centro Medico ABC"]
         })
    
