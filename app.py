@@ -130,7 +130,7 @@ st.sidebar.markdown('<div class="custom-nav-container">', unsafe_allow_html=True
 
 # MÓDULO DE PERMISOS INSTITUCIONALES AUTOMATIZADOS
     # SYSTEM COMPLIANCE SECURITY GATES (NO MORE EXPOSED PLAIN TEXT KEYS)
-    import os
+import os
     SYSTEM_ROOT_KEY = os.getenv("METHYLOX_ROOT_KEY", "FALLBACK_SECURE_ROOT_2026")
 
     if access_key == SYSTEM_ROOT_KEY:
