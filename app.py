@@ -566,12 +566,12 @@ elif nav_selection == "Patients":
             # Pulling consolidated cohort dataframe from database
             res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", timeout=2)
             df_pacientes = pd.DataFrame(res_cohort.json())
-        except Exception:
-            # Secure elastic fallback to keep the cloud application online 
+    except Exception:
+        # Secure elastic fallback to keep the cloud application online
         df_pacientes = pd.DataFrame({
             "Patient ID": ["PAC-001", "PAC-002"],
             "Anonymous Code": ["METH-ANON-09K", "METH-ANON-88F"],
-            "Age":,[45,52]
+            "Age":,
             "Gender": ["Female", "Female"],
             "Facility": [hospitals_list, hospitals_list[-1]],
             "LIMS Status": ["🟢 Verified", "🟢 Verified"],
