@@ -568,15 +568,15 @@ elif nav_selection == "Patients":
             df_pacientes = pd.DataFrame(res_cohort.json())
         except Exception:
             # Secure elastic fallback to keep the cloud application online 
-            df_pacientes = pd.DataFrame({
-                "Patient ID": ["PAC-001", "PAC-002"],
-                "Anonymous Code": ["METH-ANON-09K", "METH-ANON-88F"],
-                "Age":,[45, 52].
-                "Gender": ["Female", "Female"],
-                "Facility": ["Centro Medico ABC", "Hospital Zambrano Hellion"],
-                "LIMS Status": ["🟢 Verified", "🟢 Verified"],
-                "Mean Beta (β)": [0.1245, 0.8142]
-            })
+        df_pacientes = pd.DataFrame({
+            "Patient ID": ["PAC-001", "PAC-002"],
+            "Anonymous Code": ["METH-ANON-09K", "METH-ANON-88F"],
+            "Age":,[45,52]
+            "Gender": ["Female", "Female"],
+            "Facility": [hospitals_list, hospitals_list[-1]],
+            "LIMS Status": ["🟢 Verified", "🟢 Verified"],
+            "Mean Beta (β)": [0.1245, 0.8142]
+        })
             
         st.dataframe(df_pacientes, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
