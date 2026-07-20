@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # 🧠 Brain Node - METHYLOX Enterprise Backend API Gateway
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: methylox_backend_api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://methylox_user:METHYLOX_DB_PASS_2026@db:5432/methylox_production
+      - SECRET_KEY=FDA_COMPLIANCE_ENCRYPTION_KEY_METHYLOX_2026
+      - SMTP_HOST=://gmail.com
+      - SMTP_PORT=587
+      - SMTP_USER=notifications@methylox.com
+      - SMTP_PASSWORD=secure_app_password
+      - CLINICAL_ALERT_EMAIL=oncology.chief@methylox.com
+    volumes:
+      - methylox_compiled_reports:/backend/static/reports
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # 🗄️ Memory Node - Secure PostgreSQL Enterprise Database Server
+  db:
+    image: postgres:15-alpine
+    container_name: methylox_postgres_db
+    environment:
+      - POSTGRES_USER=methylox_user
+      - POSTGRES_PASSWORD=METHYLOX_DB_PASS_2026
+      - POSTGRES_DB=methylox_production
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_clinical_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U methylox_user -d methylox_production"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_clinical_data:
+  methylox_compiled_reports:
