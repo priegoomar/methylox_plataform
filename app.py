@@ -131,24 +131,24 @@ st.sidebar.markdown('<div class="custom-nav-container">', unsafe_allow_html=True
 # MÓDULO DE PERMISOS INSTITUCIONALES AUTOMATIZADOS
     # SYSTEM COMPLIANCE SECURITY GATES (NO MORE EXPOSED PLAIN TEXT KEYS)
 import os
-    SYSTEM_ROOT_KEY = os.getenv("METHYLOX_ROOT_KEY", "FALLBACK_SECURE_ROOT_2026")
+SYSTEM_ROOT_KEY = os.getenv("METHYLOX_ROOT_KEY", "FALLBACK_SECURE_ROOT_2026")
 
-    if access_key == SYSTEM_ROOT_KEY:
-        col_b1 = st.sidebar.button("📊 Dashboard Matrix", use_container_width=True)
-        col_b2 = st.sidebar.button("🗄️ Samples Database", use_container_width=True)
-        col_b3 = st.sidebar.button("🧠 AI Analysis Hub", use_container_width=True)
-        col_b4 = st.sidebar.button("📋 Clinical Reports", use_container_width=True)
-        col_b5 = st.sidebar.button("⚙️ System Settings", use_container_width=True)
-        token_hospital = "ROOT-INTERNAL"
-    elif access_key.startswith("METH-HOSPITAL-"):
-        col_b1 = st.sidebar.button("📊 Dashboard Matrix", use_container_width=True)
-        col_b2 = st.sidebar.button("🗄️ Samples Database", use_container_width=True)
-        col_b3, col_b4, col_b5 = False, False, False
-        token_hospital = access_key.replace("METH-", "")
-    else:
-        st.sidebar.warning("🔒 Enter institutional key to operate.")
-        col_b1, col_b2, col_b3, col_b4, col_b5 = False, False, False, False, False
-        token_hospital = None
+if access_key == SYSTEM_ROOT_KEY:
+    col_b1 = st.sidebar.button("📊 Dashboard Matrix", use_container_width=True)
+    col_b2 = st.sidebar.button("🗄️ Samples Database", use_container_width=True)
+    col_b3 = st.sidebar.button("🧠 AI Analysis Hub", use_container_width=True)
+    col_b4 = st.sidebar.button("📋 Clinical Reports", use_container_width=True)
+    col_b5 = st.sidebar.button("⚙️ System Settings", use_container_width=True)
+    token_hospital = "ROOT-INTERNAL"
+elif access_key.startswith("METH-HOSPITAL-"):
+    col_b1 = st.sidebar.button("📊 Dashboard Matrix", use_container_width=True)
+    col_b2 = st.sidebar.button("🗄️ Samples Database", use_container_width=True)
+    col_b3, col_b4, col_b5 = False, False, False
+    token_hospital = access_key.replace("METH-", "")
+else:
+    st.sidebar.warning("🔒 Enter institutional key to operate.")
+    col_b1, col_b2, col_b3, col_b4, col_b5 = False, False, False, False, False
+    token_hospital = None
 
 st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
