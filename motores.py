@@ -36,3 +36,51 @@
     
     pdf.output(r"notebooks\METHYLOX_Dossier_Clinico_Fase2.pdf")
     print("💾 ¡PDF Oficial Unificado (100% analitico / 96% operativo) generado con exito!")
+
+
+def validar_ensayo_vitro(control_blank, control_negativo, control_positivo, replicas_paciente):
+    """
+    Control de Calidad estricto para el ensayo multiplexado de METHYLOX.
+    Valida los controles de laboratorio y promedia las réplicas del paciente.
+    """
+    # 1. Parámetros operativos (Hardcoded temporalmente por seguridad operativa)
+    LIMITE_RUIDO = 0.02
+    UMBRAL_POSITIVIDAD = 0.1000
+    
+    # 2. Verificación estricta de contaminación en el pozo de agua (Blank)
+    if control_blank >= LIMITE_RUIDO:
+        return {
+            "estatus": "ERROR_CRITICO",
+            "motivo": "Contaminación detectada en pozo BLANK (Agua). Ensayo abortado."
+        }
+        
+    # 3. Verificación de falsos positivos en el Control Negativo (Leucocitos/Sanos)
+    if control_negativo >= LIMITE_RUIDO:
+        return {
+            "estatus": "ERROR_CRITICO",
+            "motivo": "Señal basal alta en CONTROL NEGATIVO. Riesgo de falso positivo."
+        }
+        
+    # 4. Verificación de eficiencia de amplificación del sistema Cas12a-Ultra
+    if control_positivo < 0.80:
+        return {
+            "estatus": "ERROR_CRITICO",
+            "motivo": "Falla de señal en CONTROL POSITIVO. Reactivos degradados."
+        }
+        
+    # 5. Procesamiento de Réplicas del Paciente (Triplicado Experimental)
+    # Se calcula el promedio matemático de las tres lecturas independientes
+    valor_beta_promedio = sum(replicas_paciente) / len(replicas_paciente)
+    
+    # 6. Clasificación basada en el voto colectivo del panel
+    if valor_beta_promedio >= UMBRAL_POSITIVIDAD:
+        resultado = "POSITIVO (ctDNA Detectado - Cáncer de Mama)"
+    else:
+        resultado = "NEGATIVO (Normal - Sin señal tumoral)"
+        
+    return {
+        "estatus": "EXITOSO",
+        "resultado_clinico": resultado,
+        "valor_beta_final": round(valor_beta_promedio, 4),
+        "mensaje": "Ensayo validado bajo criterios de control de calidad METHYLOX v2.0."
+    }
