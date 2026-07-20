@@ -959,3 +959,48 @@ def calcular_valor_beta_cpg_propietario(intensity_methylated: float, intensity_u
     st.success("✅ Verificación de integridad completada de forma exitosa. Reglas deterministas operando bajo parámetros estables del panel.")
     st.markdown('</div>', unsafe_allow_html=True)
 
+
+# --- IN VITRO QUALITY CONTROL SECTION (METHYLOX™ LAB) ---
+st.sidebar.markdown("---")
+st.sidebar.header("🧬 In Vitro Assay Control")
+st.sidebar.subheader("Controls & Replicates Validation")
+
+# 1. Operator Input Controls (Sliders & Number Inputs)
+val_blank = st.sidebar.slider("Blank Control (Water)", 0.000, 0.100, 0.005, step=0.001, format="%.3f")
+val_negativo = st.sidebar.slider("Negative Control (Healthy)", 0.000, 0.100, 0.010, step=0.001, format="%.3f")
+val_positivo = st.sidebar.slider("Positive Control (Cas12a)", 0.00, 1.00, 0.85, step=0.01)
+
+st.sidebar.markdown("**Patient Replicates (Triplicate Beta):**")
+rep1 = st.sidebar.number_input("Replicate 1", value=0.120, step=0.005, format="%.4f")
+rep2 = st.sidebar.number_input("Replicate 2", value=0.115, step=0.005, format="%.4f")
+rep3 = st.sidebar.number_input("Replicate 3", value=0.125, step=0.005, format="%.4f")
+
+# 2. Pipeline Execution Button
+if st.sidebar.button("⚙️ Process Clinical Sample"):
+    st.header("🧬 Quality Control & ctDNA Diagnostic Report")
+    
+    # Executing the analytical engine from motores.py
+    resultado_pipeline = motores.validar_ensayo_vitro(
+        control_blank=val_blank,
+        control_negativo=val_negativo,
+        control_positivo=val_positivo,
+        replicas_paciente=[rep1, rep2, rep3]
+    )
+    
+    # 3. Visual UI Rendering based on Pipeline Status
+    if resultado_pipeline["estatus"] == "ERROR_CRITICO":
+        st.error(f"🚨 **CRITICAL_ERROR**")
+        st.warning(f"**Rejection Reason:** {resultado_pipeline['motivo']}")
+        st.info("⚠️ Pipeline automatically locked. For patient safety, rerun the assay using a new reagent batch.")
+    
+    elif resultado_pipeline["estatus"] == "EXITOSO":
+        st.success("✅ **BIOLOGICAL CONCORDANCE VALIDATED**")
+        
+        # Displaying clinical metrics in structural columns
+        col1, col2 = st.columns(2)
+        col1.metric("Mean Beta Value (β)", f"{resultado_pipeline['valor_beta_final']:.4f}")
+        col2.metric("Diagnostic Status", "POSITIVE" if "POSITIVO" in resultado_pipeline["resultado_clinico"] else "NEGATIVE")
+        
+        st.markdown(f"### Clinical Details:")
+        st.info(f"📋 **Verdict:** {resultado_pipeline['resultado_clinico']}")
+        st.caption(f"🔬 {resultado_pipeline['mensaje']}")
