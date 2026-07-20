@@ -1,0 +1,19 @@
+# METHYLOX SECURITY & COMPLIANCE IGNORE LIST
+# Never commit credentials, local databases, or raw clinical assets to public repositories
+
+# Local Databases and Infrastructure fallbacks
+*.db
+methyl_clinic
+methyl_clinic.db
+notebooks/*.pdf
+backend/static/reports/*.pdf
+
+# Environment Secrets and Local Configurations
+.env
+config.json
+__pycache__/
+*.pyc
+
+# Local operating system or hardware telemetry
+.DS_Store
+Thumbs.db
