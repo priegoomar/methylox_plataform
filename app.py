@@ -376,7 +376,7 @@ elif nav_selection == "Patients":
             except Exception:
                 df_pacientes = pd.DataFrame({
                     "Patient ID": ["PAC-001", "PAC-002"], "Anonymous Code": ["METH-ANON-09K", "METH-ANON-88F"],
-                    "Age":, "Gender": ["Female", "Female"], "Facility Link": [hospitals_list[0], hospitals_list[-1] if len(hospitals_list) > 1 else hospitals_list[0]],
+                    "Age":[45, 52, "Gender": ["Female", "Female"], "Facility Link": [hospitals_list[0], hospitals_list[-1] if len(hospitals_list) > 1 else hospitals_list[0]],
                     "LIMS Status": ["🟢 Verified", "🟢 Verified"], "Current Mean Beta (β)": [0.1245, 0.0150]
                 })
             st.dataframe(df_pacientes, use_container_width=True, hide_index=True)
