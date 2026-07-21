@@ -738,7 +738,7 @@ elif nav_selection == "Reports":
             "fecha_analisis": ["2026-01-11 11:15", "2026-04-16 14:32"],
             "operador": ["Authorized Operator Alpha", "Authorized Operator Alpha"],
             "hash_seguridad": ["HSH-10294", "HSH-89291"], 
-            "age":,
+            "age": ["45", "52"],
             "sexo": ["Female", "Female"], 
             "institucion": ["Centro Medico ABC", "Hospital Zambrano Hellion"]
         })
