@@ -148,6 +148,20 @@ st.markdown("""
 
 # --- BACKEND API BACKBONE ROUTING ---
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
+# ============================================================================
+# 🧬 PRODUCTION RESILIENT BACKUPS (MOCK DATA FOR CLEAN DEPLOYMENT)
+# ============================================================================
+df_pacientes_vacios = pd.DataFrame(columns=[
+"Patient ID", "Anonymous Code", "Age", "Gender", "Facility Link", "LIMS Status", "Current Mean Beta (β)"
+])
+df_muestras_vacias = pd.DataFrame(columns=[
+"Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"
+])
+df_reportes_vacios = pd.DataFrame(columns=[
+"muestra_id", "paciente_id", "nombre_codigo", "score", "clasificacion", 
+"guias_activas", "fecha_analisis", "operador", "hash_seguridad", "age", "sexo", "institucion"
+])
 
 # ============================================================================
 # 🔒 SideBar ENCRYPTED INTERACTION GATEWAY
