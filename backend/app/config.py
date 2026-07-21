@@ -304,3 +304,99 @@ async def enroll_patient_profile(
     finally:
         cur.close()
         conn.close()
+
+# --- PYDANTIC SCHEMA FOR DYNAMIC TELEMETRY RESPONSE ---
+class TelemetrySummaryResponse(BaseModel):
+    received_today: int
+    in_progress: int
+    ready_analyses: int
+    qc_pass_rate: float
+
+# ==============================================================================
+# SECTION 3.5: CLINICAL TELEMETRY ENGINE (DYNAMIC POSTGRESQL COUNTS)
+# ==============================================================================
+@app.get("/api/v1/analysis/telemetry-summary", response_model=TelemetrySummaryResponse, tags=["Clinical Telemetry"])
+async def get_hospital_telemetry_summary(
+    current_user: TokenData = Depends(get_current_user_claims)
+):
+    """
+    Queries real-time transactional counts from clinical_samples table.
+    Enforces absolute multi-tenant data isolation using the authenticated id_hospital.
+    """
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Query 1: Muestras recibidas hoy (Filter by current calendar date and hospital boundary)
+        today_date = datetime.now().strftime("%Y-%m-%d")
+        cur.execute(
+            """
+            SELECT COUNT(*) as count 
+            FROM clinical_samples 
+            WHERE id_hospital = %s AND processed_at::date = %s::date
+            """,
+            (current_user.id_hospital, today_date)
+        )
+        received_today = cur.fetchone()['count']
+        
+        # Query 2: Análisis en proceso (Samples logged but awaiting CRISPR diagnostic_verdict)
+        cur.execute(
+            """
+            SELECT COUNT(*) as count 
+            FROM clinical_samples 
+            WHERE id_hospital = %s AND diagnostic_verdict IS NULL
+            """,
+            (current_user.id_hospital,)
+        )
+        in_progress = cur.fetchone()['count']
+        
+        # Query 3: Resultados listos (CRISPR pipeline execution complete and verdict written)
+        cur.execute(
+            """
+            SELECT COUNT(*) as count 
+            FROM clinical_samples 
+            WHERE id_hospital = %s AND diagnostic_verdict IS NOT NULL
+            """,
+            (current_user.id_hospital,)
+        )
+        ready_analyses = cur.fetchone()['count']
+        
+        # Query 4: Controles de Calidad (Percentage of batches passing the LIMITE_RUIDO of 0.0200)
+        # Fetch target cutoff from calibration matrix to avoid hardcoding drift
+        cur.execute("SELECT numeric_value FROM clinical_calibration WHERE parameter_key = 'LIMITE_RUIDO'")
+        noise_row = cur.fetchone()
+        noise_cutoff = float(noise_row['numeric_value']) if noise_row else 0.0200
+        
+        cur.execute(
+            """
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN control_blank <= %s AND control_negative <= %s THEN 1 ELSE 0 END) as passed
+            FROM clinical_samples 
+            WHERE id_hospital = %s
+            """,
+            (noise_cutoff, noise_cutoff, current_user.id_hospital)
+        )
+        qc_data = cur.fetchone()
+        
+        total_qc_runs = qc_data['total'] if qc_data else 0
+        passed_qc_runs = qc_data['passed'] if qc_data and qc_data['passed'] is not None else 0
+        
+        # Mathematical derivation of the live compliance rate percentage
+        qc_pass_rate = (passed_qc_runs / total_qc_runs * 100.0) if total_qc_runs > 0 else 100.0
+        
+        return {
+            "received_today": int(received_today),
+            "in_progress": int(in_progress),
+            "ready_analyses": int(ready_analyses),
+            "qc_pass_rate": round(float(qc_pass_rate), 1)
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to compile operational matrix from PostgreSQL nodes: {str(e)}"
+        )
+    finally:
+        cur.close()
+        conn.close()
