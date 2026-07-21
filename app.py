@@ -559,7 +559,7 @@ elif nav_selection == "Reports":
             "clasificacion": ["Epigenetic profile compatible with METHYLOX tumor panel", "Stable Baseline Control Range"],
             "guias_activas": ["MOX-SG-01;MOX-SG-07;MOX-SG-12", "None"], "fecha_analisis": ["2026-01-11 11:15", "2026-04-16 14:32"],
             "operador": ["Lucía Martínez", "Lucía Martínez"], "hash_seguridad": ["HSH-99214A882X", "HSH-10294B119Z"],
-            "age": ["45", "45"], "sexo": ["Female", "Female"], "institucion": [hospitals_list, hospitals_list]
+            "age": ["45", "52"], "sexo": ["Female", "Female"], "institucion": [hospitals_list, hospitals_list]
         })
    
     st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
