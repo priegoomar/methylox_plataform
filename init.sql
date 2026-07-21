@@ -58,3 +58,44 @@ INSERT INTO clinical_calibration (parameter_key, numeric_value, text_value, desc
 ('LIMITE_RUIDO', 0.0200, NULL, 'Maximum fluorescence noise allowed for Blank and Negative controls.'),
 ('CONSTANTE_FONDO', 100.0000, NULL, 'Illumina baseline laser correction constant.'),
 ('VERSION_PLATAFORMA', NULL, 'METHYLOX v3.0-Production', 'Official SaMD production version tag.');
+
+-- ============================================================================
+-- METHYLOX™ PLATFORM v3.0 - ENTERPRISE SECURITY UPGRADE (DYNAMIC RBAC)
+-- ============================================================================
+
+-- 1. CREATE PERMISSIONS CATALOG (Universal actions)
+CREATE TABLE IF NOT EXISTS permissions (
+    id_permission SERIAL PRIMARY KEY,
+    permission_code VARCHAR(50) NOT NULL UNIQUE, -- E.g., 'SAMPLE_CREATE', 'ANALYSIS_RUN'
+    description TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. CREATE DYNAMIC ROLES TABLE (Allows the client to create ANY role name dynamically)
+CREATE TABLE IF NOT EXISTS custom_roles (
+    id_role SERIAL PRIMARY KEY,
+    role_name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. CREATE MANY-TO-MANY RELATION: ROLE-PERMISSIONS MATRIX
+CREATE TABLE IF NOT EXISTS role_permissions (
+    id_role INTEGER REFERENCES custom_roles(id_role) ON DELETE CASCADE,
+    id_permission INTEGER REFERENCES permissions(id_permission) ON DELETE CASCADE,
+    PRIMARY KEY (id_role, id_permission)
+);
+
+-- 4. EVOLVE THE EXISTING USERS TABLE (Add dynamic role support)
+-- We inject a reference to the new dynamic roles table to bypass the old static CHECK constraint.
+ALTER TABLE users 
+ADD COLUMN IF NOT EXISTS dynamic_role_id INTEGER REFERENCES custom_roles(id_role) ON DELETE RESTRICT;
+
+-- 5. SEED UNIVERSAL IMMUTABLE CLINICAL PERMISSIONS
+INSERT INTO permissions (permission_code, description) VALUES
+('SAMPLE_CREATE', 'Allows registration of new biological and mock cohort samples.'),
+('DATA_UPLOAD', 'Allows uploading raw fluorescence intensity files (Methylated/Unmethylated channels).'),
+('ANALYSIS_RUN', 'Allows triggering the CRISPR-cas processing engine and Beta-value generation.'),
+('REPORT_DOWNLOAD', 'Allows generating and downloading clinical PDF oncology diagnostic reports.'),
+('USER_MANAGE', 'Allows creation, role assignment, and suspension of users within the same hospital.')
+ON CONFLICT (permission_code) DO NOTHING;
