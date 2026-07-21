@@ -377,17 +377,17 @@ elif nav_selection == "Patients":
                     if res_p.status_code == 200 or res_p.status_code == 201:
                         st.success(f"✅ Profile {new_p_id} successfully synchronized into PostgreSQL.")
                         st.rerun()
-                except Exception:
-                # CLINICAL ROADSHOW COMPLIANCE: If database connection is fresh, render an elegant empty baseline.
-                df_patients = df_empty_patients
-            st.markdown('</div>', unsafe_allow_html=True)
-           
-        with p2:
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">📋 LIMS Cohort Registry & Active Population Directory</div>', unsafe_allow_html=True)
-            try:
-                res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
-                df_pacientes = pd.DataFrame(res_cohort.json())
+        except Exception:
+            # CLINICAL ROADSHOW COMPLIANCE: If database connection is fresh, render an elegant empty baseline.
+            df_patients = df_empty_patients
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+    with p2:
+        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">📋 LIMS Cohort Registry & Active Population Directory</div>', unsafe_allow_html=True)
+        try:
+            res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
+            df_patients = pd.DataFrame(res_cohort.json()) if res_cohort.status_code == 200 else df_empty_patients
             except Exception:
                 # RECTIFIED AND FIXED DICTIONARY STRUCTURE: Age has proper assigned values
                 df_pacientes = pd.DataFrame({
