@@ -116,7 +116,7 @@ VALUES ('Organization Admin', 'Laboratory Director with full granular RBAC acces
 -- Provision the initial clinical administrator master user profile link
 INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital) 
 VALUES (
-    'admin.oncologia@hospital.com', 
+    'brewlint@gmail.com 
     '$2b$12$K.8/e2Xj2M60v.T03/fLHeQ6O9O17zZ6y0n2Yt1vH.cW5gO42/K1.', 
     'Director de Oncologia', 
     1, 
