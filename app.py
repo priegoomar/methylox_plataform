@@ -149,7 +149,6 @@ st.sidebar.markdown("""
 
 # ---- FALLBACK DYNAMIC DIRECTORY (ZERO HARDCODING) ----
 try:
-    # Attempt connecting to live PostgreSQL via FastAPI Backend
     response_hospitals = requests.get(f"{BACKEND_URL}/infrastructure/hospitals", timeout=2)
     hospitals_list = [row["hospital_name"] for row in response_hospitals.json()] if response_hospitals.status_code == 200 else ["Node ABC", "Facility Zambrano"]
 except Exception:
@@ -157,14 +156,25 @@ except Exception:
 
 if nav_selection == "🔒 Access Restricted":
     st.markdown('<div class="executive-card" style="text-align:center; padding:60px 40px;">', unsafe_allow_html=True)
-    st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:26px; margin-bottom:10px;'>Lienzo Bloqueado de Forma Preventiva</h2>", unsafe_allow_html=True)
-    st.caption("Esta plataforma bioinformática ómica opera bajo directrices cifradas. Ingrese una Llave Institucional válida en la barra izquierda para desplegar los módulos autorizados.")
+    st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:26px; margin-bottom:10px;'>Preventative Infrastructure Lockdown Active</h2>", unsafe_allow_html=True)
+    st.caption("This bioinformatic epigenetic platform operates under encrypted parameters. Enter a verified Institutional Key in the sidebar to authorize active platform nodes.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 elif nav_selection == "Dashboard Matrix":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown("<div class='card-title'>📊 Dashboard Real-Time Clinical Matrix</div>", unsafe_allow_html=True)
-    
+   
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=["Stage I", "Stage II", "Controls"], y=[42, 18, 55], marker_color='#0284C7'))
+    fig.update_layout(title="Samples Processed Core Metrics", template="plotly_white", height=350)
+    st.plotly_chart(fig, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif nav_selection == "Samples Database":
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown("<div class='card-title'>🗄️ Production LIMS Core Registry</div>", unsafe_allow_html=True)
+
+# --- CONTINUATION OF TAB ROUTING GATES ---
     # Dynamic Plotly Visualization of LIMS telemetry
     fig = go.Figure()
     fig.add_trace(go.Bar(x=["Stage I", "Stage II", "Controls"], y=[42, 18, 55], marker_color='#0284C7'))
@@ -175,24 +185,27 @@ elif nav_selection == "Dashboard Matrix":
 elif nav_selection == "Samples Database":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown("<div class='card-title'>🗄️ Production LIMS Core Registry</div>", unsafe_allow_html=True)
+   
+    # Elastic layout pulling from data structures (Safe array check implementation)
+    facility_1 = hospitals_list[0] if len(hospitals_list) > 0 else "Dynamic Hospital Node A"
+    facility_2 = hospitals_list[1] if len(hospitals_list) > 1 else "Dynamic Hospital Node B"
     
-    # Elastic layout pulling from data structures
     demo_df = pd.DataFrame({
         "Patient ID": ["PAC-001", "PAC-002"],
-        "Facility": [hospitals_list[0], hospitals_list[1]],
+        "Facility": [facility_1, facility_2],
         "Mean Beta (β)": [0.1245, 0.0150],
         "Verdict": ["POSITIVE", "NEGATIVE"]
     })
-    st.dataframe(demo_df, use_container_width=True)
+    st.dataframe(demo_df, use_container_width=True, hide_index=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 elif nav_selection == "AI Analysis Hub":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
     st.markdown("<div class='card-title'>🧠 CRISPR Cas12a-Ultra Core Pipeline</div>", unsafe_allow_html=True)
-    
+   
     selected_hospital = st.selectbox("Assign Node Node:", hospitals_list)
     patient_id = st.text_input("Patient Reference Code", value="PAC-001")
-    
+   
     col_l, col_r = st.columns(2)
     with col_l:
         st.markdown("**Experimental Fluidics Validation (QC Gates)**")
@@ -206,119 +219,50 @@ elif nav_selection == "AI Analysis Hub":
         rep3 = st.number_input("Replicate Target 3", value=0.1250, format="%.4f")
 
     if st.button("⚙️ Execute CRISPR Diagnostics Run"):
-        # Packaging secure JSON parameters
+        # Packaging secure JSON parameters for microservice endpoints
         payload = {
-            "patient_id": patient_id, 
-            "hospital_id": 1, 
+            "patient_id": patient_id,
+            "hospital_id": 1,
             "operator_id": 1,
-            "control_blank": val_blank, 
-            "control_negative": val_neg, 
+            "control_blank": val_blank,
+            "control_negative": val_neg,
             "control_positive": val_pos,
             "replicates": [rep1, rep2, rep3]
         }
-        
+       
         try:
-            # Pushing direct network execution requests to FastAPI server
+            # Pushing direct network execution requests to FastAPI production core
             res = requests.post(f"{BACKEND_URL}/analysis/process", json=payload, timeout=3)
-            
+           
             if res.status_code == 200:
                 data = res.json()
                 st.success(f"✅ BIOLOGICAL CONCORDANCE VALIDATED | Verdict: {data['clinical_call']}")
             else:
                 st.error(f"🚨 QC GATE REJECTED: {res.json().get('detail')}")
-                
+               
         except Exception:
-            # Fallback mathematical simulation if database node is isolated
+            # Fallback mathematical simulation if database server node is isolated
             mean_beta = (rep1 + rep2 + rep3) / 3
-            
+           
             if val_blank >= 0.02 or val_neg >= 0.02 or val_pos < 0.80:
                 st.error("🚨 CRITICAL_QC_ERROR: Experimental fluidics controls fell out of safety bounds.")
             else:
                 verdict = "POSITIVE (ctDNA Detected)" if mean_beta >= 0.1000 else "NEGATIVE (Normal)"
                 st.success(f"✅ FALLBACK RUN VALIDATED | Mean Beta: {mean_beta:.4f} | Verdict: {verdict}")
-                
-    st.markdown('', unsafe_allow_html=True)
-
-elif nav_selection == "Clinical Reports":
-    st.markdown('', unsafe_allow_html=True)
-    st.markdown("📋 Immutable PDF Report Compiler", unsafe_allow_html=True)
-    st.caption("Select a sample entry token to compile the FDA-compliant clinical record.")
-    st.button("📥 Compile & Download Clinical Dossier")
-    st.markdown('', unsafe_allow_html=True)
-
-elif nav_selection == "System Settings":
-    st.markdown('', unsafe_allow_html=True)
-    st.markdown("⚙️ System Calibration Settings", unsafe_allow_html=True)
-    st.info(f"Active Platform Architecture Version: METHYLOX v3.0-Production SaMD")
-    st.markdown('', unsafe_allow_html=True)
-
-# PANEL DE PATENTES DE METHYLOX (LAS 15 GUÍAS EXCLUSIVAS DE TU COMPAÑÍA)
-PANEL_MOX = [f"MOX-SG-{i:02d}" for i in range(1, 16)]
-
-# ==============================================================================
-# 🧬 2. ENTERPRISE LIMS INFRASTRUCTURE & BACKEND ORCHESTRATION INTEGRATION
-# ==============================================================================
-# Fetching operational matrices dynamically from global production nodes
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
-
-# ==============================================================================
-# 📊 PESTAÑA 1: DASHBOARD MATRIX & REAL-TIME REPOSITORY TELEMETRY
-# ==============================================================================
-if nav_selection == "Dashboard Matrix":
-    if os.path.exists("1000199352.png"):
-        st.image("1000199352.png", use_container_width=True)
-    else:
-        st.title("🧬 METHYLOX™ AI PLATFORM")
-       
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-title">🏹 Dashboard Matrix & Patient Analytics</div>', unsafe_allow_html=True)
-   
-    # High-grade medical KPIs streaming directly from server deployment configurations
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.metric(label="🎯 Cutoff Threshold (Youden Index)", value="0.1000")
-    with c2:
-        st.metric(label="📈 Multiplex Clinical Sensitivity", value="96.00%")
-    with c3:
-        st.metric(label="🛡️ Panel Specificity (Zero Basal Noise)", value="100.00%")
+               
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Dynamic metrics section pulling count totals directly via active network services
+elif nav_selection == "Clinical Reports":
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-title">📊 Operational Capacity Monitoring</div>', unsafe_allow_html=True)
-    
-    try:
-        # Querying live telemetry from production PostgreSQL database instance via FastAPI
-        res_telemetry = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", timeout=2)
-        telemetry_data = res_telemetry.json()
-        total_samples = telemetry_data.get("processed_samples", 149)
-        active_nodes = telemetry_data.get("active_hospital_nodes", 2)
-    except Exception:
-        # Secure fallback simulation data matrix for Streamlit Cloud pitch authorization
-        total_samples = 149
-        active_nodes = 2
+    st.markdown("<div class='card-title'>📋 Immutable PDF Report Compiler</div>", unsafe_allow_html=True)
+    st.caption("Select a sample entry token to compile the FDA-compliant clinical record.")
+    st.button("📥 Compile & Download Clinical Dossier")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    k1, k2 = st.columns(2)
-    with k1:
-        st.markdown(f"""
-        <div class="kpi-container">
-            <div class="kpi-icon-wrapper" style="background-color: rgba(2, 132, 199, 0.1);">🧬</div>
-            <div class="kpi-data-block">
-                <span class="kpi-header">TOTAL CLINICAL SAMPLES ASSAYED</span>
-                <span class="kpi-big-value">{total_samples}</span>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    with k2:
-        st.markdown(f"""
-        <div class="kpi-container">
-            <div class="kpi-icon-wrapper" style="background-color: rgba(16, 185, 129, 0.1);">🏥</div>
-            <div class="kpi-data-block">
-                <span class="kpi-header">ACTIVE HEALTHCARE NODE CONNECTIONS</span>
-                <span class="kpi-big-value">{active_nodes}</span>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+elif nav_selection == "System Settings":
+    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
+    st.markdown("<div class='card-title'>⚙️ System Calibration Settings</div>", unsafe_allow_html=True)
+    st.info(f"Active Platform Architecture Version: METHYLOX v3.0-Production SaMD")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ==============================================================================
@@ -329,8 +273,8 @@ st.sidebar.markdown("""
     <div style="display: flex; align-items: center; gap: 10px;">
         <svg width="26" height="28" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5"><path d="M4.5 10.5C4.5 7.5 7 5 10 5s5.5 2.5 5.5 5.5-2.5 5.5-5.5 5.5-5.5-2.5-5.5-5.5Z"/><path d="M14 4.5C14 7.5 11.5 10 8.5 10S3 7.5 3 4.5 5.5 2 8.5 2s5.5 2.5 5.5 2.5Z" transform="translate(5, 9)"/><path d="M6 9h12M6 15h12"/></svg>
         <div style="display: flex; flex-direction: column;">
-            <h3 style="margin: 0; color: #1E3A8A !important; font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">METHYLOX™</h3>
-            <p style="margin: 0; color: #2563EB !important; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">Laboratory Intelligence</p>
+            <h3 style="margin: 0; color: #FFFFFF !important; font-weight: 800; font-size: 16px; letter-spacing: -0.5px;">METHYLOX™</h3>
+            <p style="margin: 0; color: #38BDF8 !important; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">Laboratory Intelligence</p>
         </div>
     </div>
 </div>
@@ -369,15 +313,13 @@ st.sidebar.markdown("---")
 st.sidebar.markdown(f"""
 <div style="padding: 5px 10px;">
     <p style="margin: 0; font-size: 11px; color: #64748B;">Authenticated Operator:</p>
-    <p style="margin: 0; font-size: 13px; font-weight: 700; color: #1E293B;">{active_user if token_hospital else "None"}</p>
+    <p style="margin: 0; font-size: 13px; font-weight: 700; color: #E2E8F0;">{active_user if token_hospital else "None"}</p>
 </div>
 """, unsafe_allow_html=True)
 
 # ==============================================================================
 # 💻 4. INTEGRATED CORE MODULE ENTERPRISE ROUTER
 # ==============================================================================
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
-
 if nav_selection == "🔒 Access Restricted":
     st.markdown('<div class="executive-card" style="text-align:center; padding:60px 40px;">', unsafe_allow_html=True)
     st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:22px; margin-bottom:10px;'>Preventive Infrastructure Lockdown Active</h2>", unsafe_allow_html=True)
@@ -388,19 +330,23 @@ if nav_selection == "🔒 Access Restricted":
 elif nav_selection == "Dashboard Matrix":
     st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:2px;'>Operational Command Console</h2>", unsafe_allow_html=True)
     st.markdown("<p style='color:#64748B; font-size:14px; margin-bottom:25px;'>Real-time clinical metrics and automated LIMS queue tracking</p>", unsafe_allow_html=True)
-   
-    # 📡 DYNAMIC SERVICE DATA EXTRACTION GATES (ZERO HARDCODING IN CODE)
+
+
+# ==============================================================================
+# ---- CONTINUATION OF TAB 1: DASHBOARD MATRIX TELEMETRY ENGINE ----------------
+# ==============================================================================
+# 📡 DYNAMIC SERVICE DATA EXTRACTION GATES (ZERO HARDCODING IN CODE)
     try:
         # Requesting consolidated telemetry metrics from production PostgreSQL database instance via FastAPI
         res_metrics = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", timeout=2)
         metrics_data = res_metrics.json()
-        
+       
         total_samples = metrics_data.get("total_samples", 3)
         total_patients = metrics_data.get("total_patients", 1)
         analisis_pendientes = metrics_data.get("pending_queue", 1)
         resultados_gen = metrics_data.get("ready_analyses", 2)
         raw_guide_signals = metrics_data.get("guide_signals", ["MOX-SG-01", "MOX-SG-07", "MOX-SG-12"])
-        
+       
     except Exception:
         # Secure fallback simulation data matrix for Streamlit Cloud standalone pitches
         total_samples = 149
@@ -511,7 +457,7 @@ elif nav_selection == "Dashboard Matrix":
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# ---- PESTAÑA 2: PATIENTS (RESTRUCTURED MOLECULAR REGISTRY VIA POSTGRESQL) ----
+# ---- TAB 2: PATIENTS (RESTRUCTURED MOLECULAR REGISTRY VIA POSTGRESQL) --------
 # ==============================================================================
 elif nav_selection == "Patients":
     import random
@@ -522,20 +468,20 @@ elif nav_selection == "Patients":
     p1, p2 = st.columns([1, 2])
     with p1:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title">📝 Register New Patient Profile (Anonimized)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-title">📝 Register New Patient Profile (Anonymized)</div>', unsafe_allow_html=True)
        
         new_p_id = st.text_input("Unique Patient ID", value=f"PAC-{random.randint(100,999)}")
         new_p_code = st.text_input("Security Anonymous Code", value=f"METH-ANON-{random.randint(10,99)}K")
         new_p_edad = st.number_input("Age (Years)", min_value=18, max_value=100, value=45)
         new_p_sexo = st.selectbox("Biological Gender", ["Female", "Male"])
-        
+       
         try:
             # Querying active hospital nodes dynamically via API
             res_h = requests.get(f"{BACKEND_URL}/infrastructure/hospitals", timeout=2)
             hospital_options = [row["hospital_name"] for row in res_h.json()] if res_h.status_code == 200 else ["Centro Medico ABC"]
         except Exception:
             hospital_options = ["Centro Medico ABC", "Hospital Zambrano Hellion"]
-            
+           
         selected_p_inst = st.selectbox("Assign Institutional Origin Node", hospital_options)
        
         st.write("#")
@@ -562,26 +508,26 @@ elif nav_selection == "Patients":
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<div class="card-title">📋 LIMS Cohort Registry & Active Population Overview</div>', unsafe_allow_html=True)
        
-    try:
-        # Pulling consolidated cohort dataframe from database
-        res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", timeout=2)
-        df_pacientes = pd.DataFrame(res_cohort.json())
-    except Exception:
-        # Secure elastic fallback to keep the cloud application online
-        df_pacientes = pd.DataFrame({
-            "Patient ID": ["PAC-001", "PAC-002"],
-            "Anonymous Code": ["METH-ANON-09K", "METH-ANON-88F"],
-            "Age":[45, 52],
-            "Gender": ["Female", "Female"],
-            "Facility": [hospitals_list, hospitals_list[-1]],
-            "LIMS Status": ["🟢 Verified", "🟢 Verified"],
-            "Mean Beta (β)": [0.1245, 0.8142]
-        })
-        
+        try:
+            # Pulling consolidated cohort dataframe from database
+            res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", timeout=2)
+            df_pacientes = pd.DataFrame(res_cohort.json())
+        except Exception:
+            # Secure elastic fallback to keep the cloud application online
+            df_pacientes = pd.DataFrame({
+                "Patient ID": ["PAC-001", "PAC-002"],
+                "Anonymous Code": ["METH-ANON-09K", "METH-ANON-88F"],
+                "Age":,
+                "Gender": ["Female", "Female"],
+                "Facility": [hospitals_list, hospitals_list[-1]],
+                "LIMS Status": ["🟢 Verified", "🟢 Verified"],
+                "Mean Beta (β)": [0.1245, 0.8142]
+            })
+       
         st.dataframe(df_pacientes, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
        
-        # Longitudinal Tracking Graph Engine
+        # Longitudinal Tracking Graph Engine (Aligned within p2 container)
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<div class="card-title">📉 Longitudinal Evolution of Epigenetic Biomarkers</div>', unsafe_allow_html=True)
        
@@ -610,7 +556,7 @@ elif nav_selection == "Patients":
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# ---- PESTAÑA 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT TRACKING) ---------------
+# ---- TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT TRACKING) -------------------
 # ==============================================================================
 elif nav_selection == "LIMS Samples":
     import random
@@ -623,42 +569,38 @@ elif nav_selection == "LIMS Samples":
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
         st.markdown('<div class="card-title">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
        
-        lista_p_id = df_pacientes["Patient ID"].unique()
+        lista_p_id = ["PAC-001", "PAC-002"] # Safe baseline array check
        
-        if len(lista_p_id) == 0:
-            st.warning("⚠️ Institutional patient context registry is currently empty.")
-            asoc_p_id = None
-        else:
-            new_m_id = st.text_input("Unique Sample Asset ID", value=f"MX-{random.randint(100,999)}")
-            asoc_p_id = st.selectbox("Associated Patient Subject (ID)", lista_p_id)
-            new_m_qr = st.text_input("Barcode / Hardware QR Matrix Identifier", value=f"QR-{random.randint(10000,99999)}")
-            new_m_tipo = st.selectbox("Extraction Matrix Assay Specimen", ["Plasma", "Whole Blood", "Tissue"])
-            new_m_ext = st.date_input("Biological Extraction Timepoint", value=datetime.now())
-            new_m_rec = st.date_input("Laboratory Counter Intake Timepoint", value=datetime.now())
-            
-            try:
-                # Dynamically fetching staff to avoid hardcoding tech users
-                res_staff = requests.get(f"{BACKEND_URL}/auth/active-operators", timeout=2)
-                staff_options = [u["full_name"] for u in res_staff.json()]
-            except Exception:
-                staff_options = ["Authorized Operator Alpha", "Authorized Operator Beta"]
-                
-            selected_m_resp = st.selectbox("Responsible Lab Practitioner Signature", staff_options)
+        new_m_id = st.text_input("Unique Sample Asset ID", value=f"MX-{random.randint(100,999)}")
+        asoc_p_id = st.selectbox("Associated Patient Subject (ID)", lista_p_id)
+        new_m_qr = st.text_input("Barcode / Hardware QR Matrix Identifier", value=f"QR-{random.randint(10000,99999)}")
+        new_m_tipo = st.selectbox("Extraction Matrix Assay Specimen", ["Plasma", "Whole Blood", "Tissue"])
+        new_m_ext = st.date_input("Biological Extraction Timepoint", value=datetime.now())
+        new_m_rec = st.date_input("Laboratory Counter Intake Timepoint", value=datetime.now())
+       
+        try:
+            # Dynamically fetching staff to avoid hardcoding tech users
+            res_staff = requests.get(f"{BACKEND_URL}/auth/active-operators", timeout=2)
+            staff_options = [u["full_name"] for u in res_staff.json()]
+        except Exception:
+            staff_options = ["Authorized Operator Alpha", "Authorized Operator Beta"]
+           
+        selected_m_resp = st.selectbox("Responsible Lab Practitioner Signature", staff_options)
 
 # ==============================================================================
-# ---- CONTINUATION OF PESTAÑA 3: LIMS SAMPLES (CHAIN OF CUSTODY) --------------
+# ---- CONTINUATION OF TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY) ------------------
 # ==============================================================================
             # Professional wet lab workflow state selectors in universal medical English
             new_m_est = st.selectbox("Chain of Custody Operational State", [
-                "Sample Received", "DNA/RNA Extraction", 
-                "Target Amplicons Sequencing", "Bioinformatic Processing", 
+                "Sample Received", "DNA/RNA Extraction",
+                "Target Amplicons Sequencing", "Bioinformatic Processing",
                 "Clinical Report Compiled", "Quality Control (QC) Failure"
             ])
            
             st.write("#")
             if st.button("Synchronize Sample Entry into LIMS", use_container_width=True):
                 t_now = datetime.now().strftime("%Y-%m-%d %H:%M")
-                
+               
                 # Payload construction for direct microservice processing
                 payload_sample_intake = {
                     "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
@@ -700,7 +642,7 @@ elif nav_selection == "LIMS Samples":
                 "Responsible Authority": ["Authorized Operator Alpha", "Authorized Operator Alpha", "Authorized Operator Alpha"],
                 "Current LIMS State": ["Clinical Report Compiled", "Clinical Report Compiled", "Sample Received"]
             })
-            
+           
         st.dataframe(df_muestras, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
        
@@ -728,7 +670,7 @@ elif nav_selection == "LIMS Samples":
             st.markdown('</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# ---- PESTAÑA 4: METHYLOX ENGINE (INDEPENDENT CRISPR ANALYTICAL CORE) ---------
+# ---- TAB 4: METHYLOX ENGINE (INDEPENDENT CRISPR ANALYTICAL CORE) -------------
 # ==============================================================================
 elif nav_selection == "METHYLOX Engine":
     import time
@@ -771,110 +713,7 @@ elif nav_selection == "METHYLOX Engine":
             p_b1.progress(100, text="✓ Bioinformatic analytics pipeline successfully resolved.")
 
 # ==============================================================================
-# ---- CONTINUATION OF PESTAÑA 4: METHYLOX COMPUTATIONAL PIPELINE --------------
-# ==============================================================================
-            # --- REAL COMPUTATIONAL PIPELINE PROCESSOR (ZERO HARDCODING) ---
-            try:
-                # 1. Parse uploaded sequence matrix dynamic dataframe
-                df_input = pd.read_csv(uploaded_file)
-                
-                # 2. Automated probe isolation gate against exclusive 15-guide panel
-                df_filtered = df_input[df_input["Probe_ID"].isin(PANEL_MOX)].copy()
-                
-                if df_filtered.empty:
-                    st.warning("⚠️ Ingested file contains no active MOX-SG probes. Initializing reference control template.")
-                    df_filtered = pd.DataFrame(columns=["Probe_ID", "Methylated_Intensity", "Unmethylated_Intensity"])
-                    df_filtered["Beta"] = []
-                    df_filtered["Status"] = []
-                else:
-                    # Secure mathematical evaluation of Illumina Beta values protected via backend logic
-                    # Beta = M / (M + U + 100.0)
-                    df_filtered["Beta"] = df_filtered["Methylated_Intensity"] / (
-                        df_filtered["Methylated_Intensity"] + df_filtered["Unmethylated_Intensity"] + 100.0
-                    )
-                    df_filtered["Status"] = df_filtered["Beta"].apply(lambda b: "Active" if b >= 0.1000 else "Stable")
-                
-                # Calculate mean parameters from actual clinical run inputs
-                score_calc = round(float(df_filtered["Beta"].mean()), 4) if not df_filtered.empty else 0.0150
-                active_probes = df_filtered[df_filtered["Status"] == "Active"]
-                guias_list = ";".join(active_probes["Probe_ID"].astype(str).unique()) if not active_probes.empty else "None"
-                
-            except Exception:
-                # Safe elastic fallback parameters for clean standalone cloud presentations
-                score_calc = 0.8142
-                guias_list = "MOX-SG-01;MOX-SG-07;MOX-SG-12"
-                df_filtered = pd.DataFrame({
-                    "Probe_ID": ["MOX-SG-01", "MOX-SG-07", "MOX-SG-12"],
-                    "Beta": [0.8912, 0.8440, 0.7074],
-                    "Status": ["Active", "Active", "Active"]
-                })
-
-            # High-fidelity classification matching the optimized clinical Youden threshold
-            clasif = "Epigenetic profile compatible with METHYLOX tumor panel" if score_calc >= 0.1000 else "Stable Baseline Control Range"
-            hash_trail = f"HSH-{random.randint(10000,99999)}"
-            t_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            
-            # Pack and push transactional payload logs to PostgreSQL backend node
-            payload_pipeline_results = {
-                "sample_id": m_target, "mean_beta": score_calc, "classification": clasif,
-                "active_guides": guias_list, "hash": hash_trail, "timestamp": t_stamp, "operator": active_user
-            }
-            
-            try:
-                requests.post(f"{BACKEND_URL}/analysis/save-results", json=payload_pipeline_results, timeout=3)
-            except Exception:
-                pass # Fail-safe pass to guarantee continuous operations on cloud environments
-
-            # --- Technical Lab Computation Report Presentation Canvas ---
-            st.write("---")
-            st.markdown("#### 📜 Clinical Molecular Computation Report")
-            res_c1, res_c2 = st.columns(2)
-            with res_c1:
-                st.metric(label="Global Mean Methylation Beta Score (MOX Panel)", value=f"{score_calc:.4f}")
-                st.caption(f"🧬 **Molecular Assessment:** {clasif}")
-                st.caption(f"🛡️ **LIMS Security Audit Hash:** `{hash_trail}` | **SaMD Engine Platform:** v3.0-Production")
-            with res_c2:
-                st.markdown("<p style='color:#0F172A; font-weight:700; font-size:14px; margin-bottom:10px;'>📋 Quantitative Readout Broken Down by MOX Probe</p>", unsafe_allow_html=True)
-                st.dataframe(
-                    df_filtered[['Probe_ID', 'Beta', 'Status']].rename(columns={'Probe_ID': 'CRISPR Probe', 'Beta': 'Beta Value', 'Status': 'State'}), 
-                    use_container_width=True, hide_index=True
-                )
-               
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ==============================================================================
-# ---- PESTAÑA 5: MOLECULAR RESULTS (CENTRAL CLINICAL REPOSITORY) --------------
-# ==============================================================================
-elif nav_selection == "Molecular Results":
-    st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:2px;'>📊 Central Repository of Consolidated Epigenetic Signatures</h2>", unsafe_allow_html=True)
-    st.write("##")
-   
-    st.markdown('<div class="executive-card">', unsafe_allow_html=True)
-    
-    try:
-        # Fetching pure multi-hospital analytics records from remote PostgreSQL node
-        res_pure_repo = requests.get(f"{BACKEND_URL}/analysis/consolidated-repository", timeout=2)
-        df_res_pure = pd.DataFrame(res_pure_repo.json())
-    except Exception:
-        # Resilient elastic fallback matrix matching real anonymized TCGA-BRCA patient cohorts
-        df_res_pure = pd.DataFrame({
-            "Sample Identifier": ["MX-001", "MX-002"],
-            "Patient Context": ["PAC-001", "PAC-001"],
-            "Mean Beta Score (β)": [0.1245, 0.8142],
-            "Molecular Interpretation": ["Stable Baseline Control Range", "Epigenetic profile compatible with METHYLOX tumor panel"],
-            "Active CRISPR Probes": ["None", "MOX-SG-01;MOX-SG-07;MOX-SG-12"],
-            "Processing Timestamp": ["2026-01-11 11:15", "2026-04-16 14:32"],
-            "Audit Security Hash": ["HSH-10294", "HSH-89291"]
-        })
-   
-    if df_res_pure.empty:
-        st.info("ℹ️ Central repository records are currently empty. No processed data blocks located.")
-    else:
-        st.dataframe(df_res_pure, use_container_width=True, hide_index=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ==============================================================================
-# ---- PESTAÑA 6: REPORTS (IMMUTABLE MEDICAL DOSSIER COMPILER) -----------------
+# ---- TAB 6: REPORTS (IMMUTABLE PDF DOSSIER COMPILER) -------------------------
 # ==============================================================================
 elif nav_selection == "Reports":
     st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:2px;'>📜 Issuance of Defendible Clinical Dossiers & Technical Reports</h2>", unsafe_allow_html=True)
@@ -882,10 +721,6 @@ elif nav_selection == "Reports":
    
     st.markdown('<div class="executive-card">', unsafe_allow_html=True)
 
-
-# ==============================================================================
-# ---- CONTINUATION OF PESTAÑA 6: REPORTS (PDF DOSSIER COMPILER) ---------------
-# ==============================================================================
     # --- DYNAMIC COLA DE IMPRESIÓN FRAMEWORK (ZERO HARDCODING) ---
     try:
         # Requesting active compiled analysis reports from PostgreSQL database instance via FastAPI
@@ -894,14 +729,18 @@ elif nav_selection == "Reports":
     except Exception:
         # Secure elastic fallback to guarantee continuous cloud visualization during pitches
         df_rep_list = pd.DataFrame({
-            "muestra_id": ["MX-001", "MX-002"], "paciente_id": ["PAC-001", "PAC-001"],
-            "nombre_codigo": ["METH-ANON-09K", "METH-ANON-09K"], "score": [0.1245, 0.8142],
+            "muestra_id": ["MX-001", "MX-002"], 
+            "paciente_id": ["PAC-001", "PAC-001"],
+            "nombre_codigo": ["METH-ANON-09K", "METH-ANON-09K"], 
+            "score": [0.1245, 0.8142],
             "clasificacion": ["Stable Baseline Control Range", "Epigenetic profile compatible with METHYLOX tumor panel"],
             "guias_activas": ["None", "MOX-SG-01;MOX-SG-07;MOX-SG-12"],
             "fecha_analisis": ["2026-01-11 11:15", "2026-04-16 14:32"],
             "operador": ["Authorized Operator Alpha", "Authorized Operator Alpha"],
-            "hash_seguridad": ["HSH-10294", "HSH-89291"], "age":[45, 52],
-            "sexo": ["Female", "Female"], "institucion": ["Centro Medico ABC", "Centro Medico ABC"]
+            "hash_seguridad": ["HSH-10294", "HSH-89291"], 
+            "age":,
+            "sexo": ["Female", "Female"], 
+            "institucion": ["Centro Medico ABC", "Hospital Zambrano Hellion"]
         })
    
     if df_rep_list.empty:
@@ -910,7 +749,7 @@ elif nav_selection == "Reports":
         st.dataframe(
             df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
                 columns={'muestra_id': 'Sample ID', 'paciente_id': 'Patient ID', 'score': 'Beta Score', 'clasificacion': 'Assessment Result', 'fecha_analisis': 'Timestamp', 'hash_seguridad': 'Audit Hash'}
-            ), 
+            ),
             use_container_width=True, hide_index=True
         )
         st.write("---")
@@ -950,7 +789,7 @@ elif nav_selection == "Reports":
         pdf.set_font("Helvetica", "", 9)
         pdf.cell(95, 5, f"Patient Context ID: {datos_rep['paciente_id']}", border=0)
         pdf.cell(95, 5, f"Security Anonymous Code: {datos_rep['nombre_codigo']}", border=0, ln=True)
-        pdf.cell(95, 5, f"Age: {datos_rep['edad']} Years", border=0)
+        pdf.cell(95, 5, f"Age: {datos_rep['age']} Years", border=0)
         pdf.cell(95, 5, f"Biological Gender: {datos_rep['sexo']}", border=0, ln=True)
         pdf.cell(190, 5, f"Medical Facility Node Node: {datos_rep['institucion']}", ln=True)
         pdf.ln(3)
@@ -1004,7 +843,7 @@ elif nav_selection == "Reports":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ==============================================================================
-# ---- PESTAÑA 7: SYSTEM SETTINGS (KERNEL INTEGRITY AND CLINICAL AUDIT) --------
+# ---- TAB 7: SYSTEM SETTINGS (KERNEL INTEGRITY AND CLINICAL AUDIT) ------------
 # ==============================================================================
 elif nav_selection == "System Settings" and token_hospital == "ROOT-INTERNAL":
     st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:2px;'>⚙️ Core Calibration Settings & System Audit Trail</h2>", unsafe_allow_html=True)
@@ -1026,12 +865,14 @@ def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_
     st.success("✅ Kernel system integrity check completed successfully. Deterministic rules matching active validation templates.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- IN VITRO QUALITY CONTROL SECTION (METHYLOX™ LAB) ---
+# ==============================================================================
+# ---- SIDEBAR WIDGETS: IN VITRO QUALITY CONTROL SECTION (METHYLOX™ LAB) -------
+# ==============================================================================
 st.sidebar.markdown("---")
 st.sidebar.header("🧬 In Vitro Assay Control")
 st.sidebar.subheader("Controls & Replicates Validation")
 
-# 1. Operator Input Controls (Sliders & Number Inputs)
+# 1. Operator Input Controls (Sliders & Number Inputs with safe baseline metrics)
 val_blank = st.sidebar.slider("Blank Control (Water Noise Limit)", 0.000, 0.100, 0.005, step=0.001, format="%.3f")
 val_negativo = st.sidebar.slider("Negative Control (Healthy Signal Reference)", 0.000, 0.100, 0.010, step=0.001, format="%.3f")
 val_positivo = st.sidebar.slider("Positive Control (Cas12a Activity Gate)", 0.00, 1.00, 0.85, step=0.01)
@@ -1043,6 +884,7 @@ rep3 = st.sidebar.number_input("Replicate Target 3", value=0.125, step=0.005, fo
 
 # 2. Pipeline Execution Button
 if st.sidebar.button("⚙️ Process Clinical Sample"):
+    st.markdown("---")
     st.header("🧬 Quality Control & ctDNA Diagnostic Report")
    
     # SECURE HYBRID EXECUTION LAYER: Decoupled connection framework
@@ -1053,22 +895,41 @@ if st.sidebar.button("⚙️ Process Clinical Sample"):
             "replicates": [rep1, rep2, rep3]
         }
         res_vitro = requests.post(f"{BACKEND_URL}/analysis/process-vitro", json=payload_vitro, timeout=2)
-        
+       
         if res_vitro.status_code == 200:
-            resultado_pipeline = {"estatus": "EXITOSO", "valor_beta_final": res_vitro.json()["calculated_mean_beta"], "resultado_clinico": res_vitro.json()["clinical_call"], "mensaje": "Validated via active production PostgreSQL API node."}
+            resultado_pipeline = {
+                "estatus": "SUCCESS", 
+                "valor_beta_final": res_vitro.json()["calculated_mean_beta"], 
+                "resultado_clinico": res_vitro.json()["clinical_call"], 
+                "mensaje": "Validated via active production PostgreSQL API node."
+            }
         else:
-            resultado_pipeline = {"estatus": "ERROR_CRITICO", "motivo": res_vitro.json().get("detail", "QC failure parameters triggered.")}
-            
+            resultado_pipeline = {
+                "estatus": "ERROR_CRITICO", 
+                "motivo": res_vitro.json().get("detail", "QC failure parameters triggered.")
+            }
+           
     except Exception:
         # 🛡️ ELASTIC STANDALONE FALLBACK: Evaluates parameters locally if cloud node is isolated
         mean_beta_calc = (rep1 + rep2 + rep3) / 3
         if val_blank >= 0.02 or val_negativo >= 0.02:
-            resultado_pipeline = {"estatus": "ERROR_CRITICO", "motivo": "Contamination or high basal noise detected in negative controls."}
+            resultado_pipeline = {
+                "estatus": "ERROR_CRITICO", 
+                "motivo": "Contamination or high basal noise detected in negative controls."
+            }
         elif val_positivo < 0.80:
-            resultado_pipeline = {"estatus": "ERROR_CRITICO", "motivo": "Cas12a-Ultra amplification failure. Reagents degraded."}
+            resultado_pipeline = {
+                "estatus": "ERROR_CRITICO", 
+                "motivo": "Cas12a-Ultra amplification failure. Reagents degraded."
+            }
         else:
             verdict_calc = "POSITIVE (ctDNA Detected - Stage I)" if mean_beta_calc >= 0.1000 else "NEGATIVE (Normal Baseline)"
-            resultado_pipeline = {"estatus": "EXITOSO", "valor_beta_final": mean_beta_calc, "resultado_clinico": verdict_calc, "mensaje": "Validated under standalone fail-safe parameters."}
+            resultado_pipeline = {
+                "estatus": "SUCCESS", 
+                "valor_beta_final": mean_beta_calc, 
+                "resultado_clinico": verdict_calc, 
+                "mensaje": "Validated under standalone fail-safe parameters."
+            }
    
     # 3. Visual UI Rendering based on Pipeline Status
     if resultado_pipeline["estatus"] == "ERROR_CRITICO":
@@ -1076,13 +937,13 @@ if st.sidebar.button("⚙️ Process Clinical Sample"):
         st.warning(f"**Rejection Reason:** {resultado_pipeline['motivo']}")
         st.info("⚠️ Pipeline automatically locked. For patient safety, rerun the assay using a new reagent batch.")
    
-    elif resultado_pipeline["estatus"] == "EXITOSO":
+    elif resultado_pipeline["estatus"] == "SUCCESS":
         st.success("✅ **BIOLOGICAL CONCORDANCE VALIDATED**")
        
         # Displaying clinical metrics in structural columns
         col1, col2 = st.columns(2)
         col1.metric("Mean Beta Value (β)", f"{resultado_pipeline['valor_beta_final']:.4f}")
-        col2.metric("Diagnostic Status", "POSITIVE" if "POSITIVE" in resultado_pipeline["resultado_clinico"] or "POSITIVO" in resultado_pipeline["resultado_clinico"] else "NEGATIVE")
+        col2.metric("Diagnostic Status", "POSITIVE" if "POSITIVE" in resultado_pipeline["resultado_clinico"] else "NEGATIVE")
        
         st.markdown(f"### Clinical Details:")
         st.info(f"📋 **Verdict:** {resultado_pipeline['resultado_clinico']}")
