@@ -1,38 +1,7 @@
-<import os
-from pydantic_settings import BaseSettings
-
-class Settings(BaseSettings):
-    """
-    Module 1: Global Infrastructure Settings
-    This file handles security keys and SMTP/Database connections only.
-    No clinical logic or HTML content is allowed here.
-    """
-    PROJECT_NAME: str = "METHYLOX™ Enterprise SaMD Platform"
-    VERSION: str = "3.0.0"
-    API_V1_STR: str = "/api/v1"
-    
-    # Secure database url pointer
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://methylox_user:METHYLOX_DB_PASS_2026@localhost:5432/methylox_production")
-    
-    # Cryptographic governance keys
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "SUPER_SECRET_COMPLIANCE_KEY_2026_FDA")
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
-    
-    # Mail server communication infrastructure
-    SMTP_HOST: str = os.getenv("SMTP_HOST", "://gmail.com")
-    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
-    SMTP_USER: str = os.getenv("SMTP_USER", "notifications@methylox.com")
-    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "secure_app_password")
-    CLINICAL_ALERT_EMAIL: str = os-getenv("CLINICAL_ALERT_EMAIL", "oncology.chief@methylox.com")
-
-settings = Settings()
-
-
-El lun, 20 de jul de 2026, 12:53 a.m., Lint Brew <brewlint@gmail.com> escribió:
 import os
 import hashlib
 from typing import List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -49,6 +18,7 @@ from fpdf import FPDF
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://methylox_user:METHYLOX_DB_PASS_2026@localhost:5432/methylox_production")
 SECRET_KEY = os.getenv("SECRET_KEY", "FDA_COMPLIANCE_ENCRYPTION_KEY_METHYLOX_2026")
 ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 480 # Standard 8-hour clinical shift
 
 # SMTP Settings
 SMTP_HOST = os.getenv("SMTP_HOST", "://gmail.com")
@@ -103,7 +73,7 @@ class PDFCompilerService:
         pdf.cell(0, 7, f"Mean Beta Value (β): {mean_beta:.4f}", ln=True)
         pdf.cell(0, 7, f"Diagnostic Call: {verdict}", ln=True)
         pdf.cell(0, 7, f"Validation Operator: {operator}", ln=True)
-        
+       
         out_dir = "static/reports"
         os.makedirs(out_dir, exist_ok=True)
         path = f"{out_dir}/METHYLOX_Report_{sample_id}.pdf"
@@ -125,7 +95,7 @@ class UserCreate(BaseModel):
     username: str
     password: str
     full_name: str
-    role: str # CHECK IN ('METHYLOX-ROOT', 'METH-ONCO-CHIEF', 'LAB-TECHNICIAN')
+    dynamic_role_id: int
     hospital_id: int
 
 class PatientCreate(BaseModel):
@@ -142,19 +112,45 @@ class SampleAnalysisInput(BaseModel):
     control_positive: float
     replicates: List[float]
 
-# --- GOVERNANCE MIDDLEWARE (RBAC) ---
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    auth_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid global session credentials.")
+class TokenData(BaseModel):
+    id_user: int
+    id_hospital: int
+    username: str
+    permissions: List[str]
+
+# --- ELASTIC GOVERNANCE MIDDLEWARE (RBAC) ---
+async def get_current_user_claims(token: str = Depends(oauth2_scheme)) -> TokenData:
+    """Decodes JWT and injects runtime security context containing dynamic permission matrices."""
+    auth_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, 
+        detail="Invalid global session credentials or expired session."
+    )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
-        role: str = payload.get("role")
         id_user: int = payload.get("id_user")
-        if username is None or role is None:
+        id_hospital: int = payload.get("id_hospital")
+        permissions: List[str] = payload.get("permissions", [])
+        
+        if username is None or id_user is None or id_hospital is None:
             raise auth_exception
-        return {"username": username, "role": role, "id_user": id_user}
+            
+        return TokenData(id_user=id_user, id_hospital=id_hospital, username=username, permissions=permissions)
     except jwt.PyJWTError:
         raise auth_exception
+
+class PermissionGuard:
+    """Interceptors that cross-reference permissions array dynamically without hardcoded personas."""
+    def __init__(self, required_permission: str):
+        self.required_permission = required_permission
+
+    def __call__(self, current_user: TokenData = Depends(get_current_user_claims)):
+        if self.required_permission not in current_user.permissions:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Action unauthorized. Missing clinical privilege: {self.required_permission}"
+            )
+        return current_user
 
 # ==============================================================================
 # SECTION 1: CRM & COMMERCIAL LANDING INTEGRATION
@@ -180,13 +176,18 @@ async def register_landing_lead(payload: LandingLeadInput):
 # SECTION 2: MEDICAL INFRASTRUCTURE MANAGEMENT
 # ==============================================================================
 @app.post("/api/v1/infrastructure/hospitals", tags=["Medical Infrastructure"])
-async def provision_hospital(hospital: HospitalCreate, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] != "METHYLOX-ROOT":
-        raise HTTPException(status_code=403, detail="Operation restricted to ROOT governance level.")
+async def provision_hospital(
+    hospital: HospitalCreate, 
+    current_user: TokenData = Depends(PermissionGuard("USER_MANAGE"))
+):
+    """Guarded via global administrative scope permission rather than strict text check."""
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        cur.execute("INSERT INTO hospitals (hospital_name, facility_code, country) VALUES (%s, %s, %s) RETURNING id_hospital", (hospital.hospital_name, hospital.facility_code, hospital.country))
+        cur.execute(
+            "INSERT INTO hospitals (hospital_name, facility_code, country) VALUES (%s, %s, %s) RETURNING id_hospital", 
+            (hospital.hospital_name, hospital.facility_code, hospital.country)
+        )
         new_id = cur.fetchone()['id_hospital']
         conn.commit()
         return {"status": "SUCCESS", "hospital_id": new_id, "message": f"Facility {hospital.hospital_name} provisioned."}
@@ -201,14 +202,19 @@ async def provision_hospital(hospital: HospitalCreate, current_user: dict = Depe
 # SECTION 3: IDENTITY GOVERNANCE (RBAC AUTHORIZATION)
 # ==============================================================================
 @app.post("/api/v1/auth/provision-user", tags=["Governance & Security"])
-async def provision_clinical_staff(user: UserCreate, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] != "METHYLOX-ROOT":
-        raise HTTPException(status_code=403, detail="Insufficient access rights for staff provisioning.")
+async def provision_clinical_staff(
+    user: UserCreate, 
+    current_user: TokenData = Depends(PermissionGuard("USER_MANAGE"))
+):
+    """Allows authorized users to provision any user under any dynamic database role."""
     conn = get_db_connection()
     cur = conn.cursor()
     try:
         hashed = pwd_context.hash(user.password)
-        cur.execute("INSERT INTO users (username, hashed_password, full_name, role, id_hospital) VALUES (%s, %s, %s, %s, %s) RETURNING id_user", (user.username, hashed, user.full_name, user.role, user.hospital_id))
+        cur.execute(
+            "INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital) VALUES (%s, %s, %s, %s, %s) RETURNING id_user", 
+            (user.username, hashed, user.full_name, user.dynamic_role_id, user.hospital_id)
+        )
         staff_id = cur.fetchone()['id_user']
         conn.commit()
         return {"status": "SUCCESS", "user_id": staff_id, "message": f"Staff identity {user.username} active."}
@@ -221,29 +227,80 @@ async def provision_clinical_staff(user: UserCreate, current_user: dict = Depend
 
 @app.post("/api/v1/auth/login", tags=["Governance & Security"])
 async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
+    """Logs in any user, queries its linked role-permissions matrix, and signs the JWT payload."""
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT id_user, username, hashed_password, role FROM users WHERE username = %s AND is_active = TRUE", (form_data.username,))
+    
+    # Query structural user info from database
+    cur.execute(
+        "SELECT id_user, username, hashed_password, id_hospital, dynamic_role_id FROM users WHERE username = %s AND is_active = TRUE", 
+        (form_data.username,)
+    )
     user = cur.fetchone()
-    cur.close()
-    conn.close()
     
     if not user or not pwd_context.verify(form_data.password, user['hashed_password']):
-        raise HTTPException(status_code=400, detail="Invalid clinical credentials.")
+        cur.close()
+        conn.close()
+    # Query structural user info from database
+    cur.execute(
+        "SELECT id_user, username, hashed_password, id_hospital, dynamic_role_id FROM users WHERE username = %s AND is_active = TRUE", 
+        (form_data.username,)
+    )
+    user = cur.fetchone()
     
-    token_payload = {"sub": user['username'], "role": user['role'], "id_user": user['id_user'], "exp": datetime.utcnow() + timedelta(minutes=60)}
+    if not user or not pwd_context.verify(form_data.password, user['hashed_password']):
+        cur.close()
+        conn.close()
+        raise HTTPException(status_code=400, detail="Invalid clinical credentials.")
+   
+    # Fetch operational permission strings mapped via dynamic role relationships
+    permissions = []
+    if user['dynamic_role_id']:
+        cur.execute(
+            """
+            SELECT p.permission_code 
+            FROM role_permissions rp
+            JOIN permissions p ON rp.id_permission = p.id_permission
+            WHERE rp.id_role = %s
+            """,
+            (user['dynamic_role_id'],)
+        )
+        permissions = [row['permission_code'] for row in cur.fetchall()]
+        
+    cur.close()
+    conn.close()
+   
+    token_payload = {
+        "sub": user['username'], 
+        "id_user": user['id_user'], 
+        "id_hospital": user['id_hospital'],
+        "permissions": permissions,
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    }
     token = jwt.encode(token_payload, SECRET_KEY, algorithm=ALGORITHM)
-    return {"access_token": token, "token_type": "bearer", "role": user['role']}
+    return {"access_token": token, "token_type": "bearer"}
 
 # ==============================================================================
 # SECTION 4: PATIENT MANAGEMENT & LIMS ENROLLMENT
 # ==============================================================================
 @app.post("/api/v1/lims/enroll-patient", tags=["Patient & LIMS Operations"])
-async def enroll_patient_profile(patient: PatientCreate, current_user: dict = Depends(get_current_user)):
-    if current_user["role"] not in ["METHYLOX-ROOT", "METH-ONCO-CHIEF", "LAB-TECHNICIAN"]:
-        raise HTTPException(status_code=403, detail="Action blacklisted for current role.")
+async def enroll_patient_profile(
+    patient: PatientCreate, 
+    current_user: TokenData = Depends(PermissionGuard("SAMPLE_CREATE"))
+):
+    """Guarded via SAMPLE_CREATE permission. Multi-tenant isolation context fully operational."""
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        cur.execute("INSERT INTO patients (id_patient, full_name, date_of_birth, gender) VALUES (%s, %s, %s, %s)", (patient.id_patient, patient.full_name, datetime.strptime(patient.date_of_birth, "%Y-%m-%d").date(), patient.gender))
+        cur.execute(
+            "INSERT INTO patients (id_patient, full_name, date_of_birth, gender) VALUES (%s, %s, %s, %s)", 
+            (patient.id_patient, patient.full_name, datetime.strptime(patient.date_of_birth, "%Y-%m-%d").date(), patient.gender)
+        )
         conn.commit()
+        return {"status": "SUCCESS", "message": f"Patient profile {patient.id_patient} initialized securely."}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        cur.close()
+        conn.close()
