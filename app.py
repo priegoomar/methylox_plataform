@@ -590,13 +590,13 @@ elif nav_selection == "LIMS Samples":
 # ==============================================================================
 # ---- CONTINUATION OF TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY) ------------------
 # ==============================================================================
-            # Professional wet lab workflow state selectors in universal medical English
-            new_m_est = st.selectbox("Chain of Custody Operational State", [
-                "Sample Received", "DNA/RNA Extraction",
-                "Target Amplicons Sequencing", "Bioinformatic Processing",
-                "Clinical Report Compiled", "Quality Control (QC) Failure"
-            ])
-           
+        # Professional wet lab workflow state selectors in universal medical English
+        new_m_est = st.selectbox("Chain of Custody Operational State", [
+            "Sample Received", "DNA/RNA Extraction",
+            "Target Amplicons Sequencing", "Bioinformatic Processing",
+            "Clinical Report Compiled", "Quality Control (QC) Failure"
+        ])
+       
             st.write("#")
             if st.button("Synchronize Sample Entry into LIMS", use_container_width=True):
                 t_now = datetime.now().strftime("%Y-%m-%d %H:%M")
