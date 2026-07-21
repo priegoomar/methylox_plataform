@@ -378,7 +378,7 @@ elif nav_selection == "Patients":
                 df_pacientes = pd.DataFrame({
                     "Patient ID": ["PAC-001", "PAC-002"], 
                     "Anonymous Code": ["METH-ANON-09K", "METH-ANON-88F"],
-                    "Age":, 
+                    "Age":[45, 52], 
                     "Gender": ["Female", "Female"], 
                     "Facility Link": [hospitals_list[0], hospitals_list[-1] if len(hospitals_list) > 1 else hospitals_list[0]],
                     "LIMS Status": ["🟢 Verified", "🟢 Verified"], 
