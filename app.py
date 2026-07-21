@@ -597,32 +597,32 @@ elif nav_selection == "LIMS Samples":
             "Clinical Report Compiled", "Quality Control (QC) Failure"
         ])
        
-            st.write("#")
-            if st.button("Synchronize Sample Entry into LIMS", use_container_width=True):
-                t_now = datetime.now().strftime("%Y-%m-%d %H:%M")
-               
-                # Payload construction for direct microservice processing
-                payload_sample_intake = {
-                    "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
-                    "specimen_type": new_m_tipo, "extraction_date": str(new_m_ext),
-                    "intake_date": str(new_m_rec), "practitioner_signature": selected_m_resp,
-                    "workflow_state": new_m_est, "timestamp": t_now, "operator": active_user
-                }
-               
-                try:
-                    # Posting transaction records to the centralized enterprise database
-                    res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample_intake, timeout=3)
-                    if res_intake.status_code == 200:
-                        st.success(f"✅ Sample asset {new_m_id} registered successfully at stage: {new_m_est}")
-                        st.rerun()
-                    else:
-                        st.error("🚨 TRANSACTION_REJECTED: Entry denied by core verification rules.")
-                except Exception:
-                    # Elastic standalone simulation for decoupled preview environments
-                    st.success(f"✅ [FALLBACK MODE] Asset {new_m_id} updated at stage: {new_m_est} in session state memory.")
+        st.write("#")
+        if st.button("Synchronize Sample Entry into LIMS", use_container_width=True):
+            t_now = datetime.now().strftime("%Y-%m-%d %H:%M")
+           
+            # Payload construction for direct microservice processing
+            payload_sample_intake = {
+                "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
+                "specimen_type": new_m_tipo, "extraction_date": str(new_m_ext),
+                "intake_date": str(new_m_rec), "practitioner_signature": selected_m_resp,
+                "workflow_state": new_m_est, "timestamp": t_now, "operator": active_user
+            }
+           
+            try:
+                # Posting transaction records to the centralized enterprise database
+                res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample_intake, timeout=3)
+                if res_intake.status_code == 200:
+                    st.success(f"✅ Sample asset {new_m_id} registered successfully at stage: {new_m_est}")
                     st.rerun()
-               
-        st.markdown('</div>', unsafe_allow_html=True)
+                else:
+                    st.error("🚨 TRANSACTION_REJECTED: Entry denied by core verification rules.")
+            except Exception:
+                # Elastic standalone simulation for decoupled preview environments
+                st.success(f"✅ [FALLBACK MODE] Asset {new_m_id} updated at stage: {new_m_est} in session state memory.")
+                st.rerun()
+           
+    st.markdown('</div>', unsafe_allow_html=True)
        
     with m2:
         st.markdown('<div class="executive-card">', unsafe_allow_html=True)
