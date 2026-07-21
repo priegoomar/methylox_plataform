@@ -437,7 +437,7 @@ elif nav_selection == "Pacientes Cohort":
     with st.container():
         df_pacientes = pd.DataFrame({
             "Patient ID": ["PAC-001", "PAC-002"],
-            "Age":,
+            "Age": [45, 52],
             "Gender": ["Female", "Female"],
             "Facility Context": ["Centro Medico ABC", "Hospital Zambrano"],
             "Mean Beta (β)": [0.1245, 0.0150]
