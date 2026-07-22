@@ -111,15 +111,15 @@ INSERT INTO hospitals (hospital_name, facility_code, country)
 VALUES ('Hospital ABC', 'HOSP-ABC-2026', 'MEX');
 
 -- Provision the master clinical administrative security role (ID 1)
-INSERT INTO custom_roles (role_name, description) 
+INSERT INTO custom_roles (role_name, description)
 VALUES ('Organization Admin', 'Laboratory Director with full granular RBAC access privileges.');
 
 -- Provision the initial clinical administrator master user profile link
-INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital) 
+INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital)
 VALUES (
-    'brewlint@gmail.com 
-    '$2b$12$K.8/e2Xj2M60v.T03/fLHeQ6O9O17zZ6y0n2Yt1vH.cW5gO42/K1.', 
-    'Director de Oncologia', 
-    1, 
+    'brewlint@gmail.com,
+    '$2b$12$K.8/e2Xj2M60v.T03/fLHeQ6O9O17zZ6y0n2Yt1vH.cW5gO42/K1.',
+    'Director de Oncologia',
+    1,
     1
 );
