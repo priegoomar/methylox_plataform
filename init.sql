@@ -37,18 +37,19 @@ CREATE TABLE patients (
 -- 5. Table for Clinical Samples and Real-time Multiplexed Replicates
 CREATE TABLE clinical_samples (
     id_sample SERIAL PRIMARY KEY,
-    id_patient VARCHAR(50) REFERENCES patients(id_patient),
     id_hospital INT REFERENCES hospitals(id_hospital),
-    operator_id INT REFERENCES users(id_user),
-    control_blank NUMERIC(5,4) NOT NULL,
-    control_negative NUMERIC(5,4) NOT NULL,
-    control_positive NUMERIC(5,4) NOT NULL,
-    replicate_1 NUMERIC(5,4) NOT NULL,
-    replicate_2 NUMERIC(5,4) NOT NULL,
-    replicate_3 NUMERIC(5,4) NOT NULL,
-    mean_beta NUMERIC(5,4),
-    diagnostic_verdict VARCHAR(50),
-    lims_security_hash VARCHAR(64),
+    id_patient VARCHAR(50) REFERENCES patients(id_patient),
+    barcode_qr VARCHAR(100) UNIQUE,
+    specimen_type VARCHAR(50),
+    control_blank DOUBLE PRECISION,
+    control_negative DOUBLE PRECISION,
+    control_positive DOUBLE PRECISION,
+    replicate_1 DOUBLE PRECISION,
+    replicate_2 DOUBLE PRECISION,
+    replicate_3 DOUBLE PRECISION,
+    calculated_mean_beta DOUBLE PRECISION,
+    diagnostic_verdict VARCHAR(100),
+    practitioner_signature VARCHAR(100),
     processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
