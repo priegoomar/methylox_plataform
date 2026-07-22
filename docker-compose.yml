@@ -26,7 +26,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://methylox_user:METHYLOX_DB_PASS_2026@db:5432/methylox_production
+      - DATABASE_URL=postgresql://neondb_owner:npg_5zHK0ClaGkjt@ep-square-mouse-aww7nys6.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require
       - METHYLOX_JWT_SECRET=FDA_COMPLIANCE_ENCRYPTION_KEY_METHYLOX_2026
     depends_on:
       - db
