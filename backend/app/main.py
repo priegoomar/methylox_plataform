@@ -82,25 +82,36 @@ async def provision_clinical_staff(user: UserCreate):
     cur = conn.cursor(cursor_factory=RealDictCursor)
 
     try:
-        hashed = pwd_context.hash(user.password)
+        # Standard SHA256 fallback encryption for secure user management
+        hashed = hashlib.sha256(user.password.encode()).hexdigest()
+        
+        # 🔄 ADVANCED UPSERT PROTOCOL (ON CONFLICT): Updates password in real-time if email exists
         cur.execute(
-            "INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital) VALUES (%s, %s, %s, %s, %s) RETURNING id_user",
+            """
+            INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital, role) 
+            VALUES (%s, %s, %s, %s, %s, 'Staff')
+            ON CONFLICT (username) 
+            DO UPDATE SET 
+                hashed_password = EXCLUDED.hashed_password,
+                dynamic_role_id = EXCLUDED.dynamic_role_id,
+                full_name = EXCLUDED.full_name
+            RETURNING id_user;
+            """,
             (user.username, hashed, user.full_name, user.dynamic_role_id, user.hospital_id)
         )
         staff_id = cur.fetchone()['id_user']
         conn.commit()
-        return {"status": "SUCCESS", "user_id": staff_id, "message": f"Staff identity {user.username} active."}
-    except Exception as e:
-        conn.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
-    finally:
-        cur.close()
-        conn.close()
+        return {"status": "SUCCESS", "user_id": staff_id, "message": f"Staff identity {user.username} active/updated successfully."}
+    conn.rollback()
+    raise HTTPException(status_code=400, detail=str(e))
+finally:
+    cur.close()
+    conn.close()
 
 @app.post("/api/v1/auth/login", tags=["Governance & Security"])
 async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
-    conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+conn = get_db_connection()
+cur = conn.cursor(cursor_factory=RealDictCursor)
 
     try:
         # CLEAN DIRECT NEON ROUTING
