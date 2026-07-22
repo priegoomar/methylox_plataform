@@ -197,8 +197,8 @@ with st.sidebar:
             login_password = st.text_input("Password", type="password", placeholder="••••••••")
             login_submit = st.form_submit_button("🔑 Authenticate", use_container_width=True)
 
-            if login_submit:
-                if login_username and login_password:
+        if login_submit:
+            if login_username and login_password:
                 try:
                     # OAUTH2 COMPLIANCE FORM-DATA TRANSMISSION: Formats data dictionary explicitly as URL-encoded body
                     payload_auth = {
@@ -215,15 +215,18 @@ with st.sidebar:
                     if res.status_code == 200:
                         token_data = res.json()
                         st.session_state.jwt_access_token = token_data["access_token"]
-                        st.session_state.operator_display_name = str(login_username).split('@')[0].replace('.', ' ').title()
+                        
+                        # FIXED: Safe username rendering extraction to avoid list attribute manipulation crashes
+                        st.session_state.operator_display_name = str(login_username)
+                        
                         st.success("Access Granted")
                         st.rerun()
                     else:
                         st.error(f"❌ Authentication Denied: Invalid clinical credentials. ({res.status_code})")
                 except Exception:
                     st.error("🚨 System Security Lockdown: Core API node is currently unreachable. Check cloud routing link.")
-                else:
-                    st.error("❌ Input Required: Both email and password fields are mandatory.")
+            else:
+                st.error("❌ Input Required: Both email and password fields are mandatory.")
     else:
         st.markdown(
             f"""
