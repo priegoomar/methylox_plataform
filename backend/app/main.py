@@ -26,6 +26,15 @@ app = FastAPI(
     description="Unified central backend governance for clinical analytical pipelines, LIMS, RBAC, and commercial portals."
 )
 
+# CORE NETWORK CORRECTION: Enable safe cross-origin data streams for Streamlit Cloud
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Allows Streamlit Cloud endpoints to consume FastAPI protocols securely
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
