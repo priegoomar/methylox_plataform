@@ -13,6 +13,7 @@ from psycopg2.extras import RealDictCursor
 from passlib.context import CryptContext
 import jwt
 from fpdf import FPDF
+from fastapi.middleware.cors import CORSMiddleware
 
 # --- GLOBAL CONFIGURATION (ZERO HARDCODING) ---
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://methylox_user:METHYLOX_DB_PASS_2026@localhost:5432/methylox_production")
@@ -25,8 +26,6 @@ app = FastAPI(
     version="3.0.0",
     description="Unified central backend governance for clinical analytical pipelines, LIMS, RBAC, and commercial portals."
 )
-
-from fastapi.middleware.cors import CORSMiddleware
 
 # CORE NETWORK CORRECTION: Enable safe cross-origin data streams for Streamlit Cloud
 app.add_middleware(
@@ -97,11 +96,13 @@ class PermissionGuard:
 @app.post("/api/v1/auth/provision-user", tags=["Governance & Security"])
 async def provision_clinical_staff(user: UserCreate, current_user: TokenData = Depends(PermissionGuard("USER_MANAGE"))):
     conn = get_db_connection()
-    from psycopg2.extras import RealDictCursor
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
     try:
         hashed = pwd_context.hash(user.password)
-        cur.execute("INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital) VALUES (%s, %s, %s, %s, %s) RETURNING id_user", (user.username, hashed, user.full_name, user.dynamic_role_id, user.hospital_id))
+        cur.execute(
+            "INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital) VALUES (%s, %s, %s, %s, %s) RETURNING id_user", 
+            (user.username, hashed, user.full_name, user.dynamic_role_id, user.hospital_id)
+        )
         staff_id = cur.fetchone()['id_user']
         conn.commit()
         return {"status": "SUCCESS", "user_id": staff_id, "message": f"Staff identity {user.username} active."}
@@ -115,31 +116,39 @@ async def provision_clinical_staff(user: UserCreate, current_user: TokenData = D
 @app.post("/api/v1/auth/login", tags=["Governance & Security"])
 async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
     conn = get_db_connection()
-    from psycopg2.extras import RealDictCursor
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute("SELECT id_user, username, hashed_password, id_hospital, dynamic_role_id FROM users WHERE username = %s AND is_active = TRUE", (form_data.username,))
-    user = cur.fetchone()
-    if not user or not pwd_context.verify(form_data.password, user['hashed_password']):
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT id_user, username, hashed_password, id_hospital, dynamic_role_id FROM users WHERE username = %s AND is_active = TRUE", (form_data.username,))
+        user = cur.fetchone()
+        if not user or not pwd_context.verify(form_data.password, user['hashed_password']):
+            raise HTTPException(status_code=400, detail="Invalid clinical credentials.")
+        
+        permissions = []
+        if user['dynamic_role_id']:
+            cur.execute("SELECT p.permission_code FROM role_permissions rp JOIN permissions p ON rp.id_permission = p.id_permission WHERE rp.id_role = %s", (user['dynamic_role_id'],))
+            permissions = [row['permission_code'] for row in cur.fetchall()]
+        
+        token_payload = {
+            "sub": user['username'], 
+            "id_user": user['id_user'], 
+            "id_hospital": user['id_hospital'], 
+            "permissions": permissions,
+            "exp": datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        }
+        token = jwt.encode(token_payload, SECRET_KEY, algorithm=ALGORITHM)
+        return {"access_token": token, "token_type": "bearer"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    finally:
         cur.close()
         conn.close()
-        raise HTTPException(status_code=400, detail="Invalid clinical credentials.")
-    permissions = []
-    if user['dynamic_role_id']:
-        cur.execute("SELECT p.permission_code FROM role_permissions rp JOIN permissions p ON rp.id_permission = p.id_permission WHERE rp.id_role = %s", (user['dynamic_role_id'],))
-        permissions = [row['permission_code'] for row in cur.fetchall()]
-    cur.close()
-    conn.close()
-    token_payload = {
-        "sub": user['username'], "id_user": user['id_user'], "id_hospital": user['id_hospital'], "permissions": permissions,
-        "exp": datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    }
-    token = jwt.encode(token_payload, SECRET_KEY, algorithm=ALGORITHM)
-    return {"access_token": token, "token_type": "bearer"}
 
 @app.get("/api/v1/governance/roles", response_model=List[RoleCatalogResponse], tags=["Governance & Security"])
 async def list_available_custom_roles(current_user: TokenData = Depends(get_current_user_claims)):
     conn = get_db_connection()
-    cur = conn.cursor()
+    cur = conn.cursor() # Usa automáticamente RealDictCursor definido en la función global get_db_connection()
     try:
         cur.execute("SELECT id_role, role_name, description FROM custom_roles ORDER BY id_role ASC")
         roles_rows = cur.fetchall()
