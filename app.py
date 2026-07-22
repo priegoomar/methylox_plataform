@@ -456,7 +456,7 @@ elif nav_selection == "Patients":
 # ----------------------------------------------------------------------------
 # 🧪 TAB 3: LIMS SAMPLES (100% TOTAL CHAIN OF CUSTODY AUDIT COMPLIANCE)
 # ----------------------------------------------------------------------------
-elif nav_selection == "LIMS Samples":
+elif nav_selection == "Muestras LIMS":
     st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Chain of Custody</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Validate chronological workflow history pathways and operational audit logs</p>", unsafe_allow_html=True)
     
@@ -472,20 +472,20 @@ elif nav_selection == "LIMS Samples":
             new_m_ext = st.date_input("Biological Extraction Timepoint Scope", value=datetime.now())
             new_m_rec = st.date_input("Laboratory Counter Counter-Intake Timepoint", value=datetime.now())
             
-            # Exhaustive Workflow State Selector Mapping
             new_m_est = st.selectbox("Chain of Custody Operational Workflow State", [
                 "Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", 
                 "Bioinformatic Processing", "Clinical Report Compiled", "Quality Control (QC) Failure"
             ])
             
-    try:
-        res_staff = requests.get(f"{BACKEND_URL}/auth/active-operators", headers=headers, timeout=2)
-        staff_options = [u["full_name"] for u in res_staff.json()] if res_staff.status_code == 200 else [st.session_state.get("operator_display_name", "Authenticated Operator")]
-    except Exception:
-        # CLINICAL ROADSHOW COMPLIANCE: Extract strictly the live logged-in user credential claims from active JWT context
-        staff_options = [st.session_state.get("operator_display_name", "Authenticated Operator")]
-        
-    selected_m_resp = st.selectbox("Responsible Lab Practitioner Signature Verification", staff_options)
+            try:
+                res_staff = requests.get(f"{BACKEND_URL}/auth/active-operators", headers=headers, timeout=2)
+                staff_options = [u["full_name"] for u in res_staff.json()] if res_staff.status_code == 200 else [st.session_state.get("operator_display_name", "Authenticated Operator")]
+            except Exception:
+                staff_options = [st.session_state.get("operator_display_name", "Authenticated Operator")]
+                
+            selected_m_resp = st.selectbox("Responsible Lab Practitioner Signature Verification", staff_options)
+           
+            # FIXED INDENTATION: Aligned correctly with 12 spaces of margin to fix the cloud crash
             if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
                 payload_sample = {
                     "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
@@ -503,21 +503,19 @@ elif nav_selection == "LIMS Samples":
         with m2:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">🗄️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
-try:
-            res_s = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=2)
-            df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 else df_empty_samples
-        except Exception:
-            # CLINICAL ROADSHOW COMPLIANCE: Deploy clean onboarding zero inventory for new corporate hospital clients.
-            df_samples = df_empty_samples
-            
-        st.dataframe(df_samples, use_container_width=True, hide_index=True)
+            try:
+                res_s = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=2)
+                df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 else df_empty_samples
+            except Exception:
+                df_samples = df_empty_samples
+                
+            st.dataframe(df_samples, use_container_width=True, hide_index=True)
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # --- CHRONOLOGICAL FLOW AUDIT LOG EXTRACTION PANEL ---
-            if not df_sample.empty:
+            if not df_samples.empty:
                 st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
                 st.markdown('<div class="card-title-clinical">📋 Log Verification History & Custody Flow Telemetry (LIMS Audit)</div>', unsafe_allow_html=True)
-                m_track = st.selectbox("Select Asset Token to audit tracking pathway logs:", df_muestras["Sample ID"].unique())
+                m_track = st.selectbox("Select Asset Token to audit tracking pathway logs:", df_samples["Sample ID"].unique())
                 try:
                     res_track = requests.get(f"{BACKEND_URL}/lims/samples/track/{m_track}", headers=headers, timeout=2)
                     df_h_track = pd.DataFrame(res_track.json())
@@ -525,11 +523,10 @@ try:
                     df_h_track = pd.DataFrame({
                         "Laboratory Stage": ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"],
                         "Timestamp": ["2026-04-15 09:12", "2026-04-15 14:30", "2026-04-16 08:22", "2026-04-16 14:15", "2026-04-16 14:32"],
-                        "Authority Signature": ["Authorized Operator Alpha", "System Tech Node", "System Tech Node", "Lucía Martínez", "Lucía Martínez"]
+                        "Authority Signature": [st.session_state.get("operator_display_name", "Authenticated Operator")] * 5
                     })
                 st.dataframe(df_h_track, use_container_width=True, hide_index=True)
                 st.markdown('</div>', unsafe_allow_html=True)
-
 # ----------------------------------------------------------------------------
 # 🧬 TAB 4: METHYLOX ENGINE (PREMIUM CRISPR PIPELINE LOGIC WITH 15-GUIDE CHART)
 # ----------------------------------------------------------------------------
