@@ -180,7 +180,7 @@ st.sidebar.markdown("""
 if "jwt_access_token" not in st.session_state:
     st.session_state.jwt_access_token = None
 if "operator_display_name" not in st.session_state:
-    st.session_state.operator_display_name = "Lucía Martínez"
+    st.session_state.operator_display_name = "Authenticated Operator"
 if "id_hospital" not in st.session_state:
     st.session_state.id_hospital = 1
 if "nav_selection" not in st.session_state:
