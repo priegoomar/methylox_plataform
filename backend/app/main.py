@@ -26,6 +26,8 @@ app = FastAPI(
     description="Unified central backend governance for clinical analytical pipelines, LIMS, RBAC, and commercial portals."
 )
 
+from fastapi.middleware.cors import CORSMiddleware
+
 # CORE NETWORK CORRECTION: Enable safe cross-origin data streams for Streamlit Cloud
 app.add_middleware(
     CORSMiddleware,
