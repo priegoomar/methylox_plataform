@@ -1,7 +1,7 @@
 -- 1. Table for Dynamic Calibration Parameters (No more hardcoded 0.02 or 0.1000)
 CREATE TABLE clinical_calibration (
     parameter_key VARCHAR(50) PRIMARY KEY,
-    numeric_value NUMERIC(6, 4),
+    numeric_value DOUBLE PRECISION,
     text_value VARCHAR(100),
     description TEXT,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
