@@ -97,7 +97,8 @@ class PermissionGuard:
 @app.post("/api/v1/auth/provision-user", tags=["Governance & Security"])
 async def provision_clinical_staff(user: UserCreate, current_user: TokenData = Depends(PermissionGuard("USER_MANAGE"))):
     conn = get_db_connection()
-    cur = conn.cursor()
+    from psycopg2.extras import RealDictCursor
+    cur = conn.cursor(cursor_factory=RealDictCursor)
     try:
         hashed = pwd_context.hash(user.password)
         cur.execute("INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital) VALUES (%s, %s, %s, %s, %s) RETURNING id_user", (user.username, hashed, user.full_name, user.dynamic_role_id, user.hospital_id))
@@ -114,7 +115,8 @@ async def provision_clinical_staff(user: UserCreate, current_user: TokenData = D
 @app.post("/api/v1/auth/login", tags=["Governance & Security"])
 async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
     conn = get_db_connection()
-    cur = conn.cursor()
+    from psycopg2.extras import RealDictCursor
+    cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute("SELECT id_user, username, hashed_password, id_hospital, dynamic_role_id FROM users WHERE username = %s AND is_active = TRUE", (form_data.username,))
     user = cur.fetchone()
     if not user or not pwd_context.verify(form_data.password, user['hashed_password']):
