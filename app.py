@@ -199,25 +199,29 @@ with st.sidebar:
 
             if login_submit:
                 if login_username and login_password:
-                    try:
-                        res = requests.post(
-                            f"{BACKEND_URL}/auth/login",
-                            data={"username": login_username, "password": login_password},
-                            timeout=4,
-                        )
-                        if res.status_code == 200:
-                            token_data = res.json()
-                            st.session_state.jwt_access_token = token_data["access_token"]
-                            
-                            # SAFE AND ROBUST EXTRACTION: Assigns a clean fallback string to avoid array manipulation crashes
-                            st.session_state.operator_display_name = str(login_username)
-                            
-                            st.success("Access Granted")
-                            st.rerun()
-                        else:
-                            st.error("❌ Authentication Denied: Invalid clinical credentials.")
-                    except requests.exceptions.RequestException:
-                        st.error("🚨 System Security Lockdown: Core API node is currently unreachable. Check networks.")
+                try:
+                    # OAUTH2 COMPLIANCE FORM-DATA TRANSMISSION: Formats data dictionary explicitly as URL-encoded body
+                    payload_auth = {
+                        "username": str(login_username).strip(),
+                        "password": str(login_password).strip()
+                    }
+                    
+                    res = requests.post(
+                        f"{BACKEND_URL}/auth/login", 
+                        data=payload_auth, # Enforced raw form-data mapping dictionary stream
+                        timeout=5
+                    )
+                    
+                    if res.status_code == 200:
+                        token_data = res.json()
+                        st.session_state.jwt_access_token = token_data["access_token"]
+                        st.session_state.operator_display_name = str(login_username).split('@')[0].replace('.', ' ').title()
+                        st.success("Access Granted")
+                        st.rerun()
+                    else:
+                        st.error(f"❌ Authentication Denied: Invalid clinical credentials. ({res.status_code})")
+                except Exception:
+                    st.error("🚨 System Security Lockdown: Core API node is currently unreachable. Check cloud routing link.")
                 else:
                     st.error("❌ Input Required: Both email and password fields are mandatory.")
     else:
