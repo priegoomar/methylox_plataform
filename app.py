@@ -209,9 +209,9 @@ with st.sidebar:
                             token_data = res.json()
                             st.session_state.jwt_access_token = token_data["access_token"]
                             
-                            # Clean user mapping execution logic
-                            raw_name = login_username.split("@")[0]
-                            st.session_state.operator_display_name = raw_name.replace(".", " ").title()
+                            # SAFE AND ROBUST EXTRACTION: Assigns a clean fallback string to avoid array manipulation crashes
+                            st.session_state.operator_display_name = str(login_username)
+                            
                             st.success("Access Granted")
                             st.rerun()
                         else:
