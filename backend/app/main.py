@@ -118,14 +118,23 @@ async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        cur.execute("SELECT id_user, username, hashed_password, id_hospital, dynamic_role_id FROM users WHERE username = %s AND is_active = TRUE", (form_data.username,))
+        # NOTA: Si tu columna en la Base de Datos se llama 'email', cambia 'username = %s' por 'email = %s'
+        cur.execute(
+            "SELECT id_user, username, hashed_password, id_hospital, dynamic_role_id FROM users WHERE username = %s AND is_active = TRUE", 
+            (form_data.username,)
+        )
         user = cur.fetchone()
+        
+        # Si el usuario no existe o la contraseña no coincide, lanzamos un error 401 (Credenciales inválidas)
         if not user or not pwd_context.verify(form_data.password, user['hashed_password']):
-            raise HTTPException(status_code=400, detail="Invalid clinical credentials.")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid clinical credentials.")
         
         permissions = []
         if user['dynamic_role_id']:
-            cur.execute("SELECT p.permission_code FROM role_permissions rp JOIN permissions p ON rp.id_permission = p.id_permission WHERE rp.id_role = %s", (user['dynamic_role_id'],))
+            cur.execute(
+                "SELECT p.permission_code FROM role_permissions rp JOIN permissions p ON rp.id_permission = p.id_permission WHERE rp.id_role = %s", 
+                (user['dynamic_role_id'],)
+            )
             permissions = [row['permission_code'] for row in cur.fetchall()]
         
         token_payload = {
@@ -137,24 +146,14 @@ async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
         }
         token = jwt.encode(token_payload, SECRET_KEY, algorithm=ALGORITHM)
         return {"access_token": token, "token_type": "bearer"}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    finally:
-        cur.close()
-        conn.close()
 
-@app.get("/api/v1/governance/roles", response_model=List[RoleCatalogResponse], tags=["Governance & Security"])
-async def list_available_custom_roles(current_user: TokenData = Depends(get_current_user_claims)):
-    conn = get_db_connection()
-    cur = conn.cursor() # Usa automáticamente RealDictCursor definido en la función global get_db_connection()
-    try:
-        cur.execute("SELECT id_role, role_name, description FROM custom_roles ORDER BY id_role ASC")
-        roles_rows = cur.fetchall()
-        return [RoleCatalogResponse(id_role=row['id_role'], role_name=row['role_name'], description=row['description']) for row in roles_rows]
+    except HTTPException as http_err:
+        # Permitimos que salgan los errores controlados de credenciales sin volverse un Error 500
+        raise http_err
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        # Si hay un error de PostgreSQL (ej. columna inexistente), se imprimirá en tu terminal/consola
+        print(f"--- DETALLE DEL ERROR REAL EN EL SERVIDOR: {str(e)} ---")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Database or Server error: {str(e)}")
     finally:
         cur.close()
         conn.close()
