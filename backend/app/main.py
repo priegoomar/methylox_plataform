@@ -118,21 +118,35 @@ async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        # NOTA: Si tu columna en la Base de Datos se llama 'email', cambia 'username = %s' por 'email = %s'
+        # CORRECCIÓN DE BÚSQUEDA DUAL: 
+        # Busca en la columna 'username' O en tu columna de correos (asumiendo que se llama 'email' o la que uses).
+        # Cambia 'email' por el nombre exacto de tu columna si se llama diferente (ej: 'clinical_email').
         cur.execute(
-            "SELECT id_user, username, hashed_password, id_hospital, dynamic_role_id FROM users WHERE username = %s AND is_active = TRUE", 
-            (form_data.username,)
+            """
+            SELECT id_user, username, hashed_password, id_hospital, dynamic_role_id 
+            FROM users 
+            WHERE (username = %s OR email = %s) AND is_active = TRUE
+            """, 
+            (form_data.username, form_data.username)
         )
         user = cur.fetchone()
         
-        # Si el usuario no existe o la contraseña no coincide, lanzamos un error 401 (Credenciales inválidas)
+        # Si no localiza el registro en la base de datos o la contraseña es incorrecta
         if not user or not pwd_context.verify(form_data.password, user['hashed_password']):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid clinical credentials.")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, 
+                detail="Authentication Denied: Invalid clinical credentials."
+            )
         
         permissions = []
         if user['dynamic_role_id']:
             cur.execute(
-                "SELECT p.permission_code FROM role_permissions rp JOIN permissions p ON rp.id_permission = p.id_permission WHERE rp.id_role = %s", 
+                """
+                SELECT p.permission_code 
+                FROM role_permissions rp 
+                JOIN permissions p ON rp.id_permission = p.id_permission 
+                WHERE rp.id_role = %s
+                """, 
                 (user['dynamic_role_id'],)
             )
             permissions = [row['permission_code'] for row in cur.fetchall()]
@@ -148,12 +162,15 @@ async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
         return {"access_token": token, "token_type": "bearer"}
 
     except HTTPException as http_err:
-        # Permitimos que salgan los errores controlados de credenciales sin volverse un Error 500
+        # Devuelve los errores controlados de contraseña/usuario incorrectos al frontend
         raise http_err
     except Exception as e:
-        # Si hay un error de PostgreSQL (ej. columna inexistente), se imprimirá en tu terminal/consola
-        print(f"--- DETALLE DEL ERROR REAL EN EL SERVIDOR: {str(e)} ---")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Database or Server error: {str(e)}")
+        # Registra fallos graves de estructura (como nombres incorrectos de tablas o columnas)
+        print(f"--- ERROR INTERNO DETECTADO: {str(e)} ---")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail=f"Fallo interno de comunicación: {str(e)}"
+        )
     finally:
         cur.close()
         conn.close()
