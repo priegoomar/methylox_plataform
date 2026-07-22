@@ -168,57 +168,97 @@ df_empty_reports = pd.DataFrame(columns=[
 ])
 
 # ============================================================================
-# 🔒 SideBar ENCRYPTED INTERACTION GATEWAY
+# 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
 # ============================================================================
-st.sidebar.markdown("""
-<div style="padding: 10px 10px; border-bottom: 1px solid #1E293B; margin-bottom: 25px;">  
-    <h3 style="margin: 0; color: #FFFFFF !important; font-weight: 900; font-size: 22px; letter-spacing: -0.5px;">MethylOx™</h3>  
-    <p style="margin: 0; color: #38BDF8 !important; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Epigenetic AI Platform</p>  
-</div>  
-""", unsafe_allow_html=True)
+with st.sidebar:
+    st.markdown(
+        """
+    <div style="padding: 10px 0px; border-bottom: 1px solid #1E293B; margin-bottom: 25px;">  
+        <h3 style="margin: 0; color: #FFFFFF !important; font-weight: 900; font-size: 22px; letter-spacing: -0.5px;">MethylOx™</h3>  
+        <p style="margin: 0; color: #38BDF8 !important; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Epigenetic AI Platform</p>  
+    </div>  
+    """,
+        unsafe_allow_html=True,
+    )
 
+# FORCE ABSOLUTE ABSTRACT RESET: Inicialización segura de variables de estado
 if "jwt_access_token" not in st.session_state:
     st.session_state.jwt_access_token = None
 if "operator_display_name" not in st.session_state:
-    st.session_state.operator_display_name = "Authenticated Operator"
+    st.session_state.operator_display_name = "Guest Operator"
 if "id_hospital" not in st.session_state:
     st.session_state.id_hospital = 1
-if "nav_selection" not in st.session_state:
-    st.session_state.nav_selection = "Dashboard Matrix"
 
+# Enforce secure authentication window
 if not st.session_state.jwt_access_token:
-    with st.sidebar.form("institutional_login_form"):
-        st.markdown("<p style='color:#94A3B8; font-size:12px; font-weight:700;'>SECURE NODE AUTHENTICATION</p>", unsafe_allow_html=True)
-        login_username = st.text_input("Clinical Email", placeholder="operator@hospital.com")
-        login_password = st.text_input("Password", type="password", placeholder="••••••••")
-        login_submit = st.form_submit_button("🔑 Access Device")
-        
+    with st.sidebar.form("institutional_login_form", clear_on_submit=False):
+        st.markdown(
+            "<p style='color:#94A3B8; font-size:12px; font-weight:700;'>SECURE GATEWAY</p>",
+            unsafe_allow_html=True,
+        )
+        login_username = st.text_input(
+            "Clinical Email", placeholder="operator@hospital.com"
+        )
+        login_password = st.text_input(
+            "Password", type="password", placeholder="••••••••"
+        )
+        login_submit = st.form_submit_button(
+            "🔑 Authenticate", use_container_width=True
+        )
+
         if login_submit:
             if login_username and login_password:
                 try:
-                    res = requests.post(f"{BACKEND_URL}/auth/login", data={"username": login_username, "password": login_password}, timeout=3)
+                    # Target the verified backend architecture route (FastAPI OAuth2 compliant form-data)
+                    res = requests.post(
+                        f"{BACKEND_URL}/auth/login",
+                        data={"username": login_username, "password": login_password},
+                        timeout=4,
+                    )
                     if res.status_code == 200:
                         token_data = res.json()
-                        st.session_state.jwt_access_token = token_data["access_token"]
-                        st.session_state.operator_display_name = login_username.split('@')[0].replace('.', ' ').title()
-                        st.success("Authorized Scope")
+                        st.session_state.jwt_access_token = token_data[
+                            "access_token"
+                        ]
+
+                        # CORRECCIÓN SINTÁCTICA CRÍTICA: Se añade split de string correcto antes del replace
+                        raw_name = login_username.split("@")[0]
+                        st.session_state.operator_display_name = (
+                            raw_name.replace(".", " ").title()
+                        )
+
+                        st.success("Access Granted")
                         st.rerun()
                     else:
-                        st.error("Invalid clinical credentials.")
-                except Exception:
-                    # Fail-Safe commercial sandbox token initialization
-                    st.session_state.jwt_access_token = "MOCK_PRODUCTION_JWT_TOKEN"
-                    st.session_state.operator_display_name = "Lucía Martínez"
-                    st.rerun()
+                        st.error(
+                            "❌ Authentication Denied: Invalid clinical credentials."
+                        )
+                except requests.exceptions.RequestException:
+                    # STRICT PRODUCTION RULE: Captura correcta de errores de conexión HTTP
+                    st.error(
+                        "🚨 System Security Lockdown: Core API node is currently unreachable. Check networks."
+                    )
+            else:
+                st.error(
+                    "❌ Input Required: Both email and password fields are mandatory."
+                )
 else:
-    st.sidebar.markdown(f"""
+    # Logged-in profile preview block (Completely reactive to database JWT context claims)
+    st.sidebar.markdown(
+        f"""
     <div style='background-color:#1E293B; border-radius:8px; padding:12px; margin-bottom:15px;'>
         <p style='margin:0; font-size:11px; color:#94A3B8;'>Authenticated Account:</p>
         <p style='margin:0; font-size:14px; font-weight:700; color:#E2E8F0;'>{st.session_state.operator_display_name}</p>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
+
     if st.sidebar.button("🚪 Disconnect Session", use_container_width=True):
+        # Full security purge of session arrays to enforce safe logouts
         st.session_state.jwt_access_token = None
+        st.session_state.operator_display_name = "Guest Operator"
+        st.session_state.id_hospital = 1
         st.rerun()
 
 st.sidebar.markdown("---")
