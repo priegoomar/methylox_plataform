@@ -173,114 +173,90 @@ df_empty_reports = pd.DataFrame(columns=[
 with st.sidebar:
     st.markdown(
         """
-    <div style="padding: 10px 0px; border-bottom: 1px solid #1E293B; margin-bottom: 25px;">  
-        <h3 style="margin: 0; color: #FFFFFF !important; font-weight: 900; font-size: 22px; letter-spacing: -0.5px;">MethylOx™</h3>  
-        <p style="margin: 0; color: #38BDF8 !important; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Epigenetic AI Platform</p>  
-    </div>  
-    """,
+        <div style="padding: 10px 0px; border-bottom: 1px solid #1E293B; margin-bottom: 25px;">  
+            <h3 style="margin: 0; color: #FFFFFF !important; font-weight: 900; font-size: 22px; letter-spacing: -0.5px;">MethylOx™</h3>  
+            <p style="margin: 0; color: #38BDF8 !important; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Epigenetic AI Platform</p>  
+        </div>  
+        """,
         unsafe_allow_html=True,
     )
 
-# FORCE ABSOLUTE ABSTRACT RESET: Inicialización segura de variables de estado
-if "jwt_access_token" not in st.session_state:
-    st.session_state.jwt_access_token = None
-if "operator_display_name" not in st.session_state:
-    st.session_state.operator_display_name = "Guest Operator"
-if "id_hospital" not in st.session_state:
-    st.session_state.id_hospital = 1
+    # FORCE ABSOLUTE ABSTRACT RESET: Secure initialization inside sidebar context
+    if "jwt_access_token" not in st.session_state:
+        st.session_state.jwt_access_token = None
+    if "operator_display_name" not in st.session_state:
+        st.session_state.operator_display_name = "Guest Operator"
+    if "id_hospital" not in st.session_state:
+        st.session_state.id_hospital = 1
 
-# Enforce secure authentication window
-if not st.session_state.jwt_access_token:
-    with st.sidebar.form("institutional_login_form", clear_on_submit=False):
+    # Enforce secure authentication window
+    if not st.session_state.jwt_access_token:
+        with st.form("institutional_login_form", clear_on_submit=False):
+            st.markdown("<p style='color:#94A3B8; font-size:12px; font-weight:700;'>SECURE GATEWAY</p>", unsafe_allow_html=True)
+            login_username = st.text_input("Clinical Email", placeholder="operator@hospital.com")
+            login_password = st.text_input("Password", type="password", placeholder="••••••••")
+            login_submit = st.form_submit_button("🔑 Authenticate", use_container_width=True)
+
+            if login_submit:
+                if login_username and login_password:
+                    try:
+                        res = requests.post(
+                            f"{BACKEND_URL}/auth/login",
+                            data={"username": login_username, "password": login_password},
+                            timeout=4,
+                        )
+                        if res.status_code == 200:
+                            token_data = res.json()
+                            st.session_state.jwt_access_token = token_data["access_token"]
+                            
+                            # Clean user mapping execution logic
+                            raw_name = login_username.split("@")[0]
+                            st.session_state.operator_display_name = raw_name.replace(".", " ").title()
+                            st.success("Access Granted")
+                            st.rerun()
+                        else:
+                            st.error("❌ Authentication Denied: Invalid clinical credentials.")
+                    except requests.exceptions.RequestException:
+                        st.error("🚨 System Security Lockdown: Core API node is currently unreachable. Check networks.")
+                else:
+                    st.error("❌ Input Required: Both email and password fields are mandatory.")
+    else:
         st.markdown(
-            "<p style='color:#94A3B8; font-size:12px; font-weight:700;'>SECURE GATEWAY</p>",
+            f"""
+            <div style='background-color:#1E293B; border-radius:8px; padding:12px; margin-bottom:15px;'>
+                <p style='margin:0; font-size:11px; color:#94A3B8;'>Authenticated Account:</p>
+                <p style='margin:0; font-size:14px; font-weight:700; color:#E2E8F0;'>{st.session_state.operator_display_name}</p>
+            </div>
+            """,
             unsafe_allow_html=True,
         )
-        login_username = st.text_input(
-            "Clinical Email", placeholder="operator@hospital.com"
+
+        if st.button("🚪 Disconnect Session", use_container_width=True):
+            st.session_state.jwt_access_token = None
+            st.session_state.operator_display_name = "Guest Operator"
+            st.session_state.id_hospital = 1
+            st.rerun()
+
+    st.markdown("---")
+    if st.session_state.jwt_access_token:
+        nav_selection = st.radio(
+            "Operational Scope Selector",
+            ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports", "Identity Governance", "⚙️ System Settings"],
+            label_visibility="collapsed"
         )
-        login_password = st.text_input(
-            "Password", type="password", placeholder="••••••••"
-        )
-        login_submit = st.form_submit_button(
-            "🔑 Authenticate", use_container_width=True
-        )
+    else:
+        nav_selection = "🔒 Access Restricted"
 
-        if login_submit:
-            if login_username and login_password:
-                try:
-                    # Target the verified backend architecture route (FastAPI OAuth2 compliant form-data)
-                    res = requests.post(
-                        f"{BACKEND_URL}/auth/login",
-                        data={"username": login_username, "password": login_password},
-                        timeout=4,
-                    )
-                    if res.status_code == 200:
-                        token_data = res.json()
-                        st.session_state.jwt_access_token = token_data[
-                            "access_token"
-                        ]
-
-                        # CORRECCIÓN SINTÁCTICA CRÍTICA: Se añade split de string correcto antes del replace
-                        raw_name = login_username.split("@")[0]
-                        st.session_state.operator_display_name = (
-                            raw_name.replace(".", " ").title()
-                        )
-
-                        st.success("Access Granted")
-                        st.rerun()
-                    else:
-                        st.error(
-                            "❌ Authentication Denied: Invalid clinical credentials."
-                        )
-                except requests.exceptions.RequestException:
-                    # STRICT PRODUCTION RULE: Captura correcta de errores de conexión HTTP
-                    st.error(
-                        "🚨 System Security Lockdown: Core API node is currently unreachable. Check networks."
-                    )
-            else:
-                st.error(
-                    "❌ Input Required: Both email and password fields are mandatory."
-                )
-else:
-    # Logged-in profile preview block (Completely reactive to database JWT context claims)
-    st.sidebar.markdown(
-        f"""
-    <div style='background-color:#1E293B; border-radius:8px; padding:12px; margin-bottom:15px;'>
-        <p style='margin:0; font-size:11px; color:#94A3B8;'>Authenticated Account:</p>
-        <p style='margin:0; font-size:14px; font-weight:700; color:#E2E8F0;'>{st.session_state.operator_display_name}</p>
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
-
-    if st.sidebar.button("🚪 Disconnect Session", use_container_width=True):
-        # Full security purge of session arrays to enforce safe logouts
-        st.session_state.jwt_access_token = None
-        st.session_state.operator_display_name = "Guest Operator"
-        st.session_state.id_hospital = 1
-        st.rerun()
-
-st.sidebar.markdown("---")
-if st.session_state.jwt_access_token:
-    nav_selection = st.sidebar.radio(
-        "Operational Scope Selector",
-        ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports", "Identity Governance", "⚙️ System Settings"],
-        label_visibility="collapsed"
-    )
-else:
-    nav_selection = "🔒 Access Restricted"
-
-st.sidebar.markdown("---")
-st.sidebar.markdown("""
-<div style="padding: 5px 10px;">  
-    <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>  
-    <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">  
-        <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>  
-        <span style="font-size: 12px; font-weight: 600; color: #E2E8F0 !important;">Core Engine Active</span>  
+    st.markdown("---")
+    st.markdown("""
+    <div style="padding: 5px 10px;">  
+        <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>  
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">  
+            <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>  
+            <span style="font-size: 12px; font-weight: 600; color: #E2E8F0 !important;">Core Engine Active</span>  
+        </div>  
     </div>  
-</div>  
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 headers = {"Authorization": f"Bearer {st.session_state.jwt_access_token}"} if st.session_state.jwt_access_token else {}
 
