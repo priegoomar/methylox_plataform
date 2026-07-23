@@ -21,7 +21,7 @@ COPY requirements.txt .
 # Install production-grade Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire app source directory into the working directory
+# RECTIFICACIÓN DE RUTA: Copia el contenido directo de la carpeta app en el WORKDIR actual (/backend/app)
 COPY app/ ./app
 
 # Create necessary static directory for PDF reports compilation
