@@ -444,10 +444,10 @@ with p2:
                             st.plotly_chart(fig_long, use_container_width=True)
                         else:
                             st.info("ℹ️ No historical biomarker records tracked for the chosen patient segment.")
-                    else:
-                        st.error("❌ Execution Error: Could not resolve patient trace data index.")
+        else:
+            st.error("🚨 Execution Error: Could not resolve patient trace data index.")
     except Exception:
-        st.error("❌ Network Exception: Timeline analysis channel disconnected.")
+        st.error("🚨 Network Exception: Timeline analysis channel disconnected.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
