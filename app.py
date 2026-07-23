@@ -449,7 +449,7 @@ with p2:
                 except Exception:
                     st.error("❌ Network Exception: Timeline analysis channel disconnected.")
             else:
-                st.info("ℹ️ No clinical records available to map historical longitudinal biomarkers.")
+                st.info("ℹ️ No active cohort population profiles available to map historical longitudinal benchmarks.")
             st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
