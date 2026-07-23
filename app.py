@@ -389,12 +389,11 @@ elif nav_selection == "Patients":
                         }
         try:
             if res_p.status_code == 200:
-            st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
+                st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
                 time.sleep(0.5)
                 st.rerun()
             else:
                 st.error(f"🚨 Database Rejection: {res_p.json().get('detail', 'Write violation integrity constraints.')}")
-        except Exception:
             st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
             st.markdown('</div>', unsafe_allow_html=True)
            
