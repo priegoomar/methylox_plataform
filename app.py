@@ -506,7 +506,6 @@ elif nav_selection == "LIMS Samples":
             st.dataframe(df_samples, use_container_width=True, hide_index=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
-
 # ----------------------------------------------------------------------------
 # 🧬 TAB 4: METHYLOX ENGINE (CRISPR PIPELINE LOGIC - REAL COMPUTE)
 # ----------------------------------------------------------------------------
@@ -522,14 +521,9 @@ elif nav_selection == "METHYLOX Engine":
     else:
         try:
             res_p_samples = requests.get(f"{BACKEND_URL}/lims/samples/pending-evaluation", headers=headers, timeout=2)
-            if res_p_samples.status_code == 200:
-                pending_samples = res_p_samples.json()
-            else:
-                st.error("❌ Failed to acquire biological ingestion pipelines.")
-                st.stop()
+            pending_samples = res_p_samples.json() if res_p_samples.status_code == 200 and res_p_samples.json() else []
         except Exception:
-            st.error("❌ Core Node Error: Database pipeline unavailable.")
-            st.stop()
+            pending_samples = []
 
         if not pending_samples:
             st.info("ℹ️ Pipeline Standby: No pending samples in queue requiring CRISPR bioinformatic scoring calculation.")
@@ -548,7 +542,7 @@ elif nav_selection == "METHYLOX Engine":
                         with st.spinner("Processing Bioinformatic Analytics under Phred Q30 parameters..."):
                             res_calc = requests.post(f"{BACKEND_URL}/lims/samples/evaluate/{m_target}", files=files_payload, headers=headers, timeout=10)
                         
-                        if res_calc.status_code in:
+                        if res_calc.status_code == 200:
                             calc_result = res_calc.json()
                             st.success(f"⚡ Core mathematical analytics unraveled. Score registered: {calc_result['mean_beta']:.4f}")
                             
@@ -559,8 +553,6 @@ elif nav_selection == "METHYLOX Engine":
                                 fig_g = go.Figure([go.Bar(x=list(guia_counts.keys()), y=list(guia_counts.values()), marker_color='#2563EB', width=0.4)])
                                 fig_g.update_layout(height=240, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10), yaxis=dict(gridcolor='#F1F5F9'))
                                 st.plotly_chart(fig_g, use_container_width=True)
-                            else:
-                                st.warning("⚠️ No active CRISPR guides registered for this sample profile sequence layout.")
                         else:
                             st.error(f"❌ Computational Error: {res_calc.json().get('detail', 'Algorithmic alignment exception')}")
                     except Exception:
