@@ -271,11 +271,10 @@ if nav_selection == "🔒 Access Restricted":
 # ----------------------------------------------------------------------------
 # 📊 TAB 1: DASHBOARD MATRIX (REAL-TIME PLATFORM TELEMETRY)
 # ----------------------------------------------------------------------------
-elif nav_selection == "Dashboard Matrix":
-    st.markdown(f"<h2 class='welcome-header'>Bienvenida, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
-    current_date_str = datetime.now().strftime("%d de %B de %Y")
-    st.markdown(f"<p class='welcome-caption'>Resumen de actividad del laboratorio - {current_date_str}</p>", unsafe_allow_html=True)
-   
+if nav_selection == "Dashboard Matrix":
+    st.markdown(f"<h2 class='welcome-header'>Bienvenida, {st.session_state.operator_display_name} 📋</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Resumen de actividad del laboratorio - Telemetría en tiempo real</p>", unsafe_allow_html=True)
+    
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
         if res_telemetry.status_code == 200:
@@ -285,48 +284,19 @@ elif nav_selection == "Dashboard Matrix":
             ready_analyses = tel.get('ready_analyses', 0)
             qc_pass_rate = tel.get('qc_pass_rate', 0.0)
         else:
-            # Fallback automático: Evita el bloqueo gris si el servidor responde con códigos de inicialización
             received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
     except Exception:
-        # Fallback de red: Asegura el despliegue en ceros limpios si Render está despertando
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # Despliegue visual inmediato de las métricas comerciales de tu cliente
+    # Despliegue de métricas reales en limpio
     c1, c2, c3, c4 = st.columns(4)
     with c1: st.markdown(f"<div class='kpi-card-commercial'><p class='kpi-text-lbl'>RECEIVED TODAY</p><p class='kpi-text-val'>{received_today}</p></div>", unsafe_allow_html=True)
     with c2: st.markdown(f"<div class='kpi-card-commercial'><p class='kpi-text-lbl'>IN PROGRESS</p><p class='kpi-text-val'>{in_progress}</p></div>", unsafe_allow_html=True)
     with c3: st.markdown(f"<div class='kpi-card-commercial'><p class='kpi-text-lbl'>READY ANALYSIS</p><p class='kpi-text-val'>{ready_analyses}</p></div>", unsafe_allow_html=True)
     with c4: st.markdown(f"<div class='kpi-card-commercial'><p class='kpi-text-lbl'>QC PASS RATE</p><p class='kpi-text-val'>{qc_pass_rate}%</p></div>", unsafe_allow_html=True)
-   
-    with st.container():
-        col_left, col_right = st.columns(2)
-        with col_left:
-            st.markdown('<div class="executive-card-white" style="height: 410px;">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">Actividad reciente</div>', unsafe_allow_html=True)
-            try:
-                res_recent = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=2)
-                if res_recent.status_code == 200 and res_recent.json():
-                    st.dataframe(pd.DataFrame(res_recent.json()).head(5), use_container_width=True, hide_index=True, height=220)
-                else:
-                    st.info("ℹ️ Intake Queue Clean. No active sample workflows logged for this node context.")
-            except Exception:
-                st.error("❌ Connectivity Error: Unable to fetch recent operations.")
-                st.stop()
-            st.markdown('</div>', unsafe_allow_html=True)
-           
-        with col_right:
-            st.markdown('<div class="executive-card-white" style="height: 410px;">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">Resumen de análisis</div>', unsafe_allow_html=True)
-            if metric_ready == 0 and metric_processing == 0:
-                st.caption("System calibration: Baseline clean. Waiting for target clinical cohort analytics to construct pie distribution mapping.")
-                fig_donut = go.Figure(data=[go.Pie(labels=['System Ready'], values=[100], hole=.6, marker=dict(colors=['#E2E8F0']))])
-            else:
-                labels = ['Resultados positivos', 'Resultados negativos', 'En análisis']
-                values = [metric_ready // 2, metric_ready - (metric_ready // 2), metric_processing]
-                fig_donut = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.6, marker=dict(colors=['#EF4444', '#10B981', '#3B82F6']))])
-            fig_donut.update_layout(showlegend=True, height=220, margin=dict(l=10, r=10, t=10, b=10), legend=dict(orientation="h", y=-0.2))
-            st.plotly_chart(fig_donut, use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+
+    st.write("##")
+    st.info("📥 Intake Queue Clean: No active sample workflows logged for this node context. El sistema está listo en cero limpio para recibir datos reales.")
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT)
