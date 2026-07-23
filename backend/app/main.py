@@ -60,7 +60,14 @@ class UserCreate(BaseModel):
     username: str
     password: str
     full_name: str
-    role: str # Enforced RBAC Technical Constraint: 'admin', 'cls', 'md'
+    role: str
+    hospital_id: int
+
+class PatientCreate(BaseModel):
+    id_patient: str
+    full_name: str
+    date_of_birth: str
+    gender: str
     hospital_id: int
 
 class TokenData(BaseModel):
@@ -74,7 +81,7 @@ class TelemetrySummaryResponse(BaseModel):
     in_progress: int
     ready_analyses: int
     qc_pass_rate: float
-
+    
 # --- ELASTIC GOVERNANCE MIDDLEWARE (RBAC) ---
 async def get_current_user_claims(token: str = Depends(oauth2_scheme)) -> TokenData:
     auth_exception = HTTPException(
