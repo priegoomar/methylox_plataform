@@ -388,7 +388,7 @@ elif nav_selection == "Patients":
                             "hospital_id": int(hospitals_mapped[selected_p_inst_name])
                         }
         try:
-if res_p.status_code == 200:
+            if res_p.status_code == 200:
             st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
                 time.sleep(0.5)
                 st.rerun()
