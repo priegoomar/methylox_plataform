@@ -674,7 +674,6 @@ elif nav_selection == "Reports":
         mime="application/pdf", use_container_width=True
     )
     st.markdown('</div>', unsafe_allow_html=True)
-
 # ----------------------------------------------------------------------------
 # 🔐 TAB 6: IDENTITY GOVERNANCE (DYNAMIC RBAC AUTHORIZATION HUB)
 # ----------------------------------------------------------------------------
@@ -691,14 +690,7 @@ elif nav_selection == "Identity Governance":
             input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., Dr. John Doe, MD")
         with c2:
             input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
-            target_role_display = st.selectbox(
-                "System Assigned Operational Role Privilege", 
-                [
-                    "admin (Chief Executive Director / Medical Administrator)",
-                    "cls (Clinical Laboratory Scientist / Medical Technologist)",
-                    "md (Medical Doctor / Clinical Oncologist)"
-                ]
-            )
+            target_role_display = st.selectbox("System Assigned Operational Role Privilege", ["admin (Chief Executive Director)", "cls (Clinical Laboratory Scientist)", "md (Medical Doctor)"])
                
         target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
         submit_btn = st.form_submit_button("🚀 Activate Identity & Delegate Tasks")
@@ -707,17 +699,13 @@ elif nav_selection == "Identity Governance":
         if not input_username or not input_password or not input_full_name:
             st.error("❌ All clinical identity fields are mandatory.")
         else:
-            target_role_str = target_role_display.split(" ")[0]
             payload_u = {
-                "username": input_username, 
-                "password": input_password, 
-                "full_name": input_full_name, 
-                "role": str(target_role_str), 
-                "hospital_id": int(target_hospital_id)
+                "username": input_username, "password": input_password, "full_name": input_full_name, 
+                "role": str(target_role_display.split(" ")[0]), "hospital_id": int(target_hospital_id)
             }
             try:
                 response = requests.post(f"{BACKEND_URL}/auth/provision-user", json=payload_u, headers=headers)
-                if response.status_code in:
+                if response.status_code == 200:
                     st.success("⚡ Staff Identity Successfully Activated & Tasks Delegated Real-Time.")
                 else:
                     st.error(f"❌ Identity Provisioning Rejection: {response.json().get('detail', 'Unauthorized operational sequence')}")
@@ -736,7 +724,7 @@ elif nav_selection == "⚙️ System Settings":
     st.markdown("<p style='color:#0F172A; font-weight:700; font-size:14px; margin-bottom:10px;'>📜 METHYLOX_DETERMINISTIC_RULES.PY (AUDITABLE CONTEXT)</p>", unsafe_allow_html=True)
     st.code("""
 def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_unmethylated: float) -> float:
-    # Standard international methylation mathematical equation with fluorescence laser offset correction
+    # Standard international laser offset correction
     offset_correction = 100.0
     beta_value = intensity_methylated / (intensity_methylated + intensity_unmethylated + offset_correction)
     return round(float(beta_value), 4)
