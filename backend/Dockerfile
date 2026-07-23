@@ -15,14 +15,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the requirements file from the current directory context
-COPY requirements.txt .
+# Copia el archivo de dependencias especificando su ruta en el repositorio
+COPY backend/requirements.txt .
 
 # Install production-grade Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire app source directory into the working directory
-COPY app/ ./app
+# Copia la carpeta de la aplicación especificando su ruta en el repositorio hacia el contenedor
+COPY backend/app/ ./app
 
 # Create necessary static directory for PDF reports compilation
 RUN mkdir -p static/reports
