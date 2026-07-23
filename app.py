@@ -394,10 +394,12 @@ elif nav_selection == "Patients":
                 st.rerun()
             else:
                 st.error(f"🚨 Database Rejection: {res_p.json().get('detail', 'Write violation integrity constraints.')}")
+        except Exception:
             st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
             st.markdown('</div>', unsafe_allow_html=True)
-           
-        with p2:
+
+with p2:
+
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">📋 LIMS Cohort Registry & Active Population Directory</div>', unsafe_allow_html=True)
             try:
