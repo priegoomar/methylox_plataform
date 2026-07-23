@@ -51,7 +51,7 @@ def get_db_connection():
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=f"Database connection pipeline broken: {str(e)}"
-        ) 
+        )
 
 class UserCreate(BaseModel):
     username: str
@@ -84,14 +84,14 @@ async def provision_clinical_staff(user: UserCreate):
     try:
         # Standard SHA256 fallback encryption for secure user management
         hashed = hashlib.sha256(user.password.encode()).hexdigest()
-        
+       
         # 🔄 ADVANCED UPSERT PROTOCOL (ON CONFLICT): Updates password in real-time if email exists
         cur.execute(
             """
-            INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital, role) 
+            INSERT INTO users (username, hashed_password, full_name, dynamic_role_id, id_hospital, role)
             VALUES (%s, %s, %s, %s, %s, 'Staff')
-            ON CONFLICT (username) 
-            DO UPDATE SET 
+            ON CONFLICT (username)
+            DO UPDATE SET
                 hashed_password = EXCLUDED.hashed_password,
                 dynamic_role_id = EXCLUDED.dynamic_role_id,
                 full_name = EXCLUDED.full_name
@@ -126,25 +126,22 @@ cur = conn.cursor(cursor_factory=RealDictCursor)
         )
         user = cur.fetchone()
        
-        # 🔑 FIXED DIRECT PASSWORD CHECK: Eradicates the 401 bcrypt conflict instantly
-        if not user or str(form_data.password).strip() != "password123":
+        # Direct plaintext validation stream matching target Linux execution environment limits
+        if not user or str(form_data.password).strip() != str(user['password']).strip():
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Authentication Denied: Invalid clinical credentials."
+                detail="Authentication denied: Invalid clinical credentials."
             )
-
-        # SYSTEM BYPASS: Direct authorization assignment to bypass non-existent Neon tables
-        permissions = ["DASHBOARD_VIEW", "PATIENTS_VIEW", "LIMS_VIEW", "METHYLOX_RUN", "REPORTS_GENERATION", "USER_MANAGE"]
        
         token_payload = {
             "sub": user['username'],
-            "id_user": user['id_user'],
-            "id_hospital": user['id_hospital'],
-            "permissions": permissions,
+            "id_user": user['id'],
+            "id_hospital": user['hospital_id'],
+            "role": user['role'],
             "exp": datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         }
         token = jwt.encode(token_payload, SECRET_KEY, algorithm=ALGORITHM)
-        return {"access_token": token, "token_type": "bearer"}
+        return {"access_token": token, "token_type": "bearer", "role": user['role']}
 
     except HTTPException as http_err:
         raise http_err
@@ -152,7 +149,7 @@ cur = conn.cursor(cursor_factory=RealDictCursor)
         print(f"--- INTERNAL ERROR LOGGED: {str(e)} ---")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Internal Server Error: {str(e)}"
+            detail=f"Internal Server Error compiling secure token payload: {str(e)}"
         )
     finally:
         cur.close()
