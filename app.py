@@ -277,7 +277,7 @@ elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<p class='welcome-caption'>Resumen de actividad del laboratorio - {current_date_str}</p>", unsafe_allow_html=True)
    
     try:
-        res_telemetry = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", headers=headers, timeout=3)
+        res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=3)
         if res_telemetry.status_code == 200:
             live_data = res_telemetry.json()
             metric_received = live_data.get("received_today", 0)
