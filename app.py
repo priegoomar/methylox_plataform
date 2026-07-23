@@ -387,16 +387,15 @@ elif nav_selection == "Patients":
                             "gender": new_p_sexo,
                             "hospital_id": int(hospitals_mapped[selected_p_inst_name])
                         }
-                        try:
+        try:
             if res_p.status_code in:
-                                st.success(f"✅ Profile {new_p_id} successfully synchronized into PostgreSQL.")
-                                time.sleep(0.5)
-                                st.rerun()
-                            else:
-
-                                st.error(f"❌ Database Rejection: {res_p.json().get('detail', 'Write violation')}")
-                        except Exception:
-                            st.error("❌ Operational Error: Backend unreachable during relational synchronization.")
+                st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
+                time.sleep(0.5)
+                st.rerun()
+            else:
+                st.error(f"🚨 Database Rejection: {res_p.json().get('detail', 'Write violation integrity constraints.')}")
+        except Exception:
+            st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
             st.markdown('</div>', unsafe_allow_html=True)
            
         with p2:
@@ -475,7 +474,7 @@ elif nav_selection == "LIMS Samples":
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
             
-            if st.session_state.user_role == "doctor":
+            if st.session_state.user_role == "md":
                 st.warning("🔒 Access Denied: Medical personnel are restricted from altering LIMS physical custody states.")
             elif not registered_patients:
                 st.warning("⚠️ Action Locked: You must enroll at least one patient record before conducting laboratory asset intake operations.")
@@ -508,7 +507,7 @@ elif nav_selection == "LIMS Samples":
                         }
                         try:
                             res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=3)
-                            if res_intake.status_code in:
+                            if res_intake.status_code == 200:
                                 st.success("Asset logged successfully.")
                                 time.sleep(0.5)
                                 st.rerun()
@@ -564,7 +563,7 @@ elif nav_selection == "METHYLOX Engine":
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     st.markdown('<div class="card-title-clinical">🚀 Quantitative Epigenetic Run Over Raw Methylation Matrices</div>', unsafe_allow_html=True)
    
-    if st.session_state.user_role == "doctor":
+    if st.session_state.user_role == "md":
         st.warning("🔒 Access Denied: Medical roles do not possess computational clearance to launch sequencing kernel iterations.")
     else:
         try:
@@ -595,7 +594,7 @@ elif nav_selection == "METHYLOX Engine":
                         with st.spinner("Processing Bioinformatic Analytics under Phred Q30 parameters..."):
                             res_calc = requests.post(f"{BACKEND_URL}/lims/samples/evaluate/{m_target}", files=files_payload, headers=headers, timeout=10)
                         
-                        if res_calc.status_code == 200:
+                        if res_calc.status_code in:
                             calc_result = res_calc.json()
                             st.success(f"⚡ Core mathematical analytics unraveled. Score registered: {calc_result['mean_beta']:.4f}")
                             
@@ -689,7 +688,6 @@ elif nav_selection == "Reports":
     pdf.set_font("Helvetica", "", 9)
     pdf.cell(190, 5, f"Global Mean Methylation Beta Score (Multiplexed MOX Panel): {float(datos_rep['score']):.4f}", ln=True)
    
-    # Strict compliance tracking against the targeted Youden Cutoff boundary constraint (0.1000)
     if float(datos_rep['score']) >= 0.1000:
         pdf.set_text_color(220, 38, 38)
         pdf.set_font("Helvetica", "B", 9)
@@ -744,10 +742,17 @@ elif nav_selection == "Identity Governance":
         c1, c2 = st.columns(2)
         with c1:
             input_username = st.text_input("Account Identifier (Email / Username)", placeholder="operator@hospital.com")
-            input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., John Doe")
+            input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., Dr. John Doe, MD")
         with c2:
             input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
-            target_role_str = st.selectbox("System Assigned Operational Role Privilege", ["admin", "tech", "doctor"])
+            target_role_display = st.selectbox(
+                "System Assigned Operational Role Privilege", 
+                [
+                    "admin (Chief Executive Director / Medical Administrator)",
+                    "cls (Clinical Laboratory Scientist / Medical Technologist)",
+                    "md (Medical Doctor / Clinical Oncologist)"
+                ]
+            )
                
         target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
         submit_btn = st.form_submit_button("🚀 Activate Identity & Delegate Tasks")
@@ -756,6 +761,7 @@ elif nav_selection == "Identity Governance":
         if not input_username or not input_password or not input_full_name:
             st.error("❌ All clinical identity fields are mandatory.")
         else:
+            target_role_str = target_role_display.split(" ")[0]
             payload_u = {
                 "username": input_username, 
                 "password": input_password, 
@@ -793,52 +799,10 @@ def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================================
-# 🎛️ SIDEBAR WIDGETS: IN VITRO QUALITY CONTROL ASSAY VALIDATION (LAB SIDE)
-# ============================================================================
-st.sidebar.markdown("---")
-st.sidebar.markdown("<p style='color:#94A3B8; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;'>🧬 In Vitro Assay Control</p>", unsafe_allow_html=True)
-
-val_blank = st.sidebar.slider("Blank Control (Water Noise)", 0.000, 0.100, 0.005, step=0.001, format="%.3f")
-val_negativo = st.sidebar.slider("Negative Control (Healthy)", 0.000, 0.100, 0.010, step=0.001, format="%.3f")
-val_positivo = st.sidebar.slider("Positive Control (Cas12a Activity)", 0.00, 1.00, 0.85, step=0.01)
-
-st.sidebar.markdown("<p style='color:#E2E8F0; font-size:11px;'>Patient Replicates (Triplicate Beta):</p>", unsafe_allow_html=True)
-rep1 = st.sidebar.number_input("Replicate Target 1", value=0.120, step=0.005, format="%.4f", label_visibility="collapsed")
-rep2 = st.sidebar.number_input("Replicate Target 2", value=0.115, step=0.005, format="%.4f", label_visibility="collapsed")
-rep3 = st.sidebar.number_input("Replicate Target 3", value=0.125, step=0.005, format="%.4f", label_visibility="collapsed")
-
-if st.sidebar.button("⚙️ Process Clinical Sample"):
-    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-    st.markdown("<div class='card-title-clinical'>🧬 Assay Quality Control & ctDNA Diagnostic Report</div>", unsafe_allow_html=True)
-   
-    try:
-        payload_vitro = {"control_blank": val_blank, "control_negative": val_negativo, "control_positive": val_positivo, "replicates": [rep1, rep2, rep3]}
-        res_vitro = requests.post(f"{BACKEND_URL}/analysis/process-vitro", json=payload_vitro, headers=headers, timeout=2)
-        if res_vitro.status_code == 200:
-            res_data = res_vitro.json()
-            resultado_pipeline = {"estatus": "SUCCESS", "valor_beta_final": res_data["calculated_mean_beta"], "resultado_clinico": res_data["clinical_call"], "mensaje": "Validated via active PostgreSQL API node."}
-        else:
-            resultado_pipeline = {"estatus": "ERROR_CRITICO", "motivo": res_vitro.json().get("detail", "QC failure parameters triggered.")}
-    except Exception:
-        resultado_pipeline = {"estatus": "ERROR_CRITICO", "motivo": "In Vitro Endpoint is unreachable. Standalone emergency fallback blocked under strict production parameters."}
-   
-    if resultado_pipeline["estatus"] == "ERROR_CRITICO":
-        st.error(f"🚨 **CRITICAL_ERROR REGULATORY BLOCK**")
-        st.warning(f"**Rejection Reason:** {resultado_pipeline['motivo']}")
-    elif resultado_pipeline["estatus"] == "SUCCESS":
-        st.success("✅ **BIOLOGICAL CONCORDANCE VALIDATED SUCCESSFULLY**")
-        col1, col2 = st.columns(2)
-        col1.metric("Mean Beta Value (β)", f"{resultado_pipeline['valor_beta_final']:.4f}")
-        col2.metric("Diagnostic Status", "POSITIVE" if "CANCER" in resultado_pipeline["resultado_clinico"] or "POSITIVE" in resultado_pipeline["resultado_clinico"] else "NEGATIVE")
-        st.info(f"📋 **Verdict Call:** {resultado_pipeline['resultado_clinico']}")
-        st.caption(f"🔬 {resultado_pipeline['mensaje']}")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ============================================================================
 # 🏛️ FOOTER LEGAL BOUNDARIES
 # ============================================================================
 st.markdown("""
 <div style="text-align: center; padding: 20px 0px; margin-top: 40px; border-top: 1px solid #E2E8F0;">
-    <p style="margin: 0; font-size: 12px; color: #94A3B8;">© 2026 METHYLOX Oncology. Todos los derechos reservados. SaMD Software Stage Compliance.</p>
+    <p style="margin: 0; font-size: 12px; color: #94A3B8;">© 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
 </div>
 """, unsafe_allow_html=True)
