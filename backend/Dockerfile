@@ -15,13 +15,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia el archivo de dependencias especificando su ruta en el repositorio
+# RECTIFICACIÓN DE RUTA ABSOLUTA: Copia las dependencias especificando la subcarpeta real de tu GitHub
 COPY backend/requirements.txt ./requirements.txt
 
 # Install production-grade Python dependencies apuntando al archivo copiado localmente
 RUN pip install --no-cache-dir -r requirements.txt
 
-# RECTIFICACIÓN DE RUTA CRÍTICA: Copia la carpeta app desde el directorio real backend/app hacia el contenedor
+# RECTIFICACIÓN DE RUTA ABSOLUTA: Copia la carpeta app especificando la subcarpeta real de tu GitHub
 COPY backend/app/ ./app
 
 # Create necessary static directory for PDF reports compilation
