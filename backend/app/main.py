@@ -201,50 +201,38 @@ async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
 # SECTION 3.5: CLINICAL TELEMETRY ENGINE (DYNAMIC POSTGRESQL COUNTS)
 # ==============================================================================
 @app.get("/api/v1/analysis/telemetry-summary", response_model=TelemetrySummaryResponse, tags=["Clinical Telemetry"])
-async def get_hospital_telemetry_summary(
-    current_user: TokenData = Depends(get_current_user_claims)
-):
+async def get_hospital_telemetry_summary(current_user: TokenData = Depends(get_current_user_claims)):
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-   
+    cur = conn.cursor()
     try:
         today_date = datetime.now().strftime("%Y-%m-%d")
-        cur.execute(
-            "SELECT COUNT(*) as count FROM samples WHERE hospital_id = %s AND created_at::date = %s::date",
-            (current_user.id_hospital, today_date)
-        )
-        received_today = cur.fetchone()['count']
-       
-        cur.execute(
-            "SELECT COUNT(*) as count FROM samples WHERE hospital_id = %s AND workflow_state != 'Clinical Report Compiled'",
-            (current_user.id_hospital,)
-        )
-        in_progress = cur.fetchone()['count']
-       
-        cur.execute(
-            "SELECT COUNT(*) as count FROM samples WHERE hospital_id = %s AND workflow_state = 'Clinical Report Compiled'",
-            (current_user.id_hospital,)
-        )
-        ready_analyses = cur.fetchone()['count']
-       
-        cur.execute("SELECT COUNT(*) as total FROM samples WHERE hospital_id = %s", (current_user.id_hospital,))
-        total_qc_runs = cur.fetchone()['total']
-       
-        qc_pass_rate = 0.0 if total_qc_runs == 0 else 100.0
         
+        # Uso de COALESCE para forzar el retorno de 0 si las tablas están completamente vacías
+        cur.execute("SELECT COALESCE(COUNT(*)::int, 0) as count FROM samples WHERE hospital_id = %s AND created_at::date = %s::date", (current_user.id_hospital, today_date))
+        received_today = int(cur.fetchone()['count'])
+       
+        cur.execute("SELECT COALESCE(COUNT(*)::int, 0) as count FROM samples WHERE hospital_id = %s AND workflow_state != 'Clinical Report Compiled'", (current_user.id_hospital,))
+        in_progress = int(cur.fetchone()['count'])
+       
+        cur.execute("SELECT COALESCE(COUNT(*)::int, 0) as count FROM samples WHERE hospital_id = %s AND workflow_state = 'Clinical Report Compiled'", (current_user.id_hospital,))
+        ready_analyses = int(cur.fetchone()['count'])
+       
+        cur.execute("SELECT COALESCE(COUNT(*)::int, 0) as total FROM samples WHERE hospital_id = %s", (current_user.id_hospital,))
+        total_qc_runs = int(cur.fetchone()['total'])
+        
+        qc_pass_rate = 0.0 if total_qc_runs == 0 else 100.0
+       
         return {
-            "received_today": int(received_today),
-            "in_progress": int(in_progress),
-            "ready_analyses": int(ready_analyses),
+            "received_today": received_today, 
+            "in_progress": in_progress,
+            "ready_analyses": ready_analyses, 
             "qc_pass_rate": round(float(qc_pass_rate), 1)
         }
-       
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to compile operational matrix from PostgreSQL nodes: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to compile operational matrix: {str(e)}")
     finally:
         cur.close()
         conn.close()
-
 # ==============================================================================
 # SECTION 5: CLINICAL CORE LIMS OPERATIONS & EVALUATION PIPELINE
 # ==============================================================================
