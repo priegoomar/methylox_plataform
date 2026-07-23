@@ -2,7 +2,7 @@
 FROM python:3.10-slim
 
 # Set system environment variables to prevent Python from writing pyc files and buffering stdout
-ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONTONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Set the working directory inside the container
@@ -15,14 +15,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia el archivo de dependencias especificando su ruta en el repositorio
-COPY backend/requirements.txt .
+# COPIA LOCAL ABSOLUTA: Ignora subcarpetas externas y copia lo que encuentre en su propio directorio
+COPY requirements.txt ./requirements.txt
 
 # Install production-grade Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia la carpeta de la aplicación especificando su ruta en el repositorio hacia el contenedor
-COPY backend/app/ ./app
+# Copia la carpeta app local hacia el contenedor
+COPY app/ ./app
 
 # Create necessary static directory for PDF reports compilation
 RUN mkdir -p static/reports
