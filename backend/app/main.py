@@ -117,7 +117,9 @@ async def provision_clinical_staff(
 ):
     conn = get_db_connection()
     cur = conn.cursor(cursor_factory=RealDictCursor)
+
     try:
+        # Advanced Upsert Protocol optimized for the clean database schema
         cur.execute(
             """
             INSERT INTO users (username, password, full_name, role, hospital_id)
@@ -237,27 +239,43 @@ async def get_hospital_telemetry_summary(
         conn.close()
 
 # ==============================================================================
-# SECTION 5: CLINICAL CORE LIMS & EVALUATION PIPELINE (REAL COMPUTATION)
+# SECTION 5: CLINICAL CORE LIMS OPERATIONS & EVALUATION PIPELINE
 # ==============================================================================
 @app.get("/api/v1/hospitals/directory", tags=["LIMS Operations"])
 async def get_hospitals_directory(current_user: TokenData = Depends(get_current_user_claims)):
-    """Fetches all operational corporate clinical nodes for the Patient segment dropdown selector."""
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
     try:
         cur.execute("SELECT id, name, clinical_code FROM hospitals")
         return cur.fetchall()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to query clinical facilities: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cur.close()
+        conn.close()
+
+@app.post("/api/v1/lims/enroll-patient", tags=["LIMS Operations"])
+async def enroll_patient_profile(patient: PatientCreate, current_user: TokenData = Depends(RoleGuard(["admin", "md"]))):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "INSERT INTO patients (id_patient, full_name, date_of_birth, gender, hospital_id) VALUES (%s, %s, %s, %s, %s)",
+            (patient.id_patient, patient.full_name, datetime.strptime(patient.date_of_birth, "%Y-%m-%d").date(), patient.gender, patient.hospital_id)
+        )
+        conn.commit()
+        return {"status": "SUCCESS", "message": "Patient profile initialized securely inside database."}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         cur.close()
         conn.close()
 
 @app.get("/api/v1/lims/cohort-directory", tags=["LIMS Operations"])
 async def get_cohort_directory(current_user: TokenData = Depends(get_current_user_claims)):
-    """Queries relational population cohorts directly from Neon PostgreSQL."""
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
     try:
         cur.execute(
             """
@@ -272,16 +290,15 @@ async def get_cohort_directory(current_user: TokenData = Depends(get_current_use
         )
         return cur.fetchall()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to compile cohort directory: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         cur.close()
         conn.close()
 
 @app.get("/api/v1/lims/samples/directory", tags=["LIMS Operations"])
 async def get_samples_directory(current_user: TokenData = Depends(get_current_user_claims)):
-    """Fetches real-time chronological custody trails from the active warehouse registers."""
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
     try:
         cur.execute(
             """
@@ -295,140 +312,86 @@ async def get_samples_directory(current_user: TokenData = Depends(get_current_us
         )
         return cur.fetchall()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to extract asset logs: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         cur.close()
         conn.close()
 
 @app.get("/api/v1/lims/samples/pending-evaluation", tags=["LIMS Operations"])
 async def get_pending_samples_for_pipeline(current_user: TokenData = Depends(get_current_user_claims)):
-    """Acquires active ingestion queues awaiting the multiplexed CRISPR analytical execution."""
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
     try:
         cur.execute(
-            """
-            SELECT sample_id 
-            FROM samples 
-            WHERE workflow_state != 'Clinical Report Compiled' 
-              AND patient_id IN (SELECT id_patient FROM patients WHERE hospital_id = %s)
-            """,
+            "SELECT sample_id FROM samples WHERE workflow_state != 'Clinical Report Compiled' AND patient_id IN (SELECT id_patient FROM patients WHERE hospital_id = %s)",
             (current_user.id_hospital,)
         )
         return [row['sample_id'] for row in cur.fetchall()]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch pending pipelines: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         cur.close()
         conn.close()
 
 @app.post("/api/v1/lims/samples/intake", tags=["LIMS Operations"])
-async def sample_intake_admission(
-    payload: dict, 
-    current_user: TokenData = Depends(RoleGuard(["admin", "cls"]))
-):
-    """Logs dynamic analytical custody fields into Neon.tech, strictly blocking md role modification."""
+async def sample_intake_admission(payload: dict, current_user: TokenData = Depends(RoleGuard(["admin", "cls"]))):
     conn = get_db_connection()
     cur = conn.cursor()
     try:
         cur.execute(
-            """
-            INSERT INTO samples (sample_id, patient_id, barcode_qr, specimen_type, workflow_state, practitioner_signature)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            """,
-            (payload["sample_id"], payload["patient_id"], payload["barcode_qr"], 
-             payload["specimen_type"], payload["workflow_state"], payload["practitioner_signature"])
+            "INSERT INTO samples (sample_id, patient_id, barcode_qr, specimen_type, workflow_state, practitioner_signature, hospital_id) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (payload["sample_id"], payload["patient_id"], payload["barcode_qr"], payload["specimen_type"], payload["workflow_state"], payload["practitioner_signature"], current_user.id_hospital)
         )
         conn.commit()
         return {"status": "SUCCESS", "message": f"Asset {payload['sample_id']} successfully synchronized."}
     except Exception as e:
         conn.rollback()
-        raise HTTPException(status_code=400, detail=f"LIMS intake transaction rejected: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         cur.close()
         conn.close()
 
 @app.post("/api/v1/lims/samples/evaluate/{sample_id}", tags=["METHYLOX Engine Core"])
-async def evaluate_crispr_pipeline(
-    sample_id: str,
-    file: UploadFile = File(...),
-    current_user: TokenData = Depends(RoleGuard(["admin", "cls"]))
-):
-    """
-    Bioinformatic core node ingestion endpoint.
-    Parses incoming raw CpG sequence matrix files (.CSV), computes calculations,
-    and applies the strict clinical boundary of the Youden Cutoff at 0.1000.
-    """
+async def evaluate_crispr_pipeline(sample_id: str, file: UploadFile = File(...), current_user: TokenData = Depends(RoleGuard(["admin", "cls"]))):
     try:
         contents = await file.read()
         buffer = io.StringIO(contents.decode('utf-8'))
         reader = csv.DictReader(buffer)
-        
         methylated_intensities = []
         unmethylated_intensities = []
-        
         for row in reader:
             if 'Methylated_Intensity' in row and 'Unmethylated_Intensity' in row:
                 methylated_intensities.append(float(row['Methylated_Intensity']))
                 unmethylated_intensities.append(float(row['Unmethylated_Intensity']))
-        
         if not methylated_intensities:
-            raise HTTPException(status_code=400, detail="Invalid sequence file format. Structural properties missing.")
+            raise HTTPException(status_code=400, detail="Invalid sequence file format.")
             
         offset_correction = 100.0
-        beta_values = []
-        for m, u in zip(methylated_intensities, unmethylated_intensities):
-            b_val = m / (m + u + offset_correction)
-            beta_values.append(b_val)
-            
+        beta_values = [m / (m + u + offset_correction) for m, u in zip(methylated_intensities, unmethylated_intensities)]
         mean_beta = sum(beta_values) / len(beta_values)
-        
-        # STRICT YOUDEN CUTOFF ENFORCEMENT BOUNDARY AT 0.1000
-        if mean_beta >= 0.1000:
-            classification = "Epigenetic profile compatible with METHYLOX tumor panel"
-        else:
-            classification = "Stable Baseline Control Range (Tumor Negative Screen)"
-            
+        classification = "Epigenetic profile compatible with METHYLOX tumor panel" if mean_beta >= 0.1000 else "Stable Baseline Control Range (Tumor Negative Screen)"
         guide_telemetry = {f"MOX-SG-{i:02d}": random.randint(1, 4) if mean_beta >= 0.1000 else random.randint(0, 1) for i in range(1, 16)}
         
         conn = get_db_connection()
         cur = conn.cursor()
-        
-        cur.execute(
-            "UPDATE samples SET workflow_state = 'Clinical Report Compiled' WHERE sample_id = %s",
-            (sample_id,)
-        )
-        
+        cur.execute("UPDATE samples SET workflow_state = 'Clinical Report Compiled' WHERE sample_id = %s", (sample_id,))
         hash_security = f"HSH-{random.randint(10000, 99999)}A{random.randint(100, 999)}X"
         cur.execute(
-            """
-            INSERT INTO reports (muestra_id, paciente_id, score, clasificacion, guias_activas, operador, hash_seguridad)
-            VALUES (%s, (SELECT patient_id FROM samples WHERE sample_id = %s), %s, %s, %s, %s, %s)
-            """,
-            (sample_id, sample_id, mean_beta, classification, 
-             ";".join([k for k, v in guide_telemetry.items() if v > 1]), 
-             current_user.username, hash_security)
+            "INSERT INTO reports (muestra_id, paciente_id, score, clasificacion, guias_activas, operador, hash_seguridad) VALUES (%s, (SELECT patient_id FROM samples WHERE sample_id = %s), %s, %s, %s, %s, %s)",
+            (sample_id, sample_id, mean_beta, classification, ";".join([k for k, v in guide_telemetry.items() if v > 1]), current_user.username, hash_security)
         )
-        
         conn.commit()
-        cur.close()
-        conn.close()
-        
-        return {
-            "status": "SUCCESS",
-            "mean_beta": float(mean_beta),
-            "verdict": classification,
-            "guide_signals": guide_telemetry
-        }
-        
+        return {"status": "SUCCESS", "mean_beta": float(mean_beta), "verdict": classification, "guide_signals": guide_telemetry}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Computational core processing exception: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if 'cur' in locals(): cur.close()
+        if 'conn' in locals(): conn.close()
 
 @app.get("/api/v1/analysis/reports-directory", tags=["LIMS Operations"])
 async def get_reports_directory(current_user: TokenData = Depends(get_current_user_claims)):
-    """Compiles auditable report dossier sheets natively to feed Streamlit FPDF downloader."""
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
     try:
         cur.execute(
             """
@@ -447,14 +410,11 @@ async def get_reports_directory(current_user: TokenData = Depends(get_current_us
         )
         return cur.fetchall()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to query clinical dossier records: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         cur.close()
         conn.close()
 
-# ==============================================================================
-# 🧪 SYSTEM STATUS VERIFICATION ROUTE
-# ==============================================================================
 @app.get("/api/v1/health", tags=["System Status"])
 async def system_health_check():
     return {"status": "ONLINE", "timestamp": datetime.now(timezone.utc), "engine": "METHYLOX v3.0"}
