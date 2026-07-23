@@ -1,9 +1,7 @@
 import io
 import os
-import random
 import time
 from datetime import datetime
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
@@ -38,7 +36,7 @@ st.markdown("""
         padding-left: 3rem !important;  
         padding-right: 3rem !important;  
     }  
-    
+   
     /* Dark Compliance Corporate Sidebar */
     [data-testid="stSidebar"] {  
         background-color: #0B0F19 !important;  
@@ -52,7 +50,7 @@ st.markdown("""
         font-weight: 500 !important;
         font-size: 14px !important;
     }
-    
+   
     /* Typography System */
     .welcome-header {
         font-size: 28px !important;
@@ -65,7 +63,7 @@ st.markdown("""
         color: #64748B !important;
         margin-bottom: 25px !important;
     }
-    
+   
     /* Premium Grid Telemetry Panels */
     .kpi-row-container {
         display: grid;
@@ -106,7 +104,7 @@ st.markdown("""
         color: #64748B !important;
         margin: 0 !important;
     }
-    
+   
     /* Clean Content Containers (Commercial Grade) */
     .executive-card-white {  
         background-color: #FFFFFF !important;  
@@ -122,7 +120,7 @@ st.markdown("""
         color: #0F172A !important;
         margin-bottom: 16px !important;
     }
-    
+   
     /* Dynamic Buttons Controller */
     .action-subtext {
         font-size: 12px !important;
@@ -148,24 +146,6 @@ st.markdown("""
 
 # --- BACKEND API BACKBONE ROUTING ---
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
-
-# ============================================================================
-# 🧬 PRODUCTION RESILIENT BACKUPS (MOCK DATA FOR CLEAN DEPLOYMENT)
-# ============================================================================
-df_empty_patients = pd.DataFrame(columns=[
-    "Patient ID", "Anonymous Code", "Age", "Gender", "Facility Link", "LIMS Status", "Current Mean Beta (β)"
-])
-
-df_empty_samples = pd.DataFrame(columns=[
-    "Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"
-])
-
-# FIXED: All database key parameters translated to strict clinical English
-df_empty_reports = pd.DataFrame(columns=[
-    "sample_id", "patient_id", "anonymous_code", "beta_score", "result_assessment", 
-    "active_guides", "analysis_timestamp", "authorized_operator", "security_hash", "age", "gender", "institution"
-])
 
 # ============================================================================
 # 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
@@ -181,11 +161,13 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
-    # FORCE ABSOLUTE ABSTRACT RESET: Secure initialization inside sidebar context
+    # SECURE CORE INITIALIZATION
     if "jwt_access_token" not in st.session_state:
         st.session_state.jwt_access_token = None
     if "operator_display_name" not in st.session_state:
         st.session_state.operator_display_name = "Guest Operator"
+    if "user_role" not in st.session_state:
+        st.session_state.user_role = None # RBAC State Mirror
     if "id_hospital" not in st.session_state:
         st.session_state.id_hospital = 1
 
@@ -200,25 +182,24 @@ with st.sidebar:
         if login_submit:
             if login_username and login_password:
                 try:
-                    # OAUTH2 COMPLIANCE FORM-DATA TRANSMISSION: Formats data dictionary explicitly as URL-encoded body
                     payload_auth = {
                         "username": str(login_username).strip(),
                         "password": str(login_password).strip()
                     }
-                    
+                   
                     res = requests.post(
-                        f"{BACKEND_URL}/auth/login", 
-                        data=payload_auth, # Enforced raw form-data mapping dictionary stream
+                        f"{BACKEND_URL}/auth/login",
+                        data=payload_auth,
                         timeout=5
                     )
-                    
+                   
                     if res.status_code == 200:
                         token_data = res.json()
                         st.session_state.jwt_access_token = token_data["access_token"]
-                        
-                        # FIXED: Safe username rendering extraction to avoid list attribute manipulation crashes
                         st.session_state.operator_display_name = str(login_username)
-                        
+                        # Extract real role token injected by FastAPI database mapping
+                        st.session_state.user_role = token_data.get("role", "tech").lower()
+                       
                         st.success("Access Granted")
                         st.rerun()
                     else:
@@ -233,6 +214,7 @@ with st.sidebar:
             <div style='background-color:#1E293B; border-radius:8px; padding:12px; margin-bottom:15px;'>
                 <p style='margin:0; font-size:11px; color:#94A3B8;'>Authenticated Account:</p>
                 <p style='margin:0; font-size:14px; font-weight:700; color:#E2E8F0;'>{st.session_state.operator_display_name}</p>
+                <p style='margin:0; font-size:11px; font-weight:700; color:#38BDF8; text-transform:uppercase;'>Role: {st.session_state.user_role}</p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -241,14 +223,23 @@ with st.sidebar:
         if st.button("🚪 Disconnect Session", use_container_width=True):
             st.session_state.jwt_access_token = None
             st.session_state.operator_display_name = "Guest Operator"
+            st.session_state.user_role = None
             st.session_state.id_hospital = 1
             st.rerun()
 
     st.markdown("---")
+    
+    # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING ---
     if st.session_state.jwt_access_token:
+        # Build adaptive scopes list matching authorization level
+        available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
+        
+        if st.session_state.user_role == "admin":
+            available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
+        
         nav_selection = st.radio(
             "Operational Scope Selector",
-            ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports", "Identity Governance", "⚙️ System Settings"],
+            available_scopes,
             label_visibility="collapsed"
         )
     else:
@@ -268,7 +259,7 @@ with st.sidebar:
 headers = {"Authorization": f"Bearer {st.session_state.jwt_access_token}"} if st.session_state.jwt_access_token else {}
 
 # ============================================================================
-# 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY
+# 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
 # ============================================================================
 
 if nav_selection == "🔒 Access Restricted":
@@ -278,14 +269,13 @@ if nav_selection == "🔒 Access Restricted":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 📊 TAB 1: DASHBOARD MATRIX (REAL-TIME PLATFORM TELEMETRY - COMPREHENSIVE)
+# 📊 TAB 1: DASHBOARD MATRIX (REAL-TIME PLATFORM TELEMETRY)
 # ----------------------------------------------------------------------------
 elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Bienvenida, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
-    current_date_str = datetime.now().strftime("%d de mayo de %Y")
+    current_date_str = datetime.now().strftime("%d de %B de %Y")
     st.markdown(f"<p class='welcome-caption'>Resumen de actividad del laboratorio - {current_date_str}</p>", unsafe_allow_html=True)
-    
-    # 📡 LIVE SERVICE TELEMETRY DATA HUB Extraction
+   
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", headers=headers, timeout=3)
         if res_telemetry.status_code == 200:
@@ -294,15 +284,13 @@ elif nav_selection == "Dashboard Matrix":
             metric_processing = live_data.get("in_progress", 0)
             metric_ready = live_data.get("ready_analyses", 0)
             metric_qc = f"{live_data.get('qc_pass_rate', 100.0)}%"
-            raw_guide_signals = live_data.get("guide_signals", [])
         else:
-            raise Exception()
+            st.error("❌ Technical Error: Unable to fetch live core diagnostic metrics from Render Cloud.")
+            st.stop()
     except Exception:
-        # PURE ZERO COMMERCIAL FRESH LAUNCH DEFAULT
-        metric_received = 0; metric_processing = 0; metric_ready = 0; metric_qc = "100%"
-        raw_guide_signals = []
-    
-    # Grid KPIs Layout Implementation matching target screen
+        st.error("❌ Connectivity Error: Render Cloud Backend is unreachable.")
+        st.stop()
+   
     st.markdown(f"""
     <div class="kpi-row-container">
         <div class="kpi-card-commercial">
@@ -323,7 +311,7 @@ elif nav_selection == "Dashboard Matrix":
         </div>
     </div>
     """, unsafe_allow_html=True)
-    
+   
     with st.container():
         col_left, col_right = st.columns(2)
         with col_left:
@@ -336,10 +324,10 @@ elif nav_selection == "Dashboard Matrix":
                 else:
                     st.info("ℹ️ Intake Queue Clean. No active sample workflows logged for this node context.")
             except Exception:
-                st.info("ℹ️ Intake Queue Clean. No active sample workflows logged for this node context.")
-            st.markdown('<p style="color:#0284C7; font-size:13px; font-weight:600; cursor:pointer; margin-top:15px;">Ver todas las actividades →</p>', unsafe_allow_html=True)
+                st.error("❌ Connectivity Error: Unable to fetch recent operations.")
+                st.stop()
             st.markdown('</div>', unsafe_allow_html=True)
-            
+           
         with col_right:
             st.markdown('<div class="executive-card-white" style="height: 410px;">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">Resumen de análisis</div>', unsafe_allow_html=True)
@@ -353,59 +341,62 @@ elif nav_selection == "Dashboard Matrix":
             fig_donut.update_layout(showlegend=True, height=220, margin=dict(l=10, r=10, t=10, b=10), legend=dict(orientation="h", y=-0.2))
             st.plotly_chart(fig_donut, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
-            
-    # Quick Actions Matrix Row
-    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-    st.markdown('<div class="card-title-clinical">Acciones rápidas</div>', unsafe_allow_html=True)
-    act_col1, act_col2, act_col3, act_col4 = st.columns(4)
-    with act_col1:
-        st.markdown("<p style='font-weight:700; font-size:14px; margin:0;'>📥 Cargar archivo</p>", unsafe_allow_html=True)
-        st.markdown("<p class='action-subtext'>Cargar archivo de secuenciación (FASTQ, BAM, VCF).</p>", unsafe_allow_html=True)
-        if st.button("Cargar", key="b_l", use_container_width=True): st.info("Redirecting...")
-    with act_col2:
-        st.markdown("<p style='font-weight:700; font-size:14px; margin:0;'>🧪 Registrar muestra</p>", unsafe_allow_html=True)
-        st.markdown("<p class='action-subtext'>Registrar nueva muestra molecular dentro del LIMS.</p>", unsafe_allow_html=True)
-        if st.button("Registrar", key="b_r", use_container_width=True): st.info("Redirecting...")
-    with act_col3:
-        st.markdown("<p style='font-weight:700; font-size:14px; margin:0;'>📊 Ejecutar análisis</p>", unsafe_allow_html=True)
-        st.markdown("<p class='action-subtext'>Iniciar nuevo análisis matemático de metilación CpG.</p>", unsafe_allow_html=True)
-        if st.button("Iniciar", key="b_i", use_container_width=True): st.info("Redirecting...")
-    with act_col4:
-        st.markdown("<p style='font-weight:700; font-size:14px; margin:0;'>📜 Generar reporte</p>", unsafe_allow_html=True)
-        st.markdown("<p class='action-subtext'>Generar y firmar reporte clínico inmunooncológico.</p>", unsafe_allow_html=True)
-        if st.button("Generar", key="b_g", use_container_width=True): st.info("Redirecting...")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 👩‍⚕️ TAB 2: PATIENTS (100% EXHAUSTIVE CLINICAL MAPPING - INTEGRAL VERSION)
+# 👩‍⚕️ TAB 2: PATIENTS (REAL INTEGRAL DATA CONNECTIONS)
 # ----------------------------------------------------------------------------
 elif nav_selection == "Patients":
     st.markdown("<h2 class='welcome-header'>👩‍⚕️ Patient Management & Molecular Directory</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Query database cohorts and analyze single-subject biomarker longitudinal trends</p>", unsafe_allow_html=True)
-    
+   
+    try:
+        res_hosp = requests.get(f"{BACKEND_URL}/hospitals/directory", headers=headers, timeout=2)
+        if res_hosp.status_code == 200:
+            hospitals_dir = res_hosp.json()
+            hospitals_mapped = {h["name"]: h["id"] for h in hospitals_dir}
+        else:
+            st.error("❌ Failed to resolve active clinical nodes mapping.")
+            st.stop()
+    except Exception:
+        st.error("❌ Connection failed fetching institutional node matrices.")
+        st.stop()
+
     with st.container():
         p1, p2 = st.columns(2)
         with p1:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">📝 Enroll New Subject Molecular Profile</div>', unsafe_allow_html=True)
-            new_p_id = st.text_input("Unique Patient ID Reference", value=f"PAC-{random.randint(100,999)}")
-            new_p_code = st.text_input("Security Anonymous Code", value=f"METH-ANON-{random.randint(10,99)}K")
-            new_p_edad = st.number_input("Age (Years)", min_value=18, max_value=100, value=45)
-            new_p_sexo = st.selectbox("Biological Gender Matrix", ["Female", "Male"])
-            selected_p_inst = st.selectbox("Assign Institutional Origin Node Location", hospitals_list)
-           
-            if st.button("Save Molecular Registry Record into PostgreSQL", use_container_width=True):
-                payload_patient = {
-                    "id_patient": new_p_id, "full_name": new_p_code,
-                    "date_of_birth": f"{datetime.now().year - new_p_edad}-01-01", "gender": new_p_sexo
-                }
-                try:
-                    res_p = requests.post(f"{BACKEND_URL}/lims/enroll-patient", json=payload_patient, headers=headers, timeout=3)
-                    if res_p.status_code == 200 or res_p.status_code == 201:
-                        st.success(f"✅ Profile {new_p_id} successfully synchronized into PostgreSQL.")
-                        st.rerun()
-                except Exception:
-                    st.success(f"✅ [FALLBACK ACTIVE] Profile {new_p_id} stored in volatile demonstration state cache.")
+            
+            if st.session_state.user_role == "tech":
+                st.warning("🔒 Access Denied: Laboratory technicians possess read-only permissions inside the cohort registry.")
+            else:
+                new_p_id = st.text_input("Unique Patient ID Reference")
+                new_p_code = st.text_input("Security Anonymous Code")
+                new_p_edad = st.number_input("Age (Years)", min_value=18, max_value=100, value=45)
+                new_p_sexo = st.selectbox("Biological Gender Matrix", ["Female", "Male"])
+                selected_p_inst_name = st.selectbox("Assign Institutional Origin Node Location", list(hospitals_mapped.keys()))
+               
+                if st.button("Save Molecular Registry Record into PostgreSQL", use_container_width=True):
+                    if not new_p_id or not new_p_code:
+                        st.error("❌ Clinical validation failed: Missing target identification codes.")
+                    else:
+                        payload_patient = {
+                            "id_patient": new_p_id, 
+                            "full_name": new_p_code,
+                            "date_of_birth": f"{datetime.now().year - new_p_edad}-01-01", 
+                            "gender": new_p_sexo,
+                            "hospital_id": int(hospitals_mapped[selected_p_inst_name])
+                        }
+                        try:
+                            res_p = requests.post(f"{BACKEND_URL}/lims/enroll-patient", json=payload_patient, headers=headers, timeout=3)
+                            if res_p.status_code in:
+                                st.success(f"✅ Profile {new_p_id} successfully synchronized into PostgreSQL.")
+                                time.sleep(0.5)
+                                st.rerun()
+                            else:
+                                st.error(f"❌ Database Rejection: {res_p.json().get('detail', 'Write violation')}")
+                        except Exception:
+                            st.error("❌ Operational Error: Backend unreachable during relational synchronization.")
             st.markdown('</div>', unsafe_allow_html=True)
            
         with p2:
@@ -413,204 +404,245 @@ elif nav_selection == "Patients":
             st.markdown('<div class="card-title-clinical">📋 LIMS Cohort Registry & Active Population Directory</div>', unsafe_allow_html=True)
             try:
                 res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
-                df_patients = pd.DataFrame(res_cohort.json()) if res_cohort.status_code == 200 else df_empty_patients
+                if res_cohort.status_code == 200:
+                    cohort_data = res_cohort.json()
+                    if cohort_data:
+                        df_patients = pd.DataFrame(cohort_data)
+                    else:
+                        df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Facility Link", "Current Mean Beta (β)"])
+                else:
+                    st.error("❌ Failed to query clinical cohorts.")
+                    st.stop()
             except Exception:
-                df_patients = df_empty_patients
-                
+                st.error("❌ Pipeline Error: Relational population data could not be fetched from Neon.")
+                st.stop()
+               
             st.dataframe(df_patients, use_container_width=True, hide_index=True)
             st.markdown('</div>', unsafe_allow_html=True)
-            
-            # --- FULL HIGH-FIDELITY LONGITUDINAL SCORE GRAPH ENGINE ---
+           
+            # --- LONGITUDINAL SCORE GRAPH ENGINE ---
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">📈 Longitudinal Evolution of Epigenetic Biomarkers (Beta Score History)</div>', unsafe_allow_html=True)
-            
-            if not df_patients.empty:
+           
+            if not df_patients.empty and "Patient ID" in df_patients.columns:
                 p_select = st.selectbox("Select Patient Context ID to trace history metrics across records:", df_patients["Patient ID"].unique())
                
                 try:
                     res_history = requests.get(f"{BACKEND_URL}/analysis/history/{p_select}", headers=headers, timeout=2)
-                    df_long = pd.DataFrame(res_history.json())
+                    if res_history.status_code == 200:
+                        history_json = res_history.json()
+                        if history_json:
+                            df_long = pd.DataFrame(history_json)
+                            fig_long = go.Figure([go.Scatter(
+                                x=df_long["fecha_analisis"], y=df_long["score"], mode='lines+markers',
+                                line=dict(color='#2563EB', width=3), marker=dict(size=8, symbol="circle")
+                            )])
+                            fig_long.update_layout(
+                                height=160, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10),
+                                xaxis=dict(gridcolor='#F1F5F9'), yaxis=dict(gridcolor='#F1F5F9', range=[0, 0.5])
+                            )
+                            st.plotly_chart(fig_long, use_container_width=True)
+                        else:
+                            st.info("ℹ️ No historical biomarker records tracked for the chosen patient segment.")
+                    else:
+                        st.error("❌ Execution Error: Could not resolve patient trace data index.")
                 except Exception:
-                    df_long = pd.DataFrame({
-                        "fecha_analisis": ["2026-01-11", "2026-04-16", "2026-07-20"],
-                        "score": [0.0450, 0.0820, 0.1245],
-                        "guias_activas": ["None", "MOX-SG-01", "MOX-SG-01;MOX-SG-07"]
-                    })
-               
-                fig_long = go.Figure([go.Scatter(
-                    x=df_long["fecha_analisis"], y=df_long["score"], mode='lines+markers',
-                    line=dict(color='#2563EB', width=3), marker=dict(size=8, symbol="circle")
-                )])
-                fig_long.update_layout(
-                    height=160, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10),
-                    xaxis=dict(gridcolor='#F1F5F9'), yaxis=dict(gridcolor='#F1F5F9', range=[0, 0.5])
-                )
-                st.plotly_chart(fig_long, use_container_width=True)
+                    st.error("❌ Network Exception: Timeline analysis channel disconnected.")
             else:
                 st.info("ℹ️ No clinical records available to map historical longitudinal biomarkers.")
             st.markdown('</div>', unsafe_allow_html=True)
-            
-            # --- FULL HIGH-FIDELITY LONGITUDINAL SCORE GRAPH ENGINE ---
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">📈 Longitudinal Evolution of Epigenetic Biomarkers (Beta Score History)</div>', unsafe_allow_html=True)
-            p_select = st.selectbox("Select Patient Context ID to trace history metrics across records:", df_pacientes["Patient ID"].unique())
-           
-            try:
-                res_history = requests.get(f"{BACKEND_URL}/analysis/history/{p_select}", headers=headers, timeout=2)
-                df_long = pd.DataFrame(res_history.json())
-            except Exception:
-                df_long = pd.DataFrame({
-                    "fecha_analisis": ["2026-01-11", "2026-04-16", "2026-07-20"],
-                    "score": [0.0450, 0.0820, 0.1245],
-                    "guias_activas": ["None", "MOX-SG-01", "MOX-SG-01;MOX-SG-07"]
-                })
-           
-            fig_long = go.Figure([go.Scatter(
-                x=df_long["fecha_analisis"], y=df_long["score"], mode='lines+markers',
-                line=dict(color='#2563EB', width=3), marker=dict(size=8, symbol="circle")
-            )])
-            fig_long.update_layout(
-                height=160, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10),
-                xaxis=dict(gridcolor='#F1F5F9'), yaxis=dict(gridcolor='#F1F5F9', range=[0, 0.5])
-            )
-            st.plotly_chart(fig_long, use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧪 TAB 3: LIMS SAMPLES (100% TOTAL CHAIN OF CUSTODY AUDIT COMPLIANCE)
+# 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
 # ----------------------------------------------------------------------------
-elif nav_selection == "Muestras LIMS":
+elif nav_selection == "LIMS Samples":
     st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Chain of Custody</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Validate chronological workflow history pathways and operational audit logs</p>", unsafe_allow_html=True)
-    
+   
+    try:
+        res_p_list = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
+        if res_p_list.status_code == 200 and res_p_list.json():
+            registered_patients = [p["Patient ID"] for p in res_p_list.json()]
+        else:
+            registered_patients = []
+    except Exception:
+        st.error("❌ Critical Infrastructure Failure: Unable to fetch dynamic patient dependencies.")
+        st.stop()
+
     with st.container():
         m1, m2 = st.columns(2)
         with m1:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
-            new_m_id = st.text_input("Unique Sample Asset ID", value=f"MX-{random.randint(100,999)}")
-            asoc_p_id = st.selectbox("Associated Patient Subject Profile Link", ["PAC-001", "PAC-002"])
-            new_m_qr = st.text_input("Barcode Hardware QR Matrix Identifier", value=f"QR-{random.randint(10000,99999)}")
-            new_m_tipo = st.selectbox("Extraction Matrix Assay Specimen Type", ["Plasma", "Whole Blood", "Tissue"])
-            new_m_ext = st.date_input("Biological Extraction Timepoint Scope", value=datetime.now())
-            new_m_rec = st.date_input("Laboratory Counter Counter-Intake Timepoint", value=datetime.now())
             
-            new_m_est = st.selectbox("Chain of Custody Operational Workflow State", [
-                "Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", 
-                "Bioinformatic Processing", "Clinical Report Compiled", "Quality Control (QC) Failure"
-            ])
-            
-            try:
-                res_staff = requests.get(f"{BACKEND_URL}/auth/active-operators", headers=headers, timeout=2)
-                staff_options = [u["full_name"] for u in res_staff.json()] if res_staff.status_code == 200 else [st.session_state.get("operator_display_name", "Authenticated Operator")]
-            except Exception:
-                staff_options = [st.session_state.get("operator_display_name", "Authenticated Operator")]
-                
-            selected_m_resp = st.selectbox("Responsible Lab Practitioner Signature Verification", staff_options)
-           
-            # FIXED INDENTATION: Aligned correctly with 12 spaces of margin to fix the cloud crash
-            if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
-                payload_sample = {
-                    "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
-                    "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": selected_m_resp
-                }
+            if st.session_state.user_role == "doctor":
+                st.warning("🔒 Access Denied: Medical personnel are restricted from altering LIMS physical custody states.")
+            elif not registered_patients:
+                st.warning("⚠️ Action Locked: You must enroll at least one patient record before conducting laboratory asset intake operations.")
+            else:
+                new_m_id = st.text_input("Unique Sample Asset ID")
+                asoc_p_id = st.selectbox("Associated Patient Subject Profile Link", registered_patients)
+                new_m_qr = st.text_input("Barcode Hardware QR Matrix Identifier")
+                new_m_tipo = st.selectbox("Extraction Matrix Assay Specimen Type", ["Plasma", "Whole Blood", "Tissue"])
+               
+                new_m_est = st.selectbox("Chain of Custody Operational Workflow State", [
+                    "Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing",
+                    "Bioinformatic Processing", "Clinical Report Compiled"
+                ])
+               
                 try:
-                    res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=3)
-                    if res_intake.status_code == 200 or res_intake.status_code == 201: 
-                        st.success("Asset logged successfully.")
-                        st.rerun()
+                    res_staff = requests.get(f"{BACKEND_URL}/auth/active-operators", headers=headers, timeout=2)
+                    staff_options = [u["full_name"] for u in res_staff.json()] if res_staff.status_code == 200 else [st.session_state.operator_display_name]
                 except Exception:
-                    st.success(f"✅ [FALLBACK CACHE] Asset {new_m_id} successfully appended onto local volatile session stream.")
+                    staff_options = [st.session_state.operator_display_name]
+                   
+                selected_m_resp = st.selectbox("Responsible Lab Practitioner Signature Verification", staff_options)
+               
+                if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
+                    if not new_m_id or not new_m_qr:
+                        st.error("❌ Input Constraint: Asset ID and Hardware Barcodes are required.")
+                    else:
+                        payload_sample = {
+                            "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
+                            "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": selected_m_resp
+                        }
+                        try:
+                            res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=3)
+                            if res_intake.status_code in:
+                                st.success("Asset logged successfully.")
+                                time.sleep(0.5)
+                                st.rerun()
+                            else:
+                                st.error(f"❌ LIMS Node Rejection: {res_intake.json().get('detail', 'Invalid parameter constraints')}")
+                        except Exception:
+                            st.error("❌ Connectivity Failure: Could not commit asset state transaction to Render.")
             st.markdown('</div>', unsafe_allow_html=True)
-            
+           
         with m2:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">🗄️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
             try:
                 res_s = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=2)
-                df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 else df_empty_samples
+                if res_s.status_code == 200:
+                    samples_data = res_s.json()
+                    if samples_data:
+                        df_samples = pd.DataFrame(samples_data)
+                    else:
+                        df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
+                else:
+                    st.error("❌ Failed to query warehouse asset registers.")
+                    st.stop()
             except Exception:
-                df_samples = df_empty_samples
-                
+                st.error("❌ Pipeline Verification Interrupted: Database infrastructure is unresponsive.")
+                st.stop()
+               
             st.dataframe(df_samples, use_container_width=True, hide_index=True)
             st.markdown('</div>', unsafe_allow_html=True)
-            
-            if not df_samples.empty:
+           
+            if not df_samples.empty and "Sample ID" in df_samples.columns:
                 st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
                 st.markdown('<div class="card-title-clinical">📋 Log Verification History & Custody Flow Telemetry (LIMS Audit)</div>', unsafe_allow_html=True)
                 m_track = st.selectbox("Select Asset Token to audit tracking pathway logs:", df_samples["Sample ID"].unique())
                 try:
                     res_track = requests.get(f"{BACKEND_URL}/lims/samples/track/{m_track}", headers=headers, timeout=2)
-                    df_h_track = pd.DataFrame(res_track.json())
+                    if res_track.status_code == 200:
+                        df_h_track = pd.DataFrame(res_track.json())
+                        st.dataframe(df_h_track, use_container_width=True, hide_index=True)
+                    else:
+                        st.error("❌ Unable to trace cryptographic chain verification history for the chosen ID.")
                 except Exception:
-                    df_h_track = pd.DataFrame({
-                        "Laboratory Stage": ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"],
-                        "Timestamp": ["2026-04-15 09:12", "2026-04-15 14:30", "2026-04-16 08:22", "2026-04-16 14:15", "2026-04-16 14:32"],
-                        "Authority Signature": [st.session_state.get("operator_display_name", "Authenticated Operator")] * 5
-                    })
-                st.dataframe(df_h_track, use_container_width=True, hide_index=True)
+                    st.error("❌ Audit Exception: Secure routing pathway broken.")
                 st.markdown('</div>', unsafe_allow_html=True)
+
 # ----------------------------------------------------------------------------
-# 🧬 TAB 4: METHYLOX ENGINE (PREMIUM CRISPR PIPELINE LOGIC WITH 15-GUIDE CHART)
+# 🧬 TAB 4: METHYLOX ENGINE (CRISPR PIPELINE LOGIC - REAL COMPUTE)
 # ----------------------------------------------------------------------------
 elif nav_selection == "METHYLOX Engine":
     st.markdown("<h2 class='welcome-header'>🧬 Computational Pipeline: 15 Multiplexed MOX Guide Panel</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Execute high-density CRISPR-Cas12a calling matrices against raw sequence parameters</p>", unsafe_allow_html=True)
-    
+   
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     st.markdown('<div class="card-title-clinical">🚀 Quantitative Epigenetic Run Over Raw Methylation Matrices</div>', unsafe_allow_html=True)
-    
-    m_target = st.selectbox("Select Pending Asset ID for Pipeline Ingestion Queue:", ["MX-001", "MX-002", "MX-003"])
-    csv_ejemplo = "Probe_ID,Methylated_Intensity,Unmethylated_Intensity\nMOX-SG-01,820,100\nMOX-SG-07,760,140\nMOX-SG-12,910,20\ncg00000024,100,900\ncg00000145,500,400\nMOX-SG-04,150,850\nMOX-SG-15,620,310"
-    st.download_button("📥 Download Reference Template: methylation_data_raw.csv", data=csv_ejemplo, file_name="methylation_data_raw.csv", mime="text/csv")
    
-    uploaded_file = st.file_uploader("Upload Sequencer Raw CpG Methylation File Context (.CSV)", type=["csv"])
-   
-    if uploaded_file is not None:
-        st.success("📦 Raw structural parameters ingested into kernel stream memory buffer. Core pipeline armed.")
-        if st.button("Execute Automated Analytical Pipeline Run", use_container_width=True):
-            p_b1 = st.progress(0, text="Validating Raw Sequence File Layout Architecture...")
-            time.sleep(0.3)
-            p_b1.progress(50, text="✓ Genomic Discrimination: Running automated isolation filters against off-target probes...")
-            time.sleep(0.3)
-            p_b1.progress(100, text="✓ Bioinformatic analytics pipeline successfully resolved under Phred Quality Q30 limits.")
-            
-            # Activation frequency graph reconstruction (15 Dynamic Patent Guides Plotly)
-            st.write("##")
-            st.markdown("#### 📊 Proprietary CRISPR Guide Activation Frequency Matrix (MOX Panel)")
-            guia_counts = {f"MOX-SG-{i:02d}": random.randint(1, 4) for i in range(1, 16)}
-            fig_g = go.Figure([go.Bar(x=list(guia_counts.keys()), y=list(guia_counts.values()), marker_color='#2563EB', width=0.4)])
-            fig_g.update_layout(height=240, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10), yaxis=dict(gridcolor='#F1F5F9'))
-            st.plotly_chart(fig_g, use_container_width=True)
+    if st.session_state.user_role == "doctor":
+        st.warning("🔒 Access Denied: Medical roles do not possess computational clearance to launch sequencing kernel iterations.")
+    else:
+        try:
+            res_p_samples = requests.get(f"{BACKEND_URL}/lims/samples/pending-evaluation", headers=headers, timeout=2)
+            if res_p_samples.status_code == 200:
+                pending_samples = res_p_samples.json()
+            else:
+                st.error("❌ Failed to acquire biological ingestion pipelines.")
+                st.stop()
+        except Exception:
+            st.error("❌ Core Node Error: Database pipeline unavailable.")
+            st.stop()
+
+        if not pending_samples:
+            st.info("ℹ️ Pipeline Standby: No pending samples in queue requiring CRISPR bioinformatic scoring calculation.")
+        else:
+            m_target = st.selectbox("Select Pending Asset ID for Pipeline Ingestion Queue:", pending_samples)
+            csv_ejemplo = "Probe_ID,Methylated_Intensity,Unmethylated_Intensity\nMOX-SG-01,820,100\nMOX-SG-07,760,140\nMOX-SG-12,910,20\ncg00000024,100,900\ncg00000145,500,400\nMOX-SG-04,150,850\nMOX-SG-15,620,310"
+            st.download_button("📥 Download Reference Template: methylation_data_raw.csv", data=csv_ejemplo, file_name="methylation_data_raw.csv", mime="text/csv")
+           
+            uploaded_file = st.file_uploader("Upload Sequencer Raw CpG Methylation File Context (.CSV)", type=["csv"])
+           
+            if uploaded_file is not None:
+                st.success("📦 Raw structural parameters ingested into kernel stream memory buffer. Core pipeline armed.")
+                if st.button("Execute Automated Analytical Pipeline Run", use_container_width=True):
+                    files_payload = {"file": (uploaded_file.name, uploaded_file.getvalue(), "text/csv")}
+                    try:
+                        with st.spinner("Processing Bioinformatic Analytics under Phred Q30 parameters..."):
+                            res_calc = requests.post(f"{BACKEND_URL}/lims/samples/evaluate/{m_target}", files=files_payload, headers=headers, timeout=10)
+                        
+                        if res_calc.status_code == 200:
+                            calc_result = res_calc.json()
+                            st.success(f"⚡ Core mathematical analytics unraveled. Score registered: {calc_result['mean_beta']:.4f}")
+                            
+                            st.write("##")
+                            st.markdown("#### 📊 Proprietary CRISPR Guide Activation Frequency Matrix (MOX Panel)")
+                            guia_counts = calc_result.get("guide_signals", {})
+                            if guia_counts:
+                                fig_g = go.Figure([go.Bar(x=list(guia_counts.keys()), y=list(guia_counts.values()), marker_color='#2563EB', width=0.4)])
+                                fig_g.update_layout(height=240, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10), yaxis=dict(gridcolor='#F1F5F9'))
+                                st.plotly_chart(fig_g, use_container_width=True)
+                            else:
+                                st.warning("⚠️ No active CRISPR guides registered for this sample profile sequence layout.")
+                        else:
+                            st.error(f"❌ Computational Error: {res_calc.json().get('detail', 'Algorithmic alignment exception')}")
+                    except Exception:
+                        st.error("❌ Communication Crash: Kernel processing core timed out or dropped connection.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 📋 TAB 5: REPORTS (100% EXHAUSTIVE DEFENSIBLE PDF CLINICAL DOSSIER ENGINE)
+# 📋 TAB 5: REPORTS (EXHAUSTIVE DEFENSIBLE PDF CLINICAL DOSSIER ENGINE)
 # ----------------------------------------------------------------------------
 elif nav_selection == "Reports":
     from fpdf import FPDF
     st.markdown("<h2 class='welcome-header'>📜 Issuance of Defendible Clinical Dossiers & Technical Reports</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Verify mathematical calls and download FDA/HIPAA compliant cryptographic sheets</p>", unsafe_allow_html=True)
-    
+   
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     try:
         res_reports = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=2)
-        df_rep_list = pd.DataFrame(res_reports.json())
+        if res_reports.status_code == 200:
+            reports_data = res_reports.json()
+            if not reports_data:
+                st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet.")
+                st.markdown('</div>', unsafe_allow_html=True)
+                st.stop()
+            df_rep_list = pd.DataFrame(reports_data)
+        else:
+            st.error("❌ System Error: Denied access to compiled report indexes.")
+            st.stop()
     except Exception:
-        # High fidelity dataset matching exactly the original comprehensive parameters
-        df_rep_list = pd.DataFrame({
-            "muestra_id": ["MX-001", "MX-002"], "paciente_id": ["PAC-001", "PAC-001"],
-            "nombre_codigo": ["METH-ANON-09K", "METH-ANON-09K"], "score": [0.1245, 0.0152],
-            "clasificacion": ["Epigenetic profile compatible with METHYLOX tumor panel", "Stable Baseline Control Range"],
-            "guias_activas": ["MOX-SG-01;MOX-SG-07;MOX-SG-12", "None"], "fecha_analisis": ["2026-01-11 11:15", "2026-04-16 14:32"],
-            "operador": ["Lucía Martínez", "Lucía Martínez"], "hash_seguridad": ["HSH-99214A882X", "HSH-10294B119Z"],
-            "age": ["45", "52"], "sexo": ["Female", "Female"], "institucion": [hospitals_list, hospitals_list]
-        })
+        st.error("❌ Integrity Error: Technical clinical dossier store could not be reached.")
+        st.stop()
    
     st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
         columns={'muestra_id':'Sample ID', 'paciente_id':'Patient ID', 'score':'Beta Score', 'clasificacion':'Result Assessment', 'fecha_analisis':'Timestamp', 'hash_seguridad':'Security Hash'}
     ), use_container_width=True, hide_index=True)
-    
+   
     st.write("---")
     m_select = st.selectbox("Select Target Sample ID for Report Verification & Electronic Signature Ingestion:", df_rep_list["muestra_id"].unique())
     datos_rep = df_rep_list[df_rep_list["muestra_id"] == m_select].iloc[-1]
@@ -618,7 +650,7 @@ elif nav_selection == "Reports":
    
     st.write("##")
    
-    # FULL COMPREHENSIVE FPDF CORE ENGINE RECONSTRUCTION (HIGH-FIDELITY MEDICAL PDF)
+    # FPDF CORE ENGINE RECONSTRUCTION (HIGH-FIDELITY MEDICAL PDF)
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Helvetica", "B", 14)
@@ -636,32 +668,32 @@ elif nav_selection == "Reports":
     pdf.set_text_color(15, 23, 42)
     pdf.cell(190, 6, "1. DIGITAL CHAIN OF CUSTODY AUDIT TRAIL (LIMS TELEMETRY)", ln=True)
     pdf.set_font("Helvetica", "", 9)
-    pdf.cell(95, 5, f"Sample Asset ID: {datos_rep['muestra_id']}", border=0)
-    pdf.cell(95, 5, f"Verification Security Hash: {datos_rep['hash_seguridad']}", border=0, ln=True)
-    pdf.cell(95, 5, f"Authorized Operator Signature: {datos_rep['operador']}", border=0)
-    pdf.cell(95, 5, f"Server Transaction Timestamp: {datos_rep['fecha_analisis']}", border=0, ln=True)
+    pdf.cell(95, 5, f"Sample Asset ID: {str(datos_rep['muestra_id'])}", border=0)
+    pdf.cell(95, 5, f"Verification Security Hash: {str(datos_rep['hash_seguridad'])}", border=0, ln=True)
+    pdf.cell(95, 5, f"Authorized Operator Signature: {str(datos_rep['operador'])}", border=0)
+    pdf.cell(95, 5, f"Server Transaction Timestamp: {str(datos_rep['fecha_analisis'])}", border=0, ln=True)
     pdf.ln(3)
    
     pdf.set_font("Helvetica", "B", 10)
     pdf.cell(190, 6, "2. ANONYMIZED PATIENT MOLECULAR DIRECTORY PROFILE", ln=True)
     pdf.set_font("Helvetica", "", 9)
-    pdf.cell(95, 5, f"Patient Context ID: {datos_rep['paciente_id']}", border=0)
-    pdf.cell(95, 5, f"Security Anonymous Code String: {datos_rep['nombre_codigo']}", border=0, ln=True)
-    pdf.cell(95, 5, f"Age: {datos_rep['age']} Years", border=0)
-    pdf.cell(95, 5, f"Biological Gender Parameter: {datos_rep['sexo']}", border=0, ln=True)
-    pdf.cell(190, 5, f"Medical Corporate Facility Node: {datos_rep['institucion']}", ln=True)
+    pdf.cell(95, 5, f"Patient Context ID: {str(datos_rep['paciente_id'])}", border=0)
+    pdf.cell(95, 5, f"Security Anonymous Code String: {str(datos_rep['nombre_codigo'])}", border=0, ln=True)
+    pdf.cell(95, 5, f"Age: {str(datos_rep['age'])} Years", border=0)
+    pdf.cell(95, 5, f"Biological Gender Parameter: {str(datos_rep['sexo'])}", border=0, ln=True)
+    pdf.cell(190, 5, f"Medical Corporate Facility Node: {str(datos_rep['institucion'])}", ln=True)
     pdf.ln(3)
    
     pdf.set_font("Helvetica", "B", 10)
-    pdf.cell(190, 6, "3. QUANTITATIVE EPIGENETIC METHYLATION READOUT (CORE SAAMD ENGINE)", ln=True)
+    pdf.cell(190, 6, "3. QUANTITATIVE EPIGENETIC METHYLATION READOUT (CORE SAMD ENGINE)", ln=True)
     pdf.set_font("Helvetica", "", 9)
     pdf.cell(190, 5, f"Global Mean Methylation Beta Score (Multiplexed MOX Panel): {float(datos_rep['score']):.4f}", ln=True)
    
-    # Strict alignment with your 0.1000 Youden Cutoff boundary constraint
+    # Strict compliance tracking against the targeted Youden Cutoff boundary constraint (0.1000)
     if float(datos_rep['score']) >= 0.1000:
         pdf.set_text_color(220, 38, 38)
         pdf.set_font("Helvetica", "B", 9)
-        pdf.cell(190, 5, f"ALGORITHMIC CLINICAL VERDICT: {datos_rep['clasificacion']}", ln=True)
+        pdf.cell(190, 5, f"ALGORITHMIC CLINICAL VERDICT: {str(datos_rep['clasificacion'])}", ln=True)
         pdf.set_font("Helvetica", "I", 9)
         pdf.set_text_color(100, 116, 139)
         pdf.cell(190, 5, "INTERPRETATION SCORE: Positive ctDNA calling threshold surpassed. Complementary tissue biopsy suggested.", ln=True)
@@ -678,7 +710,7 @@ elif nav_selection == "Reports":
         pdf.set_font("Helvetica", "B", 10)
         pdf.cell(190, 6, "4. TECHNICAL BIOINFORMATIC BIOCHEMICAL APPENDIX", ln=True)
         pdf.set_font("Helvetica", "", 9)
-        pdf.cell(190, 5, f"Active Patent CRISPR Probes Panel Signatures: {datos_rep['guias_activas']}", ln=True)
+        pdf.cell(190, 5, f"Active Patent CRISPR Probes Panel Signatures: {str(datos_rep['guias_activas'])}", ln=True)
         pdf.cell(190, 5, "Genomic Alignment Quality Quality: Passes Phred Quality Score Q30 parameters.", ln=True)
        
     pdf.ln(10)
@@ -705,7 +737,7 @@ elif nav_selection == "Reports":
 elif nav_selection == "Identity Governance":
     st.markdown("<h2 class='welcome-header'>🔐 Identity Governance & Task Delegation</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Provision custom laboratory operational roles dynamically without hardcoding</p>", unsafe_allow_html=True)
-    
+   
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     with st.form("universal_user_provisioning_form", clear_on_submit=True):
         st.markdown("#### Create New Abstract Operator Account")
@@ -715,22 +747,30 @@ elif nav_selection == "Identity Governance":
             input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., John Doe")
         with c2:
             input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
-            target_role_id = st.number_input("System Assigned Role ID Reference Token", min_value=1, value=1, step=1)
-                
+            target_role_str = st.selectbox("System Assigned Operational Role Privilege", ["admin", "tech", "doctor"])
+               
         target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
         submit_btn = st.form_submit_button("🚀 Activate Identity & Delegate Tasks")
-        
+       
     if submit_btn:
         if not input_username or not input_password or not input_full_name:
             st.error("❌ All clinical identity fields are mandatory.")
         else:
-            payload_u = {"username": input_username, "password": input_password, "full_name": input_full_name, "dynamic_role_id": int(target_role_id), "hospital_id": int(target_hospital_id)}
+            payload_u = {
+                "username": input_username, 
+                "password": input_password, 
+                "full_name": input_full_name, 
+                "role": str(target_role_str), 
+                "hospital_id": int(target_hospital_id)
+            }
             try:
                 response = requests.post(f"{BACKEND_URL}/auth/provision-user", json=payload_u, headers=headers)
-                if response.status_code == 200 or response.status_code == 201: 
+                if response.status_code in:
                     st.success("⚡ Staff Identity Successfully Activated & Tasks Delegated Real-Time.")
+                else:
+                    st.error(f"❌ Identity Provisioning Rejection: {response.json().get('detail', 'Unauthorized operational sequence')}")
             except Exception:
-                st.success(f"✅ [OFFLINE SYSTEM CACHE] Identity {input_username} provisioned dynamically in local safety layer.")
+                st.error("❌ Deployment Connectivity Error: User profile could not be logged into database repository.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
@@ -739,7 +779,7 @@ elif nav_selection == "Identity Governance":
 elif nav_selection == "⚙️ System Settings":
     st.markdown("<h2 class='welcome-header'>⚙️ Core Calibration Settings & Kernel Monitor</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>System validation and mathematical processing rules parameters</p>", unsafe_allow_html=True)
-    
+   
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     st.markdown("<p style='color:#0F172A; font-weight:700; font-size:14px; margin-bottom:10px;'>📜 METHYLOX_DETERMINISTIC_RULES.PY (AUDITABLE CONTEXT)</p>", unsafe_allow_html=True)
     st.code("""
@@ -775,18 +815,12 @@ if st.sidebar.button("⚙️ Process Clinical Sample"):
         payload_vitro = {"control_blank": val_blank, "control_negative": val_negativo, "control_positive": val_positivo, "replicates": [rep1, rep2, rep3]}
         res_vitro = requests.post(f"{BACKEND_URL}/analysis/process-vitro", json=payload_vitro, headers=headers, timeout=2)
         if res_vitro.status_code == 200:
-            resultado_pipeline = {"estatus": "SUCCESS", "valor_beta_final": res_vitro.json()["calculated_mean_beta"], "resultado_clinico": res_vitro.json()["clinical_call"], "mensaje": "Validated via active PostgreSQL API node."}
+            res_data = res_vitro.json()
+            resultado_pipeline = {"estatus": "SUCCESS", "valor_beta_final": res_data["calculated_mean_beta"], "resultado_clinico": res_data["clinical_call"], "mensaje": "Validated via active PostgreSQL API node."}
         else:
             resultado_pipeline = {"estatus": "ERROR_CRITICO", "motivo": res_vitro.json().get("detail", "QC failure parameters triggered.")}
     except Exception:
-        mean_beta_calc = (rep1 + rep2 + rep3) / 3.0
-        if val_blank >= 0.0200 or val_negativo >= 0.0200:
-            resultado_pipeline = {"estatus": "ERROR_CRITICO", "motivo": "Contamination or high basal noise detected in negative controls."}
-        elif val_positivo < 0.80:
-            resultado_pipeline = {"estatus": "ERROR_CRITICO", "motivo": "Cas12a-Ultra amplification failure. Reagents degraded."}
-        else:
-            verdict_calc = "BREAST_CANCER_POSITIVE_DETECTION" if mean_beta_calc >= 0.1000 else "BREAST_CANCER_NEGATIVE_DETECTION"
-            resultado_pipeline = {"estatus": "SUCCESS", "valor_beta_final": mean_beta_calc, "resultado_clinico": verdict_calc, "mensaje": "Validated under standalone fail-safe parameters."}
+        resultado_pipeline = {"estatus": "ERROR_CRITICO", "motivo": "In Vitro Endpoint is unreachable. Standalone emergency fallback blocked under strict production parameters."}
    
     if resultado_pipeline["estatus"] == "ERROR_CRITICO":
         st.error(f"🚨 **CRITICAL_ERROR REGULATORY BLOCK**")
