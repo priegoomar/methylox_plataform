@@ -15,14 +15,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# RECTIFICACIÓN DE RUTA PARA RENDER: Copia directa del archivo en la raíz del contexto
-COPY requirements.txt .
+# RECTIFICACIÓN DE RUTA: Apunta a la ubicación real del archivo desde la raíz del repositorio
+COPY backend/requirements.txt .
 
 # Install production-grade Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia el contenido directo de la carpeta app en la raíz del contenedor
-COPY app/ ./app
+# RECTIFICACIÓN DE RUTA: Copia la carpeta app desde el directorio backend/app hacia el contenedor
+COPY backend/app/ ./app
 
 # Create necessary static directory for PDF reports compilation
 RUN mkdir -p static/reports
