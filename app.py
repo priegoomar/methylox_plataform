@@ -343,115 +343,109 @@ elif nav_selection == "Dashboard Matrix":
             st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 👩‍⚕️ TAB 2: PATIENTS (REAL INTEGRAL DATA CONNECTIONS)
+# 📊 TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT)
 # ----------------------------------------------------------------------------
 elif nav_selection == "Patients":
-    st.markdown("<h2 class='welcome-header'>👩‍⚕️ Patient Management & Molecular Directory</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Query database cohorts and analyze single-subject biomarker longitudinal trends</p>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>📊 Clinical Cohort Population Directory</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Enroll active subjects and monitor dynamic epigenetic tracing indexes across timelines</p>", unsafe_allow_html=True)
    
-    try:
-        res_hosp = requests.get(f"{BACKEND_URL}/hospitals/directory", headers=headers, timeout=2)
-        if res_hosp.status_code == 200:
-            hospitals_dir = res_hosp.json()
-            hospitals_mapped = {h["name"]: h["id"] for h in hospitals_dir}
+    p1, p2 = st.columns(2)
+    with p1:
+        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">➕ Enroll New Patient Profile Context</div>', unsafe_allow_html=True)
+       
+        if st.session_state.user_role == "cls":
+            st.warning("🔒 Access Denied: Laboratory practitioners do not possess operational clinical clearance to enroll subjects.")
         else:
-            st.error("❌ Failed to resolve active clinical nodes mapping.")
-            st.stop()
-    except Exception:
-        st.error("❌ Connection failed fetching institutional node matrices.")
-        st.stop()
-
-    with st.container():
-        p1, p2 = st.columns(2)
-        with p1:
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">📝 Enroll New Subject Molecular Profile</div>', unsafe_allow_html=True)
-            
-            if st.session_state.user_role == "tech":
-                st.warning("🔒 Access Denied: Laboratory technicians possess read-only permissions inside the cohort registry.")
-            else:
-                new_p_id = st.text_input("Unique Patient ID Reference")
-                new_p_code = st.text_input("Security Anonymous Code")
-                new_p_edad = st.number_input("Age (Years)", min_value=18, max_value=100, value=45)
-                new_p_sexo = st.selectbox("Biological Gender Matrix", ["Female", "Male"])
-                selected_p_inst_name = st.selectbox("Assign Institutional Origin Node Location", list(hospitals_mapped.keys()))
-               
-                if st.button("Save Molecular Registry Record into PostgreSQL", use_container_width=True):
-                    if not new_p_id or not new_p_code:
-                        st.error("❌ Clinical validation failed: Missing target identification codes.")
-                    else:
-                        payload_patient = {
-                            "id_patient": new_p_id, 
-                            "full_name": new_p_code,
-                            "date_of_birth": f"{datetime.now().year - new_p_edad}-01-01", 
-                            "gender": new_p_sexo,
-                            "hospital_id": int(hospitals_mapped[selected_p_inst_name])
-                        }
-        try:
-            if res_p.status_code == 200:
-                st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
-                time.sleep(0.5)
-                st.rerun()
-            else:
-                st.error(f"🚨 Database Rejection: {res_p.json().get('detail', 'Write violation integrity constraints.')}")
-        except Exception:
-            st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-with p2:
-
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">📋 LIMS Cohort Registry & Active Population Directory</div>', unsafe_allow_html=True)
+            new_p_id = st.text_input("Patient Subject Identifier (Unique ID / PAS-ID)")
+            new_p_name = st.text_input("Anonymized Corporate Patient Code Name")
+            new_p_dob = st.date_input("Date of Birth Record", min_value=datetime(1920, 1, 1))
+            new_p_sexo = st.selectbox("Biological Gender Parameter", ["Female", "Male"])
+           
             try:
-                res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
-                if res_cohort.status_code == 200:
-                    cohort_data = res_cohort.json()
-                    if cohort_data:
-                        df_patients = pd.DataFrame(cohort_data)
-                    else:
-                        df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Facility Link", "Current Mean Beta (β)"])
-                else:
-                    st.error("❌ Failed to query clinical cohorts.")
-                    st.stop()
+                res_h_dir = requests.get(f"{BACKEND_URL}/hospitals/directory", headers=headers, timeout=2)
+                hospitals_mapped = {h["name"]: h["id"] for h in res_h_dir.json()} if res_h_dir.status_code == 200 else {}
             except Exception:
-                st.error("❌ Pipeline Error: Relational population data could not be fetched from Neon.")
-                st.stop()
+                hospitals_mapped = {}
                
-            st.dataframe(df_patients, use_container_width=True, hide_index=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-           
-            # --- LONGITUDINAL SCORE GRAPH ENGINE ---
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">📈 Longitudinal Evolution of Epigenetic Biomarkers (Beta Score History)</div>', unsafe_allow_html=True)
-           
-            if not df_patients.empty and "Patient ID" in df_patients.columns:
-                p_select = st.selectbox("Select Patient Context ID to trace history metrics across records:", df_patients["Patient ID"].unique())
+            if not hospitals_mapped:
+                st.error("🚨 Configuration Error: No active facility nodes tracked inside database.")
+            else:
+                selected_h_node = st.selectbox("Assign Authorized Clinical Facility Node", list(hospitals_mapped.keys()))
                
-                try:
-                    res_history = requests.get(f"{BACKEND_URL}/analysis/history/{p_select}", headers=headers, timeout=2)
-                    if res_history.status_code == 200:
-                        history_json = res_history.json()
-                        if history_json:
-                            df_long = pd.DataFrame(history_json)
-                            fig_long = go.Figure([go.Scatter(
-                                x=df_long["fecha_analisis"], y=df_long["score"], mode='lines+markers',
-                                line=dict(color='#2563EB', width=3), marker=dict(size=8, symbol="circle")
-                            )])
-                            fig_long.update_layout(
-                                height=160, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10),
-                                xaxis=dict(gridcolor='#F1F5F9'), yaxis=dict(gridcolor='#F1F5F9', range=[0, 0.5])
-                            )
-                            st.plotly_chart(fig_long, use_container_width=True)
-                        else:
-                            st.info("ℹ️ No historical biomarker records tracked for the chosen patient segment.")
+                if st.button("Commit and Synchronize Subject Profile", use_container_width=True):
+                    if not new_p_id or not new_p_name:
+                        st.error("❌ Identification Constraint: Complete profile parameters matching protocol metrics.")
+                    else:
+                        payload_p = {
+                            "id_patient": new_p_id,
+                            "full_name": new_p_name,
+                            "date_of_birth": str(new_p_dob),
+                            "gender": new_p_sexo,
+                            "hospital_id": int(hospitals_mapped[selected_h_node])
+                        }
+                        try:
+                            res_p = requests.post(f"{BACKEND_URL}/lims/enroll-patient", json=payload_p, headers=headers, timeout=3)
+                            if res_p.status_code == 200:
+                                st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
+                                time.sleep(0.5)
+                                st.rerun()
+                            else:
+                                st.error(f"🚨 Database Rejection: {res_p.json().get('detail', 'Write violation integrity constraints.')}")
+                        except Exception:
+                            st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with p2:
+        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">🗃️ Active Cohort Registry Directory</div>', unsafe_allow_html=True)
+        try:
+            res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
+            if res_cohort.status_code == 200 and res_cohort.json():
+                df_patients = pd.DataFrame(res_cohort.json())
+            else:
+                df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Facility Link", "Current Mean Beta (β)"])
+        except Exception:
+            df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Facility Link", "Current Mean Beta (β)"])
+           
+        st.dataframe(df_patients, use_container_width=True, hide_index=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+       
+        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">📈 Longitudinal Evolution of Epigenetic Biomarkers (Beta Score History)</div>', unsafe_allow_html=True)
+       
+        if not df_patients.empty and "Patient ID" in df_patients.columns:
+            p_select = st.selectbox("Select Patient Context ID to trace history metrics across records:", df_patients["Patient ID"].unique())
+            try:
+                res_history = requests.get(f"{BACKEND_URL}/analysis/history/{p_select}", headers=headers, timeout=2)
+                if res_history.status_code == 200 and res_history.json():
+                    df_long = pd.DataFrame(res_history.json())
+                    fig_long = go.Figure()
+                    fig_long.add_trace(go.Scatter(
+                        x=df_long["fecha_analisis"], y=df_long["score"], mode='lines+markers',
+                        name='Patient Mean β-Score', line=dict(color='#2563EB', width=3),
+                        marker=dict(size=8, symbol="circle"), hovertext=df_long.get("guias_activas", "")
+                    ))
+                    fig_long.add_trace(go.Scatter(
+                        x=df_long["fecha_analisis"], y=[0.1000] * len(df_long), mode='lines',
+                        name='Youden Cutoff (0.1000)', line=dict(color='#EF4444', width=2, dash='dash')
+                    ))
+                    fig_long.update_layout(
+                        height=200, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10),
+                        showlegend=True, legend=dict(orientation="h", y=1.2, x=0),
+                        xaxis=dict(gridcolor='#F1F5F9'), yaxis=dict(gridcolor='#F1F5F9', range=[0, 0.4])
+                    )
+                    st.plotly_chart(fig_long, use_container_width=True)
+                else:
+                    st.info("ℹ️ Standby: No historical bioinformatic analysis records tracked for this patient profile context yet.")
+            except Exception:
+                st.error("❌ Network Exception: Timeline analysis data transmission channel disconnected.")
         else:
-            st.error("🚨 Execution Error: Could not resolve patient trace data index.")
-    except Exception:
-        st.error("🚨 Network Exception: Timeline analysis channel disconnected.")
-    st.markdown('</div>', unsafe_allow_html=True)
+            st.info("ℹ️ No active cohort population profiles available to map historical longitudinal benchmarks.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧪 TAB 3: LIMS SAMPLES
+# 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
 # ----------------------------------------------------------------------------
 elif nav_selection == "LIMS Samples":
     st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Chain of Custody</h2>", unsafe_allow_html=True)
@@ -459,13 +453,9 @@ elif nav_selection == "LIMS Samples":
    
     try:
         res_p_list = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
-        if res_p_list.status_code == 200 and res_p_list.json():
-            registered_patients = [p["Patient ID"] for p in res_p_list.json()]
-        else:
-            registered_patients = []
+        registered_patients = [p["Patient ID"] for p in res_p_list.json()] if res_p_list.status_code == 200 and res_p_list.json() else []
     except Exception:
-        st.error("❌ Critical Infrastructure Failure: Unable to fetch dynamic patient dependencies.")
-        st.stop()
+        registered_patients = []
 
     with st.container():
         m1, m2 = st.columns(2)
@@ -482,19 +472,7 @@ elif nav_selection == "LIMS Samples":
                 asoc_p_id = st.selectbox("Associated Patient Subject Profile Link", registered_patients)
                 new_m_qr = st.text_input("Barcode Hardware QR Matrix Identifier")
                 new_m_tipo = st.selectbox("Extraction Matrix Assay Specimen Type", ["Plasma", "Whole Blood", "Tissue"])
-               
-                new_m_est = st.selectbox("Chain of Custody Operational Workflow State", [
-                    "Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing",
-                    "Bioinformatic Processing", "Clinical Report Compiled"
-                ])
-               
-                try:
-                    res_staff = requests.get(f"{BACKEND_URL}/auth/active-operators", headers=headers, timeout=2)
-                    staff_options = [u["full_name"] for u in res_staff.json()] if res_staff.status_code == 200 else [st.session_state.operator_display_name]
-                except Exception:
-                    staff_options = [st.session_state.operator_display_name]
-                   
-                selected_m_resp = st.selectbox("Responsible Lab Practitioner Signature Verification", staff_options)
+                new_m_est = st.selectbox("Chain of Custody Operational Workflow State", ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"])
                
                 if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
                     if not new_m_id or not new_m_qr:
@@ -502,7 +480,7 @@ elif nav_selection == "LIMS Samples":
                     else:
                         payload_sample = {
                             "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
-                            "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": selected_m_resp
+                            "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name
                         }
                         try:
                             res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=3)
@@ -521,36 +499,13 @@ elif nav_selection == "LIMS Samples":
             st.markdown('<div class="card-title-clinical">🗄️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
             try:
                 res_s = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=2)
-                if res_s.status_code == 200:
-                    samples_data = res_s.json()
-                    if samples_data:
-                        df_samples = pd.DataFrame(samples_data)
-                    else:
-                        df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
-                else:
-                    st.error("❌ Failed to query warehouse asset registers.")
-                    st.stop()
+                df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
             except Exception:
-                st.error("❌ Pipeline Verification Interrupted: Database infrastructure is unresponsive.")
-                st.stop()
+                df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
                
             st.dataframe(df_samples, use_container_width=True, hide_index=True)
             st.markdown('</div>', unsafe_allow_html=True)
-           
-            if not df_samples.empty and "Sample ID" in df_samples.columns:
-                st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-                st.markdown('<div class="card-title-clinical">📋 Log Verification History & Custody Flow Telemetry (LIMS Audit)</div>', unsafe_allow_html=True)
-                m_track = st.selectbox("Select Asset Token to audit tracking pathway logs:", df_samples["Sample ID"].unique())
-                try:
-                    res_track = requests.get(f"{BACKEND_URL}/lims/samples/track/{m_track}", headers=headers, timeout=2)
-                    if res_track.status_code == 200:
-                        df_h_track = pd.DataFrame(res_track.json())
-                        st.dataframe(df_h_track, use_container_width=True, hide_index=True)
-                    else:
-                        st.error("❌ Unable to trace cryptographic chain verification history for the chosen ID.")
-                except Exception:
-                    st.error("❌ Audit Exception: Secure routing pathway broken.")
-                st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ----------------------------------------------------------------------------
 # 🧬 TAB 4: METHYLOX ENGINE (CRISPR PIPELINE LOGIC - REAL COMPUTE)
