@@ -393,6 +393,7 @@ elif nav_selection == "Patients":
                                 time.sleep(0.5)
                                 st.rerun()
                             else:
+
                                 st.error(f"❌ Database Rejection: {res_p.json().get('detail', 'Write violation')}")
                         except Exception:
                             st.error("❌ Operational Error: Backend unreachable during relational synchronization.")
