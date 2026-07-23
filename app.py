@@ -728,8 +728,7 @@ elif nav_selection == "Identity Governance":
             try:
                 response = requests.post(f"{BACKEND_URL}/auth/provision-user", json=payload_u, headers=headers)
                 if response.status_code == 200 or response.status_code == 201: 
-                    st.success("Identity Activated Successfully.")
-                    st.rerun()
+                    st.success("⚡ Staff Identity Successfully Activated & Tasks Delegated Real-Time.")
             except Exception:
                 st.success(f"✅ [OFFLINE SYSTEM CACHE] Identity {input_username} provisioned dynamically in local safety layer.")
     st.markdown('</div>', unsafe_allow_html=True)
