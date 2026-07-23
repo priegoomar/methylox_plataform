@@ -446,14 +446,12 @@ with p2:
                             st.info("ℹ️ No historical biomarker records tracked for the chosen patient segment.")
                     else:
                         st.error("❌ Execution Error: Could not resolve patient trace data index.")
-                except Exception:
-                    st.error("❌ Network Exception: Timeline analysis channel disconnected.")
-            else:
-                st.info("ℹ️ No active cohort population profiles available to map historical longitudinal benchmarks.")
-            st.markdown('</div>', unsafe_allow_html=True)
+    except Exception:
+        st.error("❌ Network Exception: Timeline analysis channel disconnected.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
+# 🧪 TAB 3: LIMS SAMPLES
 # ----------------------------------------------------------------------------
 elif nav_selection == "LIMS Samples":
     st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Chain of Custody</h2>", unsafe_allow_html=True)
