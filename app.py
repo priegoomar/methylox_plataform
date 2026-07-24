@@ -356,22 +356,29 @@ if nav_selection == "Dashboard Matrix":
     st.markdown("""
     <style>
         /* Estilos de las Tarjetas Superiores */
+        .metric-container-hub { display: flex; gap: 20px; margin-bottom: 25px; }
         .metric-card-clinical-new { 
             background: white; 
             border: 1px solid #E2E8F0; 
             border-radius: 12px; 
-            padding: 20px; 
+            padding: 24px; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
             text-align: center;
-            min-height: 130px;
+            flex: 1;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .metric-title-sub-new { 
-            font-size: 11px !important; 
+            font-size: 12px !important; 
             font-weight: 700 !important; 
             color: #64748B !important; 
-            margin-bottom: 8px !important; 
+            margin: 0 0 6px 0 !important; 
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            text-align: center;
         }
         .metric-num-big-new { 
             font-size: 36px !important; 
@@ -379,6 +386,7 @@ if nav_selection == "Dashboard Matrix":
             color: #0F172A !important; 
             margin: 5px 0 !important; 
             line-height: 1 !important;
+            text-align: center;
         }
         .metric-link-btn-new { 
             font-size: 11px !important; 
@@ -386,7 +394,14 @@ if nav_selection == "Dashboard Matrix":
             color: #2563EB !important; 
             text-decoration: none; 
             display: inline-block;
-            margin-top: 5px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .svg-top-container {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         /* Botones Rápidos con Iconos SVG Fluorescentes */
@@ -460,20 +475,56 @@ if nav_selection == "Dashboard Matrix":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # TARJETAS DE MÉTRICAS SUPERIORES
+    # RENDER DE LAS CUATRO TARJETAS SUPERIORES CON SUS SVG PERFECTOS
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Samples Received</p><p class='metric-num-big-new'>{received_today}</p><a class='metric-link-btn-new' href='#'>View all samples →</a></div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #2563EB;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Samples Received</p>
+            <p class='metric-num-big-new'>{received_today}</p>
+            <a class='metric-link-btn-new' href='#'>View all samples →</a>
+        </div>
+        """, unsafe_allow_html=True)
     with c2:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>In Progress</p><p class='metric-num-big-new'>{in_progress}</p><a class='metric-link-btn-new' href='#'>View details →</a></div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #D97706;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>In Progress</p>
+            <p class='metric-num-big-new'>{in_progress}</p>
+            <a class='metric-link-btn-new' href='#'>View details →</a>
+        </div>
+        """, unsafe_allow_html=True)
     with c3:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Ready Reports</p><p class='metric-num-big-new'>{ready_analyses}</p><a class='metric-link-btn-new' href='#'>View dossiers →</a></div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #16A34A;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Ready Reports</p>
+            <p class='metric-num-big-new'>{ready_analyses}</p>
+            <a class='metric-link-btn-new' href='#'>View dossiers →</a>
+        </div>
+        """, unsafe_allow_html=True)
     with c4:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Quality Controls</p><p class='metric-num-big-new'>{qc_pass_rate}%</p><a class='metric-link-btn-new' href='#'>View QC matrix →</a></div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #6366F1;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Quality Controls</p>
+            <p class='metric-num-big-new'>{qc_pass_rate}%</p>
+            <a class='metric-link-btn-new' href='#'>View QC matrix →</a>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.write("##")
 
-    # FILA CENTRAL UNIFICADA ( Actividad Reciente vs Dona Plotly )
+    # FILA CENTRAL UNIFICADA (Actividad Reciente vs Dona Plotly)
     c_left, c_right = st.columns([1.4, 1.0])
     
     with c_left:
@@ -527,12 +578,13 @@ if nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE
+    # 4. ⚡ ACCIONES RÁPIDAS CON BOTONES INYECTADOS EN SVG FLUORESCENTE PURO
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
     
     st.markdown("""
     <div class='quick-action-grid'>
+        <!-- BOTÓN 1: ENROLL SUBJECT -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-blue'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
@@ -542,6 +594,7 @@ if nav_selection == "Dashboard Matrix":
                 <p class='action-desc-svg'>New Patient Profile</p>
             </div>
         </div>
+        <!-- BOTÓN 2: ASSET INTAKE -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-orange'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
@@ -551,6 +604,7 @@ if nav_selection == "Dashboard Matrix":
                 <p class='action-desc-svg'>Log LIMS Custody</p>
             </div>
         </div>
+        <!-- BOTÓN 3: LAUNCH KERNEL -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-green'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
@@ -560,6 +614,7 @@ if nav_selection == "Dashboard Matrix":
                 <p class='action-desc-svg'>Run CRISPR Pipeline</p>
             </div>
         </div>
+        <!-- BOTÓN 4: DOWNLOAD DOSSIER -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-purple'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
