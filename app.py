@@ -397,12 +397,13 @@ if nav_selection == "Dashboard Matrix":
         .svg-top-container { margin-bottom: 8px; display: flex; justify-content: center; align-items: center; }
 
         /* UNIFICACIÓN TOTAL EN UN SOLO RECUADRO MONOLÍTICO PARA LA TABLA Y DONA */
+        /* Ajustado height a auto para solucionar el error del rectángulo blanco gigante */
         .unified-main-board-box {
             background: white;
             border: 1px solid #E2E8F0;
             border-radius: 12px;
             padding: 24px;
-            min-height: 380px;
+            height: auto;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             margin-bottom: 20px;
         }
@@ -427,10 +428,12 @@ if nav_selection == "Dashboard Matrix":
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
-    
-    # FETCH LIVE DATA FROM ENDPOINTS
+    # Mensajes de encabezado adaptados al idioma español de tu diseño final
+    operator_name = st.session_state.get('operator_display_name', 'Lucía Martínez')
+    st.markdown(f"<h2 class='welcome-header' style='margin-bottom: 2px;'>Bienvenida, {operator_name} 👋</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption' style='color: #64748B; margin-bottom: 25px;'>Resumen de actividad del laboratorio - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
+
+    # 1. CONSULTA DE TELEMETRÍA EN VIVO DESDE LOS ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
         if res_telemetry.status_code == 200:
@@ -444,61 +447,62 @@ if nav_selection == "Dashboard Matrix":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # RENDER DE LAS CUATRO TARJETAS SUPERIORES CON SUS SVG RECUPERADOS
+    # RENDERIZADO DE LAS CUATRO TARJETAS SUPERIORES METRICAS
     st.markdown(f"""
     <div class='metric-container-hub'>
         <div class='metric-card-clinical-new'>
             <div class='svg-top-container' style='color: #2563EB;'>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
             </div>
-            <p class='metric-title-sub-new'>Samples Received</p>
+            <p class='metric-title-sub-new'>Muestras recibidas hoy</p>
             <p class='metric-num-big-new'>{received_today}</p>
-            <a class='metric-link-btn-new' href='#'>View all samples →</a>
+            <a class='metric-link-btn-new' href='#'>Ver todas →</a>
         </div>
         <div class='metric-card-clinical-new'>
             <div class='svg-top-container' style='color: #D97706;'>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </div>
-            <p class='metric-title-sub-new'>In Progress</p>
+            <p class='metric-title-sub-new'>Análisis en proceso</p>
             <p class='metric-num-big-new'>{in_progress}</p>
-            <a class='metric-link-btn-new' href='#'>View details →</a>
+            <a class='metric-link-btn-new' href='#'>Ver detalles →</a>
         </div>
         <div class='metric-card-clinical-new'>
             <div class='svg-top-container' style='color: #16A34A;'>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
             </div>
-            <p class='metric-title-sub-new'>Ready Reports</p>
+            <p class='metric-title-sub-new'>Resultados listos</p>
             <p class='metric-num-big-new'>{ready_analyses}</p>
-            <a class='metric-link-btn-new' href='#'>View dossiers →</a>
+            <a class='metric-link-btn-new' href='#'>Ver reportes →</a>
         </div>
         <div class='metric-card-clinical-new'>
             <div class='svg-top-container' style='color: #6366F1;'>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
-            <p class='metric-title-sub-new'>Quality Controls</p>
+            <p class='metric-title-sub-new'>Controles de calidad</p>
             <p class='metric-num-big-new'>{qc_pass_rate}%</p>
-            <a class='metric-link-btn-new' href='#'>View QC matrix →</a>
+            <a class='metric-link-btn-new' href='#'>Ver QC →</a>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.write("##")
 
-    # APERTURA DEL RECUADRO BLANCO MONOLÍTICO UNIFICADO
+    # APERTURA DEL RECUADRO CENTRAL UNIFICADO RE-ESTILIZADO (SOPORTA ALTURA DINÁMICA)
     st.markdown('<div class="unified-main-board-box">', unsafe_allow_html=True)
     
     c_left, c_right = st.columns([1.4, 1.0])
     
+    # --- COLUMNA IZQUIERDA: TABLA DE ACTIVIDAD ---
     with c_left:
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0; text-align: center;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>⚡ Actividad reciente</p>", unsafe_allow_html=True)
         
         st.markdown("""
         <table class='clinical-table-new' style='width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px;'>
-            <tr style='border-bottom: 2px solid #F1F5F9; color: #64748B; font-weight: 700; text-align: center;'>
-                <th style='padding: 12px 10px; text-align: center;'>Sample ID</th>
-                <th style='padding: 12px 10px; text-align: center;'>Patient ID</th>
-                <th style='padding: 12px 10px; text-align: center;'>Matrix</th>
-                <th style='padding: 12px 10px; text-align: center;'>Status</th>
+            <tr style='border-bottom: 2px solid #F1F5F9; color: #64748B; font-weight: 700;'>
+                <th style='padding: 12px 10px; text-align: center;'>ID Muestra</th>
+                <th style='padding: 12px 10px; text-align: center;'>Paciente</th>
+                <th style='padding: 12px 10px; text-align: center;'>Tipo de muestra</th>
+                <th style='padding: 12px 10px; text-align: center;'>Estado</th>
             </tr>
         """, unsafe_allow_html=True)
         
@@ -511,104 +515,14 @@ if nav_selection == "Dashboard Matrix":
         if not samples_list:
             st.markdown("""
             <tr>
-                <td colspan='4' style='color: #94A3B8; padding: 50px 10px; font-style: italic; text-align: center;'>
-                    No active samples detected. Dashboard standby node waiting for live data registration...
+                <td colspan='4' style='color: #94A3B8; padding: 45px 10px; font-style: italic; text-align: center;'>
+                    En espera de registros de muestras en vivo...
                 </td>
             </tr>
             """, unsafe_allow_html=True)
         else:
             for s in samples_list[:5]:
                 state = s.get("workflow_state", "Sample Received")
-                badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
-                st.markdown(f"""
-                <tr style='text-align: center;'>
-                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center;'>{s.get('sample_id')}</td>
-                    <td style='padding: 14px 10px; text-align: center;'>{s.get('patient_id')}</td>
-                    <td style='padding: 14px 10px; text-align: center;'>{s.get('specimen_type', 'Plasma')}</td>
-                    <td style='padding: 14px 10px; text-align: center;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
-                </tr>
-                """, unsafe_allow_html=True)
-        st.markdown("</table>", unsafe_allow_html=True)
-
-    with c_right:
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0; text-align: center;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
-        try:
-            res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
-            rep_data = res_rep.json() if res_rep.status_code == 200 else []
-        except Exception:
-            rep_data = []
-            
-        total_cases = len(rep_data)
-        positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
-        negatives = total_cases - positives
-        in_pipeline = in_progress
-        
-        if total_cases == 0 and in_pipeline == 0:
-            labels_pie = ['Awaiting Data Ingestion']
-            values_pie = [0]
-            colors_pie = ['#F1F5F9']
-        else:
-            labels_pie = ['Positive Panels', 'Stable Controls', 'In Pipeline']
-            values_pie = [positives, negatives, in_pipeline]
-            colors_pie = ['#EF4444', '#10B981', '#3B82F6']
-
-        fig_donut = go.Figure(data=[go.Pie(
-            labels=labels_pie, values=values_pie, hole=.6,
-            marker=dict(colors=colors_pie), textinfo='none', showlegend=True
-        )])
-        fig_donut.update_layout(
-            height=220, margin=dict(l=0, r=0, t=10, b=10),
-            legend=dict(orientation="h", y=-0.2, x=0),
-            annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, showarrow=False)]
-        )
-        st.plotly_chart(fig_donut, use_container_width=True)
-        
-    st.markdown("</div>", unsafe_allow_html=True) # CIERRE PERFECTO DEL RECUADRO MONOLÍTICO
-
-    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO
-    st.write("##")
-    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class='quick-action-grid'>
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-blue'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Enroll Subject</p>
-                <p class='action-desc-svg'>New Patient Profile</p>
-            </div>
-        </div>
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-orange'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Asset Intake</p>
-                <p class='action-desc-svg'>Log LIMS Custody</p>
-            </div>
-        </div>
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-green'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Launch Kernel</p>
-                <p class='action-desc-svg'>Run CRISPR Pipeline</p>
-            </div>
-        </div>
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-purple'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Dossier Sheet</p>
-                <p class='action-desc-svg'>Export Medical PDF</p>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
     
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS
