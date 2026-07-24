@@ -95,7 +95,14 @@ st.markdown("""
     }  
     div.stButton > button:first-child:hover {  
         background-color: #E2E8F0 !important;  
-        border-color: #CBD5E1 !important;  
+        border-color: #CBD5E1 !important;
+        
+/* Oculta automáticamente cualquier tarjeta o contenedor ejecutivo si se queda sin elementos hijos */
+.executive-card-white:empty, 
+.unified-main-board-box:empty,
+div[data-testid="stVerticalBlock"]:has(> div.element-container:empty) {
+    display: none !important;
+}
     }  
 </style> """, unsafe_allow_html=True)
 
