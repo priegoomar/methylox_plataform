@@ -463,20 +463,20 @@ elif nav_selection == "LIMS Samples":
             st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧬 TAB 4: METHYLOX ENGINE (CRISPR PIPELINE LOGIC - REAL COMPUTE)
+# 🧬 TAB 4: METHYLOX ENGINE
 # ----------------------------------------------------------------------------
 elif nav_selection == "METHYLOX Engine":
-    st.markdown("<h2 class='welcome-header'>🧬 Computational Pipeline: 15 Multiplexed MOX Guide Panel</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Execute high-density CRISPR-Cas12a calling matrices against raw sequence parameters</p>", unsafe_allow_html=True)
-   
+    st.markdown("<h2 class='welcome-header'>🧬 Computational Pipeline Kernel Execution</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Execute high-density CRISPR-Cas12a calling matrices against sequence parameters</p>", unsafe_allow_html=True)
+    
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     st.markdown('<div class="card-title-clinical">🚀 Quantitative Epigenetic Run Over Raw Methylation Matrices</div>', unsafe_allow_html=True)
-   
+    
     if st.session_state.user_role == "md":
-        st.warning("🔒 Access Denied: Medical roles do not possess computational clearance to launch sequencing kernel iterations.")
+        st.warning("🔒 Access Denied: Medical roles do not possess computational clearance to launch sequencing.")
     else:
         try:
-            res_p_samples = requests.get(f"{BACKEND_URL}/lims/samples/pending-evaluation", headers=headers, timeout=2)
+            res_p_samples = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/pending-evaluation", headers=headers, timeout=5)
             pending_samples = res_p_samples.json() if res_p_samples.status_code == 200 and res_p_samples.json() else []
         except Exception:
             pending_samples = []
@@ -484,35 +484,21 @@ elif nav_selection == "METHYLOX Engine":
         if not pending_samples:
             st.info("ℹ️ Pipeline Standby: No pending samples in queue requiring CRISPR bioinformatic scoring calculation.")
         else:
-            m_target = st.selectbox("Select Pending Asset ID for Pipeline Ingestion Queue:", pending_samples)
-            csv_ejemplo = "Probe_ID,Methylated_Intensity,Unmethylated_Intensity\nMOX-SG-01,820,100\nMOX-SG-07,760,140\nMOX-SG-12,910,20\ncg00000024,100,900\ncg00000145,500,400\nMOX-SG-04,150,850\nMOX-SG-15,620,310"
-            st.download_button("📥 Download Reference Template: methylation_data_raw.csv", data=csv_ejemplo, file_name="methylation_data_raw.csv", mime="text/csv")
-           
-            uploaded_file = st.file_uploader("Upload Sequencer Raw CpG Methylation File Context (.CSV)", type=["csv"])
-           
+            m_target = st.selectbox("Select Pending Asset ID for Pipeline Queue:", pending_samples)
+            uploaded_file = st.file_uploader("Upload Sequencer Raw CpG Methylation File (.CSV)", type=["csv"])
             if uploaded_file is not None:
-                st.success("📦 Raw structural parameters ingested into kernel stream memory buffer. Core pipeline armed.")
                 if st.button("Execute Automated Analytical Pipeline Run", use_container_width=True):
                     files_payload = {"file": (uploaded_file.name, uploaded_file.getvalue(), "text/csv")}
                     try:
-                        with st.spinner("Processing Bioinformatic Analytics under Phred Q30 parameters..."):
-                            res_calc = requests.post(f"{BACKEND_URL}/lims/samples/evaluate/{m_target}", files=files_payload, headers=headers, timeout=10)
-                        
+                        res_calc = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/evaluate/{m_target}", files=files_payload, headers=headers, timeout=15)
                         if res_calc.status_code == 200:
                             calc_result = res_calc.json()
-                            st.success(f"⚡ Core mathematical analytics unraveled. Score registered: {calc_result['mean_beta']:.4f}")
-                            
-                            st.write("##")
-                            st.markdown("#### 📊 Proprietary CRISPR Guide Activation Frequency Matrix (MOX Panel)")
-                            guia_counts = calc_result.get("guide_signals", {})
-                            if guia_counts:
-                                fig_g = go.Figure([go.Bar(x=list(guia_counts.keys()), y=list(guia_counts.values()), marker_color='#2563EB', width=0.4)])
-                                fig_g.update_layout(height=240, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10), yaxis=dict(gridcolor='#F1F5F9'))
-                                st.plotly_chart(fig_g, use_container_width=True)
+                            st.success(f"⚡ Analytics unraveled. Mean Beta Score: {calc_result['mean_beta']:.4f}")
+                            st.write(f"Veredicto Clínico: {calc_result['verdict']}")
                         else:
-                            st.error(f"❌ Computational Error: {res_calc.json().get('detail', 'Algorithmic alignment exception')}")
+                            st.error("❌ Computational Alignment Exception.")
                     except Exception:
-                        st.error("❌ Communication Crash: Kernel processing core timed out or dropped connection.")
+                        st.error("❌ Kernel Processing Core Error.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
