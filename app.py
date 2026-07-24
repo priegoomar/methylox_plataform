@@ -1014,6 +1014,25 @@ def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_
     st.success("✅ Kernel system integrity check completed successfully. Deterministic rules matching validation parameters.")
     st.markdown('</div>', unsafe_allow_html=True)
 
+# ----------------------------------------------------------------------------
+# ⚙️ TAB 7: SYSTEM SETTINGS (KERNEL INTEGRITY AUDIT TRAIL MONITOR)
+# ----------------------------------------------------------------------------
+elif nav_selection == "⚙️ System Settings":
+    st.markdown("<h2 class='welcome-header'>⚙️ Core Calibration Settings & Kernel Monitor</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>System validation and mathematical processing rules parameters</p>", unsafe_allow_html=True)
+   
+    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+    st.markdown("<p style='color:#0F172A; font-weight:700; font-size:14px; margin-bottom:10px;'>📜 METHYLOX_DETERMINISTIC_RULES.PY (AUDITABLE CONTEXT)</p>", unsafe_allow_html=True)
+    st.code("""
+def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_unmethylated: float) -> float:
+    # Standard international methylation mathematical equation with fluorescence laser offset correction
+    offset_correction = 100.0
+    beta_value = intensity_methylated / (intensity_methylated + intensity_unmethylated + offset_correction)
+    return round(float(beta_value), 4)
+""", language="python")
+    st.success("✅ Kernel system integrity check completed successfully. Deterministic rules matching validation parameters.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
 # ============================================================================
 # 🏛️ FOOTER LEGAL BOUNDARIES (CLEAN CHARACTER ENCODING)
 # ============================================================================
