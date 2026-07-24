@@ -355,24 +355,24 @@ if nav_selection == "🔒 Access Restricted":
 if nav_selection == "Dashboard Matrix":
     st.markdown("""
     <style>
-        /* Estilos del Tablero Unificado */
-        .metric-container-hub { display: flex; gap: 15px; margin-bottom: 25px; }
+        /* Estilos del Tablero Unificado sin subdivisiones rotas */
+        .metric-container-hub { display: flex; gap: 15px; margin-bottom: 25px; width: 100%; }
         .metric-card-clinical-new { 
             background: white; 
             border: 1px solid #E2E8F0; 
             border-radius: 12px; 
-            padding: 20px; 
+            padding: 24px; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
             text-align: center;
             flex: 1;
-            min-height: 120px;
+            min-height: 140px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
         .metric-title-sub-new { 
-            font-size: 11px !important; 
+            font-size: 12px !important; 
             font-weight: 700 !important; 
             color: #64748B !important; 
             margin: 0 0 6px 0 !important; 
@@ -380,7 +380,7 @@ if nav_selection == "Dashboard Matrix":
             letter-spacing: 0.5px;
         }
         .metric-num-big-new { 
-            font-size: 34px !important; 
+            font-size: 36px !important; 
             font-weight: 800 !important; 
             color: #0F172A !important; 
             margin: 5px 0 !important; 
@@ -392,57 +392,29 @@ if nav_selection == "Dashboard Matrix":
             color: #2563EB !important; 
             text-decoration: none; 
             display: inline-block;
-            margin-top: 5px;
+            margin-top: 8px;
         }
+        .svg-top-container { margin-bottom: 8px; display: flex; justify-content: center; align-items: center; }
 
-        /* Bloque Unificado de la Tabla Reciente (Sin subdivisiones internas) */
-        .clean-table-box {
+        /* UNIFICACIÓN TOTAL EN UN SOLO RECUADRO MONOLÍTICO PARA LA TABLA Y DONA */
+        .unified-main-board-box {
             background: white;
             border: 1px solid #E2E8F0;
             border-radius: 12px;
             padding: 24px;
-            min-height: 340px;
+            min-height: 380px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-        .clinical-table-new { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 13px; 
-        }
-        .clinical-table-new th { 
-            color: #64748B; 
-            font-weight: 700; 
-            padding: 12px 10px; 
-            border-bottom: 2px solid #F1F5F9; 
-            text-align: center !important; 
-        }
-        .clinical-table-new td { 
-            padding: 14px 10px; 
-            color: #0F172A; 
-            border-bottom: 1px solid #F1F5F9; 
-            text-align: center !important; 
-        }
-        .empty-table-msg {
-            color: #64748B;
-            font-size: 13px;
-            text-align: center;
-            padding-top: 80px;
-            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
-        /* Botonera Inferior Estilizada en SVG Fluorescente */
-        .quick-action-grid { display: flex; gap: 15px; margin-top: 20px; }
-        .action-card-svg {
-            background: white;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            padding: 16px;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
+        /* Alineación y Centrado Absoluto de las Columnas de la Tabla */
+        .clinical-table-new { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
+        .clinical-table-new th { color: #64748B; font-weight: 700; padding: 12px 10px; border-bottom: 2px solid #F1F5F9; text-align: center !important; }
+        .clinical-table-new td { padding: 14px 10px; color: #0F172A; border-bottom: 1px solid #F1F5F9; text-align: center !important; }
+        
+        /* Botonera Inferior Estilizada con Iconos SVG Fluorescentes */
+        .quick-action-grid { display: flex; gap: 15px; margin-top: 25px; width: 100%; }
+        .action-card-svg { background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
         .icon-circle-svg { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
         .action-text-container { display: flex; flex-direction: column; }
         .action-title-svg { font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; }
@@ -458,7 +430,7 @@ if nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
     
-    # FETCH LIVE DATA FROM BACKEND
+    # FETCH LIVE DATA FROM ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
         if res_telemetry.status_code == 200:
@@ -472,29 +444,56 @@ if nav_selection == "Dashboard Matrix":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # RENDER DE LAS CUATRO TARJETAS SUPERIORES LIMPIAS EN MESA
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Samples Received</p><p class='metric-num-big-new'>{received_today}</p><a class='metric-link-btn-new' href='#'>View all samples →</a></div>", unsafe_allow_html=True)
-    with c2:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>In Progress</p><p class='metric-num-big-new'>{in_progress}</p><a class='metric-link-btn-new' href='#'>View details →</a></div>", unsafe_allow_html=True)
-    with c3:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Ready Reports</p><p class='metric-num-big-new'>{ready_analyses}</p><a class='metric-link-btn-new' href='#'>View dossiers →</a></div>", unsafe_allow_html=True)
-    with c4:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Quality Controls</p><p class='metric-num-big-new'>{qc_pass_rate}%</p><a class='metric-link-btn-new' href='#'>View QC matrix →</a></div>", unsafe_allow_html=True)
+    # RENDER DE LAS CUATRO TARJETAS SUPERIORES CON SUS SVG RECUPERADOS
+    st.markdown(f"""
+    <div class='metric-container-hub'>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #2563EB;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Samples Received</p>
+            <p class='metric-num-big-new'>{received_today}</p>
+            <a class='metric-link-btn-new' href='#'>View all samples →</a>
+        </div>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #D97706;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>In Progress</p>
+            <p class='metric-num-big-new'>{in_progress}</p>
+            <a class='metric-link-btn-new' href='#'>View details →</a>
+        </div>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #16A34A;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Ready Reports</p>
+            <p class='metric-num-big-new'>{ready_analyses}</p>
+            <a class='metric-link-btn-new' href='#'>View dossiers →</a>
+        </div>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #6366F1;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Quality Controls</p>
+            <p class='metric-num-big-new'>{qc_pass_rate}%</p>
+            <a class='metric-link-btn-new' href='#'>View QC matrix →</a>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.write("##")
 
-    # FILA CENTRAL COMPACTA EN COLUMNAS PARALELAS (FIXED STRUCTURE ENGINE)
+    # APERTURA DEL RECUADRO BLANCO MONOLÍTICO UNIFICADO
+    st.markdown('<div class="unified-main-board-box">', unsafe_allow_html=True)
+    
     c_left, c_right = st.columns([1.4, 1.0])
     
     with c_left:
-        st.markdown('<div class="clean-table-box" style="background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 340px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">', unsafe_allow_html=True)
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0; text-align: center;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
         
-        # PINTADO DE LA TABLA FIJA INDESTRUCTIBLE CON COLUMNAS CENTRADAS EN INGLÉS
         st.markdown("""
-        <table class='clinical-table-new' style='width: 100%; border-collapse: collapse; font-size: 13px;'>
+        <table class='clinical-table-new' style='width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px;'>
             <tr style='border-bottom: 2px solid #F1F5F9; color: #64748B; font-weight: 700; text-align: center;'>
                 <th style='padding: 12px 10px; text-align: center;'>Sample ID</th>
                 <th style='padding: 12px 10px; text-align: center;'>Patient ID</th>
@@ -503,7 +502,6 @@ if nav_selection == "Dashboard Matrix":
             </tr>
         """, unsafe_allow_html=True)
         
-        # INTENTA JALAR LOS DATOS EN VIVO DESDE TU BACKEND EN NEON/RENDER
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
@@ -511,33 +509,29 @@ if nav_selection == "Dashboard Matrix":
             samples_list = []
             
         if not samples_list:
-            # Si no hay datos, renderiza una fila vacía en limpio que no rompe el diseño
             st.markdown("""
             <tr>
-                <td colspan='4' style='text-align: center; color: #94A3B8; padding: 40px 10px; font-style: italic;'>
+                <td colspan='4' style='color: #94A3B8; padding: 50px 10px; font-style: italic; text-align: center;'>
                     No active samples detected. Dashboard standby node waiting for live data registration...
                 </td>
             </tr>
             """, unsafe_allow_html=True)
         else:
-            # Si entran datos en la base de datos, las filas se autogeneran e interactúan aquí en vivo
             for s in samples_list[:5]:
                 state = s.get("workflow_state", "Sample Received")
                 badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
                 st.markdown(f"""
                 <tr style='text-align: center;'>
-                    <td style='padding: 14px 10px; font-weight: 700; color: #2563EB; text-align: center;'>{s.get('sample_id', '--')}</td>
-                    <td style='padding: 14px 10px; text-align: center;'>{s.get('patient_id', '--')}</td>
+                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center;'>{s.get('sample_id')}</td>
+                    <td style='padding: 14px 10px; text-align: center;'>{s.get('patient_id')}</td>
                     <td style='padding: 14px 10px; text-align: center;'>{s.get('specimen_type', 'Plasma')}</td>
                     <td style='padding: 14px 10px; text-align: center;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
                 </tr>
                 """, unsafe_allow_html=True)
-                
-        st.markdown("</table></div>", unsafe_allow_html=True)
+        st.markdown("</table>", unsafe_allow_html=True)
 
     with c_right:
-        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:340px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0; text-align: center;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
@@ -551,7 +545,7 @@ if nav_selection == "Dashboard Matrix":
         
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
-            values_pie = [1]
+            values_pie = [0]
             colors_pie = ['#F1F5F9']
         else:
             labels_pie = ['Positive Panels', 'Stable Controls', 'In Pipeline']
@@ -563,61 +557,59 @@ if nav_selection == "Dashboard Matrix":
             marker=dict(colors=colors_pie), textinfo='none', showlegend=True
         )])
         fig_donut.update_layout(
-            height=200, margin=dict(l=0, r=0, t=10, b=10),
+            height=220, margin=dict(l=0, r=0, t=10, b=10),
             legend=dict(orientation="h", y=-0.2, x=0),
-            annotations=[dict(text=f"<b style='font-size:22px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, showarrow=False)]
+            annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, showarrow=False)]
         )
         st.plotly_chart(fig_donut, use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+        
+    st.markdown("</div>", unsafe_allow_html=True) # CIERRE PERFECTO DEL RECUADRO MONOLÍTICO
 
     # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
     
     st.markdown("""
-    <div class='quick-action-grid' style='display: flex; gap: 15px; margin-top: 20px;'>
-        <!-- BOTÓN 1: ENROLL SUBJECT -->
-        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div class='icon-circle-svg bg-neon-blue' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9;'>
+    <div class='quick-action-grid'>
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-blue'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
             </div>
-            <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Enroll Subject</p>
-                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>New Patient Profile</p>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Enroll Subject</p>
+                <p class='action-desc-svg'>New Patient Profile</p>
             </div>
         </div>
-        <!-- BOTÓN 2: ASSET INTAKE -->
-        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div class='icon-circle-svg bg-neon-orange' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316;'>
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-orange'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
             </div>
-            <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Asset Intake</p>
-                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Log LIMS Custody</p>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Asset Intake</p>
+                <p class='action-desc-svg'>Log LIMS Custody</p>
             </div>
         </div>
-        <!-- BOTÓN 3: LAUNCH KERNEL -->
-        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div class='icon-circle-svg bg-neon-green' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E;'>
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-green'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             </div>
-            <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Launch Kernel</p>
-                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Run CRISPR Pipeline</p>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Launch Kernel</p>
+                <p class='action-desc-svg'>Run CRISPR Pipeline</p>
             </div>
         </div>
-        <!-- BOTÓN 4: DOWNLOAD DOSSIER -->
-        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div class='icon-circle-svg bg-neon-purple' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7;'>
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-purple'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
-            <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Dossier Sheet</p>
-                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Export Medical PDF</p>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Dossier Sheet</p>
+                <p class='action-desc-svg'>Export Medical PDF</p>
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
+    
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS
 # ----------------------------------------------------------------------------
