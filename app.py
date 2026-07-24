@@ -865,19 +865,12 @@ elif nav_selection == "Reports":
         reports_data = []
    
     if not reports_data:
-        st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. El sistema está listo en cero limpio para registrar y emitir análisis reales.")
+        st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. The system is ready in clean-slate production to record and emit real diagnostics.")
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         df_rep_list = pd.DataFrame(reports_data)
         st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
-            columns={
-                'muestra_id': 'Sample ID', 
-                'paciente_id': 'Patient ID', 
-                'score': 'Beta Score', 
-                'clasificacion': 'Result Assessment', 
-                'fecha_analisis': 'Timestamp', 
-                'hash_seguridad': 'Security Hash'
-            }
+            columns={'muestra_id':'Sample ID', 'paciente_id':'Patient ID', 'score':'Beta Score', 'clasificacion':'Result Assessment', 'fecha_analisis':'Timestamp', 'hash_seguridad':'Security Hash'}
         ), use_container_width=True, hide_index=True)
        
         st.write("---")
@@ -887,7 +880,6 @@ elif nav_selection == "Reports":
        
         st.write("##")
        
-        # FPDF CORE ENGINE RECONSTRUCTION (HIGH-FIDELITY MEDICAL PDF)
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Helvetica", "B", 14)
@@ -956,20 +948,16 @@ elif nav_selection == "Reports":
         pdf.cell(190, 4, "Restricted pre-clinical research use only. Confidential proprietary assets of METHYLOX Platform 2026.", ln=True, align="C")
        
         try:
-            # Obtiene bytes puros directamente de fpdf para Streamlit
-            final_pdf_payload = pdf.output(dest='S')
+            final_pdf_payload = pdf.output(dest='S').encode('latin1')
         except Exception:
-            final_pdf_payload = pdf.output()
+            final_pdf_payload = bytes(pdf.output())
            
         st.download_button(
             label=f"🔬 Verify Electronic Signature & Download Defendible Dossier for Sample {m_select}",
-            data=final_pdf_payload, 
-            file_name=f"METHYLOX_Defendible_Report_{m_select}.pdf",
-            mime="application/pdf", 
-            use_container_width=True
+            data=final_pdf_payload, file_name=f"METHYLOX_Defendible_Report_{m_select}.pdf",
+            mime="application/pdf", use_container_width=True
         )
         st.markdown('</div>', unsafe_allow_html=True)
-
 
 # ----------------------------------------------------------------------------
 # 🔐 TAB 6: IDENTITY GOVERNANCE (DYNAMIC RBAC AUTHORIZATION HUB)
@@ -987,14 +975,7 @@ elif nav_selection == "Identity Governance":
             input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., Dr. John Doe, MD")
         with c2:
             input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
-            target_role_display = st.selectbox(
-                "System Assigned Operational Role Privilege", 
-                [
-                    "admin",
-                    "cls",
-                    "md"
-                ]
-            )
+            target_role_display = st.selectbox("System Assigned Operational Role Privilege", ["admin", "cls", "md"])
                
         target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
         submit_btn = st.form_submit_button("🚀 Activate Identity & Delegate Tasks")
@@ -1003,13 +984,7 @@ elif nav_selection == "Identity Governance":
         if not input_username or not input_password or not input_full_name:
             st.error("❌ All clinical identity fields are mandatory.")
         else:
-            payload_u = {
-                "username": input_username, 
-                "password": input_password, 
-                "full_name": input_full_name, 
-                "role": target_role_display, 
-                "hospital_id": int(target_hospital_id)
-            }
+            payload_u = {"username": input_username, "password": input_password, "full_name": input_full_name, "role": target_role_display, "hospital_id": int(target_hospital_id)}
             try:
                 response = requests.post(f"{BACKEND_URL}/api/v1/auth/provision-user", json=payload_u, headers=headers)
                 if response.status_code == 200:
