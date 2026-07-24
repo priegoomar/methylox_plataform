@@ -349,29 +349,61 @@ if nav_selection == "🔒 Access Restricted":
     st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
 
+
 # ----------------------------------------------------------------------------
-# 📊 TAB 1: DASHBOARD MATRIX (100% LIVE REAL-TIME TRANSACTIONAL ENGINE)
+# 📊 TAB 1: DASHBOARD MATRIX (SVG ACCIONES RÁPIDAS)
 # ----------------------------------------------------------------------------
 if nav_selection == "Dashboard Matrix":
     st.markdown("""
     <style>
         .metric-container-hub { display: flex; gap: 20px; margin-bottom: 25px; }
-        .metric-card-clinical { background: white; border: 1px solid #E2E8F0; border-radius: 14px; padding: 24px; flex: 1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: space-between; }
-        .metric-num-big { font-size: 36px !important; font-weight: 800 !important; color: #0F172A !important; margin: 0 !important; line-height: 1 !important; }
-        .metric-title-sub { font-size: 13px !important; font-weight: 700 !important; color: #64748B !important; margin-bottom: 6px !important; }
-        .metric-link-btn { font-size: 12px !important; font-weight: 600 !important; color: #2563EB !important; text-decoration: none; margin-top: 10px; display: block; }
+        .metric-card-clinical-new { 
+            background: white; 
+            border: 1px solid #E2E8F0; 
+            border-radius: 12px; 
+            padding: 20px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+            text-align: center;
+            min-height: 140px;
+        }
+        .metric-title-sub-new { 
+            font-size: 13px !important; 
+            font-weight: 700 !important; 
+            color: #64748B !important; 
+            margin-bottom: 8px !important; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .metric-num-big-new { 
+            font-size: 38px !important; 
+            font-weight: 800 !important; 
+            color: #0F172A !important; 
+            margin: 5px 0 !important; 
+        }
+        .metric-link-btn-new { 
+            font-size: 12px !important; 
+            font-weight: 600 !important; 
+            color: #2563EB !important; 
+            text-decoration: none; 
+            display: inline-block;
+            margin-top: 5px;
+        }
         
-        .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-align: center; display: inline-block; }
-        .badge-blue { background-color: #EFF6FF; color: #2563EB; }
-        .badge-yellow { background-color: #FFFBEB; color: #D97706; }
-        .badge-green { background-color: #F0FDF4; color: #16A34A; }
+        .clinical-table-new { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .clinical-table-new th { color: #64748B; font-weight: 700; padding: 12px 10px; border-bottom: 2px solid #F1F5F9; text-align: left; }
+        .clinical-table-new td { padding: 14px 10px; color: #0F172A; border-bottom: 1px solid #F1F5F9; text-align: left; }
+        
+        .badge-status-new { padding: 5px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        .badge-blue-new { background-color: #EFF6FF; color: #2563EB; }
+        .badge-yellow-new { background-color: #FFFBEB; color: #D97706; }
+        .badge-green-new { background-color: #F0FDF4; color: #16A34A; }
     </style>
     """, unsafe_allow_html=True)
 
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
     
-    # 1. FETCH LIVE CONNECTED TELEMETRY (CEROS REALES SI NO HAY LECTURAS)
+    # FETCH LIVE DATA
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
         if res_telemetry.status_code == 200:
@@ -385,86 +417,45 @@ if nav_selection == "Dashboard Matrix":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # 2. RENDER DE KPI CARDS PREMIUM
-    st.markdown(f"""
-    <div class='metric-container-hub'>
-        <div class='metric-card-clinical'>
-            <div>
-                <p class='metric-title-sub'>Samples Received Today</p>
-                <p class='metric-num-big'>{received_today}</p>
-                <a class='metric-link-btn' href='#'>View all samples →</a>
-            </div>
-            <div style='font-size: 28px; color: #2563EB;'>🧪</div>
-        </div>
-        <div class='metric-card-clinical'>
-            <div>
-                <p class='metric-title-sub'>Analyses In Progress</p>
-                <p class='metric-num-big'>{in_progress}</p>
-                <a class='metric-link-btn' href='#'>View details →</a>
-            </div>
-            <div style='font-size: 28px; color: #D97706;'>🔬</div>
-        </div>
-        <div class='metric-card-clinical'>
-            <div>
-                <p class='metric-title-sub'>Ready Reports</p>
-                <p class='metric-num-big'>{ready_analyses}</p>
-                <a class='metric-link-btn' href='#'>View dossiers →</a>
-            </div>
-            <div style='font-size: 28px; color: #16A34A;'>📄</div>
-        </div>
-        <div class='metric-card-clinical'>
-            <div>
-                <p class='metric-title-sub'>Quality Controls (QC)</p>
-                <p class='metric-num-big'>{qc_pass_rate}%</p>
-                <a class='metric-link-btn' href='#'>View QC matrix →</a>
-            </div>
-            <div style='font-size: 28px; color: #6366F1;'>🛡️</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # RENDER DE LAS TARJETAS
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Samples Received</p><p class='metric-num-big-new'>{received_today}</p><a class='metric-link-btn-new' href='#'>View all samples →</a></div>", unsafe_allow_html=True)
+    with c2:
+        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>In Progress</p><p class='metric-num-big-new'>{in_progress}</p><a class='metric-link-btn-new' href='#'>View details →</a></div>", unsafe_allow_html=True)
+    with c3:
+        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Ready Reports</p><p class='metric-num-big-new'>{ready_analyses}</p><a class='metric-link-btn-new' href='#'>View dossiers →</a></div>", unsafe_allow_html=True)
+    with c4:
+        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Quality Controls</p><p class='metric-num-big-new'>{qc_pass_rate}%</p><a class='metric-link-btn-new' href='#'>View QC matrix →</a></div>", unsafe_allow_html=True)
 
-    # 3. FILA CENTRAL: ACTIVIDAD RECIENTE TRANSACCIONAL VS DONA DE REPORTES REALES
+    st.write("##")
+
+    # FILA CENTRAL UNIFICADA
     c_left, c_right = st.columns([1.4, 1.0])
     
     with c_left:
         st.markdown('<div class="executive-card-white" style="height: 380px; overflow-y: auto;">', unsafe_allow_html=True)
         st.markdown('<div class="card-title-clinical">⚡ Recent Laboratory Activity Trail</div>', unsafe_allow_html=True)
-        
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
             
-        st.markdown("""
-        <table style='width:100%; border-collapse: collapse; font-size: 13px; text-align: left;'>
-            <tr style='border-bottom: 2px solid #F1F5F9; color: #64748B; font-weight: 700;'>
-                <th style='padding: 10px 0;'>Sample ID</th>
-                <th>Patient</th>
-                <th>Matrix</th>
-                <th>Status</th>
-            </tr>
-        """, unsafe_allow_html=True)
-        
-        for s in samples_list[:5]: # Consume dinámicamente solo lo que exista en PostgreSQL
-            state = s.get("Current LIMS State", "Sample Received")
-            badge_class = "badge-blue" if "Received" in state else "badge-yellow" if "Processing" in state or "Sequencing" in state else "badge-green"
-            
-            st.markdown(f"""
-            <tr style='border-bottom: 1px solid #F1F5F9; color: #0F172A;'>
-                <td style='padding: 12px 0; font-weight: 600; color: #2563EB;'>{s.get('Sample ID')}</td>
-                <td>{s.get('Patient Context')}</td>
-                <td>{s.get('Specimen Matrix', 'Plasma')}</td>
-                <td><span class='badge-status {badge_class}'>{state}</span></td>
-            </tr>
-            """, unsafe_allow_html=True)
-        st.markdown("</table>", unsafe_allow_html=True)
+        if not samples_list:
+            st.markdown("<p style='color:#64748B; font-size:13px; text-align:center; padding-top:100px;'>ℹ️ Standby Node: No active patient records or molecular assays detected in pipeline.</p>", unsafe_allow_html=True)
+        else:
+            st.markdown("<table class='clinical-table-new'><tr><th>Sample ID</th><th>Patient</th><th>Matrix</th><th>Status</th></tr>", unsafe_allow_html=True)
+            for s in samples_list[:5]:
+                state = s.get("Current LIMS State", "Sample Received")
+                badge_class = "badge-blue-new" if "Received" in state else "badge-yellow-new" if "Processing" in state or "Sequencing" in state else "badge-green-new"
+                st.markdown(f"<tr><td style='font-weight: 700; color: #2563EB;'>{s.get('Sample ID')}</td><td>{s.get('Patient Context')}</td><td>{s.get('Specimen Matrix', 'Plasma')}</td><td><span class='badge-status-new {badge_class}'>{state}</span></td></tr>", unsafe_allow_html=True)
+            st.markdown("</table>", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
     with c_right:
         st.markdown('<div class="executive-card-white" style="height: 380px;">', unsafe_allow_html=True)
         st.markdown('<div class="card-title-clinical">📊 Onco-Genetic Diagnostic Summary</div>', unsafe_allow_html=True)
-        
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
@@ -476,7 +467,6 @@ if nav_selection == "Dashboard Matrix":
         negatives = total_cases - positives
         in_pipeline = in_progress
         
-        # SI LA BASE DE DATOS ESTÁ EN CERO, EL GRÁFICO MUESTRA UN ANILLO GRIS LIMPIO DE ESPERA
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -498,17 +488,14 @@ if nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # 4. BOTONERA DE ACCIONES RÁPIDAS
+    # ⚡ BOTONES DE ACCIÓN RÁPIDA CON ICONOS VECTORIALES DE SISTEMA (SIN IMÁGENES ROTAS)
     st.markdown("<p style='font-size: 14px; font-weight: 700; color: #0F172A; margin-top: 10px; margin-bottom: 15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
     b1, b2, b3, b4 = st.columns(4)
-    with b1:
-        if st.button("📥 Enroll New Subject", use_container_width=True): st.info("💡 Go to 'Patients' tab on left sidebar.")
-    with b2:
-        if st.button("🧪 Log Asset Intake", use_container_width=True): st.info("💡 Go to 'LIMS Samples' tab on left sidebar.")
-    with b3:
-        if st.button("🧬 Launch CRISPR Pipeline", use_container_width=True): st.info("💡 Go to 'METHYLOX Engine' tab on left sidebar.")
-    with b4:
-        if st.button("📜 Download Clinical Dossier", use_container_width=True): st.info("💡 Go to 'Reports' tab on left sidebar.")
+    with b1: st.button("Enroll New Subject", icon=":material/person_add:", use_container_width=True)
+    with b2: st.button("Log Asset Intake", icon=":material/biotech:", use_container_width=True)
+    with b3: st.button("Launch CRISPR Pipeline", icon=":material/play_circle:", use_container_width=True)
+    with b4: st.button("Download Clinical Dossier", icon=":material/description:", use_container_width=True)
+
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS
 # ----------------------------------------------------------------------------
