@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 import requests
+
 # ============================================================================
 # 🧬 METHYLOX™ PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
 # ============================================================================
@@ -17,96 +18,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.markdown("""
-<style>  
-    /* Global Viewport Architecture */
-    .stApp {  
-        background-color: #F8FAFC !important;  
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;  
-    }  
-    [data-testid="stHeader"] {  
-        display: none !important;  
-        height: 0px !important;  
-    }  
-    [data-testid="stMainBlockContainer"] {  
-        padding-top: 2rem !important;  
-        padding-bottom: 2rem !important;  
-        padding-left: 3rem !important;  
-        padding-right: 3rem !important;  
-    }  
-   
-    /* Dark Compliance Corporate Sidebar */
-    [data-testid="stSidebar"] {  
-        background-color: #0B0F19 !important;  
-        border-right: 1px solid #1E293B;  
-    }  
-    div[data-testid="stSidebarUserContent"] .stRadio > div {
-        gap: 6px !important;
-    }
-    div[data-testid="stSidebarUserContent"] label {
-        color: #94A3B8 !important;
-        font-weight: 500 !important;
-        font-size: 14px !important;
-    }
-   
-    /* Typography System */
-    .welcome-header {
-        font-size: 28px !important;
-        font-weight: 800 !important;
-        color: #0F172A !important;
-        margin-bottom: 2px !important;
-    }
-    .welcome-caption {
-        font-size: 14px !important;
-        color: #64748B !important;
-        margin-bottom: 25px !important;
-    }
-   
-    /* Clean Content Containers (Commercial Grade) - EVITA RECTÁNGULOS VACÍOS */
-    .executive-card-white {  
-        background-color: #FFFFFF !important;  
-        border: 1px solid #E2E8F0 !important;  
-        border-radius: 12px !important;  
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;  
-        padding: 24px !important;  
-        margin-bottom: 20px !important;
-    }  
-    .executive-card-white:empty {
-        display: none !important; /* Oculta automáticamente cualquier tarjeta si se queda sin contenido */
-    }
-
-    .card-title-clinical {
-        font-size: 16px !important;
-        font-weight: 700 !important;
-        color: #0F172A !important;
-        margin-bottom: 16px !important;
-    }
-   
-    /* Dynamic Buttons Controller */
-    div.stButton > button:first-child {  
-        background-color: #F1F5F9 !important;  
-        border: 1px solid #E2E8F0 !important;  
-        color: #0F172A !important;  
-        border-radius: 8px !important;  
-        font-weight: 600 !important;  
-        height: 38px !important;  
-        font-size: 13px !important;  
-        transition: 0.2s !important;  
-    }  
-    div.stButton > button:first-child:hover {  
-        background-color: #E2E8F0 !important;  
-        border-color: #CBD5E1 !important;
-        
-/* Oculta automáticamente cualquier tarjeta o contenedor ejecutivo si se queda sin elementos hijos */
-.executive-card-white:empty, 
-.unified-main-board-box:empty,
-div[data-testid="stVerticalBlock"]:has(> div.element-container:empty) {
-    display: none !important;
-}
-    }  
-</style> """, unsafe_allow_html=True)
-
-# --- ADVANCED PREMIUM CLINICAL DESIGN SYSTEM INJECTION (CSS RECTIFICATION) ---
+# --- UNIFIED ADVANCED CLINICAL DESIGN SYSTEM & CSS RECTIFICATION ---
 st.markdown("""
 <style>  
     /* Global Viewport Architecture */
@@ -193,7 +105,7 @@ st.markdown("""
         margin: 0 !important;
     }
    
-    /* Clean Content Containers (Commercial Grade) */
+    /* Clean Content Containers (Commercial Grade) & Ghost Panel Suppression */
     .executive-card-white {  
         background-color: #FFFFFF !important;  
         border: 1px solid #E2E8F0 !important;  
@@ -202,6 +114,12 @@ st.markdown("""
         padding: 24px !important;  
         margin-bottom: 20px !important;
     }  
+    .executive-card-white:empty, 
+    .unified-main-board-box:empty,
+    div[data-testid="stVerticalBlock"]:has(> div.element-container:empty) {
+        display: none !important;
+    }
+
     .card-title-clinical {
         font-size: 16px !important;
         font-weight: 700 !important;
@@ -230,7 +148,8 @@ st.markdown("""
         background-color: #E2E8F0 !important;  
         border-color: #CBD5E1 !important;  
     }  
-</style> """, unsafe_allow_html=True)
+</style>
+""", unsafe_allow_html=True)
 
 # --- BACKEND API BACKBONE ROUTING ---
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
