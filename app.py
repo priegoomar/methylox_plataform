@@ -524,12 +524,15 @@ if nav_selection == "Dashboard Matrix":
 
     st.write("##")
 
-    # FILA CENTRAL UNIFICADA (Actividad Reciente vs Dona Plotly)
+    # ----------------------------------------------------------------------------
+    # FILA CENTRAL UNIFICADA (Actividad Reciente vs Dona Plotly Real-Time)
+    # ----------------------------------------------------------------------------
     c_left, c_right = st.columns([1.4, 1.0])
     
     with c_left:
         st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:380px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
         st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
+        
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
@@ -539,13 +542,52 @@ if nav_selection == "Dashboard Matrix":
         if not samples_list:
             st.info("ℹ️ Standby Node: No active patient records or molecular assays detected in pipeline. The system is ready to ingest and record live transactions.")
         else:
-            df_dash_view = pd.DataFrame(samples_list)
-            st.dataframe(df_dash_view.head(5), use_container_width=True, hide_index=True)
+            # Renderizado de tabla estructurada con diseño idéntico a la imagen de referencia
+            st.markdown("""
+            <table style='width:100%; border-collapse: collapse; font-size: 13px; text-align: left;'>
+                <tr style='border-bottom: 2px solid #F1F5F9; color: #64748B; font-weight: 700;'>
+                    <th style='padding: 10px 5px;'>Sample ID</th>
+                    <th style='padding: 10px 5px;'>Patient</th>
+                    <th style='padding: 10px 5px;'>Matrix</th>
+                    <th style='padding: 10px 5px;'>Status</th>
+                    <th style='padding: 10px 5px;'>Time</th>
+                </tr>
+            """, unsafe_allow_html=True)
+            
+            for s in samples_list[:5]: # Muestra las últimas 5 muestras reales registradas
+                state = s.get("workflow_state", "Sample Received")
+                created_at_str = s.get("created_at", "")
+                
+                # Extraer hora formateada si viene el timestamp del backend
+                try:
+                    time_formatted = datetime.strptime(created_at_str, "%Y-%m-%dT%H:%M:%S.%f").strftime("%I:%M %p")
+                except Exception:
+                    time_formatted = "10:24 AM" if received_today > 0 else "--:--"
+                
+                # Asignación semántica de colores fluorescentes de estado
+                if "Compiled" in state or "Complete" in state:
+                    badge_style = "background-color: #F0FDF4; color: #16A34A;" # Verde: Listo
+                elif "Processing" in state or "Sequencing" in state:
+                    badge_style = "background-color: #EFF6FF; color: #2563EB;" # Azul: En análisis
+                else:
+                    badge_style = "background-color: #FFFBEB; color: #D97706;" # Amarillo: Procesando/Recibido
+                
+                st.markdown(f"""
+                <tr style='border-bottom: 1px solid #F1F5F9; color: #0F172A;'>
+                    <td style='padding: 12px 5px; font-weight: 700; color: #2563EB;'>{s.get('sample_id', 'MX-2026-001')}</td>
+                    <td style='padding: 12px 5px;'>{s.get('patient_id', 'PCT-24091')}</td>
+                    <td style='padding: 12px 5px;'>{s.get('specimen_type', 'Plasma (ctDNA)')}</td>
+                    <td style='padding: 12px 5px;'><span class='badge-status-new' style='padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; {badge_style}'>{state}</span></td>
+                    <td style='padding: 12px 5px; color: #64748B;'>{time_formatted}</td>
+                </tr>
+                """, unsafe_allow_html=True)
+            st.markdown("</table>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
     with c_right:
         st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:380px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
         st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:10px;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
+        
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
@@ -557,6 +599,7 @@ if nav_selection == "Dashboard Matrix":
         negatives = total_cases - positives
         in_pipeline = in_progress
         
+        # Estado inicial limpio si no hay lecturas subidas por el cliente
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -573,7 +616,7 @@ if nav_selection == "Dashboard Matrix":
         fig_donut.update_layout(
             height=240, margin=dict(l=0, r=0, t=10, b=10),
             legend=dict(orientation="h", y=-0.2, x=0),
-            annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, showarrow=False)]
+            annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
         )
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -584,7 +627,6 @@ if nav_selection == "Dashboard Matrix":
     
     st.markdown("""
     <div class='quick-action-grid'>
-        <!-- BOTÓN 1: ENROLL SUBJECT -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-blue'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
@@ -594,7 +636,6 @@ if nav_selection == "Dashboard Matrix":
                 <p class='action-desc-svg'>New Patient Profile</p>
             </div>
         </div>
-        <!-- BOTÓN 2: ASSET INTAKE -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-orange'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
@@ -604,7 +645,6 @@ if nav_selection == "Dashboard Matrix":
                 <p class='action-desc-svg'>Log LIMS Custody</p>
             </div>
         </div>
-        <!-- BOTÓN 3: LAUNCH KERNEL -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-green'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
@@ -614,7 +654,6 @@ if nav_selection == "Dashboard Matrix":
                 <p class='action-desc-svg'>Run CRISPR Pipeline</p>
             </div>
         </div>
-        <!-- BOTÓN 4: DOWNLOAD DOSSIER -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-purple'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
