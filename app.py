@@ -299,7 +299,7 @@ if nav_selection == "Dashboard Matrix":
     st.info("📥 Intake Queue Clean: No active sample workflows logged for this node context. El sistema está listo en cero limpio para recibir datos reales.")
 
 # ----------------------------------------------------------------------------
-# 📊 TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT)
+# 📊 TAB 2: PATIENTS
 # ----------------------------------------------------------------------------
 elif nav_selection == "Patients":
     st.markdown("<h2 class='welcome-header'>📊 Clinical Cohort Population Directory</h2>", unsafe_allow_html=True)
@@ -319,7 +319,7 @@ elif nav_selection == "Patients":
             new_p_sexo = st.selectbox("Biological Gender Parameter", ["Female", "Male"])
            
             try:
-                res_h_dir = requests.get(f"{BACKEND_URL}/hospitals/directory", headers=headers, timeout=2)
+                res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", headers=headers, timeout=5)
                 hospitals_mapped = {h["name"]: h["id"] for h in res_h_dir.json()} if res_h_dir.status_code == 200 else {}
             except Exception:
                 hospitals_mapped = {}
@@ -341,13 +341,13 @@ elif nav_selection == "Patients":
                             "hospital_id": int(hospitals_mapped[selected_h_node])
                         }
                         try:
-                            res_p = requests.post(f"{BACKEND_URL}/lims/enroll-patient", json=payload_p, headers=headers, timeout=3)
+                            res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
                             if res_p.status_code == 200:
                                 st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
                                 time.sleep(0.5)
                                 st.rerun()
                             else:
-                                st.error(f"🚨 Database Rejection: {res_p.json().get('detail', 'Write violation integrity constraints.')}")
+                                st.error("🚨 Database Rejection: Write violation integrity constraints.")
                         except Exception:
                             st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
         st.markdown('</div>', unsafe_allow_html=True)
@@ -356,48 +356,62 @@ elif nav_selection == "Patients":
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
         st.markdown('<div class="card-title-clinical">🗃️ Active Cohort Registry Directory</div>', unsafe_allow_html=True)
         try:
-            res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
+            res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
             if res_cohort.status_code == 200 and res_cohort.json():
                 df_patients = pd.DataFrame(res_cohort.json())
             else:
-                df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Facility Link", "Current Mean Beta (β)"])
+                df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender"])
         except Exception:
-            df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Facility Link", "Current Mean Beta (β)"])
+            df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender"])
            
         st.dataframe(df_patients, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
-       
+
+# ----------------------------------------------------------------------------
+# 🧪 TAB 3: LIMS SAMPLES
+# ----------------------------------------------------------------------------
+elif nav_selection == "LIMS Samples":
+    st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Custody Flow</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Validate chronological workflow history pathways and operational audit logs</p>", unsafe_allow_html=True)
+    m1, m2 = st.columns(2)
+    with m1:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">📈 Longitudinal Evolution of Epigenetic Biomarkers (Beta Score History)</div>', unsafe_allow_html=True)
-       
-        if not df_patients.empty and "Patient ID" in df_patients.columns:
-            p_select = st.selectbox("Select Patient Context ID to trace history metrics across records:", df_patients["Patient ID"].unique())
-            try:
-                res_history = requests.get(f"{BACKEND_URL}/analysis/history/{p_select}", headers=headers, timeout=2)
-                if res_history.status_code == 200 and res_history.json():
-                    df_long = pd.DataFrame(res_history.json())
-                    fig_long = go.Figure()
-                    fig_long.add_trace(go.Scatter(
-                        x=df_long["fecha_analisis"], y=df_long["score"], mode='lines+markers',
-                        name='Patient Mean β-Score', line=dict(color='#2563EB', width=3),
-                        marker=dict(size=8, symbol="circle"), hovertext=df_long.get("guias_activas", "")
-                    ))
-                    fig_long.add_trace(go.Scatter(
-                        x=df_long["fecha_analisis"], y=[0.1000] * len(df_long), mode='lines',
-                        name='Youden Cutoff (0.1000)', line=dict(color='#EF4444', width=2, dash='dash')
-                    ))
-                    fig_long.update_layout(
-                        height=200, plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=10, r=10, t=10, b=10),
-                        showlegend=True, legend=dict(orientation="h", y=1.2, x=0),
-                        xaxis=dict(gridcolor='#F1F5F9'), yaxis=dict(gridcolor='#F1F5F9', range=[0, 0.4])
-                    )
-                    st.plotly_chart(fig_long, use_container_width=True)
-                else:
-                    st.info("ℹ️ Standby: No historical bioinformatic analysis records tracked for this patient profile context yet.")
-            except Exception:
-                st.error("❌ Network Exception: Timeline analysis data transmission channel disconnected.")
+        st.markdown('<div class="card-title-clinical">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
+        if st.session_state.user_role == "md":
+            st.warning("🔒 Access Denied: Medical personnel are restricted from modifying LIMS states.")
         else:
-            st.info("ℹ️ No active cohort population profiles available to map historical longitudinal benchmarks.")
+            new_m_id = st.text_input("Unique Sample Asset ID")
+            asoc_p_id = st.text_input("Associated Patient Context ID")
+            new_m_qr = st.text_input("Barcode Hardware QR Code")
+            new_m_tipo = st.selectbox("Specimen Matrix Type", ["Plasma", "Whole Blood", "Tissue"])
+            new_m_est = st.selectbox("LIMS Workflow State", ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"])
+            
+            if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
+                if not new_m_id or not new_m_qr or not asoc_p_id:
+                    st.error("❌ Input Constraint Violation.")
+                else:
+                    payload_sample = {"sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr, "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name}
+                    try:
+                        res_intake = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
+                        if res_intake.status_code == 200:
+                            st.success("Asset logged successfully.")
+                            time.sleep(0.5)
+                            st.rerun()
+                        else:
+                            st.error("❌ LIMS Node Parameter Rejection.")
+                    except Exception:
+                        st.error("❌ Connectivity Failure.")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+    with m2:
+        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">🗄️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
+        try:
+            res_s = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
+            df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Current LIMS State"])
+        except Exception:
+            df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Current LIMS State"])
+        st.dataframe(df_samples, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
@@ -511,7 +525,7 @@ elif nav_selection == "Reports":
    
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     try:
-        res_reports = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=2)
+        res_reports = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
         if res_reports.status_code == 200:
             reports_data = res_reports.json()
             if not reports_data:
@@ -616,6 +630,7 @@ elif nav_selection == "Reports":
         mime="application/pdf", use_container_width=True
     )
     st.markdown('</div>', unsafe_allow_html=True)
+
 # ----------------------------------------------------------------------------
 # 🔐 TAB 6: IDENTITY GOVERNANCE (DYNAMIC RBAC AUTHORIZATION HUB)
 # ----------------------------------------------------------------------------
@@ -632,7 +647,14 @@ elif nav_selection == "Identity Governance":
             input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., Dr. John Doe, MD")
         with c2:
             input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
-            target_role_display = st.selectbox("System Assigned Operational Role Privilege", ["admin (Chief Executive Director)", "cls (Clinical Laboratory Scientist)", "md (Medical Doctor)"])
+            target_role_display = st.selectbox(
+                "System Assigned Operational Role Privilege", 
+                [
+                    "admin",
+                    "cls",
+                    "md"
+                ]
+            )
                
         target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
         submit_btn = st.form_submit_button("🚀 Activate Identity & Delegate Tasks")
@@ -642,11 +664,14 @@ elif nav_selection == "Identity Governance":
             st.error("❌ All clinical identity fields are mandatory.")
         else:
             payload_u = {
-                "username": input_username, "password": input_password, "full_name": input_full_name, 
-                "role": str(target_role_display.split(" ")[0]), "hospital_id": int(target_hospital_id)
+                "username": input_username, 
+                "password": input_password, 
+                "full_name": input_full_name, 
+                "role": target_role_display, 
+                "hospital_id": int(target_hospital_id)
             }
             try:
-                response = requests.post(f"{BACKEND_URL}/auth/provision-user", json=payload_u, headers=headers)
+                response = requests.post(f"{BACKEND_URL}/api/v1/auth/provision-user", json=payload_u, headers=headers)
                 if response.status_code == 200:
                     st.success("⚡ Staff Identity Successfully Activated & Tasks Delegated Real-Time.")
                 else:
@@ -666,7 +691,7 @@ elif nav_selection == "⚙️ System Settings":
     st.markdown("<p style='color:#0F172A; font-weight:700; font-size:14px; margin-bottom:10px;'>📜 METHYLOX_DETERMINISTIC_RULES.PY (AUDITABLE CONTEXT)</p>", unsafe_allow_html=True)
     st.code("""
 def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_unmethylated: float) -> float:
-    # Standard international laser offset correction
+    # Standard international methylation mathematical equation with fluorescence laser offset correction
     offset_correction = 100.0
     beta_value = intensity_methylated / (intensity_methylated + intensity_unmethylated + offset_correction)
     return round(float(beta_value), 4)
