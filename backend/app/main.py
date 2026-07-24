@@ -120,7 +120,7 @@ class RoleGuard:
 @app.post("/api/v1/auth/provision-user", tags=["Governance & Security"])
 async def provision_clinical_staff(
     user: UserCreate,
-    current_user: TokenData = Depends(RoleGuard(["admin"]))
+    current_user: TokenData = (RoleGuard(["admin"]))
 ):
     conn = get_db_connection()
     cur = conn.cursor(cursor_factory=RealDictCursor)
