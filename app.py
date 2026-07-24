@@ -349,101 +349,13 @@ if nav_selection == "🔒 Access Restricted":
     st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
 
+# ----------------------------------------------------------------------------
+# 📊 TAB 1: DASHBOARD MATRIX
+# ----------------------------------------------------------------------------
 if nav_selection == "Dashboard Matrix":
-    st.markdown("""
-    <style>
-        /* Estilos de las Tarjetas Superiores */
-        .metric-card-clinical-new { 
-            background: white; 
-            border: 1px solid #E2E8F0; 
-            border-radius: 12px; 
-            padding: 20px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
-            text-align: center;
-            min-height: 130px;
-        }
-        .metric-title-sub-new { 
-            font-size: 11px !important; 
-            font-weight: 700 !important; 
-            color: #64748B !important; 
-            margin-bottom: 8px !important; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .metric-num-big-new { 
-            font-size: 36px !important; 
-            font-weight: 800 !important; 
-            color: #0F172A !important; 
-            margin: 5px 0 !important; 
-            line-height: 1 !important;
-        }
-        .metric-link-btn-new { 
-            font-size: 11px !important; 
-            font-weight: 600 !important; 
-            color: #2563EB !important; 
-            text-decoration: none; 
-            display: inline-block;
-            margin-top: 5px;
-        }
-
-/* Quick Buttons with Fluorescent SVG Icons */
-        .quick-action-grid {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .action-card-svg {
-            background: white;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            padding: 16px;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            transition: all 0.2s ease;
-        }
-        .action-card-svg:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-        .icon-circle-svg {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .action-text-container {
-            display: flex;
-            flex-direction: column;
-        }
-        .action-title-svg {
-            font-size: 14px;
-            font-weight: 700;
-            color: #0F172A;
-            margin: 0;
-        }
-        .action-desc-svg {
-            font-size: 11px;
-            color: #64748B;
-            margin: 2px 0 0 0;
-        }
-
-/* Fluorescent Color Palette */
-        .bg-neon-blue { background: #E0F2FE; color: #0EA5E9; }
-        .bg-neon-orange { background: #FFEDD5; color: #F97316; }
-        .bg-neon-green { background: #DCFCE7; color: #22C55E; }
-        .bg-neon-purple { background: #F3E8FF; color: #A855F7; }
-    </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
+    st.markdown(f"<h2 class='welcome-header'>Welcome, {st.session_state.operator_display_name} 📋</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Resumen de actividad del laboratorio - Telemetría en tiempo real</p>", unsafe_allow_html=True)
     
-    # 1. FETCH LIVE DATA FROM ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
         if res_telemetry.status_code == 200:
@@ -457,150 +369,15 @@ if nav_selection == "Dashboard Matrix":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-# 2. FOUR TOP CARDS PERFECTLY ALIGNED AND WITHOUT BROKEN BOXES
     c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Samples Received</p><p class='metric-num-big-new'>{received_today}</p><a class='metric-link-btn-new' href='#'>View all samples →</a></div>", unsafe_allow_html=True)
-    with c2:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>In Progress</p><p class='metric-num-big-new'>{in_progress}</p><a class='metric-link-btn-new' href='#'>View details →</a></div>", unsafe_allow_html=True)
-    with c3:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Ready Reports</p><p class='metric-num-big-new'>{ready_analyses}</p><a class='metric-link-btn-new' href='#'>View dossiers →</a></div>", unsafe_allow_html=True)
-    with c4:
-        st.markdown(f"<div class='metric-card-clinical-new'><p class='metric-title-sub-new'>Quality Controls</p><p class='metric-num-big-new'>{qc_pass_rate}%</p><a class='metric-link-btn-new' href='#'>View QC matrix →</a></div>", unsafe_allow_html=True)
+    with c1: st.markdown(f"<div class='kpi-card-commercial'><p class='kpi-text-lbl'>RECEIVED TODAY</p><p class='kpi-text-val'>{received_today}</p></div>", unsafe_allow_html=True)
+    with c2: st.markdown(f"<div class='kpi-card-commercial'><p class='kpi-text-lbl'>IN PROGRESS</p><p class='kpi-text-val'>{in_progress}</p></div>", unsafe_allow_html=True)
+    with c3: st.markdown(f"<div class='kpi-card-commercial'><p class='kpi-text-lbl'>READY ANALYSIS</p><p class='kpi-text-val'>{ready_analyses}</p></div>", unsafe_allow_html=True)
+    with c4: st.markdown(f"<div class='kpi-card-commercial'><p class='kpi-text-lbl'>QC PASS RATE</p><p class='kpi-text-val'>{qc_pass_rate}%</p></div>", unsafe_allow_html=True)
 
     st.write("##")
-
-  # 3. Fila central dinámica
-    c_left, c_right = st.columns([1.4, 1.0])
+    st.info("ℹ️ Intake Queue Clean: No active sample workflows logged for this node context. El sistema está listo para recibir datos reales.")
     
-    with c_left:
-        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:380px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
-        try:
-            res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
-            samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
-        except Exception:
-            samples_list = []
-            
-        if not samples_list:
-            st.info("ℹ️ Standby Node: No active patient records or molecular assays detected in pipeline. El sistema está listo en cero limpio para registrar operaciones reales.")
-        else:
-            df_dash_view = pd.DataFrame(samples_list)
-            st.dataframe(df_dash_view.head(5), use_container_width=True, hide_index=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with c_right:
-        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:380px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:10px;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
-        try:
-            res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
-            rep_data = res_rep.json() if res_rep.status_code == 200 else []
-        except Exception:
-            rep_data = []
-            
-        total_cases = len(rep_data)
-        positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
-        negatives = total_cases - positives
-        in_pipeline = in_progress
-        
-        if total_cases == 0 and in_pipeline == 0:
-            labels_pie = ['Awaiting Data Ingestion']
-            values_pie = [100]
-            colors_pie = ['#E2E8F0']
-        else:
-            labels_pie = ['Positive Panels', 'Stable Controls', 'In Pipeline']
-            values_pie = [positives, negatives, in_pipeline]
-            colors_pie = ['#EF4444', '#10B981', '#3B82F6']
-
-        fig_donut = go.Figure(data=[go.Pie(
-            labels=labels_pie, values=values_pie, hole=.6,
-            marker=dict(colors=colors_pie), textinfo='none', showlegend=True
-        )])
-        fig_donut.update_layout(
-            height=240, margin=dict(l=0, r=0, t=10, b=10),
-            legend=dict(orientation="h", y=-0.2, x=0),
-            annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
-        )
-        st.plotly_chart(fig_donut, use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-# 4. ⚡ QUICK ACTIONS WITH BUTTONS INJECTED IN PURE FLUORESCENT SVG
-    st.write("##")
-    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class='quick-action-grid'>
-        <!-- BOTÓN 1: ENROLL SUBJECT -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-blue'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Enroll Subject</p>
-                <p class='action-desc-svg'>New Patient Profile</p>
-            </div>
-        </div>
-        <!-- BOTÓN 2: ASSET INTAKE -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-orange'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Asset Intake</p>
-                <p class='action-desc-svg'>Log LIMS Custody</p>
-            </div>
-        </div>
-
-# 4. ⚡ QUICK ACTIONS WITH BUTTONS INJECTED IN PURE FLUORESCENT SVG
-    # 4. ⚡ ACCIONES RÁPIDAS CON BOTONES INYECTADOS EN SVG FLUORESCENTE PURO
-    st.write("##")
-    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class='quick-action-grid'>
-        <!-- BOTÓN 1: ENROLL SUBJECT -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-blue'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Enroll Subject</p>
-                <p class='action-desc-svg'>New Patient Profile</p>
-            </div>
-        </div>
-        <!-- BOTÓN 2: ASSET INTAKE -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-orange'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Asset Intake</p>
-                <p class='action-desc-svg'>Log LIMS Custody</p>
-            </div>
-        </div>
-        <!-- BOTÓN 3: LAUNCH KERNEL -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-green'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Launch Kernel</p>
-                <p class='action-desc-svg'>Run CRISPR Pipeline</p>
-            </div>
-        </div>
-        <!-- BOTÓN 4: DOWNLOAD DOSSIER -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-purple'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Dossier Sheet</p>
-                <p class='action-desc-svg'>Export Medical PDF</p>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS
 # ----------------------------------------------------------------------------
@@ -621,38 +398,67 @@ elif nav_selection == "Patients":
             new_p_dob = st.date_input("Date of Birth Record", min_value=datetime(1920, 1, 1))
             new_p_sexo = st.selectbox("Biological Gender Parameter", ["Female", "Male"])
            
+    # ----------------------------------------------------------------------------
+    # PRODUCTION CORE: FACILITY MAPPING & CONTAINER ISOLATION
+    # ----------------------------------------------------------------------------
+    try:
+        res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", timeout=5)
+        if res_h_dir.status_code == 200 and res_h_dir.json():
+            hospitals_mapped = {h["name"]: h["id"] for h in res_h_dir.json()}
+        else:
+            # Fallback comercial: Inicializa el nodo real en memoria si el servidor está en standby
+            hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
+    except Exception:
+        # Fallback de red: Asegura la continuidad operativa del cliente final
+        hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
+       
+    # Habilitación inmediata del formulario médico sin cajas fantasmas sueltas
+    selected_h_node = st.selectbox("Assign Authorized Clinical Facility Node", list(hospitals_mapped.keys()))
+   
+    if st.button("Commit and Synchronize Subject Profile", use_container_width=True):
+        if not new_p_id or not new_p_name:
+            st.error("❌ Identification Constraint: Complete profile parameters matching protocol metrics.")
+        else:
+            payload_p = {
+                "id_patient": new_p_id,
+                "full_name": new_p_name,
+                "date_of_birth": str(new_p_dob),
+                "gender": new_p_sexo,
+                "hospital_id": int(hospitals_mapped[selected_h_node])
+            }
             try:
-                res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", timeout=5)
-                hospitals_mapped = {h["name"]: h["id"] for h in res_h_dir.json()} if res_h_dir.status_code == 200 else {}
-            except Exception:
-                hospitals_mapped = {}
-               
-            if not hospitals_mapped:
-                hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
-               
-            selected_h_node = st.selectbox("Assign Authorized Clinical Facility Node", list(hospitals_mapped.keys()))
-               
-            if st.button("Commit and Synchronize Subject Profile", use_container_width=True):
-                if not new_p_id or not new_p_name:
-                    st.error("❌ Identification Constraint: Complete profile parameters matching protocol metrics.")
+                res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
+                if res_p.status_code == 200:
+                    st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
+                    time.sleep(0.5)
+                    st.rerun()
                 else:
-                    payload_p = {
-                        "id_patient": new_p_id,
-                        "full_name": new_p_name,
-                        "date_of_birth": str(new_p_dob),
-                        "gender": new_p_sexo,
-                        "hospital_id": int(hospitals_mapped[selected_h_node])
-                    }
-                    try:
-                        res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
-                        if res_p.status_code == 200:
-                            st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
-                            time.sleep(0.5)
-                            st.rerun()
-                        else:
-                            st.error("🚨 Database Rejection: Write violation integrity constraints.")
-                    except Exception:
-                        st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
+                    st.error("🚨 Database Rejection: Write violation integrity constraints.")
+            except Exception:
+                st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
+                selected_h_node = st.selectbox("Assign Authorized Clinical Facility Node", list(hospitals_mapped.keys()))
+               
+                if st.button("Commit and Synchronize Subject Profile", use_container_width=True):
+                    if not new_p_id or not new_p_name:
+                        st.error("❌ Identification Constraint: Complete profile parameters matching protocol metrics.")
+                    else:
+                        payload_p = {
+                            "id_patient": new_p_id,
+                            "full_name": new_p_name,
+                            "date_of_birth": str(new_p_dob),
+                            "gender": new_p_sexo,
+                            "hospital_id": int(hospitals_mapped[selected_h_node])
+                        }
+                        try:
+                            res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
+                            if res_p.status_code == 200:
+                                st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
+                                time.sleep(0.5)
+                                st.rerun()
+                            else:
+                                st.error("🚨 Database Rejection: Write violation integrity constraints.")
+                        except Exception:
+                            st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with p2:
@@ -718,51 +524,66 @@ elif nav_selection == "LIMS Samples":
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧪 TAB 3: LIMS SAMPLES
+# 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
 # ----------------------------------------------------------------------------
 elif nav_selection == "LIMS Samples":
-    st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Custody Flow</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Chain of Custody</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Validate chronological workflow history pathways and operational audit logs</p>", unsafe_allow_html=True)
-    m1, m2 = st.columns(2)
-    with m1:
-        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
-        if st.session_state.user_role == "md":
-            st.warning("🔒 Access Denied: Medical personnel are restricted from modifying LIMS states.")
-        else:
-            new_m_id = st.text_input("Unique Sample Asset ID")
-            asoc_p_id = st.text_input("Associated Patient Context ID")
-            new_m_qr = st.text_input("Barcode Hardware QR Code")
-            new_m_tipo = st.selectbox("Specimen Matrix Type", ["Plasma", "Whole Blood", "Tissue"])
-            new_m_est = st.selectbox("LIMS Workflow State", ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"])
+   
+    try:
+        res_p_list = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
+        registered_patients = [p["Patient ID"] for p in res_p_list.json()] if res_p_list.status_code == 200 and res_p_list.json() else []
+    except Exception:
+        registered_patients = []
+
+    with st.container():
+        m1, m2 = st.columns(2)
+        with m1:
+            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
             
-            if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
-                if not new_m_id or not new_m_qr or not asoc_p_id:
-                    st.error("❌ Input Constraint Violation.")
-                else:
-                    payload_sample = {"sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr, "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name}
-                    try:
-                        res_intake = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
-                        if res_intake.status_code == 200:
-                            st.success("Asset logged successfully.")
-                            time.sleep(0.5)
-                            st.rerun()
-                        else:
-                            st.error("❌ LIMS Node Parameter Rejection.")
-                    except Exception:
-                        st.error("❌ Connectivity Failure.")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-    with m2:
-        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">🗃️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
-        try:
-            res_s = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
-            df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Current LIMS State"])
-        except Exception:
-            df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Current LIMS State"])
-        st.dataframe(df_samples, use_container_width=True, hide_index=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+            if st.session_state.user_role == "md":
+                st.warning("🔒 Access Denied: Medical personnel are restricted from altering LIMS physical custody states.")
+            elif not registered_patients:
+                st.warning("⚠️ Action Locked: You must enroll at least one patient record before conducting laboratory asset intake operations.")
+            else:
+                new_m_id = st.text_input("Unique Sample Asset ID")
+                asoc_p_id = st.selectbox("Associated Patient Subject Profile Link", registered_patients)
+                new_m_qr = st.text_input("Barcode Hardware QR Matrix Identifier")
+                new_m_tipo = st.selectbox("Extraction Matrix Assay Specimen Type", ["Plasma", "Whole Blood", "Tissue"])
+                new_m_est = st.selectbox("Chain of Custody Operational Workflow State", ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"])
+               
+                if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
+                    if not new_m_id or not new_m_qr:
+                        st.error("❌ Input Constraint: Asset ID and Hardware Barcodes are required.")
+                    else:
+                        payload_sample = {
+                            "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
+                            "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name
+                        }
+                        try:
+                            res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=3)
+                            if res_intake.status_code == 200:
+                                st.success("Asset logged successfully.")
+                                time.sleep(0.5)
+                                st.rerun()
+                            else:
+                                st.error(f"❌ LIMS Node Rejection: {res_intake.json().get('detail', 'Invalid parameter constraints')}")
+                        except Exception:
+                            st.error("❌ Connectivity Failure: Could not commit asset state transaction to Render.")
+            st.markdown('</div>', unsafe_allow_html=True)
+           
+        with m2:
+            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical">🗄️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
+            try:
+                res_s = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=2)
+                df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
+            except Exception:
+                df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
+               
+            st.dataframe(df_samples, use_container_width=True, hide_index=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 # 🧬 TAB 4: METHYLOX ENGINE
@@ -822,12 +643,19 @@ elif nav_selection == "Reports":
         reports_data = []
    
     if not reports_data:
-        st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. The system is ready in clean-slate production to record and emit real diagnostics.")
+        st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. El sistema está listo en cero limpio para registrar y emitir análisis reales.")
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         df_rep_list = pd.DataFrame(reports_data)
         st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
-            columns={'muestra_id':'Sample ID', 'paciente_id':'Patient ID', 'score':'Beta Score', 'clasificacion':'Result Assessment', 'fecha_analisis':'Timestamp', 'hash_seguridad':'Security Hash'}
+            columns={
+                'muestra_id': 'Sample ID', 
+                'paciente_id': 'Patient ID', 
+                'score': 'Beta Score', 
+                'clasificacion': 'Result Assessment', 
+                'fecha_analisis': 'Timestamp', 
+                'hash_seguridad': 'Security Hash'
+            }
         ), use_container_width=True, hide_index=True)
        
         st.write("---")
@@ -837,6 +665,7 @@ elif nav_selection == "Reports":
        
         st.write("##")
        
+        # FPDF CORE ENGINE RECONSTRUCTION (HIGH-FIDELITY MEDICAL PDF)
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Helvetica", "B", 14)
@@ -905,16 +734,20 @@ elif nav_selection == "Reports":
         pdf.cell(190, 4, "Restricted pre-clinical research use only. Confidential proprietary assets of METHYLOX Platform 2026.", ln=True, align="C")
        
         try:
-            final_pdf_payload = pdf.output(dest='S').encode('latin1')
+            # Obtiene bytes puros directamente de fpdf para Streamlit
+            final_pdf_payload = pdf.output(dest='S')
         except Exception:
-            final_pdf_payload = bytes(pdf.output())
+            final_pdf_payload = pdf.output()
            
         st.download_button(
-            label="🔬 Verify Electronic Signature & Download Defendible Dossier",
-            data=final_pdf_payload, file_name=f"METHYLOX_Defendible_Report_{m_select}.pdf",
-            mime="application/pdf", use_container_width=True
+            label=f"🔬 Verify Electronic Signature & Download Defendible Dossier for Sample {m_select}",
+            data=final_pdf_payload, 
+            file_name=f"METHYLOX_Defendible_Report_{m_select}.pdf",
+            mime="application/pdf", 
+            use_container_width=True
         )
         st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ----------------------------------------------------------------------------
 # 🔐 TAB 6: IDENTITY GOVERNANCE (DYNAMIC RBAC AUTHORIZATION HUB)
@@ -932,7 +765,14 @@ elif nav_selection == "Identity Governance":
             input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., Dr. John Doe, MD")
         with c2:
             input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
-            target_role_display = st.selectbox("System Assigned Operational Role Privilege", ["admin", "cls", "md"])
+            target_role_display = st.selectbox(
+                "System Assigned Operational Role Privilege", 
+                [
+                    "admin",
+                    "cls",
+                    "md"
+                ]
+            )
                
         target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
         submit_btn = st.form_submit_button("🚀 Activate Identity & Delegate Tasks")
@@ -941,7 +781,13 @@ elif nav_selection == "Identity Governance":
         if not input_username or not input_password or not input_full_name:
             st.error("❌ All clinical identity fields are mandatory.")
         else:
-            payload_u = {"username": input_username, "password": input_password, "full_name": input_full_name, "role": target_role_display, "hospital_id": int(target_hospital_id)}
+            payload_u = {
+                "username": input_username, 
+                "password": input_password, 
+                "full_name": input_full_name, 
+                "role": target_role_display, 
+                "hospital_id": int(target_hospital_id)
+            }
             try:
                 response = requests.post(f"{BACKEND_URL}/api/v1/auth/provision-user", json=payload_u, headers=headers)
                 if response.status_code == 200:
@@ -958,7 +804,7 @@ elif nav_selection == "Identity Governance":
 elif nav_selection == "⚙️ System Settings":
     st.markdown("<h2 class='welcome-header'>⚙️ Core Calibration Settings & Kernel Monitor</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>System validation and mathematical processing rules parameters</p>", unsafe_allow_html=True)
-   
+    
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     st.markdown("<p style='color:#0F172A; font-weight:700; font-size:14px; margin-bottom:10px;'>📜 METHYLOX_DETERMINISTIC_RULES.PY (AUDITABLE CONTEXT)</p>", unsafe_allow_html=True)
     st.code("""
@@ -972,10 +818,10 @@ def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================================
-# 🏛️ FOOTER LEGAL BOUNDARIES (CLEAN CHARACTER ENCODING)
+# 🏛️ FOOTER LEGAL BOUNDARIES
 # ============================================================================
 st.markdown("""
 <div style="text-align: center; padding: 20px 0px; margin-top: 40px; border-top: 1px solid #E2E8F0;">
-    <p style="margin: 0; font-size: 12px; color: #94A3B8;">Copyright (c) 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
+    <p style="margin: 0; font-size: 12px; color: #94A3B8;">© 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
 </div>
 """, unsafe_allow_html=True)
