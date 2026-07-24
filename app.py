@@ -540,52 +540,6 @@ if nav_selection == "Dashboard Matrix":
 
     with c_right:
         st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:380px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-
-
-
-
-
-
-    # FILA CENTRAL UNIFICADA (Actividad Reciente vs Dona Plotly)
-    c_left, c_right = st.columns([1.4, 1.0])
-    
-    with c_left:
-        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:380px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
-        try:
-            res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
-            samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
-        except Exception:
-            samples_list = []
-            
-        if not samples_list:
-            st.info("ℹ️ Standby Node: No active patient records or molecular assays detected in pipeline. The system is ready to ingest and record live transactions.")
-        else:
-            st.markdown("""
-            <table class='clinical-table-new'>
-                <tr style='border-bottom: 2px solid #F1F5F9; color: #64748B; font-weight: 700;'>
-                    <th>Sample ID</th>
-                    <th>Patient ID</th>
-                    <th>Matrix</th>
-                    <th>Status</th>
-                </tr>
-            """, unsafe_allow_html=True)
-            for s in samples_list[:5]:
-                state = s.get("workflow_state", "Sample Received")
-                badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
-                st.markdown(f"""
-                <tr>
-                    <td style='font-weight: 700; color: #2563EB;'>{s.get('sample_id')}</td>
-                    <td>{s.get('patient_id')}</td>
-                    <td>{s.get('specimen_type', 'Plasma')}</td>
-                    <td><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
-                </tr>
-                """, unsafe_allow_html=True)
-            st.markdown("</table>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with c_right:
-        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:380px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
         st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:10px;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
