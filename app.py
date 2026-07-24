@@ -504,8 +504,8 @@ if nav_selection == "Dashboard Matrix":
     c_left, c_right = st.columns([1.4, 1.0])
     
     with c_left:
-        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:380px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
+        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.02); margin-bottom:15px;'>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
@@ -515,32 +515,14 @@ if nav_selection == "Dashboard Matrix":
         if not samples_list:
             st.info("ℹ️ Standby Node: No active patient records or molecular assays detected in pipeline. The system is ready to ingest and record live transactions.")
         else:
-            st.markdown("""
-            <table class='clinical-table-new'>
-                <tr style='border-bottom: 2px solid #F1F5F9; color: #64748B; font-weight: 700;'>
-                    <th>Sample ID</th>
-                    <th>Patient ID</th>
-                    <th>Matrix</th>
-                    <th>Status</th>
-                </tr>
-            """, unsafe_allow_html=True)
-            for s in samples_list[:5]:
-                state = s.get("workflow_state", "Sample Received")
-                badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
-                st.markdown(f"""
-                <tr>
-                    <td style='font-weight: 700; color: #2563EB;'>{s.get('sample_id')}</td>
-                    <td>{s.get('patient_id')}</td>
-                    <td>{s.get('specimen_type', 'Plasma')}</td>
-                    <td><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
-                </tr>
-                """, unsafe_allow_html=True)
-            st.markdown("</table>", unsafe_allow_html=True)
+            # Consumo dinámico real sin simulaciones
+            df_dash_view = pd.DataFrame(samples_list)
+            st.dataframe(df_dash_view.head(5), use_container_width=True, hide_index=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
     with c_right:
-        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:380px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:10px;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
+        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.02); margin-bottom:15px;'>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
@@ -552,10 +534,11 @@ if nav_selection == "Dashboard Matrix":
         negatives = total_cases - positives
         in_pipeline = in_progress
         
+        # Anillo dinámico adaptativo en cero limpio puro
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
-            colors_pie = ['#E2E8F0']
+            colors_pie = ['#F1F5F9']
         else:
             labels_pie = ['Positive Panels', 'Stable Controls', 'In Pipeline']
             values_pie = [positives, negatives, in_pipeline]
@@ -566,61 +549,12 @@ if nav_selection == "Dashboard Matrix":
             marker=dict(colors=colors_pie), textinfo='none', showlegend=True
         )])
         fig_donut.update_layout(
-            height=240, margin=dict(l=0, r=0, t=10, b=10),
+            height=200, margin=dict(l=0, r=0, t=10, b=10),
             legend=dict(orientation="h", y=-0.2, x=0),
-            annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
+            annotations=[dict(text=f"<b style='font-size:22px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, showarrow=False)]
         )
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
-
-    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO
-    st.write("##")
-    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class='quick-action-grid'>
-        <!-- BOTÓN 1: ENROLL SUBJECT -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-blue'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Enroll Subject</p>
-                <p class='action-desc-svg'>New Patient Profile</p>
-            </div>
-        </div>
-        <!-- BOTÓN 2: ASSET INTAKE -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-orange'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Asset Intake</p>
-                <p class='action-desc-svg'>Log LIMS Custody</p>
-            </div>
-        </div>
-        <!-- BOTÓN 3: LAUNCH KERNEL -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-green'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Launch Kernel</p>
-                <p class='action-desc-svg'>Run CRISPR Pipeline</p>
-            </div>
-        </div>
-        <!-- BOTÓN 4: DOWNLOAD DOSSIER -->
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-purple'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Dossier Sheet</p>
-                <p class='action-desc-svg'>Export Medical PDF</p>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
     
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS
