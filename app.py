@@ -703,7 +703,7 @@ elif nav_selection == "Identity Governance":
                     st.error(f"❌ Identity Provisioning Rejection: {response.json().get('detail', 'Unauthorized operational sequence')}")
             except Exception:
                 st.error("❌ Deployment Connectivity Error: User profile could not be logged into database repository.")
-st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 # ⚙️ TAB 7: SYSTEM SETTINGS (KERNEL INTEGRITY AUDIT TRAIL MONITOR)
