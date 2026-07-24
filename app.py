@@ -1040,7 +1040,7 @@ def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================================
-# 🏛️ FOOTER LEGAL BOUNDARIES
+# 🏛️ FOOTER LEGAL BOUNDARIES (CLEAN CHARACTER ENCODING)
 # ============================================================================
 st.markdown("""
 <div style="text-align: center; padding: 20px 0px; margin-top: 40px; border-top: 1px solid #E2E8F0;">
