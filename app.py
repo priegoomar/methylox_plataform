@@ -553,108 +553,119 @@ elif nav_selection == "Reports":
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     try:
         res_reports = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
-        if res_reports.status_code == 200 and res_reports.json():
+        if res_reports.status_code == 200:
             reports_data = res_reports.json()
-            df_rep_list = pd.DataFrame(reports_data)
         else:
             reports_data = []
-            df_rep_list = pd.DataFrame(columns=['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad'])
     except Exception:
         reports_data = []
-        df_rep_list = pd.DataFrame(columns=['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad'])
-       
+   
     if not reports_data:
-        st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. El sistema está listo en cero limpio para registrar análisis reales.")
+        st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. El sistema está listo en cero limpio para registrar y emitir análisis reales.")
+        st.markdown('</div>', unsafe_allow_html=True)
     else:
+        df_rep_list = pd.DataFrame(reports_data)
         st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
-            columns={'muestra_id':'Sample ID', 'paciente_id':'Patient ID', 'score':'Beta Score', 'clasificacion':'Result Assessment', 'fecha_analisis':'Timestamp', 'hash_seguridad':'Security Hash'}
+            columns={
+                'muestra_id': 'Sample ID', 
+                'paciente_id': 'Patient ID', 
+                'score': 'Beta Score', 
+                'clasificacion': 'Result Assessment', 
+                'fecha_analisis': 'Timestamp', 
+                'hash_seguridad': 'Security Hash'
+            }
         ), use_container_width=True, hide_index=True)
+       
         st.write("---")
         m_select = st.selectbox("Select Target Sample ID for Report Verification & Electronic Signature Ingestion:", df_rep_list["muestra_id"].unique())
         datos_rep = df_rep_list[df_rep_list["muestra_id"] == m_select].iloc[-1]
         tipo_informe = st.radio("Select Standardized Document Layout Format Structure", ["Institutional Executive Summary", "Technical Biomarker Deep Dive"], horizontal=True)
-   
-    st.write("##")
-   
-    # FPDF CORE ENGINE RECONSTRUCTION (HIGH-FIDELITY MEDICAL PDF)
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Helvetica", "B", 14)
-    pdf.set_text_color(30, 58, 138)
-    pdf.cell(190, 10, "METHYLOX(TM) LABORATORY INTELLIGENCE PLATFORM REPORT", ln=True, align="L")
-   
-    pdf.set_font("Helvetica", "", 8)
-    pdf.set_text_color(100, 116, 139)
-    pdf.cell(190, 5, "BIOMEDICAL SYSTEMS OPERATION KERNEL | SOFTWARE DEVICE STAGE: METHYLOX v3.0-PRODUCTION SaMD", ln=True)
-    pdf.ln(3)
-    pdf.line(10, pdf.get_y(), 200, pdf.get_y())
-    pdf.ln(4)
-   
-    pdf.set_font("Helvetica", "B", 10)
-    pdf.set_text_color(15, 23, 42)
-    pdf.cell(190, 6, "1. DIGITAL CHAIN OF CUSTODY AUDIT TRAIL (LIMS TELEMETRY)", ln=True)
-    pdf.set_font("Helvetica", "", 9)
-    pdf.cell(95, 5, f"Sample Asset ID: {str(datos_rep['muestra_id'])}", border=0)
-    pdf.cell(95, 5, f"Verification Security Hash: {str(datos_rep['hash_seguridad'])}", border=0, ln=True)
-    pdf.cell(95, 5, f"Authorized Operator Signature: {str(datos_rep['operador'])}", border=0)
-    pdf.cell(95, 5, f"Server Transaction Timestamp: {str(datos_rep['fecha_analisis'])}", border=0, ln=True)
-    pdf.ln(3)
-   
-    pdf.set_font("Helvetica", "B", 10)
-    pdf.cell(190, 6, "2. ANONYMIZED PATIENT MOLECULAR DIRECTORY PROFILE", ln=True)
-    pdf.set_font("Helvetica", "", 9)
-    pdf.cell(95, 5, f"Patient Context ID: {str(datos_rep['paciente_id'])}", border=0)
-    pdf.cell(95, 5, f"Security Anonymous Code String: {str(datos_rep['nombre_codigo'])}", border=0, ln=True)
-    pdf.cell(95, 5, f"Age: {str(datos_rep['age'])} Years", border=0)
-    pdf.cell(95, 5, f"Biological Gender Parameter: {str(datos_rep['sexo'])}", border=0, ln=True)
-    pdf.cell(190, 5, f"Medical Corporate Facility Node: {str(datos_rep['institucion'])}", ln=True)
-    pdf.ln(3)
-   
-    pdf.set_font("Helvetica", "B", 10)
-    pdf.cell(190, 6, "3. QUANTITATIVE EPIGENETIC METHYLATION READOUT (CORE SAMD ENGINE)", ln=True)
-    pdf.set_font("Helvetica", "", 9)
-    pdf.cell(190, 5, f"Global Mean Methylation Beta Score (Multiplexed MOX Panel): {float(datos_rep['score']):.4f}", ln=True)
-   
-    if float(datos_rep['score']) >= 0.1000:
-        pdf.set_text_color(220, 38, 38)
-        pdf.set_font("Helvetica", "B", 9)
-        pdf.cell(190, 5, f"ALGORITHMIC CLINICAL VERDICT: {str(datos_rep['clasificacion'])}", ln=True)
-        pdf.set_font("Helvetica", "I", 9)
+       
+        st.write("##")
+       
+        # FPDF CORE ENGINE RECONSTRUCTION (HIGH-FIDELITY MEDICAL PDF)
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Helvetica", "B", 14)
+        pdf.set_text_color(30, 58, 138)
+        pdf.cell(190, 10, "METHYLOX(TM) LABORATORY INTELLIGENCE PLATFORM REPORT", ln=True, align="L")
+       
+        pdf.set_font("Helvetica", "", 8)
         pdf.set_text_color(100, 116, 139)
-        pdf.cell(190, 5, "INTERPRETATION SCORE: Positive ctDNA calling threshold surpassed. Complementary tissue biopsy suggested.", ln=True)
-    else:
-        pdf.set_text_color(22, 163, 74)
-        pdf.set_font("Helvetica", "B", 9)
-        pdf.cell(190, 5, "ALGORITHMIC CLINICAL VERDICT: Stable Baseline Control Range (Tumor Negative Screen)", ln=True)
-       
-    pdf.set_text_color(15, 23, 42)
-    pdf.set_font("Helvetica", "", 9)
-   
-    if "TECHNICAL" in tipo_informe.upper():
+        pdf.cell(190, 5, "BIOMEDICAL SYSTEMS OPERATION KERNEL | SOFTWARE DEVICE STAGE: METHYLOX v3.0-PRODUCTION SaMD", ln=True)
         pdf.ln(3)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(4)
+       
         pdf.set_font("Helvetica", "B", 10)
-        pdf.cell(190, 6, "4. TECHNICAL BIOINFORMATIC BIOCHEMICAL APPENDIX", ln=True)
+        pdf.set_text_color(15, 23, 42)
+        pdf.cell(190, 6, "1. DIGITAL CHAIN OF CUSTODY AUDIT TRAIL (LIMS TELEMETRY)", ln=True)
         pdf.set_font("Helvetica", "", 9)
-        pdf.cell(190, 5, f"Active Patent CRISPR Probes Panel Signatures: {str(datos_rep['guias_activas'])}", ln=True)
-        pdf.cell(190, 5, "Genomic Alignment Quality Quality: Passes Phred Quality Score Q30 parameters.", ln=True)
+        pdf.cell(95, 5, f"Sample Asset ID: {str(datos_rep['muestra_id'])}", border=0)
+        pdf.cell(95, 5, f"Verification Security Hash: {str(datos_rep['hash_seguridad'])}", border=0, ln=True)
+        pdf.cell(95, 5, f"Authorized Operator Signature: {str(datos_rep['operador'])}", border=0)
+        pdf.cell(95, 5, f"Server Transaction Timestamp: {str(datos_rep['fecha_analisis'])}", border=0, ln=True)
+        pdf.ln(3)
        
-    pdf.ln(10)
-    pdf.set_font("Helvetica", "I", 8)
-    pdf.set_text_color(148, 163, 184)
-    pdf.cell(190, 4, "Regulatory Compliance Notice: This system operates as a Software as a Medical Device (SaMD) compliant with HIPAA and FDA 21 CFR Part 11 guidelines.", ln=True, align="C")
-    pdf.cell(190, 4, "Restricted pre-clinical research use only. Confidential proprietary assets of METHYLOX Platform 2026.", ln=True, align="C")
-   
-    try:
-        final_pdf_payload = pdf.output(dest='S').encode('latin1')
-    except Exception:
-        final_pdf_payload = bytes(pdf.output())
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.cell(190, 6, "2. ANONYMIZED PATIENT MOLECULAR DIRECTORY PROFILE", ln=True)
+        pdf.set_font("Helvetica", "", 9)
+        pdf.cell(95, 5, f"Patient Context ID: {str(datos_rep['paciente_id'])}", border=0)
+        pdf.cell(95, 5, f"Security Anonymous Code String: {str(datos_rep['nombre_codigo'])}", border=0, ln=True)
+        pdf.cell(95, 5, f"Age: {str(datos_rep['age'])} Years", border=0)
+        pdf.cell(95, 5, f"Biological Gender Parameter: {str(datos_rep['sexo'])}", border=0, ln=True)
+        pdf.cell(190, 5, f"Medical Corporate Facility Node: {str(datos_rep['institucion'])}", ln=True)
+        pdf.ln(3)
        
-    st.download_button(
-        label=f"🔬 Verify Electronic Signature & Download Defendible Dossier for Sample {m_select}",
-        data=final_pdf_payload, file_name=f"METHYLOX_Defendible_Report_{m_select}.pdf",
-        mime="application/pdf", use_container_width=True
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.cell(190, 6, "3. QUANTITATIVE EPIGENETIC METHYLATION READOUT (CORE SAMD ENGINE)", ln=True)
+        pdf.set_font("Helvetica", "", 9)
+        pdf.cell(190, 5, f"Global Mean Methylation Beta Score (Multiplexed MOX Panel): {float(datos_rep['score']):.4f}", ln=True)
+       
+        if float(datos_rep['score']) >= 0.1000:
+            pdf.set_text_color(220, 38, 38)
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.cell(190, 5, f"ALGORITHMIC CLINICAL VERDICT: {str(datos_rep['clasificacion'])}", ln=True)
+            pdf.set_font("Helvetica", "I", 9)
+            pdf.set_text_color(100, 116, 139)
+            pdf.cell(190, 5, "INTERPRETATION SCORE: Positive ctDNA calling threshold surpassed. Complementary tissue biopsy suggested.", ln=True)
+        else:
+            pdf.set_text_color(22, 163, 74)
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.cell(190, 5, "ALGORITHMIC CLINICAL VERDICT: Stable Baseline Control Range (Tumor Negative Screen)", ln=True)
+           
+        pdf.set_text_color(15, 23, 42)
+        pdf.set_font("Helvetica", "", 9)
+       
+        if "TECHNICAL" in tipo_informe.upper():
+            pdf.ln(3)
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.cell(190, 6, "4. TECHNICAL BIOINFORMATIC BIOCHEMICAL APPENDIX", ln=True)
+            pdf.set_font("Helvetica", "", 9)
+            pdf.cell(190, 5, f"Active Patent CRISPR Probes Panel Signatures: {str(datos_rep['guias_activas'])}", ln=True)
+            pdf.cell(190, 5, "Genomic Alignment Quality Quality: Passes Phred Quality Score Q30 parameters.", ln=True)
+           
+        pdf.ln(10)
+        pdf.set_font("Helvetica", "I", 8)
+        pdf.set_text_color(148, 163, 184)
+        pdf.cell(190, 4, "Regulatory Compliance Notice: This system operates as a Software as a Medical Device (SaMD) compliant with HIPAA and FDA 21 CFR Part 11 guidelines.", ln=True, align="C")
+        pdf.cell(190, 4, "Restricted pre-clinical research use only. Confidential proprietary assets of METHYLOX Platform 2026.", ln=True, align="C")
+       
+        try:
+            # Obtiene bytes puros directamente de fpdf para Streamlit
+            final_pdf_payload = pdf.output(dest='S')
+        except Exception:
+            final_pdf_payload = pdf.output()
+           
+        st.download_button(
+            label=f"🔬 Verify Electronic Signature & Download Defendible Dossier for Sample {m_select}",
+            data=final_pdf_payload, 
+            file_name=f"METHYLOX_Defendible_Report_{m_select}.pdf",
+            mime="application/pdf", 
+            use_container_width=True
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ----------------------------------------------------------------------------
 # 🔐 TAB 6: IDENTITY GOVERNANCE (DYNAMIC RBAC AUTHORIZATION HUB)
