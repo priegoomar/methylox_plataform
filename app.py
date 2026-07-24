@@ -317,7 +317,7 @@ elif nav_selection == "Patients":
             new_p_sexo = st.selectbox("Biological Gender Parameter", ["Female", "Male"])
            
             try:
-                res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", headers=headers, timeout=5)
+                res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", timeout=5)
                 hospitals_mapped = {h["name"]: h["id"] for h in res_h_dir.json()} if res_h_dir.status_code == 200 else {}
             except Exception:
                 hospitals_mapped = {}
