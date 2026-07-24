@@ -1044,6 +1044,6 @@ def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_
 # ============================================================================
 st.markdown("""
 <div style="text-align: center; padding: 20px 0px; margin-top: 40px; border-top: 1px solid #E2E8F0;">
-    <p style="margin: 0; font-size: 12px; color: #94A3B8;">© 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
+    <p style="margin: 0; font-size: 12px; color: #94A3B8;">Copyright (c) 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
 </div>
 """, unsafe_allow_html=True)
