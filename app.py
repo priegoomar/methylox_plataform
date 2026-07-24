@@ -566,18 +566,13 @@ elif nav_selection == "Reports":
     if not reports_data:
         st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. El sistema está listo en cero limpio para registrar análisis reales.")
     else:
-    except Exception:
-        st.error("❌ Integrity Error: Technical clinical dossier store could not be reached.")
-        st.stop()
-   
-    st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
-        columns={'muestra_id':'Sample ID', 'paciente_id':'Patient ID', 'score':'Beta Score', 'clasificacion':'Result Assessment', 'fecha_analisis':'Timestamp', 'hash_seguridad':'Security Hash'}
-    ), use_container_width=True, hide_index=True)
-   
-    st.write("---")
-    m_select = st.selectbox("Select Target Sample ID for Report Verification & Electronic Signature Ingestion:", df_rep_list["muestra_id"].unique())
-    datos_rep = df_rep_list[df_rep_list["muestra_id"] == m_select].iloc[-1]
-    tipo_informe = st.radio("Select Standardized Document Layout Format Structure", ["Institutional Executive Summary", "Technical Biomarker Deep Dive"], horizontal=True)
+        st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
+            columns={'muestra_id':'Sample ID', 'paciente_id':'Patient ID', 'score':'Beta Score', 'clasificacion':'Result Assessment', 'fecha_analisis':'Timestamp', 'hash_seguridad':'Security Hash'}
+        ), use_container_width=True, hide_index=True)
+        st.write("---")
+        m_select = st.selectbox("Select Target Sample ID for Report Verification & Electronic Signature Ingestion:", df_rep_list["muestra_id"].unique())
+        datos_rep = df_rep_list[df_rep_list["muestra_id"] == m_select].iloc[-1]
+        tipo_informe = st.radio("Select Standardized Document Layout Format Structure", ["Institutional Executive Summary", "Technical Biomarker Deep Dive"], horizontal=True)
    
     st.write("##")
    
