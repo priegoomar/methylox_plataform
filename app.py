@@ -398,63 +398,49 @@ elif nav_selection == "Patients":
 # 🧪 TAB 3: LIMS SAMPLES
 # ----------------------------------------------------------------------------
 elif nav_selection == "LIMS Samples":
-    st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Chain of Custody</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Custody Flow</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Validate chronological workflow history pathways and operational audit logs</p>", unsafe_allow_html=True)
-   
-    try:
-        res_p_list = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
-        registered_patients = [p["Patient ID"] for p in res_p_list.json()] if res_p_list.status_code == 200 and res_p_list.json() else []
-    except Exception:
-        registered_patients = []
-
     m1, m2 = st.columns(2)
-    
     with m1:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
         st.markdown('<div class="card-title-clinical">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
-        
         if st.session_state.user_role == "md":
-            st.warning("🔒 Access Denied: Medical personnel are restricted from altering LIMS physical custody states.")
-        elif not registered_patients:
-            st.warning("⚠️ Action Locked: You must enroll at least one patient record before conducting laboratory asset intake operations.")
+            st.warning("🔒 Access Denied: Medical personnel are restricted from modifying LIMS states.")
         else:
             new_m_id = st.text_input("Unique Sample Asset ID")
-            asoc_p_id = st.selectbox("Associated Patient Subject Profile Link", registered_patients)
-            new_m_qr = st.text_input("Barcode Hardware QR Matrix Identifier")
-            new_m_tipo = st.selectbox("Extraction Matrix Assay Specimen Type", ["Plasma", "Whole Blood", "Tissue"])
-            new_m_est = st.selectbox("Chain of Custody Operational Workflow State", ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"])
+            asoc_p_id = st.text_input("Associated Patient Context ID")
+            new_m_qr = st.text_input("Barcode Hardware QR Code")
+            new_m_tipo = st.selectbox("Specimen Matrix Type", ["Plasma", "Whole Blood", "Tissue"])
+            new_m_est = st.selectbox("LIMS Workflow State", ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"])
             
             if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
-                if not new_m_id or not new_m_qr:
-                    st.error("❌ Input Constraint: Asset ID and Hardware Barcodes are required.")
+                if not new_m_id or not new_m_qr or not asoc_p_id:
+                    st.error("❌ Input Constraint Violation.")
                 else:
-                    payload_sample = {
-                        "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
-                        "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name
-                    }
+                    payload_sample = {"sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr, "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name}
                     try:
-                        res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=3)
+                        res_intake = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
                         if res_intake.status_code == 200:
                             st.success("Asset logged successfully.")
                             time.sleep(0.5)
                             st.rerun()
                         else:
-                            st.error("❌ LIMS Node Rejection.")
+                            st.error("❌ LIMS Node Parameter Rejection.")
                     except Exception:
                         st.error("❌ Connectivity Failure.")
         st.markdown('</div>', unsafe_allow_html=True)
-         
+        
     with m2:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
         st.markdown('<div class="card-title-clinical">🗄️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
         try:
-            res_s = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=2)
-            df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
+            res_s = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
+            df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Current LIMS State"])
         except Exception:
-            df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
-            
+            df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Current LIMS State"])
         st.dataframe(df_samples, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
+
 # ----------------------------------------------------------------------------
 # 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
 # ----------------------------------------------------------------------------
