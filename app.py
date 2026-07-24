@@ -349,6 +349,9 @@ if nav_selection == "🔒 Access Restricted":
     st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
 
+# ----------------------------------------------------------------------------
+# 📊 TAB 1: DASHBOARD MATRIX (HIGH-FIDELITY LIVE ENGINE - DEFINITIVE CLEAN)
+# ----------------------------------------------------------------------------
 if nav_selection == "Dashboard Matrix":
     st.markdown("""
     <style>
@@ -468,22 +471,22 @@ if nav_selection == "Dashboard Matrix":
 
     st.write("##")
 
-    # APERTURA DEL RECUADRO BLANCO MONOLÍTICO UNIFICADO (TABLA Y DONA EN PARALELO)
-    st.markdown('<div class="unified-main-board-box">', unsafe_allow_html=True)
-    
+    # FILA CENTRAL COMPACTA EN COLUMNAS PARALELAS (TABLE STRUCTURE RECTIFIED)
     c_left, c_right = st.columns([1.4, 1.0])
     
     with c_left:
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
+        st.markdown('<div class="clean-table-box" style="background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 340px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">', unsafe_allow_html=True)
+        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
         
+        # 🟢 TABLA CON FILA DE ENCABEZADO MAESTRA UNIFICADA EN UN SOLO RECUADRO PLANO
         st.markdown("""
-        <table class='clinical-table-new'>
+        <table style='width: 100%; border-collapse: collapse; border-spacing: 0; font-size: 13px;'>
             <thead>
-                <tr>
-                    <th>Sample ID</th>
-                    <th>Patient ID</th>
-                    <th>Matrix</th>
-                    <th>Status</th>
+                <tr style='background-color: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 2px solid #E2E8F0;'>
+                    <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Sample ID</th>
+                    <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Patient ID</th>
+                    <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Matrix</th>
+                    <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -498,7 +501,7 @@ if nav_selection == "Dashboard Matrix":
         if not samples_list:
             st.markdown("""
             <tr>
-                <td colspan='4' style='color: #94A3B8; padding: 50px 10px; font-style: italic; text-align: center;'>
+                <td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>
                     No active samples detected. Dashboard standby node waiting for live data registration...
                 </td>
             </tr>
@@ -508,16 +511,18 @@ if nav_selection == "Dashboard Matrix":
                 state = s.get("workflow_state", "Sample Received")
                 badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
                 st.markdown(f"""
-                <tr>
-                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px;'>{s.get('sample_id')}</td>
-                    <td>{s.get('patient_id')}</td>
-                    <td>{s.get('specimen_type', 'Plasma')}</td>
-                    <td><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
+                <tr style='border-bottom: 1px solid #F1F5F9;'>
+                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_id', '--')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('patient_id', '--')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('specimen_type', 'Plasma')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
                 </tr>
                 """, unsafe_allow_html=True)
-        st.markdown("</tbody></table>", unsafe_allow_html=True)
+                
+        st.markdown("</tbody></table></div>", unsafe_allow_html=True)
 
     with c_right:
+        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:340px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
         st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
@@ -546,11 +551,10 @@ if nav_selection == "Dashboard Matrix":
         fig_donut.update_layout(
             height=200, margin=dict(l=0, r=0, t=10, b=10),
             legend=dict(orientation="h", y=-0.2, x=0),
-            annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
+            annotations=[dict(text=f"<b style='font-size:22px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
         )
         st.plotly_chart(fig_donut, use_container_width=True)
-        
-    st.markdown("</div>", unsafe_allow_html=True) # CIERRE PERFECTO DEL RECUADRO MONOLÍTICO
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO
     st.write("##")
