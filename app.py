@@ -485,12 +485,25 @@ if nav_selection == "Dashboard Matrix":
 
     st.write("##")
 
-    # FILA CENTRAL COMPACTA EN COLUMNAS PARALELAS
+    # FILA CENTRAL COMPACTA EN COLUMNAS PARALELAS (FIXED STRUCTURE ENGINE)
     c_left, c_right = st.columns([1.4, 1.0])
     
     with c_left:
-        st.markdown('<div class="clean-table-box">', unsafe_allow_html=True)
+        st.markdown('<div class="clean-table-box" style="background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 340px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">', unsafe_allow_html=True)
         st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
+        
+        # PINTADO DE LA TABLA FIJA INDESTRUCTIBLE CON COLUMNAS CENTRADAS EN INGLÉS
+        st.markdown("""
+        <table class='clinical-table-new' style='width: 100%; border-collapse: collapse; font-size: 13px;'>
+            <tr style='border-bottom: 2px solid #F1F5F9; color: #64748B; font-weight: 700; text-align: center;'>
+                <th style='padding: 12px 10px; text-align: center;'>Sample ID</th>
+                <th style='padding: 12px 10px; text-align: center;'>Patient ID</th>
+                <th style='padding: 12px 10px; text-align: center;'>Matrix</th>
+                <th style='padding: 12px 10px; text-align: center;'>Status</th>
+            </tr>
+        """, unsafe_allow_html=True)
+        
+        # INTENTA JALAR LOS DATOS EN VIVO DESDE TU BACKEND EN NEON/RENDER
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
@@ -498,30 +511,29 @@ if nav_selection == "Dashboard Matrix":
             samples_list = []
             
         if not samples_list:
-            st.markdown("<p class='empty-table-msg'>ℹ️ Standby Node: No active patient records or molecular assays detected in pipeline.<br>The system is ready to ingest and record live transactions.</p>", unsafe_allow_html=True)
-        else:
+            # Si no hay datos, renderiza una fila vacía en limpio que no rompe el diseño
             st.markdown("""
-            <table class='clinical-table-new'>
-                <tr>
-                    <th>Sample ID</th>
-                    <th>Patient ID</th>
-                    <th>Matrix</th>
-                    <th>Status</th>
-                </tr>
+            <tr>
+                <td colspan='4' style='text-align: center; color: #94A3B8; padding: 40px 10px; font-style: italic;'>
+                    No active samples detected. Dashboard standby node waiting for live data registration...
+                </td>
+            </tr>
             """, unsafe_allow_html=True)
+        else:
+            # Si entran datos en la base de datos, las filas se autogeneran e interactúan aquí en vivo
             for s in samples_list[:5]:
                 state = s.get("workflow_state", "Sample Received")
                 badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
                 st.markdown(f"""
-                <tr>
-                    <td style='font-weight: 700; color: #2563EB;'>{s.get('sample_id')}</td>
-                    <td>{s.get('patient_id')}</td>
-                    <td>{s.get('specimen_type', 'Plasma')}</td>
-                    <td><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
+                <tr style='text-align: center;'>
+                    <td style='padding: 14px 10px; font-weight: 700; color: #2563EB; text-align: center;'>{s.get('sample_id', '--')}</td>
+                    <td style='padding: 14px 10px; text-align: center;'>{s.get('patient_id', '--')}</td>
+                    <td style='padding: 14px 10px; text-align: center;'>{s.get('specimen_type', 'Plasma')}</td>
+                    <td style='padding: 14px 10px; text-align: center;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
                 </tr>
                 """, unsafe_allow_html=True)
-            st.markdown("</table>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+                
+        st.markdown("</table></div>", unsafe_allow_html=True)
 
     with c_right:
         st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:340px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
@@ -539,7 +551,7 @@ if nav_selection == "Dashboard Matrix":
         
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
-            values_pie = [0]
+            values_pie = [1]
             colors_pie = ['#F1F5F9']
         else:
             labels_pie = ['Positive Panels', 'Stable Controls', 'In Pipeline']
@@ -558,46 +570,50 @@ if nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # 4. BOTONERA INFERIOR UNIFICADA CON ENLACES EN SVG FLUORESCENTE
+    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
     
     st.markdown("""
-    <div class='quick-action-grid'>
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-blue'>
+    <div class='quick-action-grid' style='display: flex; gap: 15px; margin-top: 20px;'>
+        <!-- BOTÓN 1: ENROLL SUBJECT -->
+        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <div class='icon-circle-svg bg-neon-blue' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9;'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
             </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Enroll Subject</p>
-                <p class='action-desc-svg'>New Patient Profile</p>
+            <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Enroll Subject</p>
+                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>New Patient Profile</p>
             </div>
         </div>
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-orange'>
+        <!-- BOTÓN 2: ASSET INTAKE -->
+        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <div class='icon-circle-svg bg-neon-orange' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316;'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
             </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Asset Intake</p>
-                <p class='action-desc-svg'>Log LIMS Custody</p>
+            <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Asset Intake</p>
+                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Log LIMS Custody</p>
             </div>
         </div>
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-green'>
+        <!-- BOTÓN 3: LAUNCH KERNEL -->
+        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <div class='icon-circle-svg bg-neon-green' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E;'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Launch Kernel</p>
-                <p class='action-desc-svg'>Run CRISPR Pipeline</p>
+            <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Launch Kernel</p>
+                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Run CRISPR Pipeline</p>
             </div>
         </div>
-        <div class='action-card-svg'>
-            <div class='icon-circle-svg bg-neon-purple'>
+        <!-- BOTÓN 4: DOWNLOAD DOSSIER -->
+        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <div class='icon-circle-svg bg-neon-purple' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7;'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
-            <div class='action-text-container'>
-                <p class='action-title-svg'>Dossier Sheet</p>
-                <p class='action-desc-svg'>Export Medical PDF</p>
+            <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Dossier Sheet</p>
+                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Export Medical PDF</p>
             </div>
         </div>
     </div>
