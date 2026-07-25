@@ -326,11 +326,11 @@ elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
    
-    # FETCH LIVE DATA FROM ENDPOINTS
+    # FETCH LIVE DATA FROM ENDPOINTS (LINEA 333 RECTIFICADA Y SANEADA)
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
         if res_telemetry.status_code == 200:
-            tel = res_telemetry.json() bn
+            tel = res_telemetry.json()
             received_today = tel.get('received_today', 0)
             in_progress = tel.get('in_progress', 0)
             ready_analyses = tel.get('ready_analyses', 0)
@@ -340,7 +340,7 @@ elif nav_selection == "Dashboard Matrix":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # RENDER DE LAS CUATRO TARJETAS SUPERIORES CON SUS SVG RECUPERADOS
+    # RENDER DE LAS CUATRO TARJETAS SUPERIORES CON SUS SVG ORIGINALES RECUPERADOS
     st.markdown(f"""
     <div class='metric-container-hub'>
         <div class='metric-card-clinical-new'>
@@ -437,7 +437,7 @@ elif nav_selection == "Dashboard Matrix":
         negatives = total_cases - positives
         in_pipeline = in_progress
        
-        # Corrección sintáctica para la dona Plotly
+        # Fallback de seguridad en ceros limpios para no romper la dona de Plotly
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -468,7 +468,7 @@ elif nav_selection == "Dashboard Matrix":
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
    
-    # Receptor transaccional nativo de Python que procesa los clics inyectados por el contenedor web
+    # Inyección de navegación responsiva directa mediante query parameters nativos de Streamlit
     query_params = st.query_params
     if "nav" in query_params:
         target_nav = query_params["nav"]
@@ -477,58 +477,58 @@ elif nav_selection == "Dashboard Matrix":
             st.query_params.clear()
             st.rerun()
 
-    # Contenedor HTML puro embebido y blindado contra errores de compilación
+    # Contenedor HTML puro embebido y blindado con tus SVG originales interactivos
     st.components.v1.html("""
     <div class='quick-action-grid' style='display: flex; gap: 15px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; width: 100%;'>
         
-        <!-- BOTÓN 1: ADD PATIENT (SVG ORIGINAL CLIQUEABLE) -->
+        <!-- BOTÓN 1: ADD PATIENT -->
         <a href='?nav=Patients' target='_parent' style='text-decoration: none; flex: 1; display: block;'>
-            <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 58px; cursor: pointer;'>
-                <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9; flex-shrink: 0;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 58px; cursor: pointer;'>
+                <div class='icon-circle-svg bg-neon-blue' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9; flex-shrink: 0;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
                 </div>
-                <div style='display: flex; flex-direction: column;'>
-                    <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Patient</p>
-                    <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Register New Profile</p>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Patient</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Register New Profile</p>
                 </div>
             </div>
         </a>
 
-        <!-- BOTÓN 2: ADD SAMPLE (SVG ORIGINAL CLIQUEABLE) -->
+        <!-- BOTÓN 2: ADD SAMPLE -->
         <a href='?nav=LIMS+Samples' target='_parent' style='text-decoration: none; flex: 1; display: block;'>
-            <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 58px; cursor: pointer;'>
-                <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316; flex-shrink: 0;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 58px; cursor: pointer;'>
+                <div class='icon-circle-svg bg-neon-orange' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316; flex-shrink: 0;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
                 </div>
-                <div style='display: flex; flex-direction: column;'>
-                    <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Sample</p>
-                    <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Log LIMS Code & Matrix</p>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Sample</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Log LIMS Code & Matrix</p>
                 </div>
             </div>
         </a>
 
-        <!-- BOTÓN 3: RUN CRISPR (SVG ORIGINAL CLIQUEABLE) -->
+        <!-- BOTÓN 3: RUN CRISPR AI -->
         <a href='?nav=METHYLOX+Engine' target='_parent' style='text-decoration: none; flex: 1; display: block;'>
-            <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 58px; cursor: pointer;'>
-                <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E; flex-shrink: 0;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 58px; cursor: pointer;'>
+                <div class='icon-circle-svg bg-neon-green' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E; flex-shrink: 0;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
                 </div>
-                <div style='display: flex; flex-direction: column;'>
-                    <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Run CRISPR AI</p>
-                    <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Process CpG Methylation</p>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Run CRISPR AI</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Process CpG Methylation</p>
                 </div>
             </div>
         </a>
 
-        <!-- BOTÓN 4: GET REPORTS (SVG ORIGINAL CLIQUEABLE) -->
+        <!-- BOTÓN 4: GET REPORTS -->
         <a href='?nav=Reports' target='_parent' style='text-decoration: none; flex: 1; display: block;'>
-            <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 58px; cursor: pointer;'>
-                <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7; flex-shrink: 0;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); height: 58px; cursor: pointer;'>
+                <div class='icon-circle-svg bg-neon-purple' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7; flex-shrink: 0;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                 </div>
-                <div style='display: flex; flex-direction: column;'>
-                    <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Get Reports</p>
-                    <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Download Medical PDF</p>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Get Reports</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Download Medical PDF</p>
                 </div>
             </div>
         </a>
