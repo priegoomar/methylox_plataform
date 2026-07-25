@@ -491,10 +491,6 @@ elif nav_selection == "Dashboard Matrix":
             <p style='font-size: 13px; color: #64748B; font-style: italic; margin: 0;'>Awaiting Clinical Data Ingestion</p>
         </div>
         """, unsafe_allow_html=True)
-
-    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE CON ENLACES OPERATIVOS REALES
-    st.write("##")
-    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
    
     # ============================================================================
     # ⚡ 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG REAL (DISEÑO Y CLICK TRANSMITIDO)
