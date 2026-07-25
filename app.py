@@ -586,7 +586,6 @@ elif nav_selection == "Dashboard Matrix":
             st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-        
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ----------------------------------------------------------------------------
