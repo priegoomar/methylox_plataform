@@ -457,8 +457,8 @@ elif nav_selection == "Dashboard Matrix":
         )
 
         st.markdown("""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 15px;'>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0; text-align: center;'>📊 Onco-Genetic Diagnostic Summary</p>
         """, unsafe_allow_html=True)
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -486,8 +486,8 @@ elif nav_selection == "Dashboard Matrix":
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
                 </div>
                 <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2;'>Add Patient</p>
-                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2;'>Register New Profile</p>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Patient</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Register New Profile</p>
                 </div>
             </div>
         </a>
@@ -499,8 +499,8 @@ elif nav_selection == "Dashboard Matrix":
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
                 </div>
                 <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2;'>Add Sample</p>
-                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2;'>Log LIMS Code & Matrix</p>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Sample</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Log LIMS Code & Matrix</p>
                 </div>
             </div>
         </a>
@@ -512,8 +512,8 @@ elif nav_selection == "Dashboard Matrix":
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
                 </div>
                 <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2;'>Run CRISPR AI</p>
-                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2;'>Process CpG Methylation</p>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Run CRISPR AI</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Process CpG Methylation</p>
                 </div>
             </div>
         </a>
@@ -525,8 +525,8 @@ elif nav_selection == "Dashboard Matrix":
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                 </div>
                 <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2;'>Get Reports</p>
-                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2;'>Download Medical PDF</p>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Get Reports</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Download Medical PDF</p>
                 </div>
             </div>
         </a>
