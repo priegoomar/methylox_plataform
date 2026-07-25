@@ -386,7 +386,7 @@ elif nav_selection == "Dashboard Matrix":
    
     with c_left:
         try:
-            res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
+            res_s_dash = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
@@ -428,7 +428,7 @@ elif nav_selection == "Dashboard Matrix":
 
     with c_right:
         try:
-            res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
+            res_rep = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
