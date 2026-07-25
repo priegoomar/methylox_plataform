@@ -469,25 +469,48 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE CON CAPTURA INTERACTIVA NATIVA
+    with c_right:
+        try:
+            res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
+            rep_data = res_rep.json() if res_rep.status_code == 200 else []
+        except Exception:
+            rep_data = []
+           
+        total_cases = len(rep_data)
+        in_pipeline = in_progress
+        total_telemetry = total_cases + in_pipeline
+
+        # Contenedor ejecutivo de resumen de diagnóstico simétrico
+        st.markdown(f"""
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;'>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 20px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
+            <div style='width: 140px; height: 140px; border-radius: 50%; border: 14px solid #F1F5F9; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px auto;'>
+                <b style='font-size: 28px; color: #0F172A; line-height: 1;'>{total_telemetry}</b>
+                <span style='font-size: 11px; color: #64748B; font-weight: 600;'>Total</span>
+            </div>
+            <p style='font-size: 13px; color: #64748B; font-style: italic; margin: 0;'>Awaiting Clinical Data Ingestion</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE CON ENLACES OPERATIVOS REALES
     st.write("##")
-    
-    # Motor de enrutamiento nativo de Streamlit que captura el clic real de la tarjeta
+    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
+   
+    # Inyección de navegación responsiva directa mediante query parameters nativos de Streamlit
     query_params = st.query_params
     if "nav" in query_params:
         target_nav = query_params["nav"]
         if target_nav in ["Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]:
-            st.session_state.nav_selection = target_nav
+            # 🟢 RECTIFICACIÓN CLAVE: Modificación legal de la variable amarrada al key del radio del Sidebar
+            st.session_state["nav_selection"] = target_nav
             st.query_params.clear()
             st.rerun()
 
-    # Inyección limpia e indestructible mediante st.html para que el navegador dibuje las tarjetas como botones reales
-    st.html("""
-    <p style='font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>
-    
-    <div class='quick-action-grid' style='display: flex; gap: 15px; margin-top: 20px; width: 100%; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;'>
+    # Renderizado directo de las tarjetas grandes de fábrica con tus círculos fluorescentes neón y vectores SVG intactos
+    st.markdown("""
+    <div class='quick-action-grid' style='display: flex; gap: 15px; margin-top: 20px; width: 100%; box-sizing: border-box;'>
         
-        <!-- TARJETA-BOTÓN 1: ADD PATIENT -->
+        <!-- BOTÓN 1: ADD PATIENT -->
         <a href='?nav=Patients' target='_self' style='text-decoration: none; flex: 1; display: block;'>
             <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
                 <div class='icon-circle-svg bg-neon-blue' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9; flex-shrink: 0;'>
@@ -500,7 +523,7 @@ elif nav_selection == "Dashboard Matrix":
             </div>
         </a>
 
-        <!-- TARJETA-BOTÓN 2: ADD SAMPLE -->
+        <!-- BOTÓN 2: ADD SAMPLE -->
         <a href='?nav=LIMS+Samples' target='_self' style='text-decoration: none; flex: 1; display: block;'>
             <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
                 <div class='icon-circle-svg bg-neon-orange' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316; flex-shrink: 0;'>
@@ -513,7 +536,7 @@ elif nav_selection == "Dashboard Matrix":
             </div>
         </a>
 
-        <!-- TARJETA-BOTÓN 3: RUN CRISPR AI -->
+        <!-- BOTÓN 3: RUN CRISPR AI -->
         <a href='?nav=METHYLOX+Engine' target='_self' style='text-decoration: none; flex: 1; display: block;'>
             <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
                 <div class='icon-circle-svg bg-neon-green' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E; flex-shrink: 0;'>
@@ -526,7 +549,7 @@ elif nav_selection == "Dashboard Matrix":
             </div>
         </a>
 
-        <!-- TARJETA-BOTÓN 4: GET REPORTS -->
+        <!-- BOTÓN 4: GET REPORTS -->
         <a href='?nav=Reports' target='_self' style='text-decoration: none; flex: 1; display: block;'>
             <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer; height: 90px; box-sizing: border-box;'>
                 <div class='icon-circle-svg bg-neon-purple' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7; flex-shrink: 0;'>
@@ -540,7 +563,7 @@ elif nav_selection == "Dashboard Matrix":
         </a>
 
     </div>
-    """)
+    """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
