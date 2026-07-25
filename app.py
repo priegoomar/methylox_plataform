@@ -320,23 +320,8 @@ if nav_selection == "Dashboard Matrix":
             margin-top: 8px;
         }
         .svg-top-container { margin-bottom: 8px; display: flex; justify-content: center; align-items: center; }
-
-        /* CONTENEDOR MONOLÍTICO UNIFICADO (GRID INTERNO DE DOS COLUMNAS REALES) */
-        .unified-main-board-box {
-            background: white;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            padding: 24px;
-            min-height: 340px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: 1.4fr 1fr;
-            gap: 24px;
-            align-items: start;
-        }
-
-        .clinical-table-new { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
+        
+        .clinical-table-new { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
         .clinical-table-new th { color: #64748B; font-weight: 700; padding: 12px 10px; border-bottom: 2px solid #F1F5F9; background-color: #F8FAFC; text-align: center !important; }
         .clinical-table-new td { padding: 14px 10px; color: #0F172A; border-bottom: 1px solid #F1F5F9; text-align: center !important; }
     </style>
@@ -397,167 +382,14 @@ if nav_selection == "Dashboard Matrix":
     </div>
     """, unsafe_allow_html=True)
 
-    # OBTENCIÓN DE DATOS PARA LA TABLA Y GRÁFICA
-    try:
-        res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
-        samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
-    except Exception:
-        samples_list = []
-
-    try:
-        res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
-        rep_data = res_rep.json() if res_rep.status_code == 200 else []
-    except Exception:
-        rep_data = []
-
-    total_cases = len(rep_data)
-    positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
-    negatives = total_cases - positives
-    in_pipeline = in_progress
-
-    # CONSTRUCCIÓN DE LA TABLA EN HTML PURO
-    table_html = """
-    <div>
-        <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>
-        <table class='clinical-table-new'>
-            <thead>
-                <tr>
-                    <th>Sample ID</th>
-                    <th>Patient ID</th>
-                    <th>Matrix</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-    """
-    if not samples_list:
-        table_html += """
-            <tr>
-                <td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center;'>
-                    No active samples detected. Dashboard standby node waiting for live data registration...
-                </td>
-            </tr>
-        """
-    else:
-        for s in samples_list[:5]:
-            state = s.get("workflow_state", "Sample Received")
-            badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
-            table_html += f"""
-            <tr>
-                <td style='font-weight: 700; color: #2563EB;'>{s.get('sample_id', '--')}</td>
-                <td>{s.get('patient_id', '--')}</td>
-                <td>{s.get('specimen_type', 'Plasma')}</td>
-                <td><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
-            </tr>
-            """
-    table_html += "</tbody></table></div>"
-
-    # CONSTRUCCIÓN DE LA GRÁFICA DONUT
-    if total_cases == 0 and in_pipeline == 0:
-        labels_pie = ['Awaiting Data Ingestion']
-        values_pie = [1]
-        colors_pie = ['#F1F5F9']
-    else:
-        labels_pie = ['Positive Panels', 'Stable Controls', 'In Pipeline']
-        values_pie = [positives, negatives, in_pipeline]
-        colors_pie = ['#EF4444', '#10B981', '#3B82F6']
-
-    fig_donut = go.Figure(data=[go.Pie(
-        labels=labels_pie, values=values_pie, hole=.6,
-        marker=dict(colors=colors_pie), textinfo='none', showlegend=True
-    )])
-    fig_donut.update_layout(
-        height=200, margin=dict(l=0, r=0, t=10, b=10),
-        legend=dict(orientation="h", y=-0.2, x=0),
-        annotations=[dict(text=f"<b style='font-size:22px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
-    )
-
-    chart_html_wrapper = "<div><p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>"
-    
-    # RENDERIZADO DEL CONTENEDOR MONOLÍTICO ÚNICO
-    st.markdown(f"""
-    <div class="unified-main-board-box">
-        {table_html}
-        <div>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # FETCH LIVE DATA FROM ENDPOINTS
-    try:
-        res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
-        if res_telemetry.status_code == 200:
-            tel = res_telemetry.json()
-            received_today = tel.get('received_today', 0)
-            in_progress = tel.get('in_progress', 0)
-            ready_analyses = tel.get('ready_analyses', 0)
-            qc_pass_rate = tel.get('qc_pass_rate', 0.0)
-        else:
-            received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
-    except Exception:
-        received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
-
-    # RENDER DE LAS CUATRO TARJETAS SUPERIORES CON SUS SVG ORIGINALES RECUPERADOS
-    st.markdown(f"""
-    <div class='metric-container-hub'>
-        <div class='metric-card-clinical-new'>
-            <div class='svg-top-container' style='color: #2563EB;'>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <p class='metric-title-sub-new'>Samples Received</p>
-            <p class='metric-num-big-new'>{received_today}</p>
-            <a class='metric-link-btn-new' href='#'>View all samples →</a>
-        </div>
-        <div class='metric-card-clinical-new'>
-            <div class='svg-top-container' style='color: #D97706;'>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            </div>
-            <p class='metric-title-sub-new'>In Progress</p>
-            <p class='metric-num-big-new'>{in_progress}</p>
-            <a class='metric-link-btn-new' href='#'>View details →</a>
-        </div>
-        <div class='metric-card-clinical-new'>
-            <div class='svg-top-container' style='color: #16A34A;'>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
-            </div>
-            <p class='metric-title-sub-new'>Ready Reports</p>
-            <p class='metric-num-big-new'>{ready_analyses}</p>
-            <a class='metric-link-btn-new' href='#'>View dossiers →</a>
-        </div>
-        <div class='metric-card-clinical-new'>
-            <div class='svg-top-container' style='color: #6366F1;'>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <p class='metric-title-sub-new'>Quality Controls</p>
-            <p class='metric-num-big-new'>{qc_pass_rate}%</p>
-            <a class='metric-link-btn-new' href='#'>View QC matrix →</a>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
     st.write("##")
 
-    # FILA CENTRAL COMPACTA EN COLUMNAS PARALELAS (TABLE STRUCTURE RECTIFIED)
+    # FILA CENTRAL CON COLUMNAS DE STREAMLIT EQUilibradas
     c_left, c_right = st.columns([1.4, 1.0])
     
     with c_left:
-        st.markdown('<div class="clean-table-box" style="background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 340px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">', unsafe_allow_html=True)
+        st.markdown('<div style="background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">', unsafe_allow_html=True)
         st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>", unsafe_allow_html=True)
-        
-        # 🟢 TABLA CON FILA DE ENCABEZADO MAESTRA UNIFICADA EN UN SOLO RECUADRO PLANO
-        st.markdown("""
-        <table style='width: 100%; border-collapse: collapse; border-spacing: 0; font-size: 13px;'>
-            <thead>
-                <tr style='background-color: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 2px solid #E2E8F0;'>
-                    <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Sample ID</th>
-                    <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Patient ID</th>
-                    <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Matrix</th>
-                    <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-        """, unsafe_allow_html=True)
         
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
@@ -565,32 +397,30 @@ if nav_selection == "Dashboard Matrix":
         except Exception:
             samples_list = []
             
+        table_content = "<table class='clinical-table-new'><thead><tr><th>Sample ID</th><th>Patient ID</th><th>Matrix</th><th>Status</th></tr></thead><tbody>"
+        
         if not samples_list:
-            st.markdown("""
-            <tr>
-                <td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>
-                    No active samples detected. Dashboard standby node waiting for live data registration...
-                </td>
-            </tr>
-            """, unsafe_allow_html=True)
+            table_content += "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
         else:
             for s in samples_list[:5]:
                 state = s.get("workflow_state", "Sample Received")
                 badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
-                st.markdown(f"""
-                <tr style='border-bottom: 1px solid #F1F5F9;'>
-                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_id', '--')}</td>
-                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('patient_id', '--')}</td>
-                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('specimen_type', 'Plasma')}</td>
-                    <td style='padding: 14px 10px; text-align: center; border: none;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
+                table_content += f"""
+                <tr>
+                    <td style='font-weight: 700; color: #2563EB;'>{s.get('sample_id', '--')}</td>
+                    <td>{s.get('patient_id', '--')}</td>
+                    <td>{s.get('specimen_type', 'Plasma')}</td>
+                    <td><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
                 </tr>
-                """, unsafe_allow_html=True)
-                
-        st.markdown("</tbody></table></div>", unsafe_allow_html=True)
+                """
+        table_content += "</tbody></table>"
+        st.markdown(table_content, unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     with c_right:
-        st.markdown("<div style='background:white; border:1px solid #E2E8F0; border-radius:12px; padding:24px; min-height:340px; box-shadow:0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
+        st.markdown('<div style="background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">', unsafe_allow_html=True)
         st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>", unsafe_allow_html=True)
+        
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
@@ -616,53 +446,53 @@ if nav_selection == "Dashboard Matrix":
             marker=dict(colors=colors_pie), textinfo='none', showlegend=True
         )])
         fig_donut.update_layout(
-            height=200, margin=dict(l=0, r=0, t=10, b=10),
+            height=210, margin=dict(l=0, r=0, t=10, b=10),
             legend=dict(orientation="h", y=-0.2, x=0),
-            annotations=[dict(text=f"<b style='font-size:22px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
+            annotations=[dict(text=f"<b style='font-size:20px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
         )
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO
+    # 4. BOTONERA DE ACCIONES RÁPIDAS
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
     
     st.markdown("""
-    <div class='quick-action-grid' style='display: flex; gap: 15px; margin-top: 20px;'>
-        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div class='icon-circle-svg bg-neon-blue' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9;'>
+    <div style='display: flex; gap: 15px; margin-top: 10px;'>
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9;'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
             </div>
-            <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Enroll Subject</p>
-                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>New Patient Profile</p>
+            <div style='display: flex; flex-direction: column;'>
+                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Enroll Subject</p>
+                <p style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>New Patient Profile</p>
             </div>
         </div>
-        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div class='icon-circle-svg bg-neon-orange' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316;'>
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316;'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
             </div>
-            <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Asset Intake</p>
-                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Log LIMS Custody</p>
+            <div style='display: flex; flex-direction: column;'>
+                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Asset Intake</p>
+                <p style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Log LIMS Custody</p>
             </div>
         </div>
-        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div class='icon-circle-svg bg-neon-green' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E;'>
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E;'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             </div>
-            <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Launch Kernel</p>
-                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Run CRISPR Pipeline</p>
+            <div style='display: flex; flex-direction: column;'>
+                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Launch Kernel</p>
+                <p style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Run CRISPR Pipeline</p>
             </div>
         </div>
-        <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div class='icon-circle-svg bg-neon-purple' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7;'>
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7;'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
-            <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Dossier Sheet</p>
-                <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Export Medical PDF</p>
+            <div style='display: flex; flex-direction: column;'>
+                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Dossier Sheet</p>
+                <p style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Export Medical PDF</p>
             </div>
         </div>
     </div>
