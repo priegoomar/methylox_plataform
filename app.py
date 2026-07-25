@@ -21,61 +21,61 @@ st.set_page_config(
 st.markdown("""
 <style>
     /* Global Viewport Architecture */
-    .stApp { 
-        background-color: #F8FAFC !important; 
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; 
+    .stApp {
+        background-color: #F8FAFC !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     }
-    [data-testid="stHeader"] { 
-        display: none !important; 
-        height: 0px !important; 
+    [data-testid="stHeader"] {
+        display: none !important;
+        height: 0px !important;
     }
-    [data-testid="stMainBlockContainer"] { 
-        padding-top: 2rem !important; 
-        padding-bottom: 2rem !important; 
-        padding-left: 3rem !important; 
-        padding-right: 3rem !important; 
+    [data-testid="stMainBlockContainer"] {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+        padding-left: 3rem !important;
+        padding-right: 3rem !important;
     }
-    
+   
     /* Dark Compliance Corporate Sidebar */
-    [data-testid="stSidebar"] { 
-        background-color: #0B0F19 !important; 
-        border-right: 1px solid #1E293B; 
+    [data-testid="stSidebar"] {
+        background-color: #0B0F19 !important;
+        border-right: 1px solid #1E293B;
     }
-    div[data-testid="stSidebarUserContent"] .stRadio > div { 
-        gap: 6px !important; 
+    div[data-testid="stSidebarUserContent"] .stRadio > div {
+        gap: 6px !important;
     }
-    div[data-testid="stSidebarUserContent"] label { 
-        color: #94A3B8 !important; 
-        font-weight: 500 !important; 
-        font-size: 14px !important; 
+    div[data-testid="stSidebarUserContent"] label {
+        color: #94A3B8 !important;
+        font-weight: 500 !important;
+        font-size: 14px !important;
     }
-    
+   
     /* Typography System */
-    .welcome-header { 
-        font-size: 28px !important; 
-        font-weight: 800 !important; 
-        color: #0F172A !important; 
-        margin-bottom: 2px !important; 
+    .welcome-header {
+        font-size: 28px !important;
+        font-weight: 800 !important;
+        color: #0F172A !important;
+        margin-bottom: 2px !important;
     }
-    .welcome-caption { 
-        font-size: 14px !important; 
-        color: #64748B !important; 
-        margin-bottom: 25px !important; 
+    .welcome-caption {
+        font-size: 14px !important;
+        color: #64748B !important;
+        margin-bottom: 25px !important;
     }
-    
+   
     /* Premium Grid Telemetry Panels */
-    .metric-container-hub { 
-        display: flex; 
-        gap: 20px; 
-        margin-bottom: 25px; 
-        width: 100%; 
+    .metric-container-hub {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 25px;
+        width: 100%;
     }
-    .metric-card-clinical-new { 
-        background: white; 
-        border: 1px solid #E2E8F0; 
-        border-radius: 12px; 
-        padding: 24px; 
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+    .metric-card-clinical-new {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         text-align: center;
         flex: 1;
         min-height: 140px;
@@ -84,34 +84,34 @@ st.markdown("""
         align-items: center;
         justify-content: center;
     }
-    .metric-title-sub-new { 
-        font-size: 12px !important; 
-        font-weight: 700 !important; 
-        color: #64748B !important; 
-        margin: 0 0 6px 0 !important; 
+    .metric-title-sub-new {
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        color: #64748B !important;
+        margin: 0 0 6px 0 !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    .metric-num-big-new { 
-        font-size: 36px !important; 
-        font-weight: 800 !important; 
-        color: #0F172A !important; 
-        margin: 5px 0 !important; 
+    .metric-num-big-new {
+        font-size: 36px !important;
+        font-weight: 800 !important;
+        color: #0F172A !important;
+        margin: 5px 0 !important;
         line-height: 1 !important;
     }
-    .metric-link-btn-new { 
-        font-size: 11px !important; 
-        font-weight: 600 !important; 
-        color: #2563EB !important; 
-        text-decoration: none; 
+    .metric-link-btn-new {
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        color: #2563EB !important;
+        text-decoration: none;
         display: inline-block;
         margin-top: 8px;
     }
-    .svg-top-container { 
-        margin-bottom: 8px; 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
+    .svg-top-container {
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     /* UNIFICACIÓN TOTAL EN UN SOLO RECUADRO MONOLÍTICO PARA LA TABLA Y DONA */
@@ -126,68 +126,68 @@ st.markdown("""
     }
 
     /* Alineación y Centrado Absoluto de las Columnas de la Tabla */
-    .clinical-table-new { 
-        width: 100%; 
-        border-collapse: collapse; 
-        font-size: 13px; 
-        margin-top: 15px; 
+    .clinical-table-new {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-top: 15px;
     }
-    .clinical-table-new th { 
-        color: #64748B; 
-        font-weight: 700; 
-        padding: 14px 10px; 
+    .clinical-table-new th {
+        color: #64748B;
+        font-weight: 700;
+        padding: 14px 10px;
         border-top: 1px solid #E2E8F0;
-        border-bottom: 2px solid #E2E8F0; 
-        background-color: #F8FAFC; 
-        text-align: center !important; 
+        border-bottom: 2px solid #E2E8F0;
+        background-color: #F8FAFC;
+        text-align: center !important;
     }
-    .clinical-table-new td { 
-        padding: 14px 10px; 
-        color: #0F172A; 
-        border-bottom: 1px solid #F1F5F9; 
-        text-align: center !important; 
+    .clinical-table-new td {
+        padding: 14px 10px;
+        color: #0F172A;
+        border-bottom: 1px solid #F1F5F9;
+        text-align: center !important;
     }
-    
+   
     /* Premium Action Grid System */
-    .quick-action-grid { 
-        display: flex; 
-        gap: 15px; 
-        margin-top: 25px; 
-        width: 100%; 
+    .quick-action-grid {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+        width: 100%;
     }
-    .action-card-svg { 
-        background: white; 
-        border: 1px solid #E2E8F0; 
-        border-radius: 12px; 
-        padding: 16px; 
-        flex: 1; 
-        display: flex; 
-        align-items: center; 
-        gap: 15px; 
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+    .action-card-svg {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
-    .icon-circle-svg { 
-        width: 44px; 
-        height: 44px; 
-        border-radius: 10px; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
+    .icon-circle-svg {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    .action-text-container { 
-        display: flex; 
-        flex-direction: column; 
+    .action-text-container {
+        display: flex;
+        flex-direction: column;
     }
-    .action-title-svg { 
-        font-size: 14px; 
-        font-weight: 700; 
-        color: #0F172A; 
-        margin: 0; 
+    .action-title-svg {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0F172A;
+        margin: 0;
     }
-    .action-desc-svg { 
-        font-size: 11px; 
-        color: #64748B; 
-        margin: 2px 0 0 0; 
+    .action-desc-svg {
+        font-size: 11px;
+        color: #64748B;
+        margin: 2px 0 0 0;
     }
 
     .bg-neon-blue { background: #E0F2FE; color: #0EA5E9; }
@@ -220,7 +220,7 @@ with st.sidebar:
     if "operator_display_name" not in st.session_state:
         st.session_state.operator_display_name = "Guest Operator"
     if "user_role" not in st.session_state:
-        st.session_state.user_role = None 
+        st.session_state.user_role = None
     if "id_hospital" not in st.session_state:
         st.session_state.id_hospital = 1
 
@@ -280,37 +280,27 @@ with st.sidebar:
             st.rerun()
 
     st.markdown("---")
+   
+    # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING (RECTIFIED LIVE HUB) ---
+    if st.session_state.jwt_access_token:
+        available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
+         
+        if st.session_state.user_role == "admin":
+            available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
+         
+        # Sincroniza el estado de navegación antes de dibujar el radio
+        if "nav_selection" not in st.session_state:
+            st.session_state.nav_selection = "Dashboard Matrix"
+           
+        nav_selection = st.radio(
+            "Operational Scope Selector",
+            available_scopes,
+            key="nav_selection", # <-- ESTO LE DA PODER A LOS BOTONES CENTRALES
+            label_visibility="collapsed"
+        )
+    else:
+        nav_selection = "🔒 Access Restricted"
 
-# --- RBAC FRONTEND NAVIGATION STRUCTURE GATING (RECTIFIED LIVE HUB) ---
-if st.session_state.jwt_access_token:
-    available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
-     
-    if st.session_state.user_role == "admin":
-        available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
-     
-    # Sincroniza el estado inicial de la pestaña si no existe
-    if "current_tab" not in st.session_state:
-        st.session_state["current_tab"] = "Dashboard Matrix"
-    
-    # Calcula qué posición debe marcar el radio de forma dinámica
-    try:
-        default_index = available_scopes.index(st.session_state["current_tab"])
-    except ValueError:
-        default_index = 0
-
-    # Dibujamos el radio amarrado a una clave única para que no choque con la botonera central
-    nav_selection = st.radio(
-        "Operational Scope Selector",
-        available_scopes,
-        index=default_index,
-        key="sidebar_nav_radio",
-        label_visibility="collapsed"
-    )
-    
-    # Si el usuario hace clic directamente en el sidebar, actualizamos la pestaña actual
-    st.session_state["current_tab"] = nav_selection
-else:
-    nav_selection = "🔒 Access Restricted"
     st.markdown("---")
     st.markdown("""
     <div style="padding: 5px 10px;">  
@@ -502,72 +492,78 @@ elif nav_selection == "Dashboard Matrix":
         </div>
         """, unsafe_allow_html=True)
 
-    # ============================================================================
-    # ⚡ 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG REAL (CAPTURA WEB INTERACTIVA)
-    # ============================================================================
+    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE CON ENLACES OPERATIVOS REALES
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
    
-    # Receptor transaccional nativo de Python que procesa la orden del clic enviada desde el contenedor web
+    # Inyección de navegación responsiva directa mediante query parameters nativos de Streamlit
     query_params = st.query_params
     if "nav" in query_params:
         target_nav = query_params["nav"]
         if target_nav in ["Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]:
-            # 🟢 RECTIFICACIÓN CLAVE: Modificamos la variable libre en session_state, evitando el bloqueo del widget
-            st.session_state["current_tab"] = target_nav
+            # 🟢 RECTIFICACIÓN CLAVE: Modificación legal de la variable amarrada al key del radio del Sidebar
+            st.session_state["nav_selection"] = target_nav
             st.query_params.clear()
             st.rerun()
 
-    # Contenedor HTML/SVG blindado con la función interactiva parent.postMessage nativa de Streamlit
-    st.components.v1.html("""
-    <div class='quick-action-grid' style='display: flex; gap: 15px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; width: 100%; box-sizing: border-box;'>
-        
-        <!-- TARJETA-BOTÓN 1: ADD PATIENT -->
-        <div onclick="window.parent.postMessage({type: 'streamlit:set_query_params', query_params: {nav: 'Patients'}}, '*')" style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9; flex-shrink: 0;'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+    # Renderizado directo de las tarjetas grandes de fábrica con tus círculos fluorescentes neón y vectores SVG intactos
+    st.markdown("""
+    <div class='quick-action-grid' style='display: flex; gap: 15px; margin-top: 20px; width: 100%; box-sizing: border-box;'>
+       
+        <!-- BOTÓN 1: ADD PATIENT -->
+        <a href='?nav=Patients' target='_self' style='text-decoration: none; flex: 1; display: block;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
+                <div class='icon-circle-svg bg-neon-blue' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9; flex-shrink: 0;'>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+                </div>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Patient</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Register New Profile</p>
+                </div>
             </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Patient</p>
-                <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Register New Profile</p>
-            </div>
-        </div>
+        </a>
 
-        <!-- TARJETA-BOTÓN 2: ADD SAMPLE -->
-        <div onclick="window.parent.postMessage({type: 'streamlit:set_query_params', query_params: {nav: 'LIMS Samples'}}, '*')" style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316; flex-shrink: 0;'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+        <!-- BOTÓN 2: ADD SAMPLE -->
+        <a href='?nav=LIMS+Samples' target='_self' style='text-decoration: none; flex: 1; display: block;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
+                <div class='icon-circle-svg bg-neon-orange' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316; flex-shrink: 0;'>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+                </div>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Sample</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Log LIMS Code & Matrix</p>
+                </div>
             </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Sample</p>
-                <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Log LIMS Code & Matrix</p>
-            </div>
-        </div>
+        </a>
 
-        <!-- TARJETA-BOTÓN 3: RUN CRISPR AI -->
-        <div onclick="window.parent.postMessage({type: 'streamlit:set_query_params', query_params: {nav: 'METHYLOX Engine'}}, '*')" style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E; flex-shrink: 0;'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        <!-- BOTÓN 3: RUN CRISPR AI -->
+        <a href='?nav=METHYLOX+Engine' target='_self' style='text-decoration: none; flex: 1; display: block;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
+                <div class='icon-circle-svg bg-neon-green' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E; flex-shrink: 0;'>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                </div>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Run CRISPR AI</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Process CpG Methylation</p>
+                </div>
             </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Run CRISPR AI</p>
-                <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Process CpG Methylation</p>
-            </div>
-        </div>
+        </a>
 
-        <!-- TARJETA-BOTÓN 4: GET REPORTS -->
-        <div onclick="window.parent.postMessage({type: 'streamlit:set_query_params', query_params: {nav: 'Reports'}}, '*')" style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7; flex-shrink: 0;'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <!-- BOTÓN 4: GET REPORTS -->
+        <a href='?nav=Reports' target='_self' style='text-decoration: none; flex: 1; display: block;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer; height: 90px; box-sizing: border-box;'>
+                <div class='icon-circle-svg bg-neon-purple' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7; flex-shrink: 0;'>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Get Reports</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Download Medical PDF</p>
+                </div>
             </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Get Reports</p>
-                <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Download Medical PDF</p>
-            </div>
-        </div>
+        </a>
 
     </div>
-    """, height=120)
+    """, unsafe_allow_html=True)
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ----------------------------------------------------------------------------
