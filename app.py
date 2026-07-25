@@ -464,69 +464,86 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE CON CAPTURA INTERACTIVA WEB REAL
-    st.write("##")
-    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-   
-    # Receptor transaccional nativo de Python que procesa la orden del clic enviada desde el contenedor web
-    query_params = st.query_params
-    if "nav" in query_params:
-        target_nav = query_params["nav"]
-        if target_nav in ["Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]:
-            st.session_state.nav_selection = target_nav
-            st.query_params.clear()
-            st.rerun()
+# 4. BOTONERA DE ACCIONES RÁPIDAS EN Python Nativo (Alta Responsividad)
+st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-top:20px; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
 
-    # Contenedor HTML/SVG blindado con la función interactiva parent.postMessage nativa de Streamlit
-    st.components.v1.html("""
-    <div class='quick-action-grid' style='display: flex; gap: 15px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; width: 100%; box-sizing: border-box;'>
+# Estilos CSS globales para replicar el diseño exacto y añadir efectos hover reales
+st.markdown("""
+<style>
+    .quick-card {
+        background: white; 
+        border: 1px solid #E2E8F0; 
+        border-radius: 12px; 
+        padding: 16px; 
+        display: flex; 
+        align-items: center; 
+        gap: 15px; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+        height: 90px; 
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+    }
+    /* Estilo para simular que toda la columna es un botón interactivo */
+    .stColumn > div {
+        cursor: pointer;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Definición de la estructura de datos de los botones
+buttons_data = [
+    {
+        "nav": "Patients",
+        "title": "Add Patient",
+        "subtitle": "Register New Profile",
+        "bg_icon": "#E0F2FE", "color_icon": "#0EA5E9",
+        "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>'
+    },
+    {
+        "nav": "LIMS Samples",
+        "title": "Add Sample",
+        "subtitle": "Log LIMS Code & Matrix",
+        "bg_icon": "#FFEDD5", "color_icon": "#F97316",
+        "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
+    },
+    {
+        "nav": "METHYLOX Engine",
+        "title": "Run CRISPR AI",
+        "subtitle": "Process CpG Methylation",
+        "bg_icon": "#DCFCE7", "color_icon": "#22C55E",
+        "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>'
+    },
+    {
+        "nav": "Reports",
+        "title": "Get Reports",
+        "subtitle": "Download Medical PDF",
+        "bg_icon": "#F3E8FF", "color_icon": "#A855F7",
+        "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>'
+    }
+]
+
+# Crear una fila de 4 columnas independientes
+cols = st.columns(4)
+
+for i, btn in enumerate(buttons_data):
+    with cols[i]:
+        # Contenedor visual estructurado en HTML dentro de Streamlit
+        st.markdown(f"""
+        <div class="quick-card">
+            <div style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: {btn['bg_icon']}; color: {btn['color_icon']}; flex-shrink: 0;">
+                {btn['svg']}
+            </div>
+            <div style="display: flex; flex-direction: column; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                <p style="font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;">{btn['title']}</p>
+                <p style="font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;">{btn['subtitle']}</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         
-        <!-- TARJETA-BOTÓN 1: ADD PATIENT -->
-        <div onclick="window.parent.postMessage({type: 'streamlit:set_query_params', query_params: {nav: 'Patients'}}, '*')" style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9; flex-shrink: 0;'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
-            </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Patient</p>
-                <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Register New Profile</p>
-            </div>
-        </div>
-
-        <!-- TARJETA-BOTÓN 2: ADD SAMPLE -->
-        <div onclick="window.parent.postMessage({type: 'streamlit:set_query_params', query_params: {nav: 'LIMS Samples'}}, '*')" style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316; flex-shrink: 0;'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Sample</p>
-                <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Log LIMS Code & Matrix</p>
-            </div>
-        </div>
-
-        <!-- TARJETA-BOTÓN 3: RUN CRISPR AI -->
-        <div onclick="window.parent.postMessage({type: 'streamlit:set_query_params', query_params: {nav: 'METHYLOX Engine'}}, '*')" style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E; flex-shrink: 0;'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Run CRISPR AI</p>
-                <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Process CpG Methylation</p>
-            </div>
-        </div>
-
-        <!-- TARJETA-BOTÓN 4: GET REPORTS -->
-        <div onclick="window.parent.postMessage({type: 'streamlit:set_query_params', query_params: {nav: 'Reports'}}, '*')" style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; height: 90px; box-sizing: border-box;'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7; flex-shrink: 0;'>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Get Reports</p>
-                <p style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Download Medical PDF</p>
-            </div>
-        </div>
-
-    </div>
-    """, height=120)
+        # Botón invisible superpuesto que captura el click nativo sin romper el diseño
+        if st.button("🔗", key=f"btn_nav_{btn['nav']}", label_visibility="collapsed"):
+            st.session_state.nav_selection = btn['nav']
+            st.rerun()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
