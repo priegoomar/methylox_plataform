@@ -280,7 +280,7 @@ with st.sidebar:
             st.rerun()
 
     st.markdown("---")
-   
+
         # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING (RECTIFIED LIVE HUB) ---
         if st.session_state.jwt_access_token:
             available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
