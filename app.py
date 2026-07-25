@@ -385,7 +385,7 @@ if nav_selection == "Dashboard Matrix":
     # FILA CENTRAL EN COLUMNAS PARALELAS CON CONTENEDORES SEGUROS
     c_left, c_right = st.columns([1.4, 1.0])
     
-    with c_left:
+with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
@@ -394,30 +394,30 @@ if nav_selection == "Dashboard Matrix":
             
         rows_html = ""
         if not samples_list:
-            rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
+            rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
         else:
             for s in samples_list[:5]:
                 state = s.get("workflow_state", "Sample Received")
                 badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
                 rows_html += f"""
-                <tr>
-                    <td style='font-weight: 700; color: #2563EB;'>{s.get('sample_id', '--')}</td>
-                    <td>{s.get('patient_id', '--')}</td>
-                    <td>{s.get('specimen_type', 'Plasma')}</td>
-                    <td><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
+                <tr style='border-bottom: 1px solid #F1F5F9;'>
+                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_id', '--')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('patient_id', '--')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('specimen_type', 'Plasma')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
                 </tr>
                 """
 
         st.markdown(f"""
         <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
             <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>
-            <table class='clinical-table-new'>
+            <table style='width: 100%; border-collapse: collapse; border-spacing: 0; font-size: 13px;'>
                 <thead>
-                    <tr>
-                        <th>Sample ID</th>
-                        <th>Patient ID</th>
-                        <th>Matrix</th>
-                        <th>Status</th>
+                    <tr style='background-color: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 2px solid #E2E8F0;'>
+                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Sample ID</th>
+                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Patient ID</th>
+                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Matrix</th>
+                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -426,7 +426,6 @@ if nav_selection == "Dashboard Matrix":
             </table>
         </div>
         """, unsafe_allow_html=True)
-
     with c_right:
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
