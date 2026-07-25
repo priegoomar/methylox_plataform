@@ -281,36 +281,36 @@ with st.sidebar:
 
     st.markdown("---")
 
-        # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING (RECTIFIED LIVE HUB) ---
-        if st.session_state.jwt_access_token:
-            available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
-             
-            if st.session_state.user_role == "admin":
-                available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
-             
-            # Sincroniza el estado inicial de la pestaña si no existe
-            if "current_tab" not in st.session_state:
-                st.session_state["current_tab"] = "Dashboard Matrix"
-            
-            # Calcula qué posición debe marcar el radio de forma dinámica
-            try:
-                default_index = available_scopes.index(st.session_state["current_tab"])
-            except ValueError:
-                default_index = 0
+# --- RBAC FRONTEND NAVIGATION STRUCTURE GATING (RECTIFIED LIVE HUB) ---
+if st.session_state.jwt_access_token:
+    available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
+     
+    if st.session_state.user_role == "admin":
+        available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
+     
+    # Sincroniza el estado inicial de la pestaña si no existe
+    if "current_tab" not in st.session_state:
+        st.session_state["current_tab"] = "Dashboard Matrix"
+    
+    # Calcula qué posición debe marcar el radio de forma dinámica
+    try:
+        default_index = available_scopes.index(st.session_state["current_tab"])
+    except ValueError:
+        default_index = 0
 
-            # Dibujamos el radio amarrado a una clave única para que no choque con la botonera central
-            nav_selection = st.radio(
-                "Operational Scope Selector",
-                available_scopes,
-                index=default_index,
-                key="sidebar_nav_radio",
-                label_visibility="collapsed"
-            )
-            
-            # Si el usuario hace clic directamente en el sidebar, actualizamos la pestaña actual
-            st.session_state["current_tab"] = nav_selection
-        else:
-            nav_selection = "🔒 Access Restricted"
+    # Dibujamos el radio amarrado a una clave única para que no choque con la botonera central
+    nav_selection = st.radio(
+        "Operational Scope Selector",
+        available_scopes,
+        index=default_index,
+        key="sidebar_nav_radio",
+        label_visibility="collapsed"
+    )
+    
+    # Si el usuario hace clic directamente en el sidebar, actualizamos la pestaña actual
+    st.session_state["current_tab"] = nav_selection
+else:
+    nav_selection = "🔒 Access Restricted"
     st.markdown("---")
     st.markdown("""
     <div style="padding: 5px 10px;">  
