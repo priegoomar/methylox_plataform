@@ -463,62 +463,13 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-# 4. BOTONERA DE ACCIONES RÁPIDAS CON SVG Y ACCIONES FUNCIONALES
+    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO CORPORATIVO
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-    
-    # Creamos 4 columnas para distribuir las tarjetas funcionales con SVG
-    ac1, ac2, ac3, ac4 = st.columns(4)
-    
-    with ac1:
-        # BOTÓN 1: ENROLL SUBJECT (Registrar nuevo paciente)
-        if st.button("👤 Enroll Subject", key="btn_enroll", use_container_width=True):
-            st.session_state.nav_selection = "Patients Directory"
-            st.toast("Abriendo módulo de registro de pacientes...", icon="✅")
-            st.rerun()
-
-    with ac2:
-        # BOTÓN 2: ASSET INTAKE (Custodia LIMS)
-        if st.button("🧪 Asset Intake", key="btn_intake", use_container_width=True):
-            st.session_state.nav_selection = "Sample Registration"
-            st.toast("Iniciando recepción de muestras en LIMS...", icon="🔬")
-            st.rerun()
-
-    with ac3:
-        # BOTÓN 3: LAUNCH KERNEL (Ejecutar pipeline)
-        if st.button("🚀 Launch Kernel", key="btn_kernel", use_container_width=True):
-            try:
-                res_kernel = requests.post(f"{BACKEND_URL}/api/v1/analysis/launch-kernel", headers=headers, timeout=10)
-                if res_kernel.status_code == 200:
-                    st.success("¡Pipeline/Kernel disparado con éxito!")
-                else:
-                    st.error("Error al ejecutar el kernel en el servidor.")
-            except Exception as e:
-                st.error(f"Fallo de conexión: {e}")
-
-    with ac4:
-        # BOTÓN 4: DOSSIER SHEET (Extracción de PDF)
-        if st.button("📄 Dossier Sheet", key="btn_dossier", use_container_width=True):
-            try:
-                res_pdf = requests.get(f"{BACKEND_URL}/api/v1/analysis/export-pdf-dossier", headers=headers, timeout=15)
-                if res_pdf.status_code == 200:
-                    st.download_button(
-                        label="📥 Descargar Dossier PDF",
-                        data=res_pdf.content,
-                        file_name="Medical_Dossier_Report.pdf",
-                        mime="application/pdf",
-                        key="download_dossier_pdf"
-                    )
-                    st.success("¡Dossier extraído correctamente!")
-                else:
-                    st.warning("No hay suficientes datos para generar el PDF.")
-            except Exception as e:
-                st.error(f"Error en la extracción del dossier: {e}")
-
-    # RENDERIZADO VISUAL DE LAS TARJETAS SVG SUPERPUESTAS O DECORATIVAS
+   
     st.markdown("""
-    <div class='quick-action-grid' style='margin-top: 10px;'>
-        <!-- TARJETA SVG 1 -->
+    <div class='quick-action-grid'>
+        <!-- BOTÓN 1: ENROLL SUBJECT -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-blue'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
@@ -528,7 +479,7 @@ elif nav_selection == "Dashboard Matrix":
                 <p class='action-desc-svg'>New Patient Profile</p>
             </div>
         </div>
-        <!-- TARJETA SVG 2 -->
+        <!-- BOTÓN 2: ASSET INTAKE -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-orange'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
@@ -538,7 +489,7 @@ elif nav_selection == "Dashboard Matrix":
                 <p class='action-desc-svg'>Log LIMS Custody</p>
             </div>
         </div>
-        <!-- TARJETA SVG 3 -->
+        <!-- BOTÓN 3: LAUNCH KERNEL -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-green'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
@@ -548,7 +499,7 @@ elif nav_selection == "Dashboard Matrix":
                 <p class='action-desc-svg'>Run CRISPR Pipeline</p>
             </div>
         </div>
-        <!-- TARJETA SVG 4 -->
+        <!-- BOTÓN 4: DOWNLOAD DOSSIER -->
         <div class='action-card-svg'>
             <div class='icon-circle-svg bg-neon-purple'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
