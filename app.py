@@ -276,12 +276,11 @@ if nav_selection == "🔒 Access Restricted":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 📊 TAB 1: DASHBOARD MATRIX (HIGH-FIDELITY LIVE ENGINE - DEFINITIVE CLEAN)
+# 📊 TAB 1: DASHBOARD MATRIX
 # ----------------------------------------------------------------------------
 if nav_selection == "Dashboard Matrix":
     st.markdown("""
     <style>
-        /* Estilos del Tablero Unificado sin subdivisiones rotas */
         .metric-container-hub { display: flex; gap: 15px; margin-bottom: 25px; width: 100%; }
         .metric-card-clinical-new { 
             background: white; 
@@ -322,7 +321,7 @@ if nav_selection == "Dashboard Matrix":
         }
         .svg-top-container { margin-bottom: 8px; display: flex; justify-content: center; align-items: center; }
 
-        /* UNIFICACIÓN TOTAL EN UN SOLO RECUADRO MONOLÍTICO PARA LA TABLA Y DONA */
+        /* CONTENEDOR MONOLÍTICO UNIFICADO (GRID INTERNO DE DOS COLUMNAS REALES) */
         .unified-main-board-box {
             background: white;
             border: 1px solid #E2E8F0;
@@ -331,9 +330,12 @@ if nav_selection == "Dashboard Matrix":
             min-height: 340px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 24px;
+            align-items: start;
         }
 
-        /* Alineación y Centrado Absoluto de las Columnas de la Tabla */
         .clinical-table-new { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
         .clinical-table-new th { color: #64748B; font-weight: 700; padding: 12px 10px; border-bottom: 2px solid #F1F5F9; background-color: #F8FAFC; text-align: center !important; }
         .clinical-table-new td { padding: 14px 10px; color: #0F172A; border-bottom: 1px solid #F1F5F9; text-align: center !important; }
@@ -342,6 +344,145 @@ if nav_selection == "Dashboard Matrix":
 
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
+    
+    # FETCH LIVE DATA FROM ENDPOINTS
+    try:
+        res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
+        if res_telemetry.status_code == 200:
+            tel = res_telemetry.json()
+            received_today = tel.get('received_today', 0)
+            in_progress = tel.get('in_progress', 0)
+            ready_analyses = tel.get('ready_analyses', 0)
+            qc_pass_rate = tel.get('qc_pass_rate', 0.0)
+        else:
+            received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
+    except Exception:
+        received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
+
+    # RENDER DE LAS CUATRO TARJETAS SUPERIORES
+    st.markdown(f"""
+    <div class='metric-container-hub'>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #2563EB;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Samples Received</p>
+            <p class='metric-num-big-new'>{received_today}</p>
+            <a class='metric-link-btn-new' href='#'>View all samples →</a>
+        </div>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #D97706;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>In Progress</p>
+            <p class='metric-num-big-new'>{in_progress}</p>
+            <a class='metric-link-btn-new' href='#'>View details →</a>
+        </div>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #16A34A;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Ready Reports</p>
+            <p class='metric-num-big-new'>{ready_analyses}</p>
+            <a class='metric-link-btn-new' href='#'>View dossiers →</a>
+        </div>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #6366F1;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Quality Controls</p>
+            <p class='metric-num-big-new'>{qc_pass_rate}%</p>
+            <a class='metric-link-btn-new' href='#'>View QC matrix →</a>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # OBTENCIÓN DE DATOS PARA LA TABLA Y GRÁFICA
+    try:
+        res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
+        samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
+    except Exception:
+        samples_list = []
+
+    try:
+        res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
+        rep_data = res_rep.json() if res_rep.status_code == 200 else []
+    except Exception:
+        rep_data = []
+
+    total_cases = len(rep_data)
+    positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
+    negatives = total_cases - positives
+    in_pipeline = in_progress
+
+    # CONSTRUCCIÓN DE LA TABLA EN HTML PURO
+    table_html = """
+    <div>
+        <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>
+        <table class='clinical-table-new'>
+            <thead>
+                <tr>
+                    <th>Sample ID</th>
+                    <th>Patient ID</th>
+                    <th>Matrix</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+    """
+    if not samples_list:
+        table_html += """
+            <tr>
+                <td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center;'>
+                    No active samples detected. Dashboard standby node waiting for live data registration...
+                </td>
+            </tr>
+        """
+    else:
+        for s in samples_list[:5]:
+            state = s.get("workflow_state", "Sample Received")
+            badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
+            table_html += f"""
+            <tr>
+                <td style='font-weight: 700; color: #2563EB;'>{s.get('sample_id', '--')}</td>
+                <td>{s.get('patient_id', '--')}</td>
+                <td>{s.get('specimen_type', 'Plasma')}</td>
+                <td><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
+            </tr>
+            """
+    table_html += "</tbody></table></div>"
+
+    # CONSTRUCCIÓN DE LA GRÁFICA DONUT
+    if total_cases == 0 and in_pipeline == 0:
+        labels_pie = ['Awaiting Data Ingestion']
+        values_pie = [1]
+        colors_pie = ['#F1F5F9']
+    else:
+        labels_pie = ['Positive Panels', 'Stable Controls', 'In Pipeline']
+        values_pie = [positives, negatives, in_pipeline]
+        colors_pie = ['#EF4444', '#10B981', '#3B82F6']
+
+    fig_donut = go.Figure(data=[go.Pie(
+        labels=labels_pie, values=values_pie, hole=.6,
+        marker=dict(colors=colors_pie), textinfo='none', showlegend=True
+    )])
+    fig_donut.update_layout(
+        height=200, margin=dict(l=0, r=0, t=10, b=10),
+        legend=dict(orientation="h", y=-0.2, x=0),
+        annotations=[dict(text=f"<b style='font-size:22px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
+    )
+
+    chart_html_wrapper = "<div><p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>"
+    
+    # RENDERIZADO DEL CONTENEDOR MONOLÍTICO ÚNICO
+    st.markdown(f"""
+    <div class="unified-main-board-box">
+        {table_html}
+        <div>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
