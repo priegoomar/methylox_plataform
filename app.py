@@ -385,7 +385,7 @@ if nav_selection == "Dashboard Matrix":
     # FILA CENTRAL EN COLUMNAS PARALELAS CON CONTENEDORES SEGUROS
     c_left, c_right = st.columns([1.4, 1.0])
     
-with c_left:
+    with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
@@ -426,6 +426,7 @@ with c_left:
             </table>
         </div>
         """, unsafe_allow_html=True)
+
     with c_right:
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
