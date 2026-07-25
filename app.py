@@ -463,76 +463,122 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE CON ENLACES OPERATIVOS REALES
+    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE CON FUNCIÓN REAL INTERACTIVA
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
    
-    # Inyección de navegación responsiva directa mediante query parameters nativos de Streamlit
-    query_params = st.query_params
-    if "nav" in query_params:
-        target_nav = query_params["nav"]
-        if target_nav in ["Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]:
-            st.session_state.nav_selection = target_nav
-            st.query_params.clear()
-            st.rerun()
-
+    # Inyección de estilos avanzados para superponer botones interactivos invisibles sobre tus tarjetas SVG
     st.markdown("""
-    <div class='quick-action-grid' style='display: flex; gap: 15px; margin-top: 20px;'>
-        
-        <!-- BOTÓN 1: ADD PATIENT (USO REAL) -->
-        <a href='?nav=Patients' target='_self' style='text-decoration: none; flex: 1; display: block;'>
-            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer;'>
+    <style>
+        .interactive-card-wrapper {
+            position: relative;
+            width: 100%;
+            height: 90px;
+        }
+        /* Ocultar visualmente el botón nativo pero mantenerlo cliqueable al 100% de la tarjeta */
+        .interactive-card-wrapper div.stButton > button {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 90px !important;
+            opacity: 0 !important;
+            z-index: 20 !important;
+            cursor: pointer !important;
+        }
+        .action-card-svg-fixed {
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            height: 90px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    b1, b2, b3, b4 = st.columns(4)
+    
+    with b1:
+        st.markdown("""
+        <div class='interactive-card-wrapper'>
+            <div class='action-card-svg-fixed'>
                 <div class='icon-circle-svg bg-neon-blue' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
                 </div>
                 <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Patient</p>
-                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Register New Profile</p>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; text-align: left;'>Add Patient</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0; text-align: left;'>Register New Profile</p>
                 </div>
             </div>
-        </a>
+        """, unsafe_allow_html=True)
+        if st.button("NavPatients", key="action_nav_patients", use_container_width=True):
+            st.session_state.nav_selection = "Patients"
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        <!-- BOTÓN 2: ADD SAMPLE (USO REAL) -->
-        <a href='?nav=LIMS+Samples' target='_self' style='text-decoration: none; flex: 1; display: block;'>
-            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer;'>
+    with b2:
+        st.markdown("""
+        <div class='interactive-card-wrapper'>
+            <div class='action-card-svg-fixed'>
                 <div class='icon-circle-svg bg-neon-orange' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
                 </div>
                 <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Add Sample</p>
-                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Log LIMS Code & Matrix</p>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; text-align: left;'>Add Sample</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0; text-align: left;'>Log LIMS Code & Matrix</p>
                 </div>
             </div>
-        </a>
+        """, unsafe_allow_html=True)
+        if st.button("NavSamples", key="action_nav_samples", use_container_width=True):
+            st.session_state.nav_selection = "LIMS Samples"
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        <!-- BOTÓN 3: RUN CRISPR AI (USO REAL) -->
-        <a href='?nav=METHYLOX+Engine' target='_self' style='text-decoration: none; flex: 1; display: block;'>
-            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer;'>
+    with b3:
+        st.markdown("""
+        <div class='interactive-card-wrapper'>
+            <div class='action-card-svg-fixed'>
                 <div class='icon-circle-svg bg-neon-green' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
                 </div>
                 <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Run CRISPR AI</p>
-                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Process CpG Methylation</p>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; text-align: left;'>Run CRISPR AI</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0; text-align: left;'>Process CpG Methylation</p>
                 </div>
             </div>
-        </a>
+        """, unsafe_allow_html=True)
+        if st.button("NavEngine", key="action_nav_engine", use_container_width=True):
+            st.session_state.nav_selection = "METHYLOX Engine"
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        <!-- BOTÓN 4: GET REPORTS (USO REAL) -->
-        <a href='?nav=Reports' target='_self' style='text-decoration: none; flex: 1; display: block;'>
-            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer;'>
+    with b4:
+        st.markdown("""
+        <div class='interactive-card-wrapper'>
+            <div class='action-card-svg-fixed'>
                 <div class='icon-circle-svg bg-neon-purple' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                 </div>
                 <div class='action-text-container' style='display: flex; flex-direction: column;'>
-                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2; text-align: left;'>Get Reports</p>
-                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2; text-align: left;'>Download Medical PDF</p>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; text-align: left;'>Get Reports</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 2px 0 0 0; text-align: left;'>Download Medical PDF</p>
                 </div>
             </div>
-        </a>
-
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+        if st.button("NavReports", key="action_nav_reports", use_container_width=True):
+            st.session_state.nav_selection = "Reports"
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
     
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
