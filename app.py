@@ -281,25 +281,39 @@ with st.sidebar:
 
     st.markdown("---")
    
-    # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING (RECTIFIED LIVE HUB) ---
-    if st.session_state.jwt_access_token:
-        available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
-         
-        if st.session_state.user_role == "admin":
-            available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
-         
-        # Sincroniza el estado de navegación antes de dibujar el radio
-        if "nav_selection" not in st.session_state:
-            st.session_state.nav_selection = "Dashboard Matrix"
-           
-        nav_selection = st.radio(
-            "Operational Scope Selector",
-            available_scopes,
-            key="nav_selection", # <-- ESTO LE DA PODER A LOS BOTONES CENTRALES
-            label_visibility="collapsed"
-        )
-    else:
-        nav_selection = "🔒 Access Restricted"
+        # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING (RECTIFIED LIVE HUB) ---
+        if st.session_state.jwt_access_token:
+            available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
+             
+            if st.session_state.user_role == "admin":
+                available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
+             
+            # Captura de redireccionamiento seguro desde la botonera central externa
+            if "select_tab" in st.query_params:
+                requested_tab = st.query_params["select_tab"]
+                if requested_tab in available_scopes:
+                    st.session_state["nav_selection"] = requested_tab
+                st.query_params.clear()
+            
+            # Sincronización de estado inicial básico
+            if "nav_selection" not in st.session_state:
+                st.session_state["nav_selection"] = "Dashboard Matrix"
+            
+            # Calcula el índice dinámico para mover la bolita del st.radio sola
+            try:
+                default_index = available_scopes.index(st.session_state["nav_selection"])
+            except ValueError:
+                default_index = 0
+
+            nav_selection = st.radio(
+                "Operational Scope Selector",
+                available_scopes,
+                index=default_index,
+                key="nav_selection",
+                label_visibility="collapsed"
+            )
+        else:
+            nav_selection = "🔒 Access Restricted"
 
     st.markdown("---")
     st.markdown("""
@@ -493,19 +507,17 @@ elif nav_selection == "Dashboard Matrix":
         """, unsafe_allow_html=True)
    
     # ============================================================================
-    # ⚡ 4. BOTONERA DE ACCIONES RÁPIDAS EN PYTHON NATIVO (100% OPERATIVA EN LA NUBE)
+    # ⚡ 4. BOTONERA DE ACCIONES RÁPIDAS EN PYTHON NATIVO RECTIFICADA (SIN ERRORES)
     # ============================================================================
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
    
-    # Inyección de estilos avanzados para camuflar los botones reales sobre tu diseño
+    # Inyección de estilos locales avanzados para fijar las capas de botones invisibles
     st.markdown("""
     <style>
-        /* Asegura que el contenedor de Streamlit sea la base del botón */
         .element-container:has(.action-card-svg-cloud) {
             position: relative !important;
         }
-        
         .action-card-svg-cloud {
             background: white; 
             border: 1px solid #E2E8F0; 
@@ -518,17 +530,14 @@ elif nav_selection == "Dashboard Matrix":
             height: 90px; 
             box-sizing: border-box;
             transition: all 0.2s ease-in-out;
-            pointer-events: none; /* Permite que el click atraviese los textos directamente */
+            pointer-events: none; /* Hace que el click atraviese el HTML directo al botón */
         }
-        
-        /* Efecto hover real al pasar el mouse por encima de la tarjeta */
         .stColumn:hover .action-card-svg-cloud {
             border-color: #CBD5E1 !important;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05) !important;
             transform: translateY(-2px);
         }
-
-        /* Convierte el botón real de Streamlit en una capa 100% invisible sobre toda la tarjeta */
+        /* Estiramiento absoluto del botón invisible de Streamlit sobre toda la tarjeta */
         .stColumn div[data-testid="stButton"] button {
             position: absolute !important;
             top: 0 !important;
@@ -544,8 +553,6 @@ elif nav_selection == "Dashboard Matrix":
             cursor: pointer !important;
             box-shadow: none !important;
         }
-        
-        /* Neutraliza efectos visuales de interacción por defecto de Streamlit */
         .stColumn div[data-testid="stButton"] button:hover,
         .stColumn div[data-testid="stButton"] button:active,
         .stColumn div[data-testid="stButton"] button:focus {
@@ -557,31 +564,29 @@ elif nav_selection == "Dashboard Matrix":
     </style>
     """, unsafe_allow_html=True)
 
-    # Estructura de datos para renderizar limpiamente tus 4 tarjetas originales con sus clases y SVGs
     quick_buttons = [
         {
-            "nav": "Patients", "title": "Add Patient", "desc": "Register New Profile", "class": "bg-neon-blue", "bg": "#E0F2FE", "color": "#0EA5E9",
+            "id": "Patients", "title": "Add Patient", "desc": "Register New Profile", "class": "bg-neon-blue", "bg": "#E0F2FE", "color": "#0EA5E9",
             "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>'
         },
         {
-            "nav": "LIMS Samples", "title": "Add Sample", "desc": "Log LIMS Code & Matrix", "class": "bg-neon-orange", "bg": "#FFEDD5", "color": "#F97316",
+            "id": "LIMS_Samples", "title": "Add Sample", "desc": "Log LIMS Code & Matrix", "class": "bg-neon-orange", "bg": "#FFEDD5", "color": "#F97316",
             "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
         },
         {
-            "nav": "METHYLOX Engine", "title": "Run CRISPR AI", "desc": "Process CpG Methylation", "class": "bg-neon-green", "bg": "#DCFCE7", "color": "#22C55E",
+            "id": "METHYLOX_Engine", "title": "Run CRISPR AI", "desc": "Process CpG Methylation", "class": "bg-neon-green", "bg": "#DCFCE7", "color": "#22C55E",
             "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>'
         },
         {
-            "nav": "Reports", "title": "Get Reports", "desc": "Download Medical PDF", "class": "bg-neon-purple", "bg": "#F3E8FF", "color": "#A855F7",
+            "id": "Reports", "title": "Get Reports", "desc": "Download Medical PDF", "class": "bg-neon-purple", "bg": "#F3E8FF", "color": "#A855F7",
             "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>'
         }
     ]
 
-    # Distribución en 4 columnas nativas que respetan la posición de tu barra lateral
+    # Renderizado seguro en 4 columnas nativas que no rompen el Flexbox global
     cols_actions = st.columns(4)
     for idx, btn in enumerate(quick_buttons):
         with cols_actions[idx]:
-            # Renderizado visual idéntico a tu diseño original
             st.markdown(f"""
             <div class="action-card-svg-cloud">
                 <div class="icon-circle-svg {btn['class']}" style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: {btn['bg']}; color: {btn['color']}; flex-shrink: 0;">
@@ -594,9 +599,14 @@ elif nav_selection == "Dashboard Matrix":
             </div>
             """, unsafe_allow_html=True)
             
-            # El verdadero disparador: un botón nativo invisible encima que sí funciona en servidores Cloud
-            if st.button("Click", key=f"action_cloud_btn_{btn['nav']}", label_visibility="collapsed"):
-                st.session_state.nav_selection = btn['nav']
+            # Formateamos la llave (key) usando identificadores fijos sin diccionarios internos para evitar el TypeError
+            button_key = "act_btn_" + btn["id"]
+            
+            # El botón nativo invisible ejecuta el cambio usando los parámetros url nativos de Streamlit Cloud
+            if st.button("Click", key=button_key, label_visibility="collapsed"):
+                # Conversión limpia del id a la pestaña destino real del radio
+                target_route = "LIMS Samples" if btn["id"] == "LIMS_Samples" else "METHYLOX Engine" if btn["id"] == "METHYLOX_Engine" else btn["id"]
+                st.query_params["select_tab"] = target_route
                 st.rerun()
 
 # ----------------------------------------------------------------------------
