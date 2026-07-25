@@ -323,7 +323,8 @@ if nav_selection == "🔒 Access Restricted":
 # 📊 TAB 1: DASHBOARD MATRIX
 # ----------------------------------------------------------------------------
 elif nav_selection == "Dashboard Matrix":
-    st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
+    operator_name = st.session_state.get("operator_display_name", "Operator")
+    st.markdown(f"<h2 class='welcome-header'>Welcome back, {operator_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
    
     # FETCH LIVE DATA FROM ENDPOINTS
@@ -533,7 +534,7 @@ elif nav_selection == "Dashboard Matrix":
 
     </div>
     """, unsafe_allow_html=True)
-
+    
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ----------------------------------------------------------------------------
