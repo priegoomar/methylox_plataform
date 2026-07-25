@@ -8,11 +8,10 @@ import streamlit as st
 import requests
 
 # ============================================================================
-# 🧬 METHYLOX™ PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
+# 🧬 METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
 # ============================================================================
-
 st.set_page_config(
-    page_title="MethylOx™ | Epigenetic AI SaMD Platform",
+    page_title="MethylOxTM | Epigenetic AI SaMD Platform",
     page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -20,134 +19,181 @@ st.set_page_config(
 
 # --- UNIFIED ADVANCED CLINICAL DESIGN SYSTEM & CSS RECTIFICATION ---
 st.markdown("""
-<style>  
+<style>
     /* Global Viewport Architecture */
-    .stApp {  
-        background-color: #F8FAFC !important;  
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;  
-    }  
-    [data-testid="stHeader"] {  
-        display: none !important;  
-        height: 0px !important;  
-    }  
-    [data-testid="stMainBlockContainer"] {  
-        padding-top: 2rem !important;  
-        padding-bottom: 2rem !important;  
-        padding-left: 3rem !important;  
-        padding-right: 3rem !important;  
-    }  
-   
+    .stApp { 
+        background-color: #F8FAFC !important; 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; 
+    }
+    [data-testid="stHeader"] { 
+        display: none !important; 
+        height: 0px !important; 
+    }
+    [data-testid="stMainBlockContainer"] { 
+        padding-top: 2rem !important; 
+        padding-bottom: 2rem !important; 
+        padding-left: 3rem !important; 
+        padding-right: 3rem !important; 
+    }
+    
     /* Dark Compliance Corporate Sidebar */
-    [data-testid="stSidebar"] {  
-        background-color: #0B0F19 !important;  
-        border-right: 1px solid #1E293B;  
-    }  
-    div[data-testid="stSidebarUserContent"] .stRadio > div {
-        gap: 6px !important;
+    [data-testid="stSidebar"] { 
+        background-color: #0B0F19 !important; 
+        border-right: 1px solid #1E293B; 
     }
-    div[data-testid="stSidebarUserContent"] label {
-        color: #94A3B8 !important;
-        font-weight: 500 !important;
-        font-size: 14px !important;
+    div[data-testid="stSidebarUserContent"] .stRadio > div { 
+        gap: 6px !important; 
     }
-   
+    div[data-testid="stSidebarUserContent"] label { 
+        color: #94A3B8 !important; 
+        font-weight: 500 !important; 
+        font-size: 14px !important; 
+    }
+    
     /* Typography System */
-    .welcome-header {
-        font-size: 28px !important;
-        font-weight: 800 !important;
-        color: #0F172A !important;
-        margin-bottom: 2px !important;
+    .welcome-header { 
+        font-size: 28px !important; 
+        font-weight: 800 !important; 
+        color: #0F172A !important; 
+        margin-bottom: 2px !important; 
     }
-    .welcome-caption {
-        font-size: 14px !important;
-        color: #64748B !important;
-        margin-bottom: 25px !important;
+    .welcome-caption { 
+        font-size: 14px !important; 
+        color: #64748B !important; 
+        margin-bottom: 25px !important; 
     }
-   
+    
     /* Premium Grid Telemetry Panels */
-    .kpi-row-container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 25px;
+    .metric-container-hub { 
+        display: flex; 
+        gap: 20px; 
+        margin-bottom: 25px; 
+        width: 100%; 
     }
-    .kpi-card-commercial {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 12px !important;
-        padding: 24px !important;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+    .metric-card-clinical-new { 
+        background: white; 
+        border: 1px solid #E2E8F0; 
+        border-radius: 12px; 
+        padding: 24px; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+        text-align: center;
+        flex: 1;
+        min-height: 140px;
         display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-    .kpi-icon-box {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        flex-shrink: 0;
-        font-size: 20px;
     }
-    .kpi-text-val {
-        font-size: 26px !important;
-        font-weight: 800 !important;
-        color: #0F172A !important;
-        margin: 0 !important;
-        line-height: 1.1 !important;
+    .metric-title-sub-new { 
+        font-size: 12px !important; 
+        font-weight: 700 !important; 
+        color: #64748B !important; 
+        margin: 0 0 6px 0 !important; 
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    .kpi-text-lbl {
-        font-size: 13px !important;
-        font-weight: 600 !important;
-        color: #64748B !important;
-        margin: 0 !important;
+    .metric-num-big-new { 
+        font-size: 36px !important; 
+        font-weight: 800 !important; 
+        color: #0F172A !important; 
+        margin: 5px 0 !important; 
+        line-height: 1 !important;
     }
-   
-    /* Clean Content Containers (Commercial Grade) & Ghost Panel Suppression */
-    .executive-card-white {  
-        background-color: #FFFFFF !important;  
-        border: 1px solid #E2E8F0 !important;  
-        border-radius: 12px !important;  
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03) !important;  
-        padding: 24px !important;  
-        margin-bottom: 20px !important;
-    }  
-    .executive-card-white:empty, 
-    .unified-main-board-box:empty,
-    div[data-testid="stVerticalBlock"]:has(> div.element-container:empty) {
-        display: none !important;
+    .metric-link-btn-new { 
+        font-size: 11px !important; 
+        font-weight: 600 !important; 
+        color: #2563EB !important; 
+        text-decoration: none; 
+        display: inline-block;
+        margin-top: 8px;
+    }
+    .svg-top-container { 
+        margin-bottom: 8px; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
     }
 
-    .card-title-clinical {
-        font-size: 16px !important;
-        font-weight: 700 !important;
-        color: #0F172A !important;
-        margin-bottom: 16px !important;
+    /* UNIFICACIÓN TOTAL EN UN SOLO RECUADRO MONOLÍTICO PARA LA TABLA Y DONA */
+    .unified-main-board-box {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 24px;
+        min-height: 340px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        margin-bottom: 20px;
     }
-   
-    /* Dynamic Buttons Controller */
-    .action-subtext {
-        font-size: 12px !important;
-        color: #64748B !important;
-        margin-top: 4px !important;
-        margin-bottom: 12px !important;
+
+    /* Alineación y Centrado Absoluto de las Columnas de la Tabla */
+    .clinical-table-new { 
+        width: 100%; 
+        border-collapse: collapse; 
+        font-size: 13px; 
+        margin-top: 15px; 
     }
-    div.stButton > button:first-child {  
-        background-color: #F1F5F9 !important;  
-        border: 1px solid #E2E8F0 !important;  
-        color: #0F172A !important;  
-        border-radius: 8px !important;  
-        font-weight: 600 !important;  
-        height: 38px !important;  
-        font-size: 13px !important;  
-        transition: 0.2s !important;  
-    }  
-    div.stButton > button:first-child:hover {  
-        background-color: #E2E8F0 !important;  
-        border-color: #CBD5E1 !important;  
-    }  
+    .clinical-table-new th { 
+        color: #64748B; 
+        font-weight: 700; 
+        padding: 14px 10px; 
+        border-top: 1px solid #E2E8F0;
+        border-bottom: 2px solid #E2E8F0; 
+        background-color: #F8FAFC; 
+        text-align: center !important; 
+    }
+    .clinical-table-new td { 
+        padding: 14px 10px; 
+        color: #0F172A; 
+        border-bottom: 1px solid #F1F5F9; 
+        text-align: center !important; 
+    }
+    
+    /* Premium Action Grid System */
+    .quick-action-grid { 
+        display: flex; 
+        gap: 15px; 
+        margin-top: 25px; 
+        width: 100%; 
+    }
+    .action-card-svg { 
+        background: white; 
+        border: 1px solid #E2E8F0; 
+        border-radius: 12px; 
+        padding: 16px; 
+        flex: 1; 
+        display: flex; 
+        align-items: center; 
+        gap: 15px; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+    }
+    .icon-circle-svg { 
+        width: 44px; 
+        height: 44px; 
+        border-radius: 10px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+    }
+    .action-text-container { 
+        display: flex; 
+        flex-direction: column; 
+    }
+    .action-title-svg { 
+        font-size: 14px; 
+        font-weight: 700; 
+        color: #0F172A; 
+        margin: 0; 
+    }
+    .action-desc-svg { 
+        font-size: 11px; 
+        color: #64748B; 
+        margin: 2px 0 0 0; 
+    }
+
+    .bg-neon-blue { background: #E0F2FE; color: #0EA5E9; }
+    .bg-neon-orange { background: #FFEDD5; color: #F97316; }
+    .bg-neon-green { background: #DCFCE7; color: #22C55E; }
+    .bg-neon-purple { background: #F3E8FF; color: #A855F7; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -174,7 +220,7 @@ with st.sidebar:
     if "operator_display_name" not in st.session_state:
         st.session_state.operator_display_name = "Guest Operator"
     if "user_role" not in st.session_state:
-        st.session_state.user_role = None # RBAC State Mirror
+        st.session_state.user_role = None 
     if "id_hospital" not in st.session_state:
         st.session_state.id_hospital = 1
 
@@ -234,8 +280,8 @@ with st.sidebar:
             st.rerun()
 
     st.markdown("---")
-    
-    # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING ---
+   
+     # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING ---
     if st.session_state.jwt_access_token:
         available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
          
@@ -276,58 +322,10 @@ if nav_selection == "🔒 Access Restricted":
 # ----------------------------------------------------------------------------
 # 📊 TAB 1: DASHBOARD MATRIX
 # ----------------------------------------------------------------------------
-if nav_selection == "Dashboard Matrix":
-    st.markdown("""
-    <style>
-        .metric-container-hub { display: flex; gap: 15px; margin-bottom: 25px; width: 100%; }
-        .metric-card-clinical-new { 
-            background: white; 
-            border: 1px solid #E2E8F0; 
-            border-radius: 12px; 
-            padding: 24px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
-            text-align: center;
-            flex: 1;
-            min-height: 140px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .metric-title-sub-new { 
-            font-size: 12px !important; 
-            font-weight: 700 !important; 
-            color: #64748B !important; 
-            margin: 0 0 6px 0 !important; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .metric-num-big-new { 
-            font-size: 36px !important; 
-            font-weight: 800 !important; 
-            color: #0F172A !important; 
-            margin: 5px 0 !important; 
-            line-height: 1 !important;
-        }
-        .metric-link-btn-new { 
-            font-size: 11px !important; 
-            font-weight: 600 !important; 
-            color: #2563EB !important; 
-            text-decoration: none; 
-            display: inline-block;
-            margin-top: 8px;
-        }
-        .svg-top-container { margin-bottom: 8px; display: flex; justify-content: center; align-items: center; }
-        
-        .clinical-table-new { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
-        .clinical-table-new th { color: #64748B; font-weight: 700; padding: 12px 10px; border-bottom: 2px solid #F1F5F9; background-color: #F8FAFC; text-align: center !important; }
-        .clinical-table-new td { padding: 14px 10px; color: #0F172A; border-bottom: 1px solid #F1F5F9; text-align: center !important; }
-    </style>
-    """, unsafe_allow_html=True)
-
+elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
-    
+   
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
@@ -342,7 +340,7 @@ if nav_selection == "Dashboard Matrix":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # RENDER DE LAS CUATRO TARJETAS SUPERIORES
+    # RENDER DE LAS CUATRO TARJETAS SUPERIORES CON SUS SVG RECUPERADOS
     st.markdown(f"""
     <div class='metric-container-hub'>
         <div class='metric-card-clinical-new'>
@@ -384,14 +382,14 @@ if nav_selection == "Dashboard Matrix":
 
     # FILA CENTRAL EN COLUMNAS PARALELAS CON CONTENEDORES SEGUROS
     c_left, c_right = st.columns([1.4, 1.0])
-    
+   
     with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
-            
+           
         rows_html = ""
         if not samples_list:
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
@@ -411,7 +409,7 @@ if nav_selection == "Dashboard Matrix":
         st.markdown(f"""
         <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
             <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>
-            <table style='width: 100%; border-collapse: collapse; border-spacing: 0; font-size: 13px;'>
+            <table class='clinical-table-new'>
                 <thead>
                     <tr style='background-color: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 2px solid #E2E8F0;'>
                         <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Sample ID</th>
@@ -433,12 +431,12 @@ if nav_selection == "Dashboard Matrix":
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
-            
+           
         total_cases = len(rep_data)
         positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
         negatives = total_cases - positives
         in_pipeline = in_progress
-        
+       
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -448,70 +446,74 @@ if nav_selection == "Dashboard Matrix":
             values_pie = [positives, negatives, in_pipeline]
             colors_pie = ['#EF4444', '#10B981', '#3B82F6']
 
-        st.markdown("""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
         fig_donut = go.Figure(data=[go.Pie(
             labels=labels_pie, values=values_pie, hole=.6,
             marker=dict(colors=colors_pie), textinfo='none', showlegend=True
         )])
         fig_donut.update_layout(
-            height=240, margin=dict(l=0, r=0, t=10, b=10),
+            height=200, margin=dict(l=0, r=0, t=10, b=10),
             legend=dict(orientation="h", y=-0.2, x=0),
-            annotations=[dict(text=f"<b style='font-size:20px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
+            annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
         )
-        st.plotly_chart(fig_donut, use_container_width=True)
 
-    # 4. BOTONERA DE ACCIONES RÁPIDAS
+        st.markdown("""
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
+        """, unsafe_allow_html=True)
+        st.plotly_chart(fig_donut, use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO CORPORATIVO
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-    
+   
     st.markdown("""
-    <div style='display: flex; gap: 15px; margin-top: 10px;'>
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9;'>
+    <div class='quick-action-grid'>
+        <!-- BOTÓN 1: ENROLL SUBJECT -->
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-blue'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
             </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Enroll Subject</p>
-                <p style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>New Patient Profile</p>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Enroll Subject</p>
+                <p class='action-desc-svg'>New Patient Profile</p>
             </div>
         </div>
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316;'>
+        <!-- BOTÓN 2: ASSET INTAKE -->
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-orange'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
             </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Asset Intake</p>
-                <p style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Log LIMS Custody</p>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Asset Intake</p>
+                <p class='action-desc-svg'>Log LIMS Custody</p>
             </div>
         </div>
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E;'>
+        <!-- BOTÓN 3: LAUNCH KERNEL -->
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-green'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Launch Kernel</p>
-                <p style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Run CRISPR Pipeline</p>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Launch Kernel</p>
+                <p class='action-desc-svg'>Run CRISPR Pipeline</p>
             </div>
         </div>
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <div style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7;'>
+        <!-- BOTÓN 4: DOWNLOAD DOSSIER -->
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-purple'>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
-            <div style='display: flex; flex-direction: column;'>
-                <p style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0;'>Dossier Sheet</p>
-                <p style='font-size: 11px; color: #64748B; margin: 2px 0 0 0;'>Export Medical PDF</p>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Dossier Sheet</p>
+                <p class='action-desc-svg'>Export Medical PDF</p>
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
-    
+
 # ----------------------------------------------------------------------------
-# 📊 TAB 2: PATIENTS
+# 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ----------------------------------------------------------------------------
 elif nav_selection == "Patients":
     st.markdown("<h2 class='welcome-header'>📊 Clinical Cohort Population Directory</h2>", unsafe_allow_html=True)
@@ -530,67 +532,39 @@ elif nav_selection == "Patients":
             new_p_dob = st.date_input("Date of Birth Record", min_value=datetime(1920, 1, 1))
             new_p_sexo = st.selectbox("Biological Gender Parameter", ["Female", "Male"])
            
-    # ----------------------------------------------------------------------------
-    # PRODUCTION CORE: FACILITY MAPPING & CONTAINER ISOLATION
-    # ----------------------------------------------------------------------------
-    try:
-        res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", timeout=5)
-        if res_h_dir.status_code == 200 and res_h_dir.json():
-            hospitals_mapped = {h["name"]: h["id"] for h in res_h_dir.json()}
-        else:
-            # Fallback comercial: Inicializa el nodo real en memoria si el servidor está en standby
-            hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
-    except Exception:
-        # Fallback de red: Asegura la continuidad operativa del cliente final
-        hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
-       
-    # Habilitación inmediata del formulario médico sin cajas fantasmas sueltas
-    selected_h_node = st.selectbox("Assign Authorized Clinical Facility Node", list(hospitals_mapped.keys()))
-   
-    if st.button("Commit and Synchronize Subject Profile", use_container_width=True):
-        if not new_p_id or not new_p_name:
-            st.error("❌ Identification Constraint: Complete profile parameters matching protocol metrics.")
-        else:
-            payload_p = {
-                "id_patient": new_p_id,
-                "full_name": new_p_name,
-                "date_of_birth": str(new_p_dob),
-                "gender": new_p_sexo,
-                "hospital_id": int(hospitals_mapped[selected_h_node])
-            }
+            # CORE AUTH PRIVILEGE NODES INGESTION
             try:
-                res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
-                if res_p.status_code == 200:
-                    st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
-                    time.sleep(0.5)
-                    st.rerun()
+                res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", timeout=5)
+                if res_h_dir.status_code == 200 and res_h_dir.json():
+                    hospitals_mapped = {h["name"]: h["id"] for h in res_h_dir.json()}
                 else:
-                    st.error("🚨 Database Rejection: Write violation integrity constraints.")
+                    hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
             except Exception:
-                st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
-                selected_h_node = st.selectbox("Assign Authorized Clinical Facility Node", list(hospitals_mapped.keys()))
+                hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
                
-                if st.button("Commit and Synchronize Subject Profile", use_container_width=True):
-                    if not new_p_id or not new_p_name:
-                        st.error("❌ Identification Constraint: Complete profile parameters matching protocol metrics.")
-                    else:
-                        payload_p = {
-                            "id_patient": new_p_id,
-                            "full_name": new_p_name,
-                            "date_of_birth": str(new_p_dob),
-                            "gender": new_p_sexo,
-                            "hospital_id": int(hospitals_mapped[selected_h_node])
-                        }
-                        try:
-                            res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
-                            if res_p.status_code == 200:
-                                st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
-                                time.sleep(0.5)
-                                st.rerun()
-                            else:
-                                st.error("🚨 Database Rejection: Write violation integrity constraints.")
-                        except Exception:
-                            st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
+            selected_h_node = st.selectbox("Assign Authorized Clinical Facility Node", list(hospitals_mapped.keys()))
+               
+            if st.button("Commit and Synchronize Subject Profile", use_container_width=True):
+                if not new_p_id or not new_p_name:
+                    st.error("❌ Identification Constraint: Complete profile parameters matching protocol metrics.")
+                else:
+                    payload_p = {
+                        "id_patient": new_p_id,
+                        "full_name": new_p_name,
+                        "date_of_birth": str(new_p_dob),
+                        "gender": new_p_sexo,
+                        "hospital_id": int(hospitals_mapped[selected_h_node])
+                    }
+                    try:
+                        res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
+                        if res_p.status_code == 200:
+                            st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
+                            time.sleep(0.5)
+                            st.rerun()
+                        else:
+                            st.error("🚨 Database Rejection: Write violation integrity constraints.")
+                    except Exception:
+                        st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with p2:
@@ -609,53 +583,6 @@ elif nav_selection == "Patients":
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧪 TAB 3: LIMS SAMPLES
-# ----------------------------------------------------------------------------
-elif nav_selection == "LIMS Samples":
-    st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Custody Flow</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Validate chronological workflow history pathways and operational audit logs</p>", unsafe_allow_html=True)
-    m1, m2 = st.columns(2)
-    with m1:
-        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
-        if st.session_state.user_role == "md":
-            st.warning("🔒 Access Denied: Medical personnel are restricted from modifying LIMS states.")
-        else:
-            new_m_id = st.text_input("Unique Sample Asset ID")
-            asoc_p_id = st.text_input("Associated Patient Context ID")
-            new_m_qr = st.text_input("Barcode Hardware QR Code")
-            new_m_tipo = st.selectbox("Specimen Matrix Type", ["Plasma", "Whole Blood", "Tissue"])
-            new_m_est = st.selectbox("LIMS Workflow State", ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"])
-            
-            if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
-                if not new_m_id or not new_m_qr or not asoc_p_id:
-                    st.error("❌ Input Constraint Violation.")
-                else:
-                    payload_sample = {"sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr, "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name}
-                    try:
-                        res_intake = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
-                        if res_intake.status_code == 200:
-                            st.success("Asset logged successfully.")
-                            time.sleep(0.5)
-                            st.rerun()
-                        else:
-                            st.error("❌ LIMS Node Parameter Rejection.")
-                    except Exception:
-                        st.error("❌ Connectivity Failure.")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-    with m2:
-        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">🗄️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
-        try:
-            res_s = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
-            df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Current LIMS State"])
-        except Exception:
-            df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Current LIMS State"])
-        st.dataframe(df_samples, use_container_width=True, hide_index=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# ----------------------------------------------------------------------------
 # 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
 # ----------------------------------------------------------------------------
 elif nav_selection == "LIMS Samples":
@@ -663,7 +590,7 @@ elif nav_selection == "LIMS Samples":
     st.markdown("<p class='welcome-caption'>Validate chronological workflow history pathways and operational audit logs</p>", unsafe_allow_html=True)
    
     try:
-        res_p_list = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=2)
+        res_p_list = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
         registered_patients = [p["Patient ID"] for p in res_p_list.json()] if res_p_list.status_code == 200 and res_p_list.json() else []
     except Exception:
         registered_patients = []
@@ -673,7 +600,7 @@ elif nav_selection == "LIMS Samples":
         with m1:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
-            
+           
             if st.session_state.user_role == "md":
                 st.warning("🔒 Access Denied: Medical personnel are restricted from altering LIMS physical custody states.")
             elif not registered_patients:
@@ -694,7 +621,7 @@ elif nav_selection == "LIMS Samples":
                             "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name
                         }
                         try:
-                            res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=3)
+                            res_intake = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
                             if res_intake.status_code == 200:
                                 st.success("Asset logged successfully.")
                                 time.sleep(0.5)
@@ -707,9 +634,9 @@ elif nav_selection == "LIMS Samples":
            
         with m2:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">🗄️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical">🗃️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
             try:
-                res_s = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=2)
+                res_s = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
                 df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
             except Exception:
                 df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
@@ -718,15 +645,15 @@ elif nav_selection == "LIMS Samples":
             st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧬 TAB 4: METHYLOX ENGINE
+# 🧬 TAB 4: METHYLOX ENGINE (COMPUTATIONAL KERNEL CORES)
 # ----------------------------------------------------------------------------
 elif nav_selection == "METHYLOX Engine":
     st.markdown("<h2 class='welcome-header'>🧬 Computational Pipeline Kernel Execution</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Execute high-density CRISPR-Cas12a calling matrices against sequence parameters</p>", unsafe_allow_html=True)
-    
+   
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     st.markdown('<div class="card-title-clinical">🚀 Quantitative Epigenetic Run Over Raw Methylation Matrices</div>', unsafe_allow_html=True)
-    
+   
     if st.session_state.user_role == "md":
         st.warning("🔒 Access Denied: Medical roles do not possess computational clearance to launch sequencing.")
     else:
@@ -749,7 +676,7 @@ elif nav_selection == "METHYLOX Engine":
                         if res_calc.status_code == 200:
                             calc_result = res_calc.json()
                             st.success(f"⚡ Analytics unraveled. Mean Beta Score: {calc_result['mean_beta']:.4f}")
-                            st.write(f"Veredicto Clínico: {calc_result['verdict']}")
+                            st.write(f"**Clinical Verdict:** {calc_result['verdict']}")
                         else:
                             st.error("❌ Computational Alignment Exception.")
                     except Exception:
@@ -775,17 +702,17 @@ elif nav_selection == "Reports":
         reports_data = []
    
     if not reports_data:
-        st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. El sistema está listo en cero limpio para registrar y emitir análisis reales.")
+        st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. The system is ready in clean-slate production to record and emit real diagnostics.")
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         df_rep_list = pd.DataFrame(reports_data)
         st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
             columns={
-                'muestra_id': 'Sample ID', 
-                'paciente_id': 'Patient ID', 
-                'score': 'Beta Score', 
-                'clasificacion': 'Result Assessment', 
-                'fecha_analisis': 'Timestamp', 
+                'muestra_id': 'Sample ID',
+                'paciente_id': 'Patient ID',
+                'score': 'Beta Score',
+                'clasificacion': 'Result Assessment',
+                'fecha_analisis': 'Timestamp',
                 'hash_seguridad': 'Security Hash'
             }
         ), use_container_width=True, hide_index=True)
@@ -866,20 +793,18 @@ elif nav_selection == "Reports":
         pdf.cell(190, 4, "Restricted pre-clinical research use only. Confidential proprietary assets of METHYLOX Platform 2026.", ln=True, align="C")
        
         try:
-            # Obtiene bytes puros directamente de fpdf para Streamlit
-            final_pdf_payload = pdf.output(dest='S')
+            final_pdf_payload = pdf.output(dest='S').encode('latin1')
         except Exception:
-            final_pdf_payload = pdf.output()
+            final_pdf_payload = bytes(pdf.output())
            
         st.download_button(
             label=f"🔬 Verify Electronic Signature & Download Defendible Dossier for Sample {m_select}",
-            data=final_pdf_payload, 
+            data=final_pdf_payload,
             file_name=f"METHYLOX_Defendible_Report_{m_select}.pdf",
-            mime="application/pdf", 
+            mime="application/pdf",
             use_container_width=True
         )
         st.markdown('</div>', unsafe_allow_html=True)
-
 
 # ----------------------------------------------------------------------------
 # 🔐 TAB 6: IDENTITY GOVERNANCE (DYNAMIC RBAC AUTHORIZATION HUB)
@@ -897,14 +822,7 @@ elif nav_selection == "Identity Governance":
             input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., Dr. John Doe, MD")
         with c2:
             input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
-            target_role_display = st.selectbox(
-                "System Assigned Operational Role Privilege", 
-                [
-                    "admin",
-                    "cls",
-                    "md"
-                ]
-            )
+            target_role_display = st.selectbox("System Assigned Operational Role Privilege", ["admin", "cls", "md"])
                
         target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
         submit_btn = st.form_submit_button("🚀 Activate Identity & Delegate Tasks")
@@ -914,10 +832,10 @@ elif nav_selection == "Identity Governance":
             st.error("❌ All clinical identity fields are mandatory.")
         else:
             payload_u = {
-                "username": input_username, 
-                "password": input_password, 
-                "full_name": input_full_name, 
-                "role": target_role_display, 
+                "username": input_username,
+                "password": input_password,
+                "full_name": input_full_name,
+                "role": target_role_display,
                 "hospital_id": int(target_hospital_id)
             }
             try:
@@ -936,7 +854,7 @@ elif nav_selection == "Identity Governance":
 elif nav_selection == "⚙️ System Settings":
     st.markdown("<h2 class='welcome-header'>⚙️ Core Calibration Settings & Kernel Monitor</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>System validation and mathematical processing rules parameters</p>", unsafe_allow_html=True)
-    
+   
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     st.markdown("<p style='color:#0F172A; font-weight:700; font-size:14px; margin-bottom:10px;'>📜 METHYLOX_DETERMINISTIC_RULES.PY (AUDITABLE CONTEXT)</p>", unsafe_allow_html=True)
     st.code("""
@@ -950,10 +868,10 @@ def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================================
-# 🏛️ FOOTER LEGAL BOUNDARIES
+# 🏛️ FOOTER LEGAL BOUNDARIES (CLEAN CHARACTER ENCODING)
 # ============================================================================
 st.markdown("""
 <div style="text-align: center; padding: 20px 0px; margin-top: 40px; border-top: 1px solid #E2E8F0;">
-    <p style="margin: 0; font-size: 12px; color: #94A3B8;">© 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
+    <p style="margin: 0; font-size: 12px; color: #94A3B8;">Copyright (c) 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
 </div>
 """, unsafe_allow_html=True)
