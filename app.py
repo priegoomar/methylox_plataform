@@ -281,39 +281,39 @@ with st.sidebar:
 
     st.markdown("---")
    
-        # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING (RECTIFIED LIVE HUB) ---
-        if st.session_state.jwt_access_token:
-            available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
-             
-            if st.session_state.user_role == "admin":
-                available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
-             
-            # Captura de redireccionamiento seguro desde la botonera central externa
-            if "select_tab" in st.query_params:
-                requested_tab = st.query_params["select_tab"]
-                if requested_tab in available_scopes:
-                    st.session_state["nav_selection"] = requested_tab
-                st.query_params.clear()
-            
-            # Sincronización de estado inicial básico
-            if "nav_selection" not in st.session_state:
-                st.session_state["nav_selection"] = "Dashboard Matrix"
-            
-            # Calcula el índice dinámico para mover la bolita del st.radio sola
-            try:
-                default_index = available_scopes.index(st.session_state["nav_selection"])
-            except ValueError:
-                default_index = 0
+# --- RBAC FRONTEND NAVIGATION STRUCTURE GATING (RECTIFIED LIVE HUB) ---
+if st.session_state.jwt_access_token:
+    available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
+     
+    if st.session_state.user_role == "admin":
+        available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
+     
+    # Captura de redireccionamiento seguro desde la botonera central externa
+    if "select_tab" in st.query_params:
+        requested_tab = st.query_params["select_tab"]
+        if requested_tab in available_scopes:
+            st.session_state["nav_selection"] = requested_tab
+        st.query_params.clear()
+    
+    # Sincronización de estado inicial básico
+    if "nav_selection" not in st.session_state:
+        st.session_state["nav_selection"] = "Dashboard Matrix"
+    
+    # Calcula el índice dinámico para mover la bolita del st.radio sola
+    try:
+        default_index = available_scopes.index(st.session_state["nav_selection"])
+    except ValueError:
+        default_index = 0
 
-            nav_selection = st.radio(
-                "Operational Scope Selector",
-                available_scopes,
-                index=default_index,
-                key="nav_selection",
-                label_visibility="collapsed"
-            )
-        else:
-            nav_selection = "🔒 Access Restricted"
+    nav_selection = st.radio(
+        "Operational Scope Selector",
+        available_scopes,
+        index=default_index,
+        key="nav_selection",
+        label_visibility="collapsed"
+    )
+else:
+    nav_selection = "🔒 Access Restricted"
 
     st.markdown("---")
     st.markdown("""
