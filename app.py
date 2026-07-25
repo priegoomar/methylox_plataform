@@ -204,7 +204,6 @@ with st.sidebar:
                         token_data = res.json()
                         st.session_state.jwt_access_token = token_data["access_token"]
                         st.session_state.operator_display_name = str(login_username)
-                        # Extract real role token injected by FastAPI database mapping
                         st.session_state.user_role = token_data.get("role", "tech").lower()
                        
                         st.success("Access Granted")
@@ -238,12 +237,11 @@ with st.sidebar:
     
     # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING ---
     if st.session_state.jwt_access_token:
-        # Build adaptive scopes list matching authorization level
         available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
-        
+         
         if st.session_state.user_role == "admin":
             available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
-        
+         
         nav_selection = st.radio(
             "Operational Scope Selector",
             available_scopes,
