@@ -463,122 +463,77 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # 4. BOTONERA DE ACCIONES RÁPIDAS: TARJETAS MONOLÍTICAS CONVERTIDAS EN BOTONES REALES
+    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE CON ENLACES OPERATIVOS REALES
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
    
-    # Inyectamos estilos CSS personalizados para que los botones nativos adopten el look de tarjeta premium
-    st.markdown("""
-    <style>
-        /* Forzar a los botones de Streamlit en esta sección a actuar como tarjetas contenedoras */
-        div[data-testid="stHorizontalBlock"] div.stButton > button {
-            background: white !important;
-            border: 1px solid #E2E8F0 !important;
-            border-radius: 12px !important;
-            padding: 16px !important;
-            width: 100% !important;
-            height: 90px !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
-            transition: all 0.2s ease !important;
-            text-align: left !important;
-            display: block !important;
-        }
-        div[data-testid="stHorizontalBlock"] div.stButton > button:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05) !important;
-            border-color: #CBD5E1 !important;
-        }
-        /* Estructura interna de la tarjeta-botón */
-        .btn-card-content {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            width: 100%;
-            height: 100%;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-
-    b1, b2, b3, b4 = st.columns(4)
-    
-    with b1:
-        # Toda la tarjeta grande es el botón. Al hacer clic, ejecuta la acción de Python
-        if st.button(label="Add Patient", key="btn_direct_enroll", use_container_width=True):
-            st.session_state.nav_selection = "Patients"
+    # Inyección de navegación responsiva directa mediante query parameters nativos de Streamlit
+    query_params = st.query_params
+    if "nav" in query_params:
+        target_nav = query_params["nav"]
+        if target_nav in ["Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]:
+            st.session_state.nav_selection = target_nav
+            st.query_params.clear()
             st.rerun()
-        # Inyección del diseño gráfico dentro del botón mediante overlay posicionado
-        st.markdown("""
-        <div style='margin-top: -105px; pointer-events: none; padding-left: 16px; position: relative; z-index: 10;'>
-            <div class='btn-card-content'>
-                <div class='icon-circle-svg bg-neon-blue'>
+
+    st.markdown("""
+    <div class='quick-action-grid' style='display: flex; gap: 15px; margin-top: 20px;'>
+        
+        <!-- BOTÓN 1: ADD PATIENT -->
+        <a href='?nav=Patients' target='_self' style='text-decoration: none; flex: 1; display: block;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer;'>
+                <div class='icon-circle-svg bg-neon-blue' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #E0F2FE; color: #0EA5E9;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
                 </div>
-                <div class='action-text-container'>
-                    <p class='action-title-svg'>Add Patient</p>
-                    <p class='action-desc-svg'>Register New Profile</p>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2;'>Add Patient</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2;'>Register New Profile</p>
                 </div>
             </div>
-        </div>
-        <div style='margin-bottom: 25px;'></div>
-        """, unsafe_allow_html=True)
+        </a>
 
-    with b2:
-        if st.button(label="Add Sample", key="btn_direct_intake", use_container_width=True):
-            st.session_state.nav_selection = "LIMS Samples"
-            st.rerun()
-        st.markdown("""
-        <div style='margin-top: -105px; pointer-events: none; padding-left: 16px; position: relative; z-index: 10;'>
-            <div class='btn-card-content'>
-                <div class='icon-circle-svg bg-neon-orange'>
+        <!-- BOTÓN 2: ADD SAMPLE -->
+        <a href='?nav=LIMS+Samples' target='_self' style='text-decoration: none; flex: 1; display: block;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer;'>
+                <div class='icon-circle-svg bg-neon-orange' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FFEDD5; color: #F97316;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
                 </div>
-                <div class='action-text-container'>
-                    <p class='action-title-svg'>Add Sample</p>
-                    <p class='action-desc-svg'>Log LIMS Code & Matrix</p>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2;'>Add Sample</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2;'>Log LIMS Code & Matrix</p>
                 </div>
             </div>
-        </div>
-        <div style='margin-bottom: 25px;'></div>
-        """, unsafe_allow_html=True)
+        </a>
 
-    with b3:
-        if st.button(label="Run CRISPR AI", key="btn_direct_kernel", use_container_width=True):
-            st.session_state.nav_selection = "METHYLOX Engine"
-            st.rerun()
-        st.markdown("""
-        <div style='margin-top: -105px; pointer-events: none; padding-left: 16px; position: relative; z-index: 10;'>
-            <div class='btn-card-content'>
-                <div class='icon-circle-svg bg-neon-green'>
+        <!-- BOTÓN 3: RUN CRISPR AI -->
+        <a href='?nav=METHYLOX+Engine' target='_self' style='text-decoration: none; flex: 1; display: block;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer;'>
+                <div class='icon-circle-svg bg-neon-green' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #DCFCE7; color: #22C55E;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
                 </div>
-                <div class='action-text-container'>
-                    <p class='action-title-svg'>Run CRISPR AI</p>
-                    <p class='action-desc-svg'>Process CpG Methylation</p>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2;'>Run CRISPR AI</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2;'>Process CpG Methylation</p>
                 </div>
             </div>
-        </div>
-        <div style='margin-bottom: 25px;'></div>
-        """, unsafe_allow_html=True)
+        </a>
 
-    with b4:
-        if st.button(label="Get Reports", key="btn_direct_reports", use_container_width=True):
-            st.session_state.nav_selection = "Reports"
-            st.rerun()
-        st.markdown("""
-        <div style='margin-top: -105px; pointer-events: none; padding-left: 16px; position: relative; z-index: 10;'>
-            <div class='btn-card-content'>
-                <div class='icon-circle-svg bg-neon-purple'>
+        <!-- BOTÓN 4: GET REPORTS -->
+        <a href='?nav=Reports' target='_self' style='text-decoration: none; flex: 1; display: block;'>
+            <div class='action-card-svg' style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 100%; cursor: pointer;'>
+                <div class='icon-circle-svg bg-neon-purple' style='width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #F3E8FF; color: #A855F7;'>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
                 </div>
-                <div class='action-text-container'>
-                    <p class='action-title-svg'>Get Reports</p>
-                    <p class='action-desc-svg'>Download Medical PDF</p>
+                <div class='action-text-container' style='display: flex; flex-direction: column;'>
+                    <p class='action-title-svg' style='font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; padding: 0; line-height: 1.2;'>Get Reports</p>
+                    <p class='action-desc-svg' style='font-size: 11px; color: #64748B; margin: 4px 0 0 0; padding: 0; line-height: 1.2;'>Download Medical PDF</p>
                 </div>
             </div>
-        </div>
-        <div style='margin-bottom: 25px;'></div>
-        """, unsafe_allow_html=True)
-            
+        </a>
+
+    </div>
+    """, unsafe_allow_html=True)
+
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ----------------------------------------------------------------------------
