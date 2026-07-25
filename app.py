@@ -437,6 +437,7 @@ elif nav_selection == "Dashboard Matrix":
         negatives = total_cases - positives
         in_pipeline = in_progress
        
+        # Inicialización de datos limpios para evitar rupturas de maquetación CSS
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -456,9 +457,10 @@ elif nav_selection == "Dashboard Matrix":
             annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
         )
 
+        # 🟢 CONTENEDOR UNIFICADO INTEGRAL (Cierra correctamente la caja HTML envolviendo el gráfico)
         st.markdown("""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 15px;'>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0; text-align: center;'>📊 Onco-Genetic Diagnostic Summary</p>
         """, unsafe_allow_html=True)
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
