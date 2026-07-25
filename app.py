@@ -507,12 +507,12 @@ elif nav_selection == "Dashboard Matrix":
         """, unsafe_allow_html=True)
    
     # ============================================================================
-    # ⚡ 4. BOTONERA DE ACCIONES RÁPIDAS EN PYTHON NATIVO RECTIFICADA (SIN ERRORES)
+    # ⚡ 4. BOTONERA DE ACCIONES RÁPIDAS EN PYTHON NATIVO RECTIFICADA (COMPATIBLE CLOUD)
     # ============================================================================
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:15px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
    
-    # Inyección de estilos locales avanzados para fijar las capas de botones invisibles
+    # Inyección de estilos locales avanzados para fijar las capas de botones invisibles y ocultar el texto
     st.markdown("""
     <style>
         .element-container:has(.action-card-svg-cloud) {
@@ -537,7 +537,7 @@ elif nav_selection == "Dashboard Matrix":
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05) !important;
             transform: translateY(-2px);
         }
-        /* Estiramiento absoluto del botón invisible de Streamlit sobre toda la tarjeta */
+        /* Estiramiento absoluto del botón invisible de Streamlit sobre toda la tarjeta y camuflaje del texto */
         .stColumn div[data-testid="stButton"] button {
             position: absolute !important;
             top: 0 !important;
@@ -546,7 +546,7 @@ elif nav_selection == "Dashboard Matrix":
             height: 90px !important;
             background-color: transparent !important;
             border: none !important;
-            color: transparent !important;
+            color: transparent !important; /* Volvemos invisible el texto 'Click' de forma segura con CSS */
             margin: 0 !important;
             padding: 0 !important;
             z-index: 10 !important;
@@ -583,7 +583,7 @@ elif nav_selection == "Dashboard Matrix":
         }
     ]
 
-    # Renderizado seguro en 4 columnas nativas que no rompen el Flexbox global
+    # Renderizado seguro en 4 columnas nativas
     cols_actions = st.columns(4)
     for idx, btn in enumerate(quick_buttons):
         with cols_actions[idx]:
@@ -599,12 +599,12 @@ elif nav_selection == "Dashboard Matrix":
             </div>
             """, unsafe_allow_html=True)
             
-            # Formateamos la llave (key) usando identificadores fijos sin diccionarios internos para evitar el TypeError
+            # Formateamos la llave única
             button_key = "act_btn_" + btn["id"]
             
-            # El botón nativo invisible ejecuta el cambio usando los parámetros url nativos de Streamlit Cloud
-            if st.button("Click", key=button_key, label_visibility="collapsed"):
-                # Conversión limpia del id a la pestaña destino real del radio
+            # 🟢 QUITAMOS label_visibility PARA EVITAR EL TYPEERROR. El CSS se encargará de camuflarlo.
+            if st.button("", key=button_key):
+                # Conversión limpia al nombre exacto de tu pestaña del radio
                 target_route = "LIMS Samples" if btn["id"] == "LIMS_Samples" else "METHYLOX Engine" if btn["id"] == "METHYLOX_Engine" else btn["id"]
                 st.query_params["select_tab"] = target_route
                 st.rerun()
