@@ -487,7 +487,7 @@ elif nav_selection == "Dashboard Matrix":
     st.write("")
 
 # ============================================================================
-# QUICK ACTION INTERACTIVE CARDS (CON SVG EN BASE64 Y CERO RECUADROS EXTRAS)
+# QUICK ACTION INTERACTIVE CARDS (CORREGIDAS Y SIN DUPLICADOS)
 # ============================================================================
 st.markdown("### QUICK ACTIONS")
 
@@ -495,12 +495,12 @@ st.markdown("""
 <style>
 div[data-testid="column"] div.stButton > button {
     width: 100% !important;
-    height: 100px !important;
+    height: 110px !important;
     border-radius: 12px !important;
     border: 1px solid #E2E8F0 !important;
     background-color: #FFFFFF !important;
     text-align: left !important;
-    padding: 14px !important;
+    padding: 16px !important;
     box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
     transition: all 0.2s ease-in-out !important;
 }
@@ -512,14 +512,11 @@ div[data-testid="column"] div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-svg_patients = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
-svg_lims = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
-svg_engine = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>'
-svg_reports = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>'
-
-def get_svg_html(svg_code):
-    b64 = base64.b64encode(svg_code.encode('utf-8')).decode("utf-8")
-    return f'<img src="data:image/svg+xml;base64,{b64}" width="22" height="22" style="margin-bottom: 4px;" />'
+# SVGs limpios en formato nativo HTML/SVG para evitar fallos de renderizado base64
+svg_patients = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
+svg_lims = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
+svg_engine = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>'
+svg_reports = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>'
 
 actions = [
     {"title": "Enroll Subject", "subtitle": "New Patient Profile", "target": "Patients", "svg": svg_patients},
@@ -529,12 +526,18 @@ actions = [
 ]
 
 col1, col2, col3, col4 = st.columns(4)
+cols = [col1, col2, col3, col4]
 
-for i, col in enumerate([col1, col2, col3, col4]):
+for i, col in enumerate(cols):
     with col:
         act = actions[i]
-        st.markdown(get_svg_html(act['svg']), unsafe_allow_html=True)
-        if st.button(f"{act['title']}\n{act['subtitle']}", key=f"quick_action_card_{i}", use_container_width=True):
+        # Se inyecta el SVG y el texto de manera unificada evitando elementos duplicados
+        button_html = f"""
+        {act['svg']}
+        <div style="font-size: 13px; font-weight: 700; color: #0F172A; line-height: 1.2;">{act['title']}</div>
+        <div style="font-size: 11px; font-weight: 500; color: #64748B; margin-top: 2px;">{act['subtitle']}</div>
+        """
+        if st.button(button_html, key=f"quick_action_card_{i}", use_container_width=True):
             st.session_state.pending_nav = act['target']
             st.rerun()
 
