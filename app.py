@@ -288,11 +288,16 @@ with st.sidebar:
         if st.session_state.user_role == "admin":
             available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
          
-        nav_selection = st.radio(
-            "Operational Scope Selector",
-            available_scopes,
-            label_visibility="collapsed"
-        )
+if "nav_selection" not in st.session_state:
+    st.session_state.nav_selection = "Dashboard Matrix"
+
+nav_selection = st.radio(
+    "Operational Scope Selector",
+    available_scopes,
+    key="nav_selection",
+    label_visibility="collapsed"
+)
+
     else:
         nav_selection = "🔒 Access Restricted"
 
@@ -511,6 +516,28 @@ elif nav_selection == "Dashboard Matrix":
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+q1, q2, q3, q4 = st.columns(4)
+
+with q1:
+    if st.button(" ", key="quick_patient"):
+        st.session_state.nav_selection = "Patients"
+        st.rerun()
+
+with q2:
+    if st.button(" ", key="quick_samples"):
+        st.session_state.nav_selection = "LIMS Samples"
+        st.rerun()
+
+with q3:
+    if st.button(" ", key="quick_engine"):
+        st.session_state.nav_selection = "METHYLOX Engine"
+        st.rerun()
+
+with q4:
+    if st.button(" ", key="quick_reports"):
+        st.session_state.nav_selection = "Reports"
+        st.rerun()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
