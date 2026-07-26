@@ -10,6 +10,17 @@ import requests
 # ============================================================================
 # 🧬 METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
 # ============================================================================
+        
+st.set_page_config(
+    page_title="MethylOxTM | Epigenetic AI SaMD Platform",
+    page_icon="🧬",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# ============================================================================
+# 🛠️ FUNCIONES AUXILIARES GLOBALES (DEBEN IR ARRIBA)
+# ============================================================================
 def svg_button(icon_svg, title, desc, color, target):
     html = f"""
     <div style="
@@ -55,13 +66,6 @@ def svg_button(icon_svg, title, desc, color, target):
     if st.button(f"Abrir {title}", key=target, use_container_width=True):
         st.session_state.nav_selection = target
         st.rerun()
-        
-st.set_page_config(
-    page_title="MethylOxTM | Epigenetic AI SaMD Platform",
-    page_icon="🧬",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
 
 # --- UNIFIED ADVANCED CLINICAL DESIGN SYSTEM & CSS RECTIFICATION ---
 st.markdown("""
