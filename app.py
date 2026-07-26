@@ -226,13 +226,11 @@ def svg_button(svg_code, title, subtitle, bg_color, target_page):
     ):
         st.session_state.nav_selection = target_page
         st.rerun()
-
 # ============================================================================
 # 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
 # ============================================================================
 
 with st.sidebar:
-
     st.markdown(
         """
         <div style="padding:10px 0px; border-bottom:1px solid #1E293B; margin-bottom:25px;">
@@ -247,9 +245,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-
     # SESSION STATE
-
     if "jwt_access_token" not in st.session_state:
         st.session_state.jwt_access_token = None
 
@@ -262,14 +258,9 @@ with st.sidebar:
     if "id_hospital" not in st.session_state:
         st.session_state.id_hospital = 1
 
-
-
     # LOGIN
-
     if not st.session_state.jwt_access_token:
-
         with st.form("institutional_login_form"):
-
             st.markdown(
                 "<p style='color:#94A3B8;font-size:12px;font-weight:700;'>SECURE GATEWAY</p>",
                 unsafe_allow_html=True
@@ -285,24 +276,18 @@ with st.sidebar:
                 type="password"
             )
 
-
             login_submit = st.form_submit_button(
                 "🔑 Authenticate",
                 use_container_width=True
             )
 
-
         if login_submit:
-
             if login_username and login_password:
-
                 try:
-
                     payload_auth = {
                         "username": login_username.strip(),
                         "password": login_password.strip()
                     }
-
 
                     res = requests.post(
                         f"{BACKEND_URL}/auth/login",
@@ -310,11 +295,8 @@ with st.sidebar:
                         timeout=5
                     )
 
-
                     if res.status_code == 200:
-
                         token_data = res.json()
-
                         st.session_state.jwt_access_token = token_data["access_token"]
                         st.session_state.operator_display_name = login_username
                         st.session_state.user_role = token_data.get(
@@ -323,25 +305,14 @@ with st.sidebar:
                         ).lower()
 
                         st.rerun()
-
                     else:
                         st.error("Authentication denied")
 
-
                 except Exception:
-
                     st.error("Backend unavailable")
-
-
             else:
-
                 st.error("Complete credentials")
-
-
-
     else:
-
-
         st.markdown(
             f"""
             <div style='background:#1E293B;padding:12px;border-radius:8px;'>
@@ -357,16 +328,13 @@ with st.sidebar:
             unsafe_allow_html=True
         )
 
-
         if st.button(
             "🚪 Disconnect Session",
             use_container_width=True
         ):
-
             st.session_state.jwt_access_token = None
             st.session_state.operator_display_name = "Guest Operator"
             st.session_state.user_role = None
-
             st.rerun()
 
     st.markdown("---")
@@ -374,10 +342,7 @@ with st.sidebar:
     # =========================================================================
     # RBAC NAVIGATION
     # =========================================================================
-
     if st.session_state.jwt_access_token:
-
-
         available_scopes = [
             "Dashboard Matrix",
             "Patients",
@@ -386,19 +351,14 @@ with st.sidebar:
             "Reports"
         ]
 
-
         if st.session_state.user_role == "admin":
-
             available_scopes.extend([
                 "Identity Governance",
                 "⚙️ System Settings"
             ])
 
-
         if "nav_selection" not in st.session_state:
-
             st.session_state.nav_selection = "Dashboard Matrix"
-
 
         nav_selection = st.radio(
             "Operational Scope Selector",
@@ -406,37 +366,29 @@ with st.sidebar:
             key="nav_selection",
             label_visibility="collapsed"
         )
-
     else:
-
         nav_selection = "🔒 Access Restricted"
-
 
     st.markdown("---")
 
     # SYSTEM STATUS
-
     st.markdown(
         """
         <div style="padding:5px 10px;">
             <p style="font-size:10px;color:#64748B;font-weight:700;">
             SYSTEM STATUS
             </p>
-
             <div>
             🟢 Core Engine Active
             </div>
-
         </div>
         """,
         unsafe_allow_html=True
     )
 
 # AUTH HEADERS
-
 headers = {
-    "Authorization":
-    f"Bearer {st.session_state.jwt_access_token}"
+    "Authorization": f"Bearer {st.session_state.jwt_access_token}"
 } if st.session_state.jwt_access_token else {}
 
 # ============================================================================
