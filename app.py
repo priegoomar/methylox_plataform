@@ -205,13 +205,11 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
 # ============================================================================
 
 def svg_button(svg_code, title, subtitle, bg_color, target_page):
-
     st.markdown(f"""
     <div class="action-card-svg">
         <div class="icon-circle-svg" style="background:{bg_color};">
             {svg_code}
         </div>
-
         <div class="action-text-container">
             <p class="action-title-svg">{title}</p>
             <p class="action-desc-svg">{subtitle}</p>
@@ -226,6 +224,7 @@ def svg_button(svg_code, title, subtitle, bg_color, target_page):
     ):
         st.session_state.nav_selection = target_page
         st.rerun()
+
 # ============================================================================
 # 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
 # ============================================================================
@@ -507,7 +506,7 @@ elif nav_selection == "Dashboard Matrix":
         </div>
         """, unsafe_allow_html=True)
 
-with c_right:
+    with c_right:
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
