@@ -325,6 +325,33 @@ else:
 headers = {"Authorization": f"Bearer {st.session_state.jwt_access_token}"} if st.session_state.jwt_access_token else {}
 
 # ============================================================================
+# QUICK ACTION SVG BUTTON COMPONENT
+# ============================================================================
+
+def svg_button(svg_code, title, subtitle, bg_color, target_page):
+
+    st.markdown(f"""
+    <div class="action-card-svg">
+        <div class="icon-circle-svg" style="background:{bg_color};">
+            {svg_code}
+        </div>
+
+        <div class="action-text-container">
+            <p class="action-title-svg">{title}</p>
+            <p class="action-desc-svg">{subtitle}</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if st.button(
+        title,
+        key=f"quick_{target_page}",
+        use_container_width=True
+    ):
+        st.session_state.nav_selection = target_page
+        st.rerun()
+
+# ============================================================================
 # 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
 # ============================================================================
 
@@ -478,59 +505,110 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    st.write("##")
+st.write("##")
 
-    col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4 = st.columns(4)
 
-    with col1:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="#0EA5E9" stroke-width="2.5">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6"/>
-            <circle cx="9" cy="7" r="4"/>
-            </svg>""",
-            "Enroll Subject",
-            "New Patient Profile",
-            "#E0F2FE",
-            "Patients"
-        )
+with col1:
+    svg_button(
+        """
+        <svg width="22" height="22" viewBox="0 0 24 24"
+        fill="none" stroke="#0EA5E9"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
 
-    with col2:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="#F97316" stroke-width="2.5">
-            <path d="M10 2v8L4 18h16L14 10V2"/>
-            </svg>""",
-            "Asset Intake",
-            "Log LIMS Custody",
-            "#FFEDD5",
-            "LIMS Samples"
-        )
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6
+        a4 4 0 0 0-4 4v2"/>
 
-    with col3:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="#22C55E" stroke-width="2.5">
-            <circle cx="12" cy="12" r="10"/>
-            <polygon points="10 8 16 12 10 16"/>
-            </svg>""",
-            "Launch Kernel",
-            "Run CRISPR Pipeline",
-            "#DCFCE7",
-            "METHYLOX Engine"
-        )
+        <circle cx="9" cy="7" r="4"/>
 
-    with col4:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="#A855F7" stroke-width="2.5">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16"/>
-            </svg>""",
-            "Dossier Sheet",
-            "Export Medical PDF",
-            "#F3E8FF",
-            "Reports"
-        )
+        <line x1="19" y1="8" x2="19" y2="14"/>
+        <line x1="16" y1="11" x2="22" y2="11"/>
+
+        </svg>
+        """,
+        "Enroll Subject",
+        "New Patient Profile",
+        "#E0F2FE",
+        "Patients"
+    )
+
+
+with col2:
+    svg_button(
+        """
+        <svg width="22" height="22" viewBox="0 0 24 24"
+        fill="none" stroke="#F97316"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <path d="M10 2v8L4.72 17.55
+        a1 1 0 0 0 .83 1.45h12.9
+        a1 1 0 0 0 .83-1.45L14 10V2"/>
+
+        <path d="M14 2h-4"/>
+
+        </svg>
+        """,
+        "Asset Intake",
+        "Log LIMS Custody",
+        "#FFEDD5",
+        "LIMS Samples"
+    )
+
+
+with col3:
+    svg_button(
+        """
+        <svg width="22" height="22" viewBox="0 0 24 24"
+        fill="none" stroke="#22C55E"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <circle cx="12" cy="12" r="10"/>
+
+        <polygon points="
+        10 8
+        16 12
+        10 16
+        10 8"/>
+
+        </svg>
+        """,
+        "Launch Kernel",
+        "Run CRISPR Pipeline",
+        "#DCFCE7",
+        "METHYLOX Engine"
+    )
+
+
+with col4:
+    svg_button(
+        """
+        <svg width="22" height="22" viewBox="0 0 24 24"
+        fill="none" stroke="#A855F7"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <path d="
+        M14.5 2H6
+        a2 2 0 0 0-2 2v16
+        a2 2 0 0 0 2 2h12
+        a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+
+        <polyline points="14 2 14 8 20 8"/>
+
+        </svg>
+        """,
+        "Dossier Sheet",
+        "Export Medical PDF",
+        "#F3E8FF",
+        "Reports"
+    )
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
