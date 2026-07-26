@@ -491,7 +491,6 @@ elif nav_selection == "Dashboard Matrix":
 # ============================================================================
 st.markdown("### QUICK ACTIONS")
 
-# 1. CSS para transformar el botón nativo en una tarjeta limpia y con diseño corporativo
 st.markdown("""
 <style>
 div[data-testid="column"] div.stButton > button {
@@ -513,7 +512,6 @@ div[data-testid="column"] div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# Definimos los SVGs vectoriales limpios
 svg_patients = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
 svg_lims = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
 svg_engine = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>'
@@ -540,12 +538,12 @@ for i, col in enumerate([col1, col2, col3, col4]):
             st.session_state.pending_nav = act['target']
             st.rerun()
 
-# ----------------------------------------------------------------------------
-# 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
-# ----------------------------------------------------------------------------
+# ============================================================================
+# 👥 TAB 2: PATIENTS
+# ============================================================================
 elif nav_selection == "Patients":
-    st.markdown("<h2 class='welcome-header'>📊 Clinical Cohort Population Directory</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Enroll active subjects and monitor dynamic epigenetic tracing indexes across timelines</p>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>👥 Patient Cohort Management</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Enroll and review clinical subject profiles safely under HIPAA guidelines</p>", unsafe_allow_html=True)
    
     p1, p2 = st.columns(2)
     with p1:
