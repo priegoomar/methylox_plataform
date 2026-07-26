@@ -325,7 +325,7 @@ if nav_selection == "🔒 Access Restricted":
 elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
-   
+    
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
@@ -382,14 +382,14 @@ elif nav_selection == "Dashboard Matrix":
 
     # FILA CENTRAL EN COLUMNAS PARALELAS CON CONTENEDORES SEGUROS
     c_left, c_right = st.columns([1.4, 1.0])
-   
+    
     with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
-           
+            
         rows_html = ""
         if not samples_list:
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
@@ -431,12 +431,12 @@ elif nav_selection == "Dashboard Matrix":
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
-           
+            
         total_cases = len(rep_data)
         positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
         negatives = total_cases - positives
         in_pipeline = in_progress
-       
+        
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -463,115 +463,59 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-st.write("##")
+    st.write("##")
 
-col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4 = st.columns(4)
 
+    with col1:
+        svg_button(
+            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="#0EA5E9" stroke-width="2.5">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6"/>
+            <circle cx="9" cy="7" r="4"/>
+            </svg>""",
+            "Enroll Subject",
+            "New Patient Profile",
+            "#E0F2FE",
+            "Patients"
+        )
 
-def svg_button(icon_svg, title, desc, color, target):
+    with col2:
+        svg_button(
+            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="#F97316" stroke-width="2.5">
+            <path d="M10 2v8L4 18h16L14 10V2"/>
+            </svg>""",
+            "Asset Intake",
+            "Log LIMS Custody",
+            "#FFEDD5",
+            "LIMS Samples"
+        )
 
-    html = f"""
-    <div style="
-        background:white;
-        border:1px solid #E2E8F0;
-        border-radius:12px;
-        padding:16px;
-        height:90px;
-        display:flex;
-        align-items:center;
-        gap:15px;
-        margin-bottom:8px;
-    ">
-        <div style="
-            width:44px;
-            height:44px;
-            border-radius:10px;
-            background:{color};
-            display:flex;
-            align-items:center;
-            justify-content:center;
-        ">
-            {icon_svg}
-        </div>
+    with col3:
+        svg_button(
+            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="#22C55E" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="10 8 16 12 10 16"/>
+            </svg>""",
+            "Launch Kernel",
+            "Run CRISPR Pipeline",
+            "#DCFCE7",
+            "METHYLOX Engine"
+        )
 
-        <div>
-            <div style="
-                font-size:14px;
-                font-weight:700;
-                color:#0F172A;
-            ">
-            {title}
-            </div>
-
-            <div style="
-                font-size:11px;
-                color:#64748B;
-            ">
-            {desc}
-            </div>
-        </div>
-    </div>
-    """
-
-    st.markdown(html, unsafe_allow_html=True)
-
-    if st.button(f"Abrir {title}", key=target, use_container_width=True):
-        st.session_state.nav_selection = target
-        st.rerun()
-
-
-with col1:
-    svg_button(
-        """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-        stroke="#0EA5E9" stroke-width="2.5">
-        <path d="M16 21v-2a4 4 0 0 0-4-4H6"/>
-        <circle cx="9" cy="7" r="4"/>
-        </svg>""",
-        "Enroll Subject",
-        "New Patient Profile",
-        "#E0F2FE",
-        "Patients"
-    )
-
-
-with col2:
-    svg_button(
-        """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-        stroke="#F97316" stroke-width="2.5">
-        <path d="M10 2v8L4 18h16L14 10V2"/>
-        </svg>""",
-        "Asset Intake",
-        "Log LIMS Custody",
-        "#FFEDD5",
-        "LIMS Samples"
-    )
-
-
-with col3:
-    svg_button(
-        """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-        stroke="#22C55E" stroke-width="2.5">
-        <circle cx="12" cy="12" r="10"/>
-        <polygon points="10 8 16 12 10 16"/>
-        </svg>""",
-        "Launch Kernel",
-        "Run CRISPR Pipeline",
-        "#DCFCE7",
-        "METHYLOX Engine"
-    )
-
-
-with col4:
-    svg_button(
-        """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-        stroke="#A855F7" stroke-width="2.5">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16"/>
-        </svg>""",
-        "Dossier Sheet",
-        "Export Medical PDF",
-        "#F3E8FF",
-        "Reports"
-    )
+    with col4:
+        svg_button(
+            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="#A855F7" stroke-width="2.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16"/>
+            </svg>""",
+            "Dossier Sheet",
+            "Export Medical PDF",
+            "#F3E8FF",
+            "Reports"
+        )
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
