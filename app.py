@@ -344,9 +344,9 @@ if nav_selection == "🔒 Access Restricted":
     st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # 📊 TAB 1: DASHBOARD MATRIX
-# ============================================================================
+# ----------------------------------------------------------------------------
 elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
@@ -513,7 +513,7 @@ div[data-testid="column"] div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# Definimos los SVGs vectoriales limpios
+# Definimos los SVGs de ejemplo (puedes ajustar el código SVG de cada icono)
 svg_patients = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
 svg_lims = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
 svg_engine = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>'
@@ -535,7 +535,10 @@ col1, col2, col3, col4 = st.columns(4)
 for i, col in enumerate([col1, col2, col3, col4]):
     with col:
         act = actions[i]
+        # Renderizamos primero el SVG perfectamente empaquetado en Base64
         st.markdown(get_svg_html(act['svg']), unsafe_allow_html=True)
+        
+        # Botón estilizado que actúa como tarjeta completa sin elementos extras molestos
         if st.button(f"{act['title']}\n{act['subtitle']}", key=f"quick_action_card_{i}", use_container_width=True):
             st.session_state.pending_nav = act['target']
             st.rerun()
