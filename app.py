@@ -537,18 +537,15 @@ elif nav_selection == "Dashboard Matrix":
             annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
         )
 
-        st.markdown("""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
-        """, unsafe_allow_html=True)
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    st.write("##")
+    st.write("")
 
-    col1, col2, col3, col4 = st.columns(4)
+    "QUICK ACTIONS
+   # col1, col2, col3, col4 = st.columns(4)
 
-    with col1:
+  #  with col1:
         svg_button(
             """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>""",
             "Enroll Subject",
@@ -557,7 +554,7 @@ elif nav_selection == "Dashboard Matrix":
             "Patients"
         )
 
-    with col2:
+   # with col2:
         svg_button(
             """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2"/><path d="M14 2h-4"/></svg>""",
             "Asset Intake",
@@ -566,7 +563,7 @@ elif nav_selection == "Dashboard Matrix":
             "LIMS Samples"
         )
 
-    with col3:
+   # with col3:
         svg_button(
             """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>""",
             "Launch Kernel",
@@ -575,7 +572,7 @@ elif nav_selection == "Dashboard Matrix":
             "METHYLOX Engine"
         )
 
-    with col4:
+   # with col4:
         svg_button(
             """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>""",
             "Dossier Sheet",
@@ -583,7 +580,7 @@ elif nav_selection == "Dashboard Matrix":
             "#F3E8FF",
             "Reports"
         )
-        
+
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ----------------------------------------------------------------------------
