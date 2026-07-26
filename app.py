@@ -507,7 +507,7 @@ elif nav_selection == "Dashboard Matrix":
         </div>
         """, unsafe_allow_html=True)
 
-    with c_right:
+with c_right:
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
@@ -538,7 +538,7 @@ elif nav_selection == "Dashboard Matrix":
             annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
         )
 
-st.markdown("""
+        st.markdown("""
         <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
             <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
         """, unsafe_allow_html=True)
