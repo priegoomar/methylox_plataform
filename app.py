@@ -35,7 +35,7 @@ st.markdown("""
         padding-left: 3rem !important;
         padding-right: 3rem !important;
     }
-   
+    
     /* Dark Compliance Corporate Sidebar */
     [data-testid="stSidebar"] {
         background-color: #0B0F19 !important;
@@ -49,7 +49,7 @@ st.markdown("""
         font-weight: 500 !important;
         font-size: 14px !important;
     }
-   
+    
     /* Typography System */
     .welcome-header {
         font-size: 28px !important;
@@ -62,7 +62,7 @@ st.markdown("""
         color: #64748B !important;
         margin-bottom: 25px !important;
     }
-   
+    
     /* Premium Grid Telemetry Panels */
     .metric-container-hub {
         display: flex;
@@ -147,7 +147,7 @@ st.markdown("""
         border-bottom: 1px solid #F1F5F9;
         text-align: center !important;
     }
-   
+    
     /* Premium Action Grid System */
     .quick-action-grid {
         display: flex;
@@ -239,19 +239,19 @@ with st.sidebar:
                         "username": str(login_username).strip(),
                         "password": str(login_password).strip()
                     }
-                   
+                    
                     res = requests.post(
                         f"{BACKEND_URL}/auth/login",
                         data=payload_auth,
                         timeout=5
                     )
-                   
+                    
                     if res.status_code == 200:
                         token_data = res.json()
                         st.session_state.jwt_access_token = token_data["access_token"]
                         st.session_state.operator_display_name = str(login_username)
                         st.session_state.user_role = token_data.get("role", "tech").lower()
-                       
+                        
                         st.success("Access Granted")
                         st.rerun()
                     else:
@@ -280,37 +280,36 @@ with st.sidebar:
             st.rerun()
 
     st.markdown("---")
-   
-     # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING ---
+    
+    # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING ---
     if st.session_state.jwt_access_token:
         available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
-         
+        
         if st.session_state.user_role == "admin":
             available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
-         
-if "nav_selection" not in st.session_state:
-    st.session_state.nav_selection = "Dashboard Matrix"
+        
+        if "nav_selection" not in st.session_state:
+            st.session_state.nav_selection = "Dashboard Matrix"
 
-nav_selection = st.radio(
-    "Operational Scope Selector",
-    available_scopes,
-    key="nav_selection",
-    label_visibility="collapsed"
-)
+        nav_selection = st.radio(
+            "Operational Scope Selector",
+            available_scopes,
+            key="nav_selection",
+            label_visibility="collapsed"
+        )
+    else:
+        nav_selection = "🔒 Access Restricted"
 
-else:
-    nav_selection = "🔒 Access Restricted"
-
-st.markdown("---")
-st.markdown("""
-<div style="padding: 5px 10px;">  
-    <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>  
-    <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">  
-        <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>  
-        <span style="font-size: 12px; font-weight: 600; color: #E2E8F0 !important;">Core Engine Active</span>  
+    st.markdown("---")
+    st.markdown("""
+    <div style="padding: 5px 10px;">  
+        <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>  
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">  
+            <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>  
+            <span style="font-size: 12px; font-weight: 600; color: #E2E8F0 !important;">Core Engine Active</span>  
+        </div>  
     </div>  
-</div>  
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 headers = {"Authorization": f"Bearer {st.session_state.jwt_access_token}"} if st.session_state.jwt_access_token else {}
 
@@ -330,7 +329,7 @@ if nav_selection == "🔒 Access Restricted":
 elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
-   
+    
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
@@ -387,14 +386,14 @@ elif nav_selection == "Dashboard Matrix":
 
     # FILA CENTRAL EN COLUMNAS PARALELAS CON CONTENEDORES SEGUROS
     c_left, c_right = st.columns([1.4, 1.0])
-   
+    
     with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
-           
+            
         rows_html = ""
         if not samples_list:
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
@@ -436,12 +435,12 @@ elif nav_selection == "Dashboard Matrix":
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
-           
+            
         total_cases = len(rep_data)
         positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
         negatives = total_cases - positives
         in_pipeline = in_progress
-       
+        
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -471,7 +470,7 @@ elif nav_selection == "Dashboard Matrix":
     # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO CORPORATIVO
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-   
+    
     st.markdown("""
     <div class='quick-action-grid'>
         <!-- BOTÓN 1: ENROLL SUBJECT -->
@@ -517,27 +516,27 @@ elif nav_selection == "Dashboard Matrix":
     </div>
     """, unsafe_allow_html=True)
 
-q1, q2, q3, q4 = st.columns(4)
+    q1, q2, q3, q4 = st.columns(4)
 
-with q1:
-    if st.button(" ", key="quick_patient"):
-        st.session_state.nav_selection = "Patients"
-        st.rerun()
+    with q1:
+        if st.button(" ", key="quick_patient"):
+            st.session_state.nav_selection = "Patients"
+            st.rerun()
 
-with q2:
-    if st.button(" ", key="quick_samples"):
-        st.session_state.nav_selection = "LIMS Samples"
-        st.rerun()
+    with q2:
+        if st.button(" ", key="quick_samples"):
+            st.session_state.nav_selection = "LIMS Samples"
+            st.rerun()
 
-with q3:
-    if st.button(" ", key="quick_engine"):
-        st.session_state.nav_selection = "METHYLOX Engine"
-        st.rerun()
+    with q3:
+        if st.button(" ", key="quick_engine"):
+            st.session_state.nav_selection = "METHYLOX Engine"
+            st.rerun()
 
-with q4:
-    if st.button(" ", key="quick_reports"):
-        st.session_state.nav_selection = "Reports"
-        st.rerun()
+    with q4:
+        if st.button(" ", key="quick_reports"):
+            st.session_state.nav_selection = "Reports"
+            st.rerun()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
