@@ -10,62 +10,12 @@ import requests
 # ============================================================================
 # 🧬 METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
 # ============================================================================
-        
 st.set_page_config(
     page_title="MethylOxTM | Epigenetic AI SaMD Platform",
     page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# ============================================================================
-# 🛠️ FUNCIONES AUXILIARES GLOBALES (DEBEN IR ARRIBA)
-# ============================================================================
-def svg_button(icon_svg, title, desc, color, target):
-    html = f"""
-    <div style="
-        background:white;
-        border:1px solid #E2E8F0;
-        border-radius:12px;
-        padding:16px;
-        height:90px;
-        display:flex;
-        align-items:center;
-        gap:15px;
-        margin-bottom:8px;
-    ">
-        <div style="
-            width:44px;
-            height:44px;
-            border-radius:10px;
-            background:{color};
-            display:flex;
-            align-items:center;
-            justify-content:center;
-        ">
-            {icon_svg}
-        </div>
-        <div>
-            <div style="
-                font-size:14px;
-                font-weight:700;
-                color:#0F172A;
-            ">
-            {title}
-            </div>
-            <div style="
-                font-size:11px;
-                color:#64748B;
-            ">
-            {desc}
-            </div>
-        </div>
-    </div>
-    """
-    st.markdown(html, unsafe_allow_html=True)
-    if st.button(f"Abrir {title}", key=target, use_container_width=True):
-        st.session_state.nav_selection = target
-        st.rerun()
 
 # --- UNIFIED ADVANCED CLINICAL DESIGN SYSTEM & CSS RECTIFICATION ---
 st.markdown("""
@@ -369,9 +319,9 @@ if nav_selection == "🔒 Access Restricted":
     st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ============================================================================
+# ----------------------------------------------------------------------------
 # 📊 TAB 1: DASHBOARD MATRIX
-# ============================================================================
+# ----------------------------------------------------------------------------
 elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
