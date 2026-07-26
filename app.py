@@ -201,130 +201,6 @@ st.markdown("""
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
 
 # ============================================================================
-# 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
-# ============================================================================
-with st.sidebar:
-    st.markdown(
-        """
-        <div style="padding: 10px 0px; border-bottom: 1px solid #1E293B; margin-bottom: 25px;">  
-            <h3 style="margin: 0; color: #FFFFFF !important; font-weight: 900; font-size: 22px; letter-spacing: -0.5px;">MethylOx™</h3>  
-            <p style="margin: 0; color: #38BDF8 !important; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Epigenetic AI Platform</p>  
-        </div>  
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # SECURE CORE INITIALIZATION
-    if "jwt_access_token" not in st.session_state:
-        st.session_state.jwt_access_token = None
-    if "operator_display_name" not in st.session_state:
-        st.session_state.operator_display_name = "Guest Operator"
-    if "user_role" not in st.session_state:
-        st.session_state.user_role = None
-    if "id_hospital" not in st.session_state:
-        st.session_state.id_hospital = 1
-
-    # Enforce secure authentication window
-    if not st.session_state.jwt_access_token:
-        with st.form("institutional_login_form", clear_on_submit=False):
-            st.markdown("<p style='color:#94A3B8; font-size:12px; font-weight:700;'>SECURE GATEWAY</p>", unsafe_allow_html=True)
-            login_username = st.text_input("Clinical Email", placeholder="operator@hospital.com")
-            login_password = st.text_input("Password", type="password", placeholder="••••••••")
-            login_submit = st.form_submit_button("🔑 Authenticate", use_container_width=True)
-
-        if login_submit:
-            if login_username and login_password:
-                try:
-                    payload_auth = {
-                        "username": str(login_username).strip(),
-                        "password": str(login_password).strip()
-                    }
-                   
-                    res = requests.post(
-                        f"{BACKEND_URL}/auth/login",
-                        data=payload_auth,
-                        timeout=5
-                    )
-                   
-                    if res.status_code == 200:
-                        token_data = res.json()
-                        st.session_state.jwt_access_token = token_data["access_token"]
-                        st.session_state.operator_display_name = str(login_username)
-                        st.session_state.user_role = token_data.get("role", "tech").lower()
-                       
-                        st.success("Access Granted")
-                        st.rerun()
-                    else:
-                        st.error(f"❌ Authentication Denied: Invalid clinical credentials. ({res.status_code})")
-                except Exception:
-                    st.error("🚨 System Security Lockdown: Core API node is currently unreachable. Check cloud routing link.")
-            else:
-                st.error("❌ Input Required: Both email and password fields are mandatory.")
-    else:
-        st.markdown(
-            f"""
-            <div style='background-color:#1E293B; border-radius:8px; padding:12px; margin-bottom:15px;'>
-                <p style='margin:0; font-size:11px; color:#94A3B8;'>Authenticated Account:</p>
-                <p style='margin:0; font-size:14px; font-weight:700; color:#E2E8F0;'>{st.session_state.operator_display_name}</p>
-                <p style='margin:0; font-size:11px; font-weight:700; color:#38BDF8; text-transform:uppercase;'>Role: {st.session_state.user_role}</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        if st.button("🚪 Disconnect Session", use_container_width=True):
-            st.session_state.jwt_access_token = None
-            st.session_state.operator_display_name = "Guest Operator"
-            st.session_state.user_role = None
-            st.session_state.id_hospital = 1
-            st.rerun()
-
-    st.markdown("---")
-   
-     # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING ---
-if st.session_state.jwt_access_token:
-
-    available_scopes = [
-        "Dashboard Matrix",
-        "Patients",
-        "LIMS Samples",
-        "METHYLOX Engine",
-        "Reports"
-    ]
-
-    if st.session_state.user_role == "admin":
-        available_scopes.extend([
-            "Identity Governance",
-            "⚙️ System Settings"
-        ])
-
-    if "nav_selection" not in st.session_state:
-        st.session_state.nav_selection = "Dashboard Matrix"
-
-    nav_selection = st.radio(
-        "Operational Scope Selector",
-        available_scopes,
-        key="nav_selection",
-        label_visibility="collapsed"
-    )
-
-else:
-    nav_selection = "🔒 Access Restricted"
-
-    st.markdown("---")
-    st.markdown("""
-    <div style="padding: 5px 10px;">  
-        <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>  
-        <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">  
-            <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>  
-            <span style="font-size: 12px; font-weight: 600; color: #E2E8F0 !important;">Core Engine Active</span>  
-        </div>  
-    </div>  
-    """, unsafe_allow_html=True)
-
-headers = {"Authorization": f"Bearer {st.session_state.jwt_access_token}"} if st.session_state.jwt_access_token else {}
-
-# ============================================================================
 # QUICK ACTION SVG BUTTON COMPONENT
 # ============================================================================
 
@@ -350,6 +226,218 @@ def svg_button(svg_code, title, subtitle, bg_color, target_page):
     ):
         st.session_state.nav_selection = target_page
         st.rerun()
+
+# ============================================================================
+# 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
+# ============================================================================
+
+with st.sidebar:
+
+    st.markdown(
+        """
+        <div style="padding:10px 0px; border-bottom:1px solid #1E293B; margin-bottom:25px;">
+            <h3 style="margin:0; color:#FFFFFF; font-weight:900; font-size:22px;">
+                MethylOx™
+            </h3>
+            <p style="margin:0; color:#38BDF8; font-size:11px; font-weight:600;">
+                Epigenetic AI Platform
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+    # SESSION STATE
+
+    if "jwt_access_token" not in st.session_state:
+        st.session_state.jwt_access_token = None
+
+    if "operator_display_name" not in st.session_state:
+        st.session_state.operator_display_name = "Guest Operator"
+
+    if "user_role" not in st.session_state:
+        st.session_state.user_role = None
+
+    if "id_hospital" not in st.session_state:
+        st.session_state.id_hospital = 1
+
+
+
+    # LOGIN
+
+    if not st.session_state.jwt_access_token:
+
+        with st.form("institutional_login_form"):
+
+            st.markdown(
+                "<p style='color:#94A3B8;font-size:12px;font-weight:700;'>SECURE GATEWAY</p>",
+                unsafe_allow_html=True
+            )
+
+            login_username = st.text_input(
+                "Clinical Email",
+                placeholder="operator@hospital.com"
+            )
+
+            login_password = st.text_input(
+                "Password",
+                type="password"
+            )
+
+
+            login_submit = st.form_submit_button(
+                "🔑 Authenticate",
+                use_container_width=True
+            )
+
+
+        if login_submit:
+
+            if login_username and login_password:
+
+                try:
+
+                    payload_auth = {
+                        "username": login_username.strip(),
+                        "password": login_password.strip()
+                    }
+
+
+                    res = requests.post(
+                        f"{BACKEND_URL}/auth/login",
+                        data=payload_auth,
+                        timeout=5
+                    )
+
+
+                    if res.status_code == 200:
+
+                        token_data = res.json()
+
+                        st.session_state.jwt_access_token = token_data["access_token"]
+                        st.session_state.operator_display_name = login_username
+                        st.session_state.user_role = token_data.get(
+                            "role",
+                            "tech"
+                        ).lower()
+
+                        st.rerun()
+
+                    else:
+                        st.error("Authentication denied")
+
+
+                except Exception:
+
+                    st.error("Backend unavailable")
+
+
+            else:
+
+                st.error("Complete credentials")
+
+
+
+    else:
+
+
+        st.markdown(
+            f"""
+            <div style='background:#1E293B;padding:12px;border-radius:8px;'>
+                <p style='color:#94A3B8;font-size:11px;'>Authenticated Account:</p>
+                <p style='color:#FFFFFF;font-weight:700;'>
+                {st.session_state.operator_display_name}
+                </p>
+                <p style='color:#38BDF8;font-size:11px;'>
+                ROLE: {st.session_state.user_role}
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+
+        if st.button(
+            "🚪 Disconnect Session",
+            use_container_width=True
+        ):
+
+            st.session_state.jwt_access_token = None
+            st.session_state.operator_display_name = "Guest Operator"
+            st.session_state.user_role = None
+
+            st.rerun()
+
+    st.markdown("---")
+
+    # =========================================================================
+    # RBAC NAVIGATION
+    # =========================================================================
+
+    if st.session_state.jwt_access_token:
+
+
+        available_scopes = [
+            "Dashboard Matrix",
+            "Patients",
+            "LIMS Samples",
+            "METHYLOX Engine",
+            "Reports"
+        ]
+
+
+        if st.session_state.user_role == "admin":
+
+            available_scopes.extend([
+                "Identity Governance",
+                "⚙️ System Settings"
+            ])
+
+
+        if "nav_selection" not in st.session_state:
+
+            st.session_state.nav_selection = "Dashboard Matrix"
+
+
+        nav_selection = st.radio(
+            "Operational Scope Selector",
+            available_scopes,
+            key="nav_selection",
+            label_visibility="collapsed"
+        )
+
+    else:
+
+        nav_selection = "🔒 Access Restricted"
+
+
+    st.markdown("---")
+
+    # SYSTEM STATUS
+
+    st.markdown(
+        """
+        <div style="padding:5px 10px;">
+            <p style="font-size:10px;color:#64748B;font-weight:700;">
+            SYSTEM STATUS
+            </p>
+
+            <div>
+            🟢 Core Engine Active
+            </div>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# AUTH HEADERS
+
+headers = {
+    "Authorization":
+    f"Bearer {st.session_state.jwt_access_token}"
+} if st.session_state.jwt_access_token else {}
 
 # ============================================================================
 # 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
