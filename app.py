@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 import requests
+import base64
 
 # ============================================================================
 # 🧬 METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
@@ -485,29 +486,62 @@ elif nav_selection == "Dashboard Matrix":
 
     st.write("")
 
-    # ============================================================================
-    # QUICK ACTION INTERACTIVE CARDS (SOLUCIÓN SEGURA DE ESTADO)
-    # ============================================================================
-    st.markdown("QUICK ACTIONS")
-    col1, col2, col3, col4 = st.columns(4)
+# ============================================================================
+# QUICK ACTION INTERACTIVE CARDS (CON SVG EN BASE64 Y CERO RECUADROS EXTRAS)
+# ============================================================================
+st.markdown("### QUICK ACTIONS")
 
-    actions = [
-        {"title": "Enroll Subject", "subtitle": "New Patient Profile", "target": "Patients", "bg": "#E0F2FE", "color": "#0EA5E9"},
-        {"title": "Asset Intake", "subtitle": "Log LIMS Custody", "target": "LIMS Samples", "bg": "#FFEDD5", "color": "#F97316"},
-        {"title": "Launch Kernel", "subtitle": "Run CRISPR Pipeline", "target": "METHYLOX Engine", "bg": "#DCFCE7", "color": "#22C55E"},
-        {"title": "Dossier Sheet", "subtitle": "Export Medical PDF", "target": "Reports", "bg": "#F3E8FF", "color": "#A855F7"}
-    ]
+# 1. CSS para transformar el botón nativo en una tarjeta limpia y con diseño corporativo
+st.markdown("""
+<style>
+div[data-testid="column"] div.stButton > button {
+    width: 100% !important;
+    height: 100px !important;
+    border-radius: 12px !important;
+    border: 1px solid #E2E8F0 !important;
+    background-color: #FFFFFF !important;
+    text-align: left !important;
+    padding: 14px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+    transition: all 0.2s ease-in-out !important;
+}
+div[data-testid="column"] div.stButton > button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.06) !important;
+    border-color: #CBD5E1 !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
-    for i, col in enumerate([col1, col2, col3, col4]):
-        with col:
-            act = actions[i]
-            if st.button(
-                f"{act['title']}\n{act['subtitle']}",
-                key=f"safe_card_btn_{i}",
-                use_container_width=True
-            ):
-                st.session_state.pending_nav = act['target']
-                st.rerun()
+# Definimos los SVGs de ejemplo (puedes ajustar el código SVG de cada icono)
+svg_patients = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
+svg_lims = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
+svg_engine = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>'
+svg_reports = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>'
+
+def get_svg_html(svg_code):
+    b64 = base64.b64encode(svg_code.encode('utf-8')).decode("utf-8")
+    return f'<img src="data:image/svg+xml;base64,{b64}" width="22" height="22" style="margin-bottom: 4px;" />'
+
+actions = [
+    {"title": "Enroll Subject", "subtitle": "New Patient Profile", "target": "Patients", "svg": svg_patients},
+    {"title": "Asset Intake", "subtitle": "Log LIMS Custody", "target": "LIMS Samples", "svg": svg_lims},
+    {"title": "Launch Kernel", "subtitle": "Run CRISPR Pipeline", "target": "METHYLOX Engine", "svg": svg_engine},
+    {"title": "Dossier Sheet", "subtitle": "Export Medical PDF", "target": "Reports", "svg": svg_reports}
+]
+
+col1, col2, col3, col4 = st.columns(4)
+
+for i, col in enumerate([col1, col2, col3, col4]):
+    with col:
+        act = actions[i]
+        # Renderizamos primero el SVG perfectamente empaquetado en Base64
+        st.markdown(get_svg_html(act['svg']), unsafe_allow_html=True)
+        
+        # Botón estilizado que actúa como tarjeta completa sin elementos extras molestos
+        if st.button(f"{act['title']}\n{act['subtitle']}", key=f"quick_action_card_{i}", use_container_width=True):
+            st.session_state.pending_nav = act['target']
+            st.rerun()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
