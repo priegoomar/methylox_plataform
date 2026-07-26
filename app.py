@@ -542,44 +542,61 @@ elif nav_selection == "Dashboard Matrix":
 
     st.write("")
 
-    "QUICK ACTIONS"
-    col1, col2, col3, col4 = st.columns(4)
+# ============================================================================
+# QUICK ACTION INTERACTIVE CARDS (TODA LA TARJETA ES UN BOTÓN)
+# ============================================================================
 
-    with col1:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>""",
-            "Enroll Subject",
-            "New Patient Profile",
-            "#E0F2FE",
-            "Patients"
-        )
+"QUICK ACTIONS"
+col1, col2, col3, col4 = st.columns(4)
 
-    with col2:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2"/><path d="M14 2h-4"/></svg>""",
-            "Asset Intake",
-            "Log LIMS Custody",
-            "#FFEDD5",
-            "LIMS Samples"
-        )
+# Definimos los datos de las acciones rápidas
+actions = [
+    {
+        "title": "Enroll Subject",
+        "subtitle": "New Patient Profile",
+        "target": "Patients",
+        "bg": "#E0F2FE",
+        "color": "#0EA5E9",
+        "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>'
+    },
+    {
+        "title": "Asset Intake",
+        "subtitle": "Log LIMS Custody",
+        "target": "LIMS Samples",
+        "bg": "#FFEDD5",
+        "color": "#F97316",
+        "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2"/><path d="M14 2h-4"/></svg>'
+    },
+    {
+        "title": "Launch Kernel",
+        "subtitle": "Run CRISPR Pipeline",
+        "target": "METHYLOX Engine",
+        "bg": "#DCFCE7",
+        "color": "#22C55E",
+        "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>'
+    },
+    {
+        "title": "Dossier Sheet",
+        "subtitle": "Export Medical PDF",
+        "target": "Reports",
+        "bg": "#F3E8FF",
+        "color": "#A855F7",
+        "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>'
+    }
+]
 
-    with col3:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>""",
-            "Launch Kernel",
-            "Run CRISPR Pipeline",
-            "#DCFCE7",
-            "METHYLOX Engine"
-        )
-
-    with col4:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>""",
-            "Dossier Sheet",
-            "Export Medical PDF",
-            "#F3E8FF",
-            "Reports"
-        )
+# Renderizamos las tarjetas usando st.button de manera limpia en columnas
+for i, col in enumerate([col1, col2, col3, col4]):
+    with col:
+        act = actions[i]
+        # Dibujamos el botón nativo de Streamlit con el diseño compacto de tarjeta
+        if st.button(
+            f"{act['title']}\n{act['subtitle']}",
+            key=f"card_btn_{act['target']}",
+            use_container_width=True
+        ):
+            st.session_state.nav_selection = act['target']
+            st.rerurn()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
