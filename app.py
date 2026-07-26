@@ -298,19 +298,19 @@ nav_selection = st.radio(
     label_visibility="collapsed"
 )
 
-    else:
-        nav_selection = "🔒 Access Restricted"
+else:
+    nav_selection = "🔒 Access Restricted"
 
-    st.markdown("---")
-    st.markdown("""
-    <div style="padding: 5px 10px;">  
-        <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>  
-        <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">  
-            <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>  
-            <span style="font-size: 12px; font-weight: 600; color: #E2E8F0 !important;">Core Engine Active</span>  
-        </div>  
+st.markdown("---")
+st.markdown("""
+<div style="padding: 5px 10px;">  
+    <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>  
+    <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">  
+        <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>  
+        <span style="font-size: 12px; font-weight: 600; color: #E2E8F0 !important;">Core Engine Active</span>  
     </div>  
-    """, unsafe_allow_html=True)
+</div>  
+""", unsafe_allow_html=True)
 
 headers = {"Authorization": f"Bearer {st.session_state.jwt_access_token}"} if st.session_state.jwt_access_token else {}
 
