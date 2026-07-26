@@ -541,7 +541,7 @@ for i, col in enumerate([col1, col2, col3, col4]):
 # ============================================================================
 # 👥 TAB 2: PATIENTS
 # ============================================================================
-elif nav_selection == "Patients":
+if nav_selection == "Patients":
     st.markdown("<h2 class='welcome-header'>👥 Patient Cohort Management</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Enroll and review clinical subject profiles safely under HIPAA guidelines</p>", unsafe_allow_html=True)
    
