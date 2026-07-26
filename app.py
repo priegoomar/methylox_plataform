@@ -6,7 +6,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 import requests
-import base64
 
 # ============================================================================
 # 🧬 METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
@@ -115,19 +114,15 @@ st.markdown("""
         align-items: center;
     }
 
-    .executive-card-white {
+    /* UNIFICACIÓN TOTAL EN UN SOLO RECUADRO MONOLÍTICO PARA LA TABLA Y DONA */
+    .unified-main-board-box {
         background: white;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
         padding: 24px;
+        min-height: 340px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         margin-bottom: 20px;
-    }
-    .card-title-clinical {
-        font-size: 15px;
-        font-weight: 700;
-        color: #0F172A;
-        margin-bottom: 15px;
     }
 
     /* Alineación y Centrado Absoluto de las Columnas de la Tabla */
@@ -152,6 +147,53 @@ st.markdown("""
         border-bottom: 1px solid #F1F5F9;
         text-align: center !important;
     }
+   
+    /* Premium Action Grid System */
+    .quick-action-grid {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+        width: 100%;
+    }
+    .action-card-svg {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .icon-circle-svg {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .action-text-container {
+        display: flex;
+        flex-direction: column;
+    }
+    .action-title-svg {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0F172A;
+        margin: 0;
+    }
+    .action-desc-svg {
+        font-size: 11px;
+        color: #64748B;
+        margin: 2px 0 0 0;
+    }
+
+    .bg-neon-blue { background: #E0F2FE; color: #0EA5E9; }
+    .bg-neon-orange { background: #FFEDD5; color: #F97316; }
+    .bg-neon-green { background: #DCFCE7; color: #22C55E; }
+    .bg-neon-purple { background: #F3E8FF; color: #A855F7; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -159,27 +201,34 @@ st.markdown("""
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
 
 # ============================================================================
-# GESTIÓN SEGURA DE ESTADO PARA NAVEGACIÓN
+# QUICK ACTION SVG BUTTON COMPONENT
 # ============================================================================
-if "jwt_access_token" not in st.session_state:
-    st.session_state.jwt_access_token = None
 
-if "operator_display_name" not in st.session_state:
-    st.session_state.operator_display_name = "Guest Operator"
+def svg_button(svg_code, title, subtitle, bg_color, target_page):
+    st.markdown(f"""
+    <div class="action-card-svg">
+        <div class="icon-circle-svg" style="background:{bg_color};">
+            {svg_code}
+        </div>
+        <div class="action-text-container">
+            <p class="action-title-svg">{title}</p>
+            <p class="action-desc-svg">{subtitle}</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-if "user_role" not in st.session_state:
-    st.session_state.user_role = None
-
-if "id_hospital" not in st.session_state:
-    st.session_state.id_hospital = 1
-
-# Variable intermedia para gestionar el cambio de pestañas de forma segura desde botones externos
-if "pending_nav" not in st.session_state:
-    st.session_state.pending_nav = "Dashboard Matrix"
+    if st.button(
+        title,
+        key=f"quick_{target_page}",
+        use_container_width=True
+    ):
+        st.session_state.nav_selection = target_page
+        st.rerun()
 
 # ============================================================================
 # 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
 # ============================================================================
+
 with st.sidebar:
     st.markdown(
         """
@@ -194,6 +243,19 @@ with st.sidebar:
         """,
         unsafe_allow_html=True
     )
+
+    # SESSION STATE
+    if "jwt_access_token" not in st.session_state:
+        st.session_state.jwt_access_token = None
+
+    if "operator_display_name" not in st.session_state:
+        st.session_state.operator_display_name = "Guest Operator"
+
+    if "user_role" not in st.session_state:
+        st.session_state.user_role = None
+
+    if "id_hospital" not in st.session_state:
+        st.session_state.id_hospital = 1
 
     # LOGIN
     if not st.session_state.jwt_access_token:
@@ -294,21 +356,15 @@ with st.sidebar:
                 "⚙️ System Settings"
             ])
 
-        # Aseguramos que si se presionó una tarjeta, el selector inicie en esa pestaña
-        if st.session_state.pending_nav in available_scopes:
-            default_index = available_scopes.index(st.session_state.pending_nav)
-        else:
-            default_index = 0
+        if "nav_selection" not in st.session_state:
+            st.session_state.nav_selection = "Dashboard Matrix"
 
         nav_selection = st.radio(
             "Operational Scope Selector",
             available_scopes,
-            index=default_index,
+            key="nav_selection",
             label_visibility="collapsed"
         )
-        
-        # Sincronizamos la variable pendiente con la selección actual del sidebar
-        st.session_state.pending_nav = nav_selection
     else:
         nav_selection = "🔒 Access Restricted"
 
@@ -335,7 +391,7 @@ headers = {
 } if st.session_state.jwt_access_token else {}
 
 # ============================================================================
-# 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY
+# 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
 # ============================================================================
 
 if nav_selection == "🔒 Access Restricted":
@@ -365,7 +421,7 @@ elif nav_selection == "Dashboard Matrix":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # RENDER DE LAS CUATRO TARJETAS SUPERIORES
+    # RENDER DE LAS CUATRO TARJETAS SUPERIORES CON SUS SVG RECUPERADOS
     st.markdown(f"""
     <div class='metric-container-hub'>
         <div class='metric-card-clinical-new'>
@@ -405,7 +461,7 @@ elif nav_selection == "Dashboard Matrix":
 
     st.write("##")
 
-    # FILA CENTRAL EN COLUMNAS PARALELAS
+    # FILA CENTRAL EN COLUMNAS PARALELAS CON CONTENEDORES SEGUROS
     c_left, c_right = st.columns([1.4, 1.0])
     
     with c_left:
@@ -486,62 +542,57 @@ elif nav_selection == "Dashboard Matrix":
 
     st.write("")
 
-# ============================================================================
-# QUICK ACTION INTERACTIVE CARDS (CON SVG EN BASE64 Y CERO RECUADROS EXTRAS)
-# ============================================================================
-st.markdown("### QUICK ACTIONS")
+    # ============================================================================
+    # QUICK ACTION INTERACTIVE CARDS
+    # ============================================================================
+    st.markdown("QUICK ACTIONS")
+    col1, col2, col3, col4 = st.columns(4)
 
-# 1. CSS para transformar el botón nativo en una tarjeta limpia y con diseño corporativo
-st.markdown("""
-<style>
-div[data-testid="column"] div.stButton > button {
-    width: 100% !important;
-    height: 100px !important;
-    border-radius: 12px !important;
-    border: 1px solid #E2E8F0 !important;
-    background-color: #FFFFFF !important;
-    text-align: left !important;
-    padding: 14px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
-    transition: all 0.2s ease-in-out !important;
-}
-div[data-testid="column"] div.stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.06) !important;
-    border-color: #CBD5E1 !important;
-}
-</style>
-""", unsafe_allow_html=True)
+    actions = [
+        {
+            "title": "Enroll Subject",
+            "subtitle": "New Patient Profile",
+            "target": "Patients",
+            "bg": "#E0F2FE",
+            "color": "#0EA5E9",
+            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>'
+        },
+        {
+            "title": "Asset Intake",
+            "subtitle": "Log LIMS Custody",
+            "target": "LIMS Samples",
+            "bg": "#FFEDD5",
+            "color": "#F97316",
+            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2"/><path d="M14 2h-4"/></svg>'
+        },
+        {
+            "title": "Launch Kernel",
+            "subtitle": "Run CRISPR Pipeline",
+            "target": "METHYLOX Engine",
+            "bg": "#DCFCE7",
+            "color": "#22C55E",
+            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>'
+        },
+        {
+            "title": "Dossier Sheet",
+            "subtitle": "Export Medical PDF",
+            "target": "Reports",
+            "bg": "#F3E8FF",
+            "color": "#A855F7",
+            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>'
+        }
+    ]
 
-# Definimos los SVGs de ejemplo (puedes ajustar el código SVG de cada icono)
-svg_patients = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
-svg_lims = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
-svg_engine = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>'
-svg_reports = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>'
-
-def get_svg_html(svg_code):
-    b64 = base64.b64encode(svg_code.encode('utf-8')).decode("utf-8")
-    return f'<img src="data:image/svg+xml;base64,{b64}" width="22" height="22" style="margin-bottom: 4px;" />'
-
-actions = [
-    {"title": "Enroll Subject", "subtitle": "New Patient Profile", "target": "Patients", "svg": svg_patients},
-    {"title": "Asset Intake", "subtitle": "Log LIMS Custody", "target": "LIMS Samples", "svg": svg_lims},
-    {"title": "Launch Kernel", "subtitle": "Run CRISPR Pipeline", "target": "METHYLOX Engine", "svg": svg_engine},
-    {"title": "Dossier Sheet", "subtitle": "Export Medical PDF", "target": "Reports", "svg": svg_reports}
-]
-
-col1, col2, col3, col4 = st.columns(4)
-
-for i, col in enumerate([col1, col2, col3, col4]):
-    with col:
-        act = actions[i]
-        # Renderizamos primero el SVG perfectamente empaquetado en Base64
-        st.markdown(get_svg_html(act['svg']), unsafe_allow_html=True)
-        
-        # Botón estilizado que actúa como tarjeta completa sin elementos extras molestos
-        if st.button(f"{act['title']}\n{act['subtitle']}", key=f"quick_action_card_{i}", use_container_width=True):
-            st.session_state.pending_nav = act['target']
-            st.rerun()
+    for i, col in enumerate([col1, col2, col3, col4]):
+        with col:
+            act = actions[i]
+            if st.button(
+                f"{act['title']}\n{act['subtitle']}",
+                key=f"card_action_btn_{i}",
+                use_container_width=True
+            ):
+                st.session_state.nav_selection = act['target']
+                st.rerun()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
