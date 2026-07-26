@@ -596,7 +596,7 @@ for i, col in enumerate([col1, col2, col3, col4]):
             use_container_width=True
         ):
             st.session_state.nav_selection = act['target']
-            st.rerurn()
+            st.rerun()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
