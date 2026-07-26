@@ -487,36 +487,38 @@ elif nav_selection == "Dashboard Matrix":
     st.write("")
 
 # ============================================================================
-# QUICK ACTION INTERACTIVE CARDS (CORREGIDAS Y SIN DUPLICADOS)
+# QUICK ACTIONS - BLOQUE INTERACTIVO LIMPIO (SIN HTML DENTRO DE ST.BUTTON)
 # ============================================================================
 st.markdown("### QUICK ACTIONS")
 
+# Estilos CSS para convertir contenedores limpios en tarjetas interactivas con efecto hover
 st.markdown("""
 <style>
-div[data-testid="column"] div.stButton > button {
-    width: 100% !important;
-    height: 110px !important;
-    border-radius: 12px !important;
-    border: 1px solid #E2E8F0 !important;
-    background-color: #FFFFFF !important;
-    text-align: left !important;
-    padding: 16px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
-    transition: all 0.2s ease-in-out !important;
+.quick-card-container {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 16px;
+    height: 110px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
-div[data-testid="column"] div.stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.06) !important;
-    border-color: #CBD5E1 !important;
+.quick-card-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+    border-color: #CBD5E1;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# SVGs limpios en formato nativo HTML/SVG para evitar fallos de renderizado base64
-svg_patients = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
-svg_lims = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
-svg_engine = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>'
-svg_reports = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px;"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>'
+svg_patients = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
+svg_lims = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>'
+svg_engine = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>'
+svg_reports = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>'
 
 actions = [
     {"title": "Enroll Subject", "subtitle": "New Patient Profile", "target": "Patients", "svg": svg_patients},
@@ -525,19 +527,24 @@ actions = [
     {"title": "Dossier Sheet", "subtitle": "Export Medical PDF", "target": "Reports", "svg": svg_reports}
 ]
 
-col1, col2, col3, col4 = st.columns(4)
-cols = [col1, col2, col3, col4]
+cols = st.columns(4)
 
 for i, col in enumerate(cols):
     with col:
         act = actions[i]
-        # Se inyecta el SVG y el texto de manera unificada evitando elementos duplicados
-        button_html = f"""
-        {act['svg']}
-        <div style="font-size: 13px; font-weight: 700; color: #0F172A; line-height: 1.2;">{act['title']}</div>
-        <div style="font-size: 11px; font-weight: 500; color: #64748B; margin-top: 2px;">{act['subtitle']}</div>
-        """
-        if st.button(button_html, key=f"quick_action_card_{i}", use_container_width=True):
+        # Renderizamos la tarjeta visual limpia con HTML/SVG real
+        st.markdown(f"""
+        <div class="quick-card-container">
+            <div>{act['svg']}</div>
+            <div>
+                <div style="font-size: 13px; font-weight: 700; color: #0F172A; line-height: 1.2;">{act['title']}</div>
+                <div style="font-size: 11px; font-weight: 500; color: #64748B; margin-top: 2px;">{act['subtitle']}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Un botón minimalista y limpio justo debajo para manejar la acción de navegación sin romper diseños
+        if st.button("Access", key=f"action_btn_{i}", use_container_width=True):
             st.session_state.pending_nav = act['target']
             st.rerun()
 
