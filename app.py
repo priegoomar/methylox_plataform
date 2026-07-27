@@ -674,26 +674,26 @@ elif nav_selection == "dashboard":
         """, unsafe_allow_html=True)
 
 # ============================================================================
-# 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
+# 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
 # ============================================================================
 elif nav_selection == "patients":
-    st.markdown("<h2 class='welcome-header'>📊 Clinical Cohort Population Directory</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Enroll active subjects and monitor dynamic epigenetic tracing indexes across timelines</p>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>📊 Directorio de Cohorte y Pacientes</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Inscriba nuevos pacientes y supervise el historial de marcadores epigenéticos en el tiempo</p>", unsafe_allow_html=True)
     
     p1, p2 = st.columns(2)
     with p1:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">➕ Enroll New Patient Profile Context</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">➕ Registrar Nuevo Expediente de Paciente</div>', unsafe_allow_html=True)
         
         if st.session_state.user_role == "cls":
-            st.warning("🔒 Access Denied: Laboratory practitioners do not possess operational clinical clearance to enroll subjects.")
+            st.warning("🔒 Acceso Restringido: El rol de laboratorio no posee privilegios clínicos para dar de alta pacientes.")
         else:
-            new_p_id = st.text_input("Patient Subject Identifier (Unique ID / PAS-ID)")
-            new_p_name = st.text_input("Anonymized Corporate Patient Code Name")
-            new_p_dob = st.date_input("Date of Birth Record", min_value=datetime(1920, 1, 1))
-            new_p_sexo = st.selectbox("Biological Gender Parameter", ["Female", "Male"])
+            new_p_id = st.text_input("Unique patient ID")
+            new_p_name = st.text_input("Anonymized corporate patient code name")
+            new_p_dob = st.date_input("Date of birth", min_value=datetime(1920, 1, 1))
+            new_p_sexo = st.selectbox("Biological sex", ["Female", "Male"], format_func=lambda x: "Femenino" if x == "Female" else "Masculino")
             
-            # CORE AUTH PRIVILEGE NODES INGESTION
+            # GESTIÓN DE NODOS HOSPITALARIOS
             try:
                 res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", timeout=5)
                 if res_h_dir.status_code == 200 and res_h_dir.json():
@@ -703,34 +703,36 @@ elif nav_selection == "patients":
             except Exception:
                 hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
                 
-            selected_h_node = st.selectbox("Assign Authorized Clinical Facility Node", list(hospitals_mapped.keys()))
+            selected_h_node = st.selectbox("Clinical center or hospital", list(hospitals_mapped.keys()))
                 
-            if st.button("Commit and Synchronize Subject Profile", use_container_width=True):
+            if st.button("Save and synchronize record", use_container_width=True):
+                gender_backend = new_p_sexo
+                
                 if not new_p_id or not new_p_name:
-                    st.error("❌ Identification Constraint: Complete profile parameters matching protocol metrics.")
+                    st.error("❌ Faltan datos: Complete los campos obligatorios del expediente.")
                 else:
                     payload_p = {
                         "id_patient": new_p_id,
                         "full_name": new_p_name,
                         "date_of_birth": str(new_p_dob),
-                        "gender": new_p_sexo,
+                        "gender": gender_backend,
                         "hospital_id": int(hospitals_mapped[selected_h_node])
                     }
                     try:
                         res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
                         if res_p.status_code == 200:
-                            st.success(f"🧬 Profile {new_p_id} successfully synchronized into PostgreSQL.")
+                            st.success(f"🧬 Expediente {new_p_id} registrado exitosamente.")
                             time.sleep(0.5)
                             st.rerun()
                         else:
-                            st.error("🚨 Database Rejection: Write violation integrity constraints.")
+                            st.error("🚨 Error del Servidor: No se pudo completar el registro.")
                     except Exception:
-                        st.error("🚨 Operational Error: Backend unreachable during relational synchronization stream.")
+                        st.error("🚨 Error de Conectividad: Backend no disponible.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with p2:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">🗃️ Active Cohort Registry Directory</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">Patient directory</div>', unsafe_allow_html=True)
         try:
             res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
             if res_cohort.status_code == 200 and res_cohort.json():
