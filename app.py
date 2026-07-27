@@ -6,7 +6,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 import requests
-import base64
 
 # ============================================================================
 # 🧬 METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
@@ -202,194 +201,113 @@ st.markdown("""
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
 
 # ============================================================================
-# QUICK ACTION SVG BUTTON COMPONENT
-# ============================================================================
-
-def svg_button(svg_code, title, subtitle, bg_color, target_page):
-    st.markdown(f"""
-    <div class="action-card-svg">
-        <div class="icon-circle-svg" style="background:{bg_color};">
-            {svg_code}
-        </div>
-        <div class="action-text-container">
-            <p class="action-title-svg">{title}</p>
-            <p class="action-desc-svg">{subtitle}</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    if st.button(
-        title,
-        key=f"quick_{target_page}",
-        use_container_width=True
-    ):
-        st.session_state.nav_selection = target_page
-        st.rerun()
-
-# ============================================================================
 # 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
 # ============================================================================
-
 with st.sidebar:
     st.markdown(
         """
-        <div style="padding:10px 0px; border-bottom:1px solid #1E293B; margin-bottom:25px;">
-            <h3 style="margin:0; color:#FFFFFF; font-weight:900; font-size:22px;">
-                MethylOx™
-            </h3>
-            <p style="margin:0; color:#38BDF8; font-size:11px; font-weight:600;">
-                Epigenetic AI Platform
-            </p>
-        </div>
+        <div style="padding: 10px 0px; border-bottom: 1px solid #1E293B; margin-bottom: 25px;">  
+            <h3 style="margin: 0; color: #FFFFFF !important; font-weight: 900; font-size: 22px; letter-spacing: -0.5px;">MethylOx™</h3>  
+            <p style="margin: 0; color: #38BDF8 !important; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Epigenetic AI Platform</p>  
+        </div>  
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
 
-    # SESSION STATE
+    # SECURE CORE INITIALIZATION
     if "jwt_access_token" not in st.session_state:
         st.session_state.jwt_access_token = None
-
     if "operator_display_name" not in st.session_state:
         st.session_state.operator_display_name = "Guest Operator"
-
     if "user_role" not in st.session_state:
         st.session_state.user_role = None
-
     if "id_hospital" not in st.session_state:
         st.session_state.id_hospital = 1
 
-    # LOGIN
+    # Enforce secure authentication window
     if not st.session_state.jwt_access_token:
-        with st.form("institutional_login_form"):
-            st.markdown(
-                "<p style='color:#94A3B8;font-size:12px;font-weight:700;'>SECURE GATEWAY</p>",
-                unsafe_allow_html=True
-            )
-
-            login_username = st.text_input(
-                "Clinical Email",
-                placeholder="operator@hospital.com"
-            )
-
-            login_password = st.text_input(
-                "Password",
-                type="password"
-            )
-
-            login_submit = st.form_submit_button(
-                "🔑 Authenticate",
-                use_container_width=True
-            )
+        with st.form("institutional_login_form", clear_on_submit=False):
+            st.markdown("<p style='color:#94A3B8; font-size:12px; font-weight:700;'>SECURE GATEWAY</p>", unsafe_allow_html=True)
+            login_username = st.text_input("Clinical Email", placeholder="operator@hospital.com")
+            login_password = st.text_input("Password", type="password", placeholder="••••••••")
+            login_submit = st.form_submit_button("🔑 Authenticate", use_container_width=True)
 
         if login_submit:
             if login_username and login_password:
                 try:
                     payload_auth = {
-                        "username": login_username.strip(),
-                        "password": login_password.strip()
+                        "username": str(login_username).strip(),
+                        "password": str(login_password).strip()
                     }
-
+                   
                     res = requests.post(
                         f"{BACKEND_URL}/auth/login",
                         data=payload_auth,
                         timeout=5
                     )
-
+                   
                     if res.status_code == 200:
                         token_data = res.json()
                         st.session_state.jwt_access_token = token_data["access_token"]
-                        st.session_state.operator_display_name = login_username
-                        st.session_state.user_role = token_data.get(
-                            "role",
-                            "tech"
-                        ).lower()
-
+                        st.session_state.operator_display_name = str(login_username)
+                        st.session_state.user_role = token_data.get("role", "tech").lower()
+                       
+                        st.success("Access Granted")
                         st.rerun()
                     else:
-                        st.error("Authentication denied")
-
+                        st.error(f"❌ Authentication Denied: Invalid clinical credentials. ({res.status_code})")
                 except Exception:
-                    st.error("Backend unavailable")
+                    st.error("🚨 System Security Lockdown: Core API node is currently unreachable. Check cloud routing link.")
             else:
-                st.error("Complete credentials")
+                st.error("❌ Input Required: Both email and password fields are mandatory.")
     else:
         st.markdown(
             f"""
-            <div style='background:#1E293B;padding:12px;border-radius:8px;'>
-                <p style='color:#94A3B8;font-size:11px;'>Authenticated Account:</p>
-                <p style='color:#FFFFFF;font-weight:700;'>
-                {st.session_state.operator_display_name}
-                </p>
-                <p style='color:#38BDF8;font-size:11px;'>
-                ROLE: {st.session_state.user_role}
-                </p>
+            <div style='background-color:#1E293B; border-radius:8px; padding:12px; margin-bottom:15px;'>
+                <p style='margin:0; font-size:11px; color:#94A3B8;'>Authenticated Account:</p>
+                <p style='margin:0; font-size:14px; font-weight:700; color:#E2E8F0;'>{st.session_state.operator_display_name}</p>
+                <p style='margin:0; font-size:11px; font-weight:700; color:#38BDF8; text-transform:uppercase;'>Role: {st.session_state.user_role}</p>
             </div>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
-        if st.button(
-            "🚪 Disconnect Session",
-            use_container_width=True
-        ):
+        if st.button("🚪 Disconnect Session", use_container_width=True):
             st.session_state.jwt_access_token = None
             st.session_state.operator_display_name = "Guest Operator"
             st.session_state.user_role = None
+            st.session_state.id_hospital = 1
             st.rerun()
 
     st.markdown("---")
-
-    # =========================================================================
-    # RBAC NAVIGATION
-    # =========================================================================
+   
+     # --- RBAC FRONTEND NAVIGATION STRUCTURE GATING ---
     if st.session_state.jwt_access_token:
-        available_scopes = [
-            "Dashboard Matrix",
-            "Patients",
-            "LIMS Samples",
-            "METHYLOX Engine",
-            "Reports"
-        ]
-
+        available_scopes = ["Dashboard Matrix", "Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]
+         
         if st.session_state.user_role == "admin":
-            available_scopes.extend([
-                "Identity Governance",
-                "⚙️ System Settings"
-            ])
-
-        if "nav_selection" not in st.session_state:
-            st.session_state.nav_selection = "Dashboard Matrix"
-
+            available_scopes.extend(["Identity Governance", "⚙️ System Settings"])
+         
         nav_selection = st.radio(
             "Operational Scope Selector",
             available_scopes,
-            key="nav_selection",
             label_visibility="collapsed"
         )
     else:
         nav_selection = "🔒 Access Restricted"
 
     st.markdown("---")
+    st.markdown("""
+    <div style="padding: 5px 10px;">  
+        <p style="margin: 0; font-size: 10px; font-weight: 700; color: #64748B !important; text-transform: uppercase; letter-spacing: 1px;">SYSTEM STATUS</p>  
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">  
+            <span style="height: 7px; width: 7px; background-color: #10B981; border-radius: 50%; display: inline-block;"></span>  
+            <span style="font-size: 12px; font-weight: 600; color: #E2E8F0 !important;">Core Engine Active</span>  
+        </div>  
+    </div>  
+    """, unsafe_allow_html=True)
 
-    # SYSTEM STATUS
-    st.markdown(
-        """
-        <div style="padding:5px 10px;">
-            <p style="font-size:10px;color:#64748B;font-weight:700;">
-            SYSTEM STATUS
-            </p>
-            <div>
-            🟢 Core Engine Active
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-# AUTH HEADERS
-headers = {
-    "Authorization": f"Bearer {st.session_state.jwt_access_token}"
-} if st.session_state.jwt_access_token else {}
+headers = {"Authorization": f"Bearer {st.session_state.jwt_access_token}"} if st.session_state.jwt_access_token else {}
 
 # ============================================================================
 # 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
@@ -407,7 +325,7 @@ if nav_selection == "🔒 Access Restricted":
 elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
-    
+   
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
@@ -464,14 +382,14 @@ elif nav_selection == "Dashboard Matrix":
 
     # FILA CENTRAL EN COLUMNAS PARALELAS CON CONTENEDORES SEGUROS
     c_left, c_right = st.columns([1.4, 1.0])
-    
+   
     with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
-            
+           
         rows_html = ""
         if not samples_list:
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
@@ -513,12 +431,12 @@ elif nav_selection == "Dashboard Matrix":
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
-            
+           
         total_cases = len(rep_data)
         positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
         negatives = total_cases - positives
         in_pipeline = in_progress
-        
+       
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -538,74 +456,61 @@ elif nav_selection == "Dashboard Matrix":
             annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
         )
 
+        st.markdown("""
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>📊 Onco-Genetic Diagnostic Summary</p>
+        """, unsafe_allow_html=True)
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    st.write("")
-
-# ============================================================================
-    # QUICK ACTION INTERACTIVE CARDS (CORRECTED STATE MANAGEMENT & SVG)
-    # ============================================================================
-    st.markdown("### QUICK ACTIONS")
-    col1, col2, col3, col4 = st.columns(4)
-
-    actions = [
-        {
-            "title": "Enroll Subject",
-            "subtitle": "New Patient Profile",
-            "target": "Patients",
-            "bg": "#E0F2FE",
-            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>'
-        },
-        {
-            "title": "Asset Intake",
-            "subtitle": "Log LIMS Custody",
-            "target": "LIMS Samples",
-            "bg": "#FFEDD5",
-            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2"/><path d="M14 2h-4"/></svg>'
-        },
-        {
-            "title": "Launch Kernel",
-            "subtitle": "Run CRISPR Pipeline",
-            "target": "METHYLOX Engine",
-            "bg": "#DCFCE7",
-            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>'
-        },
-        {
-            "title": "Dossier Sheet",
-            "subtitle": "Export Medical PDF",
-            "target": "Reports",
-            "bg": "#F3E8FF",
-            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>'
-        }
-    ]
-
-    for i, col in enumerate([col1, col2, col3, col4]):
-        with col:
-            act = actions[i]
-            st.markdown(f"""
-            <div class="quick-card-box">
-                <div style="background:{act['bg']}; width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                    {act['svg']}
-                </div>
-                <div>
-                    <div style="font-size:13px; font-weight:700; color:#0F172A; line-height:1.2;">{act['title']}</div>
-                    <div style="font-size:11px; color:#64748B; margin-top:2px;">{act['subtitle']}</div>
-                </div>
+    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO CORPORATIVO
+    st.write("##")
+    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>⚡ Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
+   
+    st.markdown("""
+    <div class='quick-action-grid'>
+        <!-- BOTÓN 1: ENROLL SUBJECT -->
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-blue'>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
             </div>
-            """, unsafe_allow_html=True)
-            
-            # Usamos un estado intermedio para evitar el conflicto con la key del radio button
-            if st.button("Access", key=f"card_action_btn_{i}", use_container_width=True):
-                st.session_state.pending_nav = act['target']
-                st.rerun()
-
-    # Manejo seguro del cambio de vista fuera del flujo del widget radio
-    if "pending_nav" in st.session_state:
-        target_view = st.session_state.pending_nav
-        del st.session_state.pending_nav
-        st.session_state.nav_selection = target_view
-        st.rerun()
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Enroll Subject</p>
+                <p class='action-desc-svg'>New Patient Profile</p>
+            </div>
+        </div>
+        <!-- BOTÓN 2: ASSET INTAKE -->
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-orange'>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+            </div>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Asset Intake</p>
+                <p class='action-desc-svg'>Log LIMS Custody</p>
+            </div>
+        </div>
+        <!-- BOTÓN 3: LAUNCH KERNEL -->
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-green'>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            </div>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Launch Kernel</p>
+                <p class='action-desc-svg'>Run CRISPR Pipeline</p>
+            </div>
+        </div>
+        <!-- BOTÓN 4: DOWNLOAD DOSSIER -->
+        <div class='action-card-svg'>
+            <div class='icon-circle-svg bg-neon-purple'>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class='action-text-container'>
+                <p class='action-title-svg'>Dossier Sheet</p>
+                <p class='action-desc-svg'>Export Medical PDF</p>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
@@ -676,6 +581,7 @@ elif nav_selection == "Patients":
            
         st.dataframe(df_patients, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
+
 # ----------------------------------------------------------------------------
 # 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
 # ----------------------------------------------------------------------------
