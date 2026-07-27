@@ -675,28 +675,6 @@ elif selected_key == "settings":
     st.info("System settings panel active.")
 
 # ============================================================================
-# 🧭 SIDEBAR NAVIGATION SETUP
-# ============================================================================
-with st.sidebar:
-    st.markdown("### 🧬 METHYLOX Platform")
-    st.markdown(f"**Operator:** {st.session_state.get('operator_display_name', 'Authorized User')}")
-    st.markdown(f"**Role:** `{st.session_state.get('user_role', 'user').upper()}`")
-    st.markdown("---")
-    
-    nav_selection = st.radio(
-        "Navigation Module",
-        [
-            "Dashboard",
-            "Patients",
-            "LIMS Samples",
-            "METHYLOX Engine",
-            "Reports",
-            "Identity Governance",
-            "System Settings"
-        ]
-    )
-
-# ============================================================================
 #   TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ============================================================================
 if nav_selection == "Patients":
