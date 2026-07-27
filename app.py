@@ -671,6 +671,29 @@ elif selected_key == "dashboard":
         </a>
         """, unsafe_allow_html=True)
 
+# ============================================================================
+# 🧭 SIDEBAR NAVIGATION SETUP (ACTUALIZADO SIN NOMBRES NO DESEADOS)
+# ============================================================================
+with st.sidebar:
+    st.markdown("### 🧬 METHYLOX Platform")
+    st.markdown(f"**Operator:** {st.session_state.get('operator_display_name', 'Authorized User')}")
+    st.markdown(f"**Role:** `{st.session_state.get('user_role', 'user').upper()}`")
+    st.markdown("---")
+    
+    # Lista limpia de opciones de navegación (Modifica aquí si hay algún texto antiguo)
+    nav_selection = st.radio(
+        "Navigation Module",
+        [
+            "Dashboard",
+            "Patients",
+            "LIMS Samples",
+            "METHYLOX Engine",
+            "Reports",
+            "Identity Governance",
+            "System Settings"
+        ]
+    )
+
     # Ensure active session state variables are initialized for interactive elements
     if "active_live_sample" not in st.session_state:
         st.session_state.active_live_sample = None
