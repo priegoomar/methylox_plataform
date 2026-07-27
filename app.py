@@ -574,87 +574,57 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-# =========================================================================
-    # RECUADROS INFERIORES COMO BOTONES NATIVOS UNIFICADOS (SVG + TEXTO)
-    # =========================================================================
-    qa_col1, qa_col2, qa_col3, qa_col4 = st.columns(4)
+    # ============================================================================
+    # QUICK ACTION INTERACTIVE CARDS
+    # ============================================================================
+    st.markdown("QUICK ACTIONS")
+    col1, col2, col3, col4 = st.columns(4)
 
-    with qa_col1:
-        if st.button(
-            """
-            <div class="icon-circle-svg bg-neon-blue">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
-            </div>
-            <div>
-                <p style="margin:0; font-size:14px; font-weight:700; color:#0F172A;">Enroll Subject</p>
-                <p style="margin:2px 0 0 0; font-size:11px; color:#64748B;">New Patient Profile</p>
-            </div>
-            """,
-            key="btn_quick_patients",
-            use_container_width=True,
-            type="secondary",
-            help="Navigate to Patients module"
-        ):
-            st.session_state["nav_selection"] = "Patients"
-            st.rerun()
+    actions = [
+        {
+            "title": "Enroll Subject",
+            "subtitle": "New Patient Profile",
+            "target": "Patients",
+            "bg": "#E0F2FE",
+            "color": "#0EA5E9",
+            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>'
+        },
+        {
+            "title": "Asset Intake",
+            "subtitle": "Log LIMS Custody",
+            "target": "LIMS Samples",
+            "bg": "#FFEDD5",
+            "color": "#F97316",
+            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2"/><path d="M14 2h-4"/></svg>'
+        },
+        {
+            "title": "Launch Kernel",
+            "subtitle": "Run CRISPR Pipeline",
+            "target": "METHYLOX Engine",
+            "bg": "#DCFCE7",
+            "color": "#22C55E",
+            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>'
+        },
+        {
+            "title": "Dossier Sheet",
+            "subtitle": "Export Medical PDF",
+            "target": "Reports",
+            "bg": "#F3E8FF",
+            "color": "#A855F7",
+            "svg": '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>'
+        }
+    ]
 
-    with qa_col2:
-        if st.button(
-            """
-            <div class="icon-circle-svg bg-neon-orange">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <div>
-                <p style="margin:0; font-size:14px; font-weight:700; color:#0F172A;">Asset Intake</p>
-                <p style="margin:2px 0 0 0; font-size:11px; color:#64748B;">Log LIMS Custody</p>
-            </div>
-            """,
-            key="btn_quick_lims",
-            use_container_width=True,
-            type="secondary",
-            help="Navigate to LIMS Samples module"
-        ):
-            st.session_state["nav_selection"] = "LIMS Samples"
-            st.rerun()
-
-    with qa_col3:
-        if st.button(
-            """
-            <div class="icon-circle-svg bg-neon-green">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            </div>
-            <div>
-                <p style="margin:0; font-size:14px; font-weight:700; color:#0F172A;">Launch Kernel</p>
-                <p style="margin:2px 0 0 0; font-size:11px; color:#64748B;">Run CRISPR Pipeline</p>
-            </div>
-            """,
-            key="btn_quick_engine",
-            use_container_width=True,
-            type="secondary",
-            help="Navigate to METHYLOX Engine module"
-        ):
-            st.session_state["nav_selection"] = "METHYLOX Engine"
-            st.rerun()
-
-    with qa_col4:
-        if st.button(
-            """
-            <div class="icon-circle-svg bg-neon-purple">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div>
-                <p style="margin:0; font-size:14px; font-weight:700; color:#0F172A;">Dossier Sheet</p>
-                <p style="margin:2px 0 0 0; font-size:11px; color:#64748B;">Export Medical PDF</p>
-            </div>
-            """,
-            key="btn_quick_reports",
-            use_container_width=True,
-            type="secondary",
-            help="Navigate to Reports module"
-        ):
-            st.session_state["nav_selection"] = "Reports"
-            st.rerun()
-
+    for i, col in enumerate([col1, col2, col3, col4]):
+        with col:
+            act = actions[i]
+            if st.button(
+                f"{act['title']}\n{act['subtitle']}",
+                key=f"card_action_btn_{i}",
+                use_container_width=True
+            ):
+                st.session_state.nav_selection = act['target']
+                st.rerun()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
