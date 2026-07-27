@@ -259,20 +259,20 @@ with st.sidebar:
     st.markdown("---")
 
     # =========================================================================
-    # RBAC NAVIGATION
+    # RBAC NAVIGATION (NOMBRES CAMBIADOS Y SIN ICONOS)
     # =========================================================================
     menu_options = {}
     if st.session_state.jwt_access_token:
         menu_options = {
-            "dashboard": {"label": "General Dashboard", "icon": "📊"},
-            "patients": {"label": "Patient Directory", "icon": "👥"},
-            "lims": {"label": "Sample Traceability (LIMS)", "icon": "🧪"},
-            "analysis": {"label": "Epigenetic Analysis", "icon": "⚙️"},
-            "reports": {"label": "Reports & Certificates", "icon": "📄"}
+            "dashboard": {"label": "Panel Principal"},
+            "patients": {"label": "Directorio de Pacientes"},
+            "lims": {"label": "Control de Muestras (LIMS)"},
+            "analysis": {"label": "Motor Epigenético"},
+            "reports": {"label": "Informes y Certificados"}
         }
 
         if st.session_state.user_role == "admin":
-            menu_options["settings"] = {"label": "System Settings", "icon": "🛠️"}
+            menu_options["settings"] = {"label": "Configuración del Sistema"}
 
         current_selection = st.session_state.nav_selection
         if current_selection not in menu_options:
@@ -493,7 +493,7 @@ elif selected_key == "dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
 
     # ====================================================================
-    # QUICK ACTION WORKFLOWS GRID (BOTONES NATIVOS SIN ICONOS Y CON NOMBRES EXACTOS)
+    # QUICK ACTION WORKFLOWS GRID
     # ====================================================================
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
@@ -540,27 +540,27 @@ elif selected_key == "dashboard":
 #   MÓDULOS SECUNDARIOS (PATIENTS, LIMS, ANALYSIS, REPORTS, SETTINGS)
 # ----------------------------------------------------------------------------
 elif selected_key == "patients":
-    st.markdown("<h2 class='welcome-header'>Patient Directory</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>Directorio de Pacientes</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Manage clinical subjects and diagnostic registry records.</p>", unsafe_allow_html=True)
     st.info("Patient directory module loaded successfully.")
 
 elif selected_key == "lims":
-    st.markdown("<h2 class='welcome-header'>Sample Traceability (LIMS)</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>Control de Muestras (LIMS)</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Track biological samples, storage units, and custody workflows.</p>", unsafe_allow_html=True)
     st.info("LIMS sample matrix module loaded successfully.")
 
 elif selected_key == "analysis":
-    st.markdown("<h2 class='welcome-header'>Epigenetic Analysis Engine</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>Motor Epigenético</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Execute DNA methylation sequencing analysis and diagnostic inference.</p>", unsafe_allow_html=True)
     st.info("Epigenetic analysis pipeline ready.")
 
 elif selected_key == "reports":
-    st.markdown("<h2 class='welcome-header'>Reports & Certificates</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>Informes y Certificados</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Generate and export clinical dossiers and PDF diagnostic sheets.</p>", unsafe_allow_html=True)
     st.info("Reporting module loaded successfully.")
 
 elif selected_key == "settings":
-    st.markdown("<h2 class='welcome-header'>System Settings</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>Configuración del Sistema</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Administrative controls and API routing configurations.</p>", unsafe_allow_html=True)
     st.info("System settings panel active.")
 
