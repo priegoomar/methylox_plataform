@@ -626,6 +626,10 @@ elif nav_selection == "Dashboard Matrix":
     </style>
     """, unsafe_allow_html=True)
 
+    # Como Streamlit requiere de un widget activo (como st.button) para cambiar el estado de la app de forma segura,
+    # la alternativa más limpia sin duplicar cuadros es usar un formulario compacto o botones nativos estilizados 
+    # donde el texto del botón contenga el HTML formateado a través de contenedores de columnas directas.
+
 act_col1, act_col2, act_col3, act_col4 = st.columns(4)
 
     with act_col1:
