@@ -626,27 +626,27 @@ elif nav_selection == "Dashboard Matrix":
     </style>
     """, unsafe_allow_html=True)
 
-    act_col1, act_col2, act_col3, act_col4 = st.columns(4)
-    
-        with act_col1:
-            if st.button("👥 Enroll Subject\nNew Patient Profile", key="btn_card_enroll", use_container_width=True):
-                st.session_state.nav_selection = "Patients"
-                st.rerun()
-    
-        with act_col2:
-            if st.button("📦 Asset Intake\nLog LIMS Custody", key="btn_card_intake", use_container_width=True):
-                st.session_state.nav_selection = "LIMS Samples"
-                st.rerun()
-    
-        with act_col3:
-            if st.button("⚡ Launch Kernel\nRun CRISPR Pipeline", key="btn_card_kernel", use_container_width=True):
-                st.session_state.nav_selection = "METHYLOX Engine"
-                st.rerun()
-    
-        with act_col4:
-            if st.button("📄 Dossier Sheet\nExport Medical PDF", key="btn_card_dossier", use_container_width=True):
-                st.session_state.nav_selection = "Reports"
-                st.rerun()
+act_col1, act_col2, act_col3, act_col4 = st.columns(4)
+
+    with act_col1:
+        if st.button("👥 Enroll Subject\nNew Patient Profile", key="btn_card_enroll", use_container_width=True):
+            st.session_state.nav_selection = "Patients"
+            st.rerun()
+
+    with act_col2:
+        if st.button("📦 Asset Intake\nLog LIMS Custody", key="btn_card_intake", use_container_width=True):
+            st.session_state.nav_selection = "LIMS Samples"
+            st.rerun()
+
+    with act_col3:
+        if st.button("⚡ Launch Kernel\nRun CRISPR Pipeline", key="btn_card_kernel", use_container_width=True):
+            st.session_state.nav_selection = "METHYLOX Engine"
+            st.rerun()
+
+    with act_col4:
+        if st.button("📄 Dossier Sheet\nExport Medical PDF", key="btn_card_dossier", use_container_width=True):
+            st.session_state.nav_selection = "Reports"
+            st.rerun()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
