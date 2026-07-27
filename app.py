@@ -366,6 +366,15 @@ with st.sidebar:
             key="nav_selection",
             label_visibility="collapsed"
         )
+# Sincronizador ultra simple para capturar los clics del HTML
+if "page" in st.query_params and st.query_params["page"] == "Patients":
+    nav_selection = "Patients"
+elif "page" in st.query_params and st.query_params["page"] == "LIMS-Samples":
+    nav_selection = "LIMS Samples"
+elif "page" in st.query_params and st.query_params["page"] == "METHYLOX-Engine":
+    nav_selection = "METHYLOX Engine"
+elif "page" in st.query_params and st.query_params["page"] == "Reports":
+    nav_selection = "Reports"
     else:
         nav_selection = "🔒 Access Restricted"
 
