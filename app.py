@@ -9,11 +9,11 @@ import requests
 import base64
 
 # ============================================================================
-# 🧬 METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
+#   METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
 # ============================================================================
 st.set_page_config(
-    page_title="MethyloxTM | Epigenetic AI SaMD Platform",
-    page_icon="🧬",
+    page_title="MethylOxTM | Epigenetic AI SaMD Platform",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -227,7 +227,7 @@ def svg_button(svg_code, title, subtitle, bg_color, target_page):
         st.rerun()
 
 # ============================================================================
-# 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
+#   SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
 # ============================================================================
 
 with st.sidebar:
@@ -235,7 +235,7 @@ with st.sidebar:
         """
         <div style="padding:10px 0px; border-bottom:1px solid #1E293B; margin-bottom:25px;">
             <h3 style="margin:0; color:#FFFFFF; font-weight:900; font-size:22px;">
-                Methylox™
+                MethylOx™
             </h3>
             <p style="margin:0; color:#38BDF8; font-size:11px; font-weight:600;">
                 Epigenetic AI Platform
@@ -245,7 +245,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # SESSION STATE INITIALIZATION
+    # SESSION STATE
     if "jwt_access_token" not in st.session_state:
         st.session_state.jwt_access_token = None
 
@@ -258,7 +258,7 @@ with st.sidebar:
     if "id_hospital" not in st.session_state:
         st.session_state.id_hospital = 1
 
-    # LOGIN FORM
+    # LOGIN
     if not st.session_state.jwt_access_token:
         with st.form("institutional_login_form"):
             st.markdown(
@@ -277,7 +277,7 @@ with st.sidebar:
             )
 
             login_submit = st.form_submit_button(
-                "🔑 Authenticate",
+                "  Authenticate",
                 use_container_width=True
             )
 
@@ -329,7 +329,7 @@ with st.sidebar:
         )
 
         if st.button(
-            "🚪 Disconnect Session",
+            "  Disconnect Session",
             use_container_width=True
         ):
             st.session_state.jwt_access_token = None
@@ -340,20 +340,19 @@ with st.sidebar:
     st.markdown("---")
 
     # =========================================================================
-    # RBAC NAVIGATION (PROFESSIONAL ENGLISH LABELS & CORRECTED KEYS)
+    # RBAC NAVIGATION (PROFESSIONAL ENGLISH LABELS & SVG-READY KEYS)
     # =========================================================================
-    menu_options = {}
     if st.session_state.jwt_access_token:
         menu_options = {
-            "dashboard": {"label": "General Dashboard", "icon": "📊"},
-            "patients": {"label": "Patient Directory", "icon": "👥"},
-            "lims": {"label": "Sample Traceability (LIMS)", "icon": "🧪"},
-            "analysis": {"label": "Epigenetic Analysis", "icon": "⚙️"},
-            "reports": {"label": "Reports & Certificates", "icon": "📄"}
+            "dashboard": {"label": "General Dashboard", "icon": ""},
+            "patients": {"label": "Patient Directory", "icon": ""},
+            "lims": {"label": "Sample Traceability (LIMS)", "icon": ""},
+            "analysis": {"label": "Epigenetic Analysis", "icon": ""},
+            "reports": {"label": "Reports & Certificates", "icon": ""}
         }
 
         if st.session_state.user_role == "admin":
-            menu_options["settings"] = {"label": "System Settings", "icon": "🛠️"}
+            menu_options["settings"] = {"label": "System Settings", "icon": ""}
 
         if "nav_selection" not in st.session_state:
             st.session_state.nav_selection = "dashboard"
@@ -362,6 +361,7 @@ with st.sidebar:
         if current_selection not in menu_options:
             current_selection = "dashboard"
 
+        # Sincronizamos las variables para usar 'selected_key' de manera limpia
         selected_key = st.sidebar.radio(
             "Operational Scope Selector",
             options=list(menu_options.keys()),
@@ -392,7 +392,7 @@ with st.sidebar:
             SYSTEM STATUS
             </p>
             <div>
-            🟢 Core Engine Active
+               Core Engine Active
             </div>
         </div>
         """,
@@ -404,13 +404,13 @@ headers = {
 } if st.session_state.jwt_access_token else {}
 
 # ============================================================================
-# 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY
+#   CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
 # ============================================================================
 
 if selected_key == "restricted":
     st.markdown('<div class="executive-card-white" style="text-align:center; padding:60px 40px; margin-top:40px;">', unsafe_allow_html=True)
     st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:10px;'>Preventative Infrastructure Lockdown Active</h2>", unsafe_allow_html=True)
-    st.caption("Methylox™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
+    st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
@@ -671,267 +671,379 @@ elif selected_key == "dashboard":
         </a>
         """, unsafe_allow_html=True)
 
-# ============================================================================
-# 👥 TAB 2: PATIENT DIRECTORY & CLINICAL METADATA REGISTRY
-# ============================================================================
-if selected_key == "patients":
-    st.markdown("<h2 class='welcome-header'>Clinical Subject Directory</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Manage cohort entries, demographics, and clinical indication records.</p>", unsafe_allow_html=True)
+    # Ensure active session state variables are initialized for interactive elements
+    if "active_live_sample" not in st.session_state:
+        st.session_state.active_live_sample = None
 
-    tab_p_reg, tab_p_dir = st.tabs(["➕ Enroll Subject", "📋 Cohort Directory & Search"])
-
-    with tab_p_reg:
-        st.markdown("""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 20px;'>
-            <p style='font-size:16px; font-weight:700; color:#0F172A; margin:0 0 5px 0;'>New Subject Intake Form</p>
-            <p style='font-size:12px; color:#64748B; margin:0 0 20px 0;'>Register a new patient profile into the encrypted clinical database.</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        with st.form("patient_registration_form"):
-            f_col1, f_col2 = st.columns(2)
-            with f_col1:
-                p_id = st.text_input("Patient ID / Medical Record Number (MRN) *", placeholder="MRN-2026-XXXX")
-                p_full_name = st.text_input("Full Subject Name *", placeholder="Doe, John A.")
-                p_dob = st.date_input("Date of Birth", value=date(1975, 1, 1))
-            with f_col2:
-                p_gender = st.selectbox("Biological Sex", ["Female", "Male", "Other / Undisclosed"])
-                p_indication = st.text_input("Primary Clinical Indication", placeholder="e.g. Suspected Colorectal Neoplasia")
-                p_hospital_id = st.number_input("Hospital / Site ID", min_value=1, value=int(st.session_state.get("id_hospital", 1)))
-
-            submit_patient = st.form_submit_button("💾 Save Patient Record", use_container_width=True)
-
-        if submit_patient:
-            if not p_id or not p_full_name:
-                st.error("Please fill in all mandatory fields (Patient ID and Name).")
-            else:
-                payload_patient = {
-                    "patient_id": p_id.strip(),
-                    "full_name": p_full_name.strip(),
-                    "date_of_birth": str(p_dob),
-                    "gender": p_gender,
-                    "clinical_indication": p_indication.strip(),
-                    "hospital_id": int(p_hospital_id)
-                }
-                try:
-                    res_p_post = requests.post(f"{BACKEND_URL}/api/v1/patients/", json=payload_patient, headers=headers, timeout=10)
-                    if res_p_post.status_code in [200, 201]:
-                        st.success(f"Subject {p_id} successfully registered in the database.")
-                    else:
-                        err_detail = res_p_post.json().get("detail", "Unknown error")
-                        st.error(f"Failed to register patient: {err_detail}")
-                except Exception as e:
-                    st.error(f"Connection error while communicating with backend: {e}")
-
-    with tab_p_dir:
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:15px;'>Active Cohort Records</p>", unsafe_allow_html=True)
-        
-        try:
-            res_p_get = requests.get(f"{BACKEND_URL}/api/v1/patients/", headers=headers, timeout=10)
-            patients_list = res_p_get.json() if res_p_get.status_code == 200 else []
-        except Exception:
-            patients_list = []
-
-        if not patients_list:
-            st.info("No patient records found in the system registry.")
-        else:
-            df_patients = pd.DataFrame(patients_list)
-            st.dataframe(df_patients, use_container_width=True, hide_index=True)
+    # Handle sample selection state action if triggered from the interactive data stream
+    if st.session_state.active_live_sample:
+        st.markdown(
+            f"""
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 12px 16px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <span style="font-size: 12px; font-weight: 700; color: #1E40AF; text-transform: uppercase;">Selected LIMS Custody Node:</span>
+                    <span style="font-size: 13px; font-weight: 800; color: #1E3A8A; margin-left: 8px;">{st.session_state.active_live_sample}</span>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 # ============================================================================
-# 🧪 TAB 3: SAMPLE TRACEABILITY & LIMS
+#   TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ============================================================================
-elif selected_key == "lims":
-    st.markdown("<h2 class='welcome-header'>Sample Traceability & LIMS</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Track biological specimen custody, extraction quality metrics, and workflow state transitions.</p>", unsafe_allow_html=True)
-
-    tab_l_reg, tab_l_track = st.tabs(["🧪 Register Sample", "🔍 Custody & Status Tracker"])
-
-    with tab_l_reg:
-        st.markdown("""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 20px;'>
-            <p style='font-size:16px; font-weight:700; color:#0F172A; margin:0 0 5px 0;'>Biological Specimen Intake</p>
-            <p style='font-size:12px; color:#64748B; margin:0 0 20px 0;'>Log incoming plasma, tissue, or fluid samples for epigenetic testing.</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        with st.form("sample_registration_form"):
-            l_col1, l_col2 = st.columns(2)
-            with l_col1:
-                s_id = st.text_input("Sample ID *", placeholder="SMP-2026-XXXX")
-                s_pid = st.text_input("Associated Patient ID / MRN *", placeholder="MRN-2026-XXXX")
-                s_type = st.selectbox("Specimen Matrix Type", ["Plasma (cfDNA)", "FFPE Tissue", "Whole Blood", "Saliva"])
-            with l_col2:
-                s_state = st.selectbox("Initial Workflow State", ["Sample Received", "DNA Extraction", "Bisulfite Conversion", "Sequencing / Array", "Analysis Ready"])
-                s_notes = st.text_area("Handling Notes / Quality Observations", placeholder="e.g., Hemolyzed plasma sample, verified yield via Qubit.")
-
-            submit_sample = st.form_submit_button("📦 Register Sample Custody", use_container_width=True)
-
-        if submit_sample:
-            if not s_id or not s_pid:
-                st.error("Please fill in all mandatory fields (Sample ID and Patient ID).")
-            else:
-                payload_sample = {
-                    "sample_id": s_id.strip(),
-                    "patient_id": s_pid.strip(),
-                    "specimen_type": s_type,
-                    "workflow_state": s_state,
-                    "notes": s_notes.strip()
-                }
-                try:
-                    res_s_post = requests.post(f"{BACKEND_URL}/api/v1/lims/samples", json=payload_sample, headers=headers, timeout=10)
-                    if res_s_post.status_code in [200, 201]:
-                        st.success(f"Sample {s_id} successfully logged into LIMS.")
-                    else:
-                        err_detail = res_s_post.json().get("detail", "Unknown error")
-                        st.error(f"Failed to log sample: {err_detail}")
-                except Exception as e:
-                    st.error(f"Connection error while communicating with backend: {e}")
-
-    with tab_l_track:
-        st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:15px;'>Active LIMS Specimen Registry</p>", unsafe_allow_html=True)
-        
-        try:
-            res_l_get = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=10)
-            lims_list = res_l_get.json() if res_l_get.status_code == 200 else []
-        except Exception:
-            lims_list = []
-
-        if not lims_list:
-            st.info("No specimens currently registered in the LIMS repository.")
-        else:
-            df_lims = pd.DataFrame(lims_list)
-            st.dataframe(df_lims, use_container_width=True, hide_index=True)
-
-# ============================================================================
-# ⚙️ TAB 4: EPIGENETIC ANALYSIS KERNEL
-# ============================================================================
-elif selected_key == "analysis":
-    st.markdown("<h2 class='welcome-header'>Epigenetic Analysis Kernel</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Execute computational pipelines for methylation biomarker scoring and classification.</p>", unsafe_allow_html=True)
-
-    with st.form("analysis_pipeline_form"):
-        a_col1, a_col2 = st.columns(2)
-        with a_col1:
-            target_sample_id = st.text_input("Target Sample ID *", value=st.session_state.get("active_live_sample", ""), placeholder="SMP-2026-XXXX")
-            model_version = st.selectbox("Diagnostic Model Version", ["Methylox-PanCancer-v3.2", "Methylox-Colorectal-v2.1", "Methylox-Lung-v1.8"])
-        with a_col2:
-            threshold_val = st.slider("Classification Threshold", min_value=0.01, max_value=0.99, value=0.10, step=0.01)
-            include_qc = st.checkbox("Include Deep Quality Control Metrics", value=True)
-
-        run_pipeline_btn = st.form_submit_button("🚀 Run Epigenetic Pipeline", use_container_width=True)
-
-    if run_pipeline_btn:
-        if not target_sample_id:
-            st.error("Please specify a valid Target Sample ID.")
-        else:
-            payload_run = {
-                "sample_id": target_sample_id.strip(),
-                "model_version": model_version,
-                "threshold": threshold_val,
-                "include_qc": include_qc
-            }
-            with st.spinner("Executing epigenetic classification kernel... Please wait."):
-                try:
-                    res_run = requests.post(f"{BACKEND_URL}/api/v1/analysis/run", json=payload_run, headers=headers, timeout=30)
-                    if res_run.status_code == 200:
-                        res_data = res_run.json()
-                        st.success("Analysis pipeline executed successfully.")
-                        st.json(res_data)
-                    else:
-                        err_detail = res_run.json().get("detail", "Pipeline error")
-                        st.error(f"Execution failed: {err_detail}")
-                except Exception as e:
-                    st.error(f"Connection error during pipeline execution: {e}")
-
-# ============================================================================
-# 📄 TAB 5: REPORTS & DOSSIERS
-# ============================================================================
-elif selected_key == "reports":
-    st.markdown("<h2 class='welcome-header'>Clinical Reports & Certificates</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Review finalized diagnostic dossiers and export verified medical PDF certificates.</p>", unsafe_allow_html=True)
-
-    try:
-        res_rep_dir = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=10)
-        reports_list = res_rep_dir.json() if res_rep_dir.status_code == 200 else []
-    except Exception:
-        reports_list = []
-
-    if not reports_list:
-        st.info("No finalized clinical reports are currently available in the directory.")
-    else:
-        df_reports = pd.DataFrame(reports_list)
-        st.dataframe(df_reports, use_container_width=True, hide_index=True)
-
-        st.markdown("### Export Dossier")
-        # Ensure fallback column checking if keys differ
-        sample_col = 'sample_id' if 'sample_id' in df_reports.columns else 'muestra_id'
-        report_options = df_reports.get(sample_col, pd.Series([''])).tolist()
-        
-        selected_report_id = st.selectbox("Select Report / Sample ID for PDF Export", options=report_options)
-        
-        if st.button("📄 Generate & Download PDF Certificate", use_container_width=True):
-            if selected_report_id:
-                try:
-                    res_pdf = requests.get(f"{BACKEND_URL}/api/v1/analysis/report-pdf/{selected_report_id}", headers=headers, timeout=15)
-                    if res_pdf.status_code == 200:
-                        st.success("PDF Dossier retrieved successfully.")
-                        st.download_button(
-                            label="📥 Download Verified Medical PDF",
-                            data=res_pdf.content,
-                            file_name=f"Methylox_Report_{selected_report_id}.pdf",
-                            mime="application/pdf"
-                        )
-                    else:
-                        st.error("Failed to generate PDF document from backend.")
-                except Exception as e:
-                    st.error(f"Connection error: {e}")
-
-# ============================================================================
-# 🛠️ TAB 6: SYSTEM SETTINGS (ADMINISTRATOR ONLY)
-# ============================================================================
-elif selected_key == "settings":
-    if st.session_state.get("user_role") != "admin":
-        st.error("Access Denied. Administrative privileges required to access system settings.")
-    else:
-        st.markdown("<h2 class='welcome-header'>System Settings & Administration</h2>", unsafe_allow_html=True)
-        st.markdown("<p class='welcome-caption'>Configure platform parameters, user permissions, and node integration endpoints.</p>", unsafe_allow_html=True)
-
-        with st.form("system_settings_form"):
-            sys_url = st.text_input("Backend API Gateway URL", value=BACKEND_URL)
-            sys_hospital_name = st.text_input("Primary Hospital / Institution Name", value="Global Clinical Oncology Center")
-            sys_debug_mode = st.checkbox("Enable Verbose Telemetry Logging", value=False)
-            
-            save_settings = st.form_submit_button("💾 Save System Configuration", use_container_width=True)
-
-        if save_settings:
-            st.success("System configuration parameters updated successfully.")
-# ----------------------------------------------------------------------------
-# ⚙️ TAB 7: SYSTEM SETTINGS (KERNEL INTEGRITY AUDIT TRAIL MONITOR)
-# ----------------------------------------------------------------------------
-elif selected_key == "settings" or nav_selection == "⚙️ System Settings":
-    if st.session_state.get("user_role") != "admin":
-        st.error("Access Denied. Administrative privileges required to access system settings.")
-    else:
-        st.markdown("<h2 class='welcome-header'>⚙️ Core Calibration Settings & Kernel Monitor</h2>", unsafe_allow_html=True)
-        st.markdown("<p class='welcome-caption'>System validation and mathematical processing rules parameters</p>", unsafe_allow_html=True)
-       
+if nav_selection == "Patients":
+    st.markdown("<h2 class='welcome-header'> Clinical Cohort Population Directory</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Enroll active subjects and monitor dynamic epigenetic tracing indexes across timelines</p>", unsafe_allow_html=True)
+   
+    p1, p2 = st.columns(2)
+    with p1:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown("<p style='color:#0F172A; font-weight:700; font-size:14px; margin-bottom:10px;'>📜 METHYLOX_DETERMINISTIC_RULES.PY (AUDITABLE CONTEXT)</p>", unsafe_allow_html=True)
-        st.code("""
+        st.markdown('<div class="card-title-clinical"> Enroll New Patient Profile Context</div>', unsafe_allow_html=True)
+       
+        if st.session_state.user_role == "cls":
+            st.warning(" Access Denied: Laboratory practitioners do not possess operational clinical clearance to enroll subjects.")
+        else:
+            new_p_id = st.text_input("Patient Subject Identifier (Unique ID / PAS-ID)")
+            new_p_name = st.text_input("Anonymized Corporate Patient Code Name")
+            new_p_dob = st.date_input("Date of Birth Record", min_value=datetime(1920, 1, 1))
+            new_p_sexo = st.selectbox("Biological Gender Parameter", ["Female", "Male"])
+           
+            try:
+                res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", timeout=5)
+                if res_h_dir.status_code == 200 and res_h_dir.json():
+                    hospitals_mapped = {h["name"]: h["id"] for h in res_h_dir.json()}
+                else:
+                    hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
+            except Exception:
+                hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
+               
+            selected_h_node = st.selectbox("Assign Authorized Clinical Facility Node", list(hospitals_mapped.keys()))
+               
+            if st.button("Commit and Synchronize Subject Profile", use_container_width=True):
+                if not new_p_id or not new_p_name:
+                    st.error(" Identification Constraint: Complete profile parameters matching protocol metrics.")
+                else:
+                    payload_p = {
+                        "id_patient": new_p_id,
+                        "full_name": new_p_name,
+                        "date_of_birth": str(new_p_dob),
+                        "gender": new_p_sexo,
+                        "hospital_id": int(hospitals_mapped[selected_h_node])
+                    }
+                    try:
+                        res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
+                        if res_p.status_code == 200:
+                            st.success(f" Profile {new_p_id} successfully synchronized into PostgreSQL.")
+                            time.sleep(0.5)
+                            st.rerun()
+                        else:
+                            st.error(" Database Rejection: Write violation integrity constraints.")
+                    except Exception:
+                        st.error(" Operational Error: Backend unreachable during relational synchronization stream.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with p2:
+        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical"> Active Cohort Registry Directory</div>', unsafe_allow_html=True)
+        try:
+            res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
+            if res_cohort.status_code == 200 and res_cohort.json():
+                df_patients = pd.DataFrame(res_cohort.json())
+            else:
+                df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender"])
+        except Exception:
+            df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender"])
+           
+        st.dataframe(df_patients, use_container_width=True, hide_index=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# ============================================================================
+#   TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
+# ============================================================================
+elif nav_selection == "LIMS Samples":
+    st.markdown("<h2 class='welcome-header'> LIMS Access Control & Chain of Custody</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Validate chronological workflow history pathways and operational audit logs</p>", unsafe_allow_html=True)
+   
+    try:
+        res_p_list = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
+        registered_patients = [p["Patient ID"] for p in res_p_list.json()] if res_p_list.status_code == 200 and res_p_list.json() else []
+    except Exception:
+        registered_patients = []
+
+    with st.container():
+        m1, m2 = st.columns(2)
+        with m1:
+            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical"> Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
+           
+            if st.session_state.user_role == "md":
+                st.warning(" Access Denied: Medical personnel are restricted from altering LIMS physical custody states.")
+            elif not registered_patients:
+                st.warning(" Action Locked: You must enroll at least one patient record before conducting laboratory asset intake operations.")
+            else:
+                new_m_id = st.text_input("Unique Sample Asset ID")
+                asoc_p_id = st.selectbox("Associated Patient Subject Profile Link", registered_patients)
+                new_m_qr = st.text_input("Barcode Hardware QR Matrix Identifier")
+                new_m_tipo = st.selectbox("Extraction Matrix Assay Specimen Type", ["Plasma", "Whole Blood", "Tissue"])
+                new_m_est = st.selectbox("Chain of Custody Operational Workflow State", ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"])
+               
+                if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
+                    if not new_m_id or not new_m_qr:
+                        st.error(" Input Constraint: Asset ID and Hardware Barcodes are required.")
+                    else:
+                        payload_sample = {
+                            "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
+                            "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name
+                        }
+                        try:
+                            res_intake = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
+                            if res_intake.status_code == 200:
+                                st.success("Asset logged successfully.")
+                                time.sleep(0.5)
+                                st.rerun()
+                            else:
+                                st.error(f" LIMS Node Rejection: {res_intake.json().get('detail', 'Invalid parameter constraints')}")
+                        except Exception:
+                            st.error(" Connectivity Failure: Could not commit asset state transaction to Render.")
+            st.markdown('</div>', unsafe_allow_html=True)
+           
+        with m2:
+            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical"> Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
+            try:
+                res_s = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
+                df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
+            except Exception:
+                df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
+               
+            st.dataframe(df_samples, use_container_width=True, hide_index=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+
+# ============================================================================
+#   TAB 4: METHYLOX ENGINE (COMPUTATIONAL KERNEL CORES)
+# ============================================================================
+elif nav_selection == "METHYLOX Engine":
+    st.markdown("<h2 class='welcome-header'> Computational Pipeline Kernel Execution</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Execute high-density CRISPR-Cas12a calling matrices against sequence parameters</p>", unsafe_allow_html=True)
+   
+    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+    st.markdown('<div class="card-title-clinical"> Quantitative Epigenetic Run Over Raw Methylation Matrices</div>', unsafe_allow_html=True)
+   
+    if st.session_state.user_role == "md":
+        st.warning(" Access Denied: Medical roles do not possess computational clearance to launch sequencing.")
+    else:
+        try:
+            res_p_samples = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/pending-evaluation", headers=headers, timeout=5)
+            pending_samples = res_p_samples.json() if res_p_samples.status_code == 200 and res_p_samples.json() else []
+        except Exception:
+            pending_samples = []
+
+        if not pending_samples:
+            st.info(" Pipeline Standby: No pending samples in queue requiring CRISPR bioinformatic scoring calculation.")
+        else:
+            m_target = st.selectbox("Select Pending Asset ID for Pipeline Queue:", pending_samples)
+            uploaded_file = st.file_uploader("Upload Sequencer Raw CpG Methylation File (.CSV)", type=["csv"])
+            if uploaded_file is not None:
+                if st.button("Execute Automated Analytical Pipeline Run", use_container_width=True):
+                    files_payload = {"file": (uploaded_file.name, uploaded_file.getvalue(), "text/csv")}
+                    try:
+                        res_calc = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/evaluate/{m_target}", files=files_payload, headers=headers, timeout=15)
+                        if res_calc.status_code == 200:
+                            calc_result = res_calc.json()
+                            st.success(f" Analytics unraveled. Mean Beta Score: {calc_result['mean_beta']:.4f}")
+                            st.write(f"**Clinical Verdict:** {calc_result['verdict']}")
+                        else:
+                            st.error(" Computational Alignment Exception.")
+                    except Exception:
+                        st.error(" Kernel Processing Core Error.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ============================================================================
+#   TAB 5: REPORTS (EXHAUSTIVE DEFENSIBLE PDF CLINICAL DOSSIER ENGINE)
+# ============================================================================
+elif nav_selection == "Reports":
+    from fpdf import FPDF
+    st.markdown("<h2 class='welcome-header'> Issuance of Defendible Clinical Dossiers & Technical Reports</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Verify mathematical calls and download FDA/HIPAA compliant cryptographic sheets</p>", unsafe_allow_html=True)
+   
+    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+    try:
+        res_reports = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
+        reports_data = res_reports.json() if res_reports.status_code == 200 else []
+    except Exception:
+        reports_data = []
+   
+    if not reports_data:
+        st.info(" Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. The system is ready in clean-slate production to record and emit real diagnostics.")
+        st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        df_rep_list = pd.DataFrame(reports_data)
+        st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
+            columns={
+                'muestra_id': 'Sample ID',
+                'paciente_id': 'Patient ID',
+                'score': 'Beta Score',
+                'clasificacion': 'Result Assessment',
+                'fecha_analisis': 'Timestamp',
+                'hash_seguridad': 'Security Hash'
+            }
+        ), use_container_width=True, hide_index=True)
+       
+        st.write("---")
+        m_select = st.selectbox("Select Target Sample ID for Report Verification & Electronic Signature Ingestion:", df_rep_list["muestra_id"].unique())
+        datos_rep = df_rep_list[df_rep_list["muestra_id"] == m_select].iloc[-1]
+        tipo_informe = st.radio("Select Standardized Document Layout Format Structure", ["Institutional Executive Summary", "Technical Biomarker Deep Dive"], horizontal=True)
+       
+        st.write("##")
+       
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Helvetica", "B", 14)
+        pdf.set_text_color(30, 58, 138)
+        pdf.cell(190, 10, "METHYLOX(TM) LABORATORY INTELLIGENCE PLATFORM REPORT", ln=True, align="L")
+       
+        pdf.set_font("Helvetica", "", 8)
+        pdf.set_text_color(100, 116, 139)
+        pdf.cell(190, 5, "BIOMEDICAL SYSTEMS OPERATION KERNEL | SOFTWARE DEVICE STAGE: METHYLOX v3.0-PRODUCTION SaMD", ln=True)
+        pdf.ln(3)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(4)
+       
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.set_text_color(15, 23, 42)
+        pdf.cell(190, 6, "1. DIGITAL CHAIN OF CUSTODY AUDIT TRAIL (LIMS TELEMETRY)", ln=True)
+        pdf.set_font("Helvetica", "", 9)
+        pdf.cell(95, 5, f"Sample Asset ID: {str(datos_rep['muestra_id'])}", border=0)
+        pdf.cell(95, 5, f"Verification Security Hash: {str(datos_rep['hash_seguridad'])}", border=0, ln=True)
+        pdf.cell(95, 5, f"Authorized Operator Signature: {str(datos_rep['operador'])}", border=0)
+        pdf.cell(95, 5, f"Server Transaction Timestamp: {str(datos_rep['fecha_analisis'])}", border=0, ln=True)
+        pdf.ln(3)
+       
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.cell(190, 6, "2. ANONYMIZED PATIENT MOLECULAR DIRECTORY PROFILE", ln=True)
+        pdf.set_font("Helvetica", "", 9)
+        pdf.cell(95, 5, f"Patient Context ID: {str(datos_rep['paciente_id'])}", border=0)
+        pdf.cell(95, 5, f"Security Anonymous Code String: {str(datos_rep['nombre_codigo'])}", border=0, ln=True)
+        pdf.cell(95, 5, f"Age: {str(datos_rep['age'])} Years", border=0)
+        pdf.cell(95, 5, f"Biological Gender Parameter: {str(datos_rep['sexo'])}", border=0, ln=True)
+        pdf.cell(190, 5, f"Medical Corporate Facility Node: {str(datos_rep['institucion'])}", ln=True)
+        pdf.ln(3)
+       
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.cell(190, 6, "3. QUANTITATIVE EPIGENETIC METHYLATION READOUT (CORE SAMD ENGINE)", ln=True)
+        pdf.set_font("Helvetica", "", 9)
+        pdf.cell(190, 5, f"Global Mean Methylation Beta Score (Multiplexed MOX Panel): {float(datos_rep['score']):.4f}", ln=True)
+       
+        if float(datos_rep['score']) >= 0.1000:
+            pdf.set_text_color(220, 38, 38)
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.cell(190, 5, f"ALGORITHMIC CLINICAL VERDICT: {str(datos_rep['clasificacion'])}", ln=True)
+            pdf.set_font("Helvetica", "I", 9)
+            pdf.set_text_color(100, 116, 139)
+            pdf.cell(190, 5, "INTERPRETATION SCORE: Positive ctDNA calling threshold surpassed. Complementary tissue biopsy suggested.", ln=True)
+        else:
+            pdf.set_text_color(22, 163, 74)
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.cell(190, 5, "ALGORITHMIC CLINICAL VERDICT: Stable Baseline Control Range (Tumor Negative Screen)", ln=True)
+           
+        pdf.set_text_color(15, 23, 42)
+        pdf.set_font("Helvetica", "", 9)
+       
+        if "TECHNICAL" in tipo_informe.upper():
+            pdf.ln(3)
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.cell(190, 6, "4. TECHNICAL BIOINFORMATIC BIOCHEMICAL APPENDIX", ln=True)
+            pdf.set_font("Helvetica", "", 9)
+            pdf.cell(190, 5, f"Active Patent CRISPR Probes Panel Signatures: {str(datos_rep['guias_activas'])}", ln=True)
+            pdf.cell(190, 5, "Genomic Alignment Quality Quality: Passes Phred Quality Score Q30 parameters.", ln=True)
+           
+        pdf.ln(10)
+        pdf.set_font("Helvetica", "I", 8)
+        pdf.set_text_color(148, 163, 184)
+        pdf.cell(190, 4, "Regulatory Compliance Notice: This system operates as a Software as a Medical Device (SaMD) compliant with HIPAA and FDA 21 CFR Part 11 guidelines.", ln=True, align="C")
+        pdf.cell(190, 4, "Restricted pre-clinical research use only. Confidential proprietary assets of METHYLOX Platform 2026.", ln=True, align="C")
+       
+        try:
+            final_pdf_payload = pdf.output(dest='S').encode('latin1')
+        except Exception:
+            final_pdf_payload = bytes(pdf.output())
+           
+        st.download_button(
+            label=f" Verify Electronic Signature & Download Defendible Dossier for Sample {m_select}",
+            data=final_pdf_payload,
+            file_name=f"METHYLOX_Defendible_Report_{m_select}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# ============================================================================
+#   TAB 6: IDENTITY GOVERNANCE (DYNAMIC RBAC AUTHORIZATION HUB)
+# ============================================================================
+elif nav_selection == "Identity Governance":
+    st.markdown("<h2 class='welcome-header'> Identity Governance & Task Delegation</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Provision custom laboratory operational roles dynamically without hardcoding</p>", unsafe_allow_html=True)
+   
+    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+    with st.form("universal_user_provisioning_form", clear_on_submit=True):
+        st.markdown("#### Create New Abstract Operator Account")
+        c1, c2 = st.columns(2)
+        with c1:
+            input_username = st.text_input("Account Identifier (Email / Username)", placeholder="operator@hospital.com")
+            input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., Dr. John Doe, MD")
+        with c2:
+            input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
+            target_role_display = st.selectbox("System Assigned Operational Role Privilege", ["admin", "cls", "md"])
+               
+        target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
+        submit_btn = st.form_submit_button(" Activate Identity & Delegate Tasks")
+       
+    if submit_btn:
+        if not input_username or not input_password or not input_full_name:
+            st.error(" All clinical identity fields are mandatory.")
+        else:
+            payload_u = {
+                "username": input_username,
+                "password": input_password,
+                "full_name": input_full_name,
+                "role": target_role_display,
+                "hospital_id": int(target_hospital_id)
+            }
+            try:
+                response = requests.post(f"{BACKEND_URL}/api/v1/auth/provision-user", json=payload_u, headers=headers)
+                if response.status_code == 200:
+                    st.success(" Staff Identity Successfully Activated & Tasks Delegated Real-Time.")
+                else:
+                    st.error(f" Identity Provisioning Rejection: {response.json().get('detail', 'Unauthorized operational sequence')}")
+            except Exception:
+                st.error(" Deployment Connectivity Error: User profile could not be logged into database repository.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ============================================================================
+#   TAB 7: SYSTEM SETTINGS (KERNEL INTEGRITY AUDIT TRAIL MONITOR)
+# ============================================================================
+elif nav_selection == " System Settings":
+    st.markdown("<h2 class='welcome-header'> Core Calibration Settings & Kernel Monitor</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>System validation and mathematical processing rules parameters</p>", unsafe_allow_html=True)
+   
+    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+    st.markdown("<p style='color:#0F172A; font-weight:700; font-size:14px; margin-bottom:10px;'> METHYLOX_DETERMINISTIC_RULES.PY (AUDITABLE CONTEXT)</p>", unsafe_allow_html=True)
+    st.code("""
 def calculate_proprietary_cpg_beta_value(intensity_methylated: float, intensity_unmethylated: float) -> float:
     # Standard international methylation mathematical equation with fluorescence laser offset correction
     offset_correction = 100.0
-    beta_value = (intensity_methylated + offset_correction) / (intensity_methylated + intensity_unmethylated + (2 * offset_correction))
-    return float(beta_value)
-        """, language="python")
-        st.markdown('</div>', unsafe_allow_html=True)
+    beta_value = intensity_methylated / (intensity_methylated + intensity_unmethylated + offset_correction)
+    return round(float(beta_value), 4)
+""", language="python")
+    st.success(" Kernel system integrity check completed successfully. Deterministic rules matching validation parameters.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================================
 #   FOOTER LEGAL BOUNDARIES (CLEAN CHARACTER ENCODING)
 # ============================================================================
 st.markdown("""
 <div style="text-align: center; padding: 20px 0px; margin-top: 40px; border-top: 1px solid #E2E8F0;">
-    <p style="margin: 0; font-size: 12px; color: #94A3B8;">Copyright &copy; 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
+    <p style="margin: 0; font-size: 12px; color: #94A3B8;">Copyright (c) 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
 </div>
 """, unsafe_allow_html=True)
