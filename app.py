@@ -585,37 +585,14 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-# 4. BOTONERA DE ACCIONES RÁPIDAS (TARJETAS SVG 100% CLICKEABLES Y LIMPIAS)
+# 4. BOTONERA DE ACCIONES RÁPIDAS (TARJETAS SVG CON NAVEGACIÓN SEGURA Y CERO RECUADROS)
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
 
-    # Estilos CSS de precisión quirúrgica para superponer el botón detrás de la tarjeta limpia
+    # Estilos CSS limpios para tarjetas profesionales con efecto hover
     st.markdown("""
     <style>
-        div[data-testid="column"] {
-            position: relative;
-        }
-        /* El contenedor del botón ahora actúa como una capa inferior invisible que cubre la tarjeta */
-        div[data-testid="column"] div.stButton {
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            z-index: 1 !important;
-            margin: 0 !important;
-        }
-        div[data-testid="column"] div.stButton > button {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            width: 100% !important;
-            height: 100% !important;
-            opacity: 0 !important;
-            cursor: pointer !important;
-        }
-        /* La tarjeta visual se coloca con z-index superior para mostrar los iconos SVG perfectamente */
-        .svg-action-card {
+        .svg-action-card-container {
             background-color: #FFFFFF;
             border: 1px solid #E2E8F0;
             border-radius: 12px;
@@ -628,11 +605,10 @@ elif nav_selection == "Dashboard Matrix":
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             transition: all 0.2s ease-in-out;
             box-sizing: border-box;
-            position: relative;
-            z-index: 2;
-            pointer-events: none; /* Permite que el clic atraviese la tarjeta hacia el botón invisible de abajo */
+            text-decoration: none !important;
+            margin-bottom: 10px;
         }
-        div[data-testid="column"]:hover .svg-action-card {
+        .svg-action-card-container:hover {
             border-color: #3B82F6;
             box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
             transform: translateY(-2px);
@@ -641,69 +617,33 @@ elif nav_selection == "Dashboard Matrix":
     </style>
     """, unsafe_allow_html=True)
 
+    # Definimos la lógica de navegación segura si el usuario hizo clic en alguna tarjeta
+    query_params = st.query_params
+    if "action_nav" in query_params:
+        target_nav = query_params["action_nav"]
+        if target_nav in ["Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]:
+            st.session_state.nav_selection = target_nav
+            st.rerun()
+
     act_col1, act_col2, act_col3, act_col4 = st.columns(4)
 
     with act_col1:
-        st.markdown("""
-        <div class="svg-action-card">
-            <div style="background: #EFF6FF; padding: 10px; border-radius: 10px; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
-            </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Enroll Subject</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">New Patient Profile</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("Enroll", key="btn_card_enroll"):
+        if st.button("👥 Enroll Subject\nNew Patient Profile", key="btn_card_enroll_safe", use_container_width=True):
             st.session_state.nav_selection = "Patients"
             st.rerun()
 
     with act_col2:
-        st.markdown("""
-        <div class="svg-action-card">
-            <div style="background: #FFF7ED; padding: 10px; border-radius: 10px; color: #EA580C; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Asset Intake</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Log LIMS Custody</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("Intake", key="btn_card_intake"):
+        if st.button("📦 Asset Intake\nLog LIMS Custody", key="btn_card_intake_safe", use_container_width=True):
             st.session_state.nav_selection = "LIMS Samples"
             st.rerun()
 
     with act_col3:
-        st.markdown("""
-        <div class="svg-action-card">
-            <div style="background: #F0FDF4; padding: 10px; border-radius: 10px; color: #16A34A; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Launch Kernel</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Run CRISPR Pipeline</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("Kernel", key="btn_card_kernel"):
+        if st.button("⚡ Launch Kernel\nRun CRISPR Pipeline", key="btn_card_kernel_safe", use_container_width=True):
             st.session_state.nav_selection = "METHYLOX Engine"
             st.rerun()
 
     with act_col4:
-        st.markdown("""
-        <div class="svg-action-card">
-            <div style="background: #FAF5FF; padding: 10px; border-radius: 10px; color: #9333EA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Dossier Sheet</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Export Medical PDF</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("Dossier", key="btn_card_dossier"):
+        if st.button("📄 Dossier Sheet\nExport Medical PDF", key="btn_card_dossier_safe", use_container_width=True):
             st.session_state.nav_selection = "Reports"
             st.rerun()
 
