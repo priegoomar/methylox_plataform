@@ -206,43 +206,23 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
 # ============================================================================
 
 def svg_button(svg_code, title, subtitle, bg_color, target_page):
-    # Forzamos un contenedor que vuelve invisible CUALQUIER elemento de tipo botón que Streamlit intente dibujar adentro
     st.markdown(f"""
-    <style>
-        /* Apuntamos directamente al bloque de streamlit asignado a esta columna */
-        div.element-container:has(button[key="quick_{target_page}"]) {{
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            opacity: 0 !important;
-            z-index: 10 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }}
-        .action-card-clickable-wrapper-fixed {{
-            position: relative;
-            width: 100%;
-            cursor: pointer;
-        }}
-    </style>
-    
-    <div class="action-card-clickable-wrapper-fixed">
-        <div class="action-card-svg" style="margin-top: 0px !important; margin-bottom: 0px !important;">
-            <div class="icon-circle-svg" style="background:{bg_color};">
-                {svg_code}
-            </div>
-            <div class="action-text-container">
-                <p class="action-title-svg">{title}</p>
-                <p class="action-desc-svg">{subtitle}</p>
-            </div>
+    <div class="action-card-svg">
+        <div class="icon-circle-svg" style="background:{bg_color};">
+            {svg_code}
+        </div>
+        <div class="action-text-container">
+            <p class="action-title-svg">{title}</p>
+            <p class="action-desc-svg">{subtitle}</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # El botón nativo ahora se renderiza de forma invisible oculto por completo dentro del contenedor Absolute con Opacity 0
-    if st.button(title, key=f"quick_{target_page}", use_container_width=True):
+    if st.button(
+        title,
+        key=f"quick_{target_page}",
+        use_container_width=True
+    ):
         st.session_state.nav_selection = target_page
         st.rerun()
 
