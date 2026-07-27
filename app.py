@@ -625,6 +625,7 @@ elif nav_selection == "Dashboard Matrix":
         }
     </style>
     """, unsafe_allow_html=True)
+
     act_col1, act_col2, act_col3, act_col4 = st.columns(4)
     
         with act_col1:
@@ -646,7 +647,6 @@ elif nav_selection == "Dashboard Matrix":
             if st.button("📄 Dossier Sheet\nExport Medical PDF", key="btn_card_dossier", use_container_width=True):
                 st.session_state.nav_selection = "Reports"
                 st.rerun()
-
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
