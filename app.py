@@ -282,20 +282,20 @@ with st.sidebar:
     st.markdown("---")
 
     # =========================================================================
-    # RBAC NAVIGATION
+    # RBAC NAVIGATION (NOMBRES CAMBIADOS Y SIN ICONOS/EMOJIS)
     # =========================================================================
     menu_options = {}
     if st.session_state.jwt_access_token:
         menu_options = {
-            "dashboard": {"label": "General Dashboard", "icon": "📊"},
-            "patients": {"label": "Patient Directory", "icon": "👥"},
-            "lims": {"label": "Sample Traceability (LIMS)", "icon": "🧪"},
-            "analysis": {"label": "Epigenetic Analysis", "icon": "⚙️"},
-            "reports": {"label": "Reports & Certificates", "icon": "📄"}
+            "dashboard": {"label": "Panel Principal"},
+            "patients": {"label": "Directorio de Pacientes"},
+            "lims": {"label": "Control de Muestras (LIMS)"},
+            "analysis": {"label": "Motor Epigenético"},
+            "reports": {"label": "Informes y Certificados"}
         }
 
         if st.session_state.user_role == "admin":
-            menu_options["settings"] = {"label": "System Settings", "icon": "🛠️"}
+            menu_options["settings"] = {"label": "Configuración del Sistema"}
 
         current_selection = st.session_state.nav_selection
         if current_selection not in menu_options:
@@ -304,7 +304,7 @@ with st.sidebar:
         selected_key = st.sidebar.radio(
             "Operational Scope Selector",
             options=list(menu_options.keys()),
-            format_func=lambda x: f"{menu_options[x]['icon']} {menu_options[x]['label']}",
+            format_func=lambda x: menu_options[x]['label'],
             key="nav_selection",
             label_visibility="collapsed"
         )
@@ -528,7 +528,7 @@ elif selected_key == "dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
 
     # ====================================================================
-    # QUICK ACTION WORKFLOWS GRID (BOTONES CSS CORRECTOS CON FUNCIONALIDAD REAL)
+    # QUICK ACTION WORKFLOWS GRID
     # ====================================================================
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
@@ -630,7 +630,6 @@ elif selected_key == "settings":
     st.markdown("<h2 class='welcome-header'>System Settings</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Administrative controls and API routing configurations.</p>", unsafe_allow_html=True)
     st.info("System settings panel active.")
-
 # ============================================================================
 #   TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ============================================================================
