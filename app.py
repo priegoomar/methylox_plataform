@@ -585,14 +585,27 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-# 4. BOTONERA DE ACCIONES RÁPIDAS (TARJETAS 100% LIMPIAS CON SVG PURO Y CERO RECUADROS EXTRAS)
+# 4. BOTONERA DE ACCIONES RÁPIDAS (TARJETAS 100% LIMPIAS CON SVG Y CERO ESPACIOS RESIDUALES)
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
 
-    # Inyectamos estilos CSS para eliminar bordes de botones nativos y estilizar las tarjetas SVG
+    # CSS Definitivo para anular cualquier rastro, sombra o caja fantasma del botón nativo
     st.markdown("""
     <style>
-        /* Ocultamos los botones nativos tradicionales y los convertimos en contenedores invisibles sobre la tarjeta */
+        /* Contenedor de la columna para permitir posicionamiento relativo absoluto */
+        div[data-testid="column"] {
+            position: relative;
+        }
+        /* Ocultamos por completo el flujo visual del botón pero lo dejamos clickeable cubriendo la tarjeta */
+        div[data-testid="column"] div.stButton {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 99 !important;
+            margin: 0 !important;
+        }
         div[data-testid="column"] div.stButton > button {
             background: transparent !important;
             border: none !important;
@@ -600,15 +613,10 @@ elif nav_selection == "Dashboard Matrix":
             padding: 0 !important;
             width: 100% !important;
             height: 100% !important;
-            min-height: 75px !important;
-            position: absolute !important;
-            top: 0;
-            left: 0;
-            z-index: 10;
-            cursor: pointer;
-            opacity: 0;
+            opacity: 0 !important;
+            cursor: pointer !important;
         }
-        /* Contenedor visual de la tarjeta con SVG */
+        /* Estética visual de la tarjeta SVG */
         .svg-action-card {
             background-color: #FFFFFF;
             border: 1px solid #E2E8F0;
@@ -618,9 +626,10 @@ elif nav_selection == "Dashboard Matrix":
             align-items: center;
             gap: 12px;
             width: 100%;
+            min-height: 75px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             transition: all 0.2s ease-in-out;
-            position: relative;
+            box-sizing: border-box;
         }
         div[data-testid="column"]:hover .svg-action-card {
             border-color: #3B82F6;
@@ -634,6 +643,9 @@ elif nav_selection == "Dashboard Matrix":
     act_col1, act_col2, act_col3, act_col4 = st.columns(4)
 
     with act_col1:
+        if st.button("Enroll", key="btn_card_enroll"):
+            st.session_state.nav_selection = "Patients"
+            st.rerun()
         st.markdown("""
         <div class="svg-action-card">
             <div style="background: #EFF6FF; padding: 10px; border-radius: 10px; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -645,11 +657,11 @@ elif nav_selection == "Dashboard Matrix":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Enroll", key="btn_card_enroll"):
-            st.session_state.nav_selection = "Patients"
-            st.rerun()
 
     with act_col2:
+        if st.button("Intake", key="btn_card_intake"):
+            st.session_state.nav_selection = "LIMS Samples"
+            st.rerun()
         st.markdown("""
         <div class="svg-action-card">
             <div style="background: #FFF7ED; padding: 10px; border-radius: 10px; color: #EA580C; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -661,11 +673,11 @@ elif nav_selection == "Dashboard Matrix":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Intake", key="btn_card_intake"):
-            st.session_state.nav_selection = "LIMS Samples"
-            st.rerun()
 
     with act_col3:
+        if st.button("Kernel", key="btn_card_kernel"):
+            st.session_state.nav_selection = "METHYLOX Engine"
+            st.rerun()
         st.markdown("""
         <div class="svg-action-card">
             <div style="background: #F0FDF4; padding: 10px; border-radius: 10px; color: #16A34A; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -677,11 +689,11 @@ elif nav_selection == "Dashboard Matrix":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Kernel", key="btn_card_kernel"):
-            st.session_state.nav_selection = "METHYLOX Engine"
-            st.rerun()
 
     with act_col4:
+        if st.button("Dossier", key="btn_card_dossier"):
+            st.session_state.nav_selection = "Reports"
+            st.rerun()
         st.markdown("""
         <div class="svg-action-card">
             <div style="background: #FAF5FF; padding: 10px; border-radius: 10px; color: #9333EA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -693,9 +705,6 @@ elif nav_selection == "Dashboard Matrix":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Dossier", key="btn_card_dossier"):
-            st.session_state.nav_selection = "Reports"
-            st.rerun()
 
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
