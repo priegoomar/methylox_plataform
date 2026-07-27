@@ -138,46 +138,27 @@ st.markdown("""
         text-align: center !important;
     }
    
-    /* Premium Action Grid System */
-    .quick-action-grid {
-        display: flex;
-        gap: 15px;
-        margin-top: 25px;
-        width: 100%;
-    }
-    .action-card-svg {
-        background: white;
+    /* Premium Action Grid System con Tarjetas Interactivas CSS */
+    .svg-action-link {
+        background-color: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
         padding: 16px;
-        flex: 1;
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
+        width: 100%;
+        min-height: 75px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        box-sizing: border-box;
+        text-decoration: none !important;
+        transition: all 0.2s ease-in-out;
     }
-    .icon-circle-svg {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .action-text-container {
-        display: flex;
-        flex-direction: column;
-    }
-    .action-title-svg {
-        font-size: 14px;
-        font-weight: 700;
-        color: #0F172A;
-        margin: 0;
-    }
-    .action-desc-svg {
-        font-size: 11px;
-        color: #64748B;
-        margin: 2px 0 0 0;
+    .svg-action-link:hover {
+        border-color: #3B82F6;
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
+        transform: translateY(-2px);
+        background-color: #F8FAFC;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -546,35 +527,11 @@ elif selected_key == "dashboard":
         st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # QUICK ACTION WORKFLOWS GRID
+    # ====================================================================
+    # QUICK ACTION WORKFLOWS GRID (BOTONES CSS CORRECTOS CON FUNCIONALIDAD REAL)
+    # ====================================================================
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-
-    st.markdown("""
-    <style>
-        .svg-action-link {
-            background-color: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            min-height: 75px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            box-sizing: border-box;
-            text-decoration: none !important;
-            transition: all 0.2s ease-in-out;
-        }
-        .svg-action-link:hover {
-            border-color: #3B82F6;
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
-            background-color: #F8FAFC;
-        }
-    </style>
-    """, unsafe_allow_html=True)
 
     act_col1, act_col2, act_col3, act_col4 = st.columns(4)
 
