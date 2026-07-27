@@ -671,8 +671,27 @@ elif selected_key == "dashboard":
         </a>
         """, unsafe_allow_html=True)
 
+    # ====================================================================
+    # RENDER SELECTED LIVE SAMPLE NOTIFICATION DIRECTLY ON THE DASHBOARD
+    # ====================================================================
+    if "active_live_sample" not in st.session_state:
+        st.session_state.active_live_sample = None
+
+    if st.session_state.active_live_sample:
+        st.markdown(
+            f"""
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 12px 16px; margin-top: 20px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <span style="font-size: 12px; font-weight: 700; color: #1E40AF; text-transform: uppercase;">Selected LIMS Custody Node:</span>
+                    <span style="font-size: 13px; font-weight: 800; color: #1E3A8A; margin-left: 8px;">{st.session_state.active_live_sample}</span>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
 # ============================================================================
-# 🧭 SIDEBAR NAVIGATION SETUP (ACTUALIZADO SIN NOMBRES NO DESEADOS)
+# 🧭 SIDEBAR NAVIGATION SETUP
 # ============================================================================
 with st.sidebar:
     st.markdown("### 🧬 METHYLOX Platform")
@@ -680,7 +699,6 @@ with st.sidebar:
     st.markdown(f"**Role:** `{st.session_state.get('user_role', 'user').upper()}`")
     st.markdown("---")
     
-    # Lista limpia de opciones de navegación (Modifica aquí si hay algún texto antiguo)
     nav_selection = st.radio(
         "Navigation Module",
         [
@@ -693,24 +711,6 @@ with st.sidebar:
             "System Settings"
         ]
     )
-
-    # Ensure active session state variables are initialized for interactive elements
-    if "active_live_sample" not in st.session_state:
-        st.session_state.active_live_sample = None
-
-    # Handle sample selection state action if triggered from the interactive data stream
-    if st.session_state.active_live_sample:
-        st.markdown(
-            f"""
-            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 12px 16px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between;">
-                <div>
-                    <span style="font-size: 12px; font-weight: 700; color: #1E40AF; text-transform: uppercase;">Selected LIMS Custody Node:</span>
-                    <span style="font-size: 13px; font-weight: 800; color: #1E3A8A; margin-left: 8px;">{st.session_state.active_live_sample}</span>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
 
 # ============================================================================
 #   TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
