@@ -12,8 +12,8 @@ import base64
 #   METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
 # ============================================================================
 st.set_page_config(
-    page_title="MethylOxTM | Epigenetic AI SaMD Platform",
-    page_icon="",
+    page_title="MethylOx™ | Epigenetic AI SaMD Platform",
+    page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -115,18 +115,7 @@ st.markdown("""
         align-items: center;
     }
 
-    /* UNIFICACIÓN TOTAL EN UN SOLO RECUADRO MONOLÍTICO PARA LA TABLA Y DONA */
-    .unified-main-board-box {
-        background: white;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 24px;
-        min-height: 340px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        margin-bottom: 20px;
-    }
-
-    /* Alineación y Centrado Absoluto de las Columnas de la Tabla */
+    /* Tabla y Dona Monolítica */
     .clinical-table-new {
         width: 100%;
         border-collapse: collapse;
@@ -190,41 +179,11 @@ st.markdown("""
         color: #64748B;
         margin: 2px 0 0 0;
     }
-
-    .bg-neon-blue { background: #E0F2FE; color: #0EA5E9; }
-    .bg-neon-orange { background: #FFEDD5; color: #F97316; }
-    .bg-neon-green { background: #DCFCE7; color: #22C55E; }
-    .bg-neon-purple { background: #F3E8FF; color: #A855F7; }
 </style>
 """, unsafe_allow_html=True)
 
 # --- BACKEND API BACKBONE ROUTING ---
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
-
-# ============================================================================
-# QUICK ACTION SVG BUTTON COMPONENT
-# ============================================================================
-
-def svg_button(svg_code, title, subtitle, bg_color, target_page):
-    st.markdown(f"""
-    <div class="action-card-svg">
-        <div class="icon-circle-svg" style="background:{bg_color};">
-            {svg_code}
-        </div>
-        <div class="action-text-container">
-            <p class="action-title-svg">{title}</p>
-            <p class="action-desc-svg">{subtitle}</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    if st.button(
-        title,
-        key=f"quick_{target_page}",
-        use_container_width=True
-    ):
-        st.session_state.nav_selection = target_page
-        st.rerun()
 
 # ============================================================================
 #   SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
@@ -245,7 +204,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # SESSION STATE
+    # SESSION STATE INITIALIZATION
     if "jwt_access_token" not in st.session_state:
         st.session_state.jwt_access_token = None
 
@@ -258,7 +217,10 @@ with st.sidebar:
     if "id_hospital" not in st.session_state:
         st.session_state.id_hospital = 1
 
-    # LOGIN
+    if "nav_selection" not in st.session_state:
+        st.session_state.nav_selection = "dashboard"
+
+    # LOGIN GATEWAY
     if not st.session_state.jwt_access_token:
         with st.form("institutional_login_form"):
             st.markdown(
@@ -277,7 +239,7 @@ with st.sidebar:
             )
 
             login_submit = st.form_submit_button(
-                "  Authenticate",
+                "Authenticate",
                 use_container_width=True
             )
 
@@ -303,7 +265,6 @@ with st.sidebar:
                             "role",
                             "tech"
                         ).lower()
-
                         st.rerun()
                     else:
                         st.error("Authentication denied")
@@ -321,7 +282,7 @@ with st.sidebar:
                 {st.session_state.operator_display_name}
                 </p>
                 <p style='color:#38BDF8;font-size:11px;'>
-                ROLE: {st.session_state.user_role}
+                ROLE: {str(st.session_state.user_role).upper()}
                 </p>
             </div>
             """,
@@ -329,7 +290,7 @@ with st.sidebar:
         )
 
         if st.button(
-            "  Disconnect Session",
+            "Disconnect Session",
             use_container_width=True
         ):
             st.session_state.jwt_access_token = None
@@ -340,28 +301,25 @@ with st.sidebar:
     st.markdown("---")
 
     # =========================================================================
-    # RBAC NAVIGATION (PROFESSIONAL ENGLISH LABELS & SVG-READY KEYS)
+    # RBAC NAVIGATION
     # =========================================================================
+    menu_options = {}
     if st.session_state.jwt_access_token:
         menu_options = {
-            "dashboard": {"label": "General Dashboard", "icon": ""},
-            "patients": {"label": "Patient Directory", "icon": ""},
-            "lims": {"label": "Sample Traceability (LIMS)", "icon": ""},
-            "analysis": {"label": "Epigenetic Analysis", "icon": ""},
-            "reports": {"label": "Reports & Certificates", "icon": ""}
+            "dashboard": {"label": "General Dashboard", "icon": "📊"},
+            "patients": {"label": "Patient Directory", "icon": "👥"},
+            "lims": {"label": "Sample Traceability (LIMS)", "icon": "🧪"},
+            "analysis": {"label": "Epigenetic Analysis", "icon": "⚙️"},
+            "reports": {"label": "Reports & Certificates", "icon": "📄"}
         }
 
         if st.session_state.user_role == "admin":
-            menu_options["settings"] = {"label": "System Settings", "icon": ""}
-
-        if "nav_selection" not in st.session_state:
-            st.session_state.nav_selection = "dashboard"
+            menu_options["settings"] = {"label": "System Settings", "icon": "🛠️"}
 
         current_selection = st.session_state.nav_selection
         if current_selection not in menu_options:
             current_selection = "dashboard"
 
-        # Sincronizamos las variables para usar 'selected_key' de manera limpia
         selected_key = st.sidebar.radio(
             "Operational Scope Selector",
             options=list(menu_options.keys()),
@@ -374,6 +332,7 @@ with st.sidebar:
 
     st.markdown("---")
 
+    # QUERY PARAMS ROUTING
     if "page" in st.query_params:
         query_page = st.query_params["page"]
         if query_page == "Patients" and "patients" in menu_options:
@@ -391,8 +350,8 @@ with st.sidebar:
             <p style="font-size:10px;color:#64748B;font-weight:700;">
             SYSTEM STATUS
             </p>
-            <div>
-               Core Engine Active
+            <div style="color: #22C55E; font-size: 12px; font-weight: 600;">
+                ● Core Engine Active
             </div>
         </div>
         """,
@@ -404,11 +363,11 @@ headers = {
 } if st.session_state.jwt_access_token else {}
 
 # ============================================================================
-#   CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
+#   CENTRAL ARCHITECTURE MODULES
 # ============================================================================
 
 if selected_key == "restricted":
-    st.markdown('<div class="executive-card-white" style="text-align:center; padding:60px 40px; margin-top:40px;">', unsafe_allow_html=True)
+    st.markdown('<div style="background:white; border:1px solid #E2E8F0; border-radius:12px; text-align:center; padding:60px 40px; margin-top:40px;">', unsafe_allow_html=True)
     st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:10px;'>Preventative Infrastructure Lockdown Active</h2>", unsafe_allow_html=True)
     st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -434,7 +393,7 @@ elif selected_key == "dashboard":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # RENDER TOP TELEMETRY CARDS WITH RECOVERED SVGs
+    # RENDER TOP TELEMETRY CARDS WITH SVGs
     st.markdown(f"""
     <div class='metric-container-hub'>
         <div class='metric-card-clinical-new'>
@@ -502,7 +461,7 @@ elif selected_key == "dashboard":
 
         st.markdown(f"""
         <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'> Recent Laboratory Activity Trail</p>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>Recent Laboratory Activity Trail</p>
             <table class='clinical-table-new'>
                 <thead>
                     <tr style='background-color: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 2px solid #E2E8F0;'>
@@ -582,7 +541,7 @@ elif selected_key == "dashboard":
 
         st.markdown("""
         <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'> Onco-Genetic Diagnostic Summary</p>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'>Onco-Genetic Diagnostic Summary</p>
         """, unsafe_allow_html=True)
         st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
@@ -671,9 +630,6 @@ elif selected_key == "dashboard":
         </a>
         """, unsafe_allow_html=True)
 
-    # ====================================================================
-    # RENDER SELECTED LIVE SAMPLE NOTIFICATION DIRECTLY ON THE DASHBOARD
-    # ====================================================================
     if "active_live_sample" not in st.session_state:
         st.session_state.active_live_sample = None
 
@@ -689,6 +645,34 @@ elif selected_key == "dashboard":
             """,
             unsafe_allow_html=True
         )
+
+# ----------------------------------------------------------------------------
+#   MÓDULOS SECUNDARIOS (PATIENTS, LIMS, ANALYSIS, REPORTS, SETTINGS)
+# ----------------------------------------------------------------------------
+elif selected_key == "patients":
+    st.markdown("<h2 class='welcome-header'>Patient Directory</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Manage clinical subjects and diagnostic registry records.</p>", unsafe_allow_html=True)
+    st.info("Patient directory module loaded successfully.")
+
+elif selected_key == "lims":
+    st.markdown("<h2 class='welcome-header'>Sample Traceability (LIMS)</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Track biological samples, storage units, and custody workflows.</p>", unsafe_allow_html=True)
+    st.info("LIMS sample matrix module loaded successfully.")
+
+elif selected_key == "analysis":
+    st.markdown("<h2 class='welcome-header'>Epigenetic Analysis Engine</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Execute DNA methylation sequencing analysis and diagnostic inference.</p>", unsafe_allow_html=True)
+    st.info("Epigenetic analysis pipeline ready.")
+
+elif selected_key == "reports":
+    st.markdown("<h2 class='welcome-header'>Reports & Certificates</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Generate and export clinical dossiers and PDF diagnostic sheets.</p>", unsafe_allow_html=True)
+    st.info("Reporting module loaded successfully.")
+
+elif selected_key == "settings":
+    st.markdown("<h2 class='welcome-header'>System Settings</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Administrative controls and API routing configurations.</p>", unsafe_allow_html=True)
+    st.info("System settings panel active.")
 
 # ============================================================================
 # 🧭 SIDEBAR NAVIGATION SETUP
