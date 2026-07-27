@@ -137,6 +137,29 @@ st.markdown("""
         border-bottom: 1px solid #F1F5F9;
         text-align: center !important;
     }
+   
+    /* Premium Action Grid System con Tarjetas Interactivas CSS */
+    .svg-action-link {
+        background-color: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        min-height: 75px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        box-sizing: border-box;
+        text-decoration: none !important;
+        transition: all 0.2s ease-in-out;
+    }
+    .svg-action-link:hover {
+        border-color: #3B82F6;
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
+        transform: translateY(-2px);
+        background-color: #F8FAFC;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -259,20 +282,20 @@ with st.sidebar:
     st.markdown("---")
 
     # =========================================================================
-    # RBAC NAVIGATION (NOMBRES CAMBIADOS Y SIN ICONOS)
+    # RBAC NAVIGATION
     # =========================================================================
     menu_options = {}
     if st.session_state.jwt_access_token:
         menu_options = {
-            "dashboard": {"label": "Panel Principal"},
-            "patients": {"label": "Directorio de Pacientes"},
-            "lims": {"label": "Control de Muestras (LIMS)"},
-            "analysis": {"label": "Motor Epigenético"},
-            "reports": {"label": "Informes y Certificados"}
+            "dashboard": {"label": "General Dashboard", "icon": "📊"},
+            "patients": {"label": "Patient Directory", "icon": "👥"},
+            "lims": {"label": "Sample Traceability (LIMS)", "icon": "🧪"},
+            "analysis": {"label": "Epigenetic Analysis", "icon": "⚙️"},
+            "reports": {"label": "Reports & Certificates", "icon": "📄"}
         }
 
         if st.session_state.user_role == "admin":
-            menu_options["settings"] = {"label": "Configuración del Sistema"}
+            menu_options["settings"] = {"label": "System Settings", "icon": "🛠️"}
 
         current_selection = st.session_state.nav_selection
         if current_selection not in menu_options:
@@ -281,7 +304,7 @@ with st.sidebar:
         selected_key = st.sidebar.radio(
             "Operational Scope Selector",
             options=list(menu_options.keys()),
-            format_func=lambda x: menu_options[x]['label'],
+            format_func=lambda x: f"{menu_options[x]['icon']} {menu_options[x]['label']}",
             key="nav_selection",
             label_visibility="collapsed"
         )
@@ -289,6 +312,18 @@ with st.sidebar:
         selected_key = "restricted"
 
     st.markdown("---")
+
+    # QUERY PARAMS ROUTING
+    if "page" in st.query_params:
+        query_page = st.query_params["page"]
+        if query_page == "Patients" and "patients" in menu_options:
+            st.session_state.nav_selection = "patients"
+        elif query_page == "LIMS-Samples" and "lims" in menu_options:
+            st.session_state.nav_selection = "lims"
+        elif query_page == "METHYLOX-Engine" and "analysis" in menu_options:
+            st.session_state.nav_selection = "analysis"
+        elif query_page == "Reports" and "reports" in menu_options:
+            st.session_state.nav_selection = "reports"
 
     st.markdown(
         """
@@ -493,7 +528,7 @@ elif selected_key == "dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
 
     # ====================================================================
-    # QUICK ACTION WORKFLOWS GRID
+    # QUICK ACTION WORKFLOWS GRID (BOTONES CSS CORRECTOS CON FUNCIONALIDAD REAL)
     # ====================================================================
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
@@ -501,24 +536,56 @@ elif selected_key == "dashboard":
     act_col1, act_col2, act_col3, act_col4 = st.columns(4)
 
     with act_col1:
-        if st.button("Patient Directory", use_container_width=True):
-            st.session_state.nav_selection = "patients"
-            st.rerun()
+        st.markdown("""
+        <a href="?page=Patients" target="_self" class="svg-action-link">
+            <div style="background: #EFF6FF; padding: 10px; border-radius: 10px; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Enroll Subject</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">New Patient Profile</p>
+            </div>
+        </a>
+        """, unsafe_allow_html=True)
 
     with act_col2:
-        if st.button("Sample Traceability (LIMS)", use_container_width=True):
-            st.session_state.nav_selection = "lims"
-            st.rerun()
+        st.markdown("""
+        <a href="?page=LIMS-Samples" target="_self" class="svg-action-link">
+            <div style="background: #FFF7ED; padding: 10px; border-radius: 10px; color: #EA580C; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Asset Intake</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Log LIMS Custody</p>
+            </div>
+        </a>
+        """, unsafe_allow_html=True)
 
     with act_col3:
-        if st.button("Epigenetic Analysis", use_container_width=True):
-            st.session_state.nav_selection = "analysis"
-            st.rerun()
+        st.markdown("""
+        <a href="?page=METHYLOX-Engine" target="_self" class="svg-action-link">
+            <div style="background: #F0FDF4; padding: 10px; border-radius: 10px; color: #16A34A; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Launch Kernel</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Run Epigenetic Pipeline</p>
+            </div>
+        </a>
+        """, unsafe_allow_html=True)
 
     with act_col4:
-        if st.button("Reports & Certificates", use_container_width=True):
-            st.session_state.nav_selection = "reports"
-            st.rerun()
+        st.markdown("""
+        <a href="?page=Reports" target="_self" class="svg-action-link">
+            <div style="background: #FAF5FF; padding: 10px; border-radius: 10px; color: #9333EA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Dossier Sheet</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Export Medical PDF</p>
+            </div>
+        </a>
+        """, unsafe_allow_html=True)
 
     if "active_live_sample" not in st.session_state:
         st.session_state.active_live_sample = None
@@ -540,27 +607,27 @@ elif selected_key == "dashboard":
 #   MÓDULOS SECUNDARIOS (PATIENTS, LIMS, ANALYSIS, REPORTS, SETTINGS)
 # ----------------------------------------------------------------------------
 elif selected_key == "patients":
-    st.markdown("<h2 class='welcome-header'>Directorio de Pacientes</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>Patient Directory</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Manage clinical subjects and diagnostic registry records.</p>", unsafe_allow_html=True)
     st.info("Patient directory module loaded successfully.")
 
 elif selected_key == "lims":
-    st.markdown("<h2 class='welcome-header'>Control de Muestras (LIMS)</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>Sample Traceability (LIMS)</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Track biological samples, storage units, and custody workflows.</p>", unsafe_allow_html=True)
     st.info("LIMS sample matrix module loaded successfully.")
 
 elif selected_key == "analysis":
-    st.markdown("<h2 class='welcome-header'>Motor Epigenético</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>Epigenetic Analysis Engine</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Execute DNA methylation sequencing analysis and diagnostic inference.</p>", unsafe_allow_html=True)
     st.info("Epigenetic analysis pipeline ready.")
 
 elif selected_key == "reports":
-    st.markdown("<h2 class='welcome-header'>Informes y Certificados</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>Reports & Certificates</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Generate and export clinical dossiers and PDF diagnostic sheets.</p>", unsafe_allow_html=True)
     st.info("Reporting module loaded successfully.")
 
 elif selected_key == "settings":
-    st.markdown("<h2 class='welcome-header'>Configuración del Sistema</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>System Settings</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Administrative controls and API routing configurations.</p>", unsafe_allow_html=True)
     st.info("System settings panel active.")
 
