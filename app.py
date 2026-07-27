@@ -589,7 +589,7 @@ elif nav_selection == "Dashboard Matrix":
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
 
-    # Estilos CSS para que las tarjetas se comporten como botones interactivos limpios
+    # Estilos CSS para las tarjetas clickeables
     st.markdown("""
     <style>
         .svg-action-link {
@@ -616,19 +616,11 @@ elif nav_selection == "Dashboard Matrix":
     </style>
     """, unsafe_allow_html=True)
 
-    # Manejador de navegación mediante parámetros de URL seguros
-    query_params = st.query_params
-    if "goto" in query_params:
-        target = query_params["goto"]
-        if target in ["Patients", "LIMS Samples", "METHYLOX Engine", "Reports"]:
-            st.session_state.nav_selection = target
-            st.rerun()
-
     act_col1, act_col2, act_col3, act_col4 = st.columns(4)
 
     with act_col1:
         st.markdown("""
-        <a href="?goto=Patients" target="_self" class="svg-action-link">
+        <a href="?nav=Patients" target="_self" class="svg-action-link">
             <div style="background: #EFF6FF; padding: 10px; border-radius: 10px; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
             </div>
@@ -641,7 +633,7 @@ elif nav_selection == "Dashboard Matrix":
 
     with act_col2:
         st.markdown("""
-        <a href="?goto=LIMS Samples" target="_self" class="svg-action-link">
+        <a href="?nav=LIMS Samples" target="_self" class="svg-action-link">
             <div style="background: #FFF7ED; padding: 10px; border-radius: 10px; color: #EA580C; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
             </div>
@@ -654,7 +646,7 @@ elif nav_selection == "Dashboard Matrix":
 
     with act_col3:
         st.markdown("""
-        <a href="?goto=METHYLOX Engine" target="_self" class="svg-action-link">
+        <a href="?nav=METHYLOX Engine" target="_self" class="svg-action-link">
             <div style="background: #F0FDF4; padding: 10px; border-radius: 10px; color: #16A34A; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             </div>
@@ -667,7 +659,7 @@ elif nav_selection == "Dashboard Matrix":
 
     with act_col4:
         st.markdown("""
-        <a href="?goto=Reports" target="_self" class="svg-action-link">
+        <a href="?nav=Reports" target="_self" class="svg-action-link">
             <div style="background: #FAF5FF; padding: 10px; border-radius: 10px; color: #9333EA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
