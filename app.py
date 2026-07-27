@@ -585,73 +585,115 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-# 4. BOTONERA DE ACCIONES RÁPIDAS (TARJETAS CON SVG REALES Y REDIRECCIÓN)
+# 4. BOTONERA DE ACCIONES RÁPIDAS (TARJETAS 100% LIMPIAS CON SVG PURO Y CERO RECUADROS EXTRAS)
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
+
+    # Inyectamos estilos CSS para eliminar bordes de botones nativos y estilizar las tarjetas SVG
+    st.markdown("""
+    <style>
+        /* Ocultamos los botones nativos tradicionales y los convertimos en contenedores invisibles sobre la tarjeta */
+        div[data-testid="column"] div.stButton > button {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 75px !important;
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            cursor: pointer;
+            opacity: 0;
+        }
+        /* Contenedor visual de la tarjeta con SVG */
+        .svg-action-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+        div[data-testid="column"]:hover .svg-action-card {
+            border-color: #3B82F6;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+            background-color: #F8FAFC;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
     act_col1, act_col2, act_col3, act_col4 = st.columns(4)
 
     with act_col1:
         st.markdown("""
-        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div style="background: #EFF6FF; padding: 8px; border-radius: 8px; color: #2563EB; display: flex; align-items: center; justify-content: center;">
+        <div class="svg-action-card">
+            <div style="background: #EFF6FF; padding: 10px; border-radius: 10px; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
             </div>
-            <div>
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0;">Enroll Subject</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0;">New Patient Profile</p>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Enroll Subject</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">New Patient Profile</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Abrir Pacientes", key="btn_enroll_svg", use_container_width=True):
+        if st.button("Enroll", key="btn_card_enroll"):
             st.session_state.nav_selection = "Patients"
             st.rerun()
 
     with act_col2:
         st.markdown("""
-        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div style="background: #FFF7ED; padding: 8px; border-radius: 8px; color: #EA580C; display: flex; align-items: center; justify-content: center;">
+        <div class="svg-action-card">
+            <div style="background: #FFF7ED; padding: 10px; border-radius: 10px; color: #EA580C; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
             </div>
-            <div>
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0;">Asset Intake</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0;">Log LIMS Custody</p>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Asset Intake</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Log LIMS Custody</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Abrir LIMS", key="btn_intake_svg", use_container_width=True):
+        if st.button("Intake", key="btn_card_intake"):
             st.session_state.nav_selection = "LIMS Samples"
             st.rerun()
 
     with act_col3:
         st.markdown("""
-        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div style="background: #F0FDF4; padding: 8px; border-radius: 8px; color: #16A34A; display: flex; align-items: center; justify-content: center;">
+        <div class="svg-action-card">
+            <div style="background: #F0FDF4; padding: 10px; border-radius: 10px; color: #16A34A; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             </div>
-            <div>
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0;">Launch Kernel</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0;">Run CRISPR Pipeline</p>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Launch Kernel</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Run CRISPR Pipeline</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Abrir Engine", key="btn_kernel_svg", use_container_width=True):
+        if st.button("Kernel", key="btn_card_kernel"):
             st.session_state.nav_selection = "METHYLOX Engine"
             st.rerun()
 
     with act_col4:
         st.markdown("""
-        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div style="background: #FAF5FF; padding: 8px; border-radius: 8px; color: #9333EA; display: flex; align-items: center; justify-content: center;">
+        <div class="svg-action-card">
+            <div style="background: #FAF5FF; padding: 10px; border-radius: 10px; color: #9333EA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
-            <div>
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0;">Dossier Sheet</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0;">Export Medical PDF</p>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Dossier Sheet</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Export Medical PDF</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Abrir Reports", key="btn_dossier_svg", use_container_width=True):
+        if st.button("Dossier", key="btn_card_dossier"):
             st.session_state.nav_selection = "Reports"
             st.rerun()
 
