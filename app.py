@@ -508,10 +508,11 @@ elif nav_selection == "Dashboard Matrix":
         """, unsafe_allow_html=True)
 
     with c_right:
+
         # --- TABLA INTERACTIVA EN VIVO (JUSTO ARRIBA DE LA DONA) ---
         st.markdown("<div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
         st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'>⚡ Live Interactive Data Stream</p>", unsafe_allow_html=True)
-        
+       
         try:
             res_live_df = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             live_list = res_live_df.json() if res_live_df.status_code == 200 else []
@@ -519,7 +520,6 @@ elif nav_selection == "Dashboard Matrix":
             live_list = []
 
         if live_list:
-            import pandas as pd
             df_live = pd.DataFrame(live_list)
             selected_live_event = st.dataframe(
                 df_live[['sample_id', 'workflow_state']],
@@ -535,8 +535,8 @@ elif nav_selection == "Dashboard Matrix":
         else:
             st.caption("Awaiting live registry telemetry stream...")
         st.markdown("</div>", unsafe_allow_html=True)
-        # -----------------------------------------------------------
 
+        # --- SECCIÓN GRÁFICO DE DONA (DIAGNOSTIC SUMMARY) ---
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
@@ -564,6 +564,8 @@ elif nav_selection == "Dashboard Matrix":
         fig_donut.update_layout(
             height=180, margin=dict(l=0, r=0, t=10, b=10),
             legend=dict(orientation="h", y=-0.2, x=0),
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
             annotations=[dict(text=f"<b style='font-size:20px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=11, showarrow=False)]
         )
 
@@ -571,57 +573,126 @@ elif nav_selection == "Dashboard Matrix":
         <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
             <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'> Onco-Genetic Diagnostic Summary</p>
         """, unsafe_allow_html=True)
-        st.plotly_chart(fig_donut, use_container_width=True)
+        st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # ============================================================================
-    # QUICK ACTION CLINICAL WORKFLOWS
-    # ============================================================================
-    
+    # 4. BOTONERA DE ACCIONES RÁPIDAS EN SVG FLUORESCENTE PURO CORPORATIVO (CON TRANSPARENCIA TOTAL COHERENTE)
     st.write("##")
+    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'> Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
+   
+    # Estilos CSS específicos para inyectar y superponer los botones nativos de forma invisible
+    st.markdown("""
+    <style>
+        .action-card-clickable-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .action-card-clickable-wrapper .action-card-svg {
+            margin-top: 0px !important;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .action-card-clickable-wrapper:hover .action-card-svg {
+            border-color: #CBD5E1;
+            transform: translateY(-2px);
+        }
+        /* Hack absoluto para encimar el botón nativo de Streamlit de forma 100% invisible ocupando toda la tarjeta */
+        .stButton > button[key^="btn_card_"] {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            color: transparent !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            z-index: 10 !important;
+            cursor: pointer !important;
+        }
+        .stButton > button[key^="btn_card_"]:hover {
+            background: transparent !important;
+            border: none !important;
+            color: transparent !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Distribución en 4 columnas nativas independientes para aislar el flujo de Streamlit sin cajas secundarias
+    act_col1, act_col2, act_col3, act_col4 = st.columns(4)
     
-    st.markdown(
-        "<p style='font-size:14px;font-weight:700;color:#0F172A;margin-bottom:15px;'>Quick Action Clinical Workflows</p>",
-        unsafe_allow_html=True
-    )
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>""",
-            "Enroll Subject",
-            "New Patient Profile",
-            "#E0F2FE",
-            "Patients"
-        )
-    
-    with col2:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2"/><path d="M14 2h-4"/></svg>""",
-            "Asset Intake",
-            "Log LIMS Custody",
-            "#FFEDD5",
-            "LIMS Samples"
-        )
-    
-    with col3:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>""",
-            "Launch Kernel",
-            "Run CRISPR Pipeline",
-            "#DCFCE7",
-            "METHYLOX Engine"
-        )
-    
-    with col4:
-        svg_button(
-            """<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A855F7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>""",
-            "Dossier Sheet",
-            "Export Medical PDF",
-            "#F3E8FF",
-            "Reports"
-        )
+    with act_col1:
+        st.markdown("""
+        <div class="action-card-clickable-wrapper">
+            <div class='action-card-svg'>
+                <div class='icon-circle-svg bg-neon-blue'>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+                </div>
+                <div class='action-text-container'>
+                    <p class='action-title-svg'>Enroll Subject</p>
+                    <p class='action-desc-svg'>New Patient Profile</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Enroll", key="btn_card_enroll", use_container_width=True):
+            st.session_state.nav_selection = "Patients"
+            st.rerun()
+
+    with act_col2:
+        st.markdown("""
+        <div class="action-card-clickable-wrapper">
+            <div class='action-card-svg'>
+                <div class='icon-circle-svg bg-neon-orange'>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+                </div>
+                <div class='action-text-container'>
+                    <p class='action-title-svg'>Asset Intake</p>
+                    <p class='action-desc-svg'>Log LIMS Custody</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Intake", key="btn_card_intake", use_container_width=True):
+            st.session_state.nav_selection = "LIMS Samples"
+            st.rerun()
+
+    with act_col3:
+        st.markdown("""
+        <div class="action-card-clickable-wrapper">
+            <div class='action-card-svg'>
+                <div class='icon-circle-svg bg-neon-green'>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                </div>
+                <div class='action-text-container'>
+                    <p class='action-title-svg'>Launch Kernel</p>
+                    <p class='action-desc-svg'>Run CRISPR Pipeline</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Kernel", key="btn_card_kernel", use_container_width=True):
+            st.session_state.nav_selection = "METHYLOX Engine"
+            st.rerun()
+
+    with act_col4:
+        st.markdown("""
+        <div class="action-card-clickable-wrapper">
+            <div class='action-card-svg'>
+                <div class='icon-circle-svg bg-neon-purple'>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class='action-text-container'>
+                    <p class='action-title-svg'>Dossier Sheet</p>
+                    <p class='action-desc-svg'>Export Medical PDF</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Dossier", key="btn_card_dossier", use_container_width=True):
+            st.session_state.nav_selection = "Reports"
+            st.rerun()
 # ----------------------------------------------------------------------------
 # 📊 TAB 2: PATIENTS (RECTIFIED PARALLEL COHORT STRUCTURE)
 # ----------------------------------------------------------------------------
