@@ -417,7 +417,7 @@ if nav_selection == "🔒 Access Restricted":
 elif nav_selection == "Dashboard Matrix":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
-   
+    
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
@@ -474,14 +474,14 @@ elif nav_selection == "Dashboard Matrix":
 
     # FILA CENTRAL EN COLUMNAS PARALELAS CON CONTENEDORES SEGUROS
     c_left, c_right = st.columns([1.4, 1.0])
-   
+    
     with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
-           
+            
         rows_html = ""
         if not samples_list:
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
@@ -518,11 +518,10 @@ elif nav_selection == "Dashboard Matrix":
         """, unsafe_allow_html=True)
 
     with c_right:
-
-        # --- TABLA INTERACTIVA EN VIVO (JUSTO ARRIBA DE LA DONA) ---
+        # --- TABLA INTERACTIVA EN VIVO ---
         st.markdown("<div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
         st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'>⚡ Live Interactive Data Stream</p>", unsafe_allow_html=True)
-       
+        
         try:
             res_live_df = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             live_list = res_live_df.json() if res_live_df.status_code == 200 else []
@@ -546,18 +545,18 @@ elif nav_selection == "Dashboard Matrix":
             st.caption("Awaiting live registry telemetry stream...")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # --- SECCIÓN GRÁFICO DE DONA (DIAGNOSTIC SUMMARY) ---
+        # --- SECCIÓN GRÁFICO DE DONA ---
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
-           
+            
         total_cases = len(rep_data)
         positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
         negatives = total_cases - positives
         in_pipeline = in_progress
-       
+        
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -586,51 +585,11 @@ elif nav_selection == "Dashboard Matrix":
         st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-# 4. BOTONERA DE ACCIONES RÁPIDAS (TARJETAS 100% CLICKABLES CON SVG PURO - SIN BOTONES EXTRA)
+    # 4. BOTONERA DE ACCIONES RÁPIDAS
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
 
-    # Capturar clics mediante query parameters o redirección de sesión si el usuario hace clic en la tarjeta
-    # Nota: En Streamlit, para hacer tarjetas completamente clickeables sin botones extra, 
-    # utilizamos componentes HTML con estilos de cursor pointer y manejo de estado.
-    
-    # Estilos CSS avanzados para las tarjetas clickeables con SVG y efecto hover
-    st.markdown("""
-    <style>
-        .quick-action-grid {
-            display: flex;
-            gap: 16px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        .action-card-item {
-            flex: 1;
-            background-color: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            transition: all 0.2s ease-in-out;
-            text-decoration: none !important;
-            cursor: pointer;
-        }
-        .action-card-item:hover {
-            border-color: #3B82F6;
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
-            background-color: #F8FAFC;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # Como Streamlit requiere de un widget activo (como st.button) para cambiar el estado de la app de forma segura,
-    # la alternativa más limpia sin duplicar cuadros es usar un formulario compacto o botones nativos estilizados 
-    # donde el texto del botón contenga el HTML formateado a través de contenedores de columnas directas.
-
-act_col1, act_col2, act_col3, act_col4 = st.columns(4)
+    act_col1, act_col2, act_col3, act_col4 = st.columns(4)
 
     with act_col1:
         if st.button("👥 Enroll Subject\nNew Patient Profile", key="btn_card_enroll", use_container_width=True):
