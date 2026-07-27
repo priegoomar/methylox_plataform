@@ -6,7 +6,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 import requests
-import base64
 
 # ============================================================================
 # 🧬 METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
@@ -223,7 +222,7 @@ def svg_button(svg_code, title, subtitle, bg_color, target_page):
         key=f"quick_{target_page}",
         use_container_width=True
     ):
-        st.session_state["nav_selection"] = target_page
+        st.session_state.nav_selection = target_page
         st.rerun()
 
 # ============================================================================
@@ -402,12 +401,12 @@ if nav_selection == "🔒 Access Restricted":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-#  TAB 1: DASHBOARD MATRIX
+# 📊 TAB 1: DASHBOARD MATRIX
 # ----------------------------------------------------------------------------
 elif nav_selection == "Dashboard Matrix":
-    st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} 👋</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
-   
+    
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
@@ -464,14 +463,14 @@ elif nav_selection == "Dashboard Matrix":
 
     # FILA CENTRAL EN COLUMNAS PARALELAS CON CONTENEDORES SEGUROS
     c_left, c_right = st.columns([1.4, 1.0])
-   
+    
     with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
-           
+            
         rows_html = ""
         if not samples_list:
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
@@ -490,7 +489,7 @@ elif nav_selection == "Dashboard Matrix":
 
         st.markdown(f"""
         <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'> Recent Laboratory Activity Trail</p>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'>⚡ Recent Laboratory Activity Trail</p>
             <table class='clinical-table-new'>
                 <thead>
                     <tr style='background-color: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 2px solid #E2E8F0;'>
@@ -508,46 +507,17 @@ elif nav_selection == "Dashboard Matrix":
         """, unsafe_allow_html=True)
 
     with c_right:
-        # --- TABLA INTERACTIVA EN VIVO (JUSTO ARRIBA DE LA DONA) ---
-        st.markdown("<div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'>⚡ Live Interactive Data Stream</p>", unsafe_allow_html=True)
-        
-        try:
-            res_live_df = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
-            live_list = res_live_df.json() if res_live_df.status_code == 200 else []
-        except Exception:
-            live_list = []
-
-        if live_list:
-            import pandas as pd
-            df_live = pd.DataFrame(live_list)
-            selected_live_event = st.dataframe(
-                df_live[['sample_id', 'workflow_state']],
-                use_container_width=True,
-                hide_index=True,
-                height=110,
-                on_select="rerun",
-                selection_mode="single-row"
-            )
-            if selected_live_event and selected_live_event.selection.rows:
-                sel_idx = selected_live_event.selection.rows[0]
-                st.session_state.active_live_sample = df_live.iloc[sel_idx].get('sample_id')
-        else:
-            st.caption("Awaiting live registry telemetry stream...")
-        st.markdown("</div>", unsafe_allow_html=True)
-        # -----------------------------------------------------------
-
         try:
             res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
-           
+            
         total_cases = len(rep_data)
         positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
         negatives = total_cases - positives
         in_pipeline = in_progress
-       
+        
         if total_cases == 0 and in_pipeline == 0:
             labels_pie = ['Awaiting Data Ingestion']
             values_pie = [1]
@@ -562,17 +532,15 @@ elif nav_selection == "Dashboard Matrix":
             marker=dict(colors=colors_pie), textinfo='none', showlegend=True
         )])
         fig_donut.update_layout(
-            height=180, margin=dict(l=0, r=0, t=10, b=10),
+            height=200, margin=dict(l=0, r=0, t=10, b=10),
             legend=dict(orientation="h", y=-0.2, x=0),
-            annotations=[dict(text=f"<b style='font-size:20px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=11, showarrow=False)]
+            annotations=[dict(text=f"<b style='font-size:24px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:11px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=12, showarrow=False)]
         )
 
-        st.markdown("""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'> Onco-Genetic Diagnostic Summary</p>
-        """, unsafe_allow_html=True)
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
+
+    st.write("")
 
     # ============================================================================
     # QUICK ACTION INTERACTIVE CARDS
