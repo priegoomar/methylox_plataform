@@ -406,6 +406,9 @@ headers = {
 # 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
 # ============================================================================
 
+# Asignar la variable globalmente desde el session_state para evitar el NameError
+nav_selection = st.session_state.get("nav_selection", "dashboard")
+
 if selected_key == "restricted":
     st.markdown('<div class="executive-card-white" style="text-align:center; padding:60px 40px; margin-top:40px;">', unsafe_allow_html=True)
     st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:10px;'>Preventative Infrastructure Lockdown Active</h2>", unsafe_allow_html=True)
@@ -415,7 +418,7 @@ if selected_key == "restricted":
 # ----------------------------------------------------------------------------
 #  TAB 1: GENERAL DASHBOARD MATRIX
 # ----------------------------------------------------------------------------
-elif selected_key == "dashboard":
+elif nav_selection == "dashboard":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
    
