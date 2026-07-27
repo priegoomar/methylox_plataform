@@ -343,7 +343,6 @@ with st.sidebar:
     # RBAC NAVIGATION (PROFESSIONAL ENGLISH LABELS & SVG-READY KEYS)
     # =========================================================================
     if st.session_state.jwt_access_token:
-        # Dictionary defining internal keys and their clean professional labels/icons
         menu_options = {
             "dashboard": {"label": "General Dashboard", "icon": "📊"},
             "patients": {"label": "Patient Directory", "icon": "👥"},
@@ -352,14 +351,12 @@ with st.sidebar:
             "reports": {"label": "Reports & Certificates", "icon": "📄"}
         }
 
-        # Restrict system settings strictly to super-admin role
         if st.session_state.user_role == "admin":
             menu_options["settings"] = {"label": "System Settings", "icon": "🛠️"}
 
         if "nav_selection" not in st.session_state:
             st.session_state.nav_selection = "dashboard"
 
-        # Ensure current selection is valid
         current_selection = st.session_state.nav_selection
         if current_selection not in menu_options:
             current_selection = "dashboard"
@@ -376,7 +373,6 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # URL query parameter sync for smooth routing
     if "page" in st.query_params:
         query_page = st.query_params["page"]
         if query_page == "Patients" and "patients" in menu_options:
@@ -388,7 +384,6 @@ with st.sidebar:
         elif query_page == "Reports" and "reports" in menu_options:
             st.session_state.nav_selection = "reports"
 
-    # SYSTEM STATUS TELEMETRY
     st.markdown(
         """
         <div style="padding:5px 10px;">
@@ -403,7 +398,6 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-# AUTH HEADERS FOR API REQUESTS
 headers = {
     "Authorization": f"Bearer {st.session_state.jwt_access_token}"
 } if st.session_state.jwt_access_token else {}
