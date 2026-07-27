@@ -340,19 +340,19 @@ with st.sidebar:
     st.markdown("---")
 
     # =========================================================================
-    # RBAC NAVIGATION (PROFESSIONAL ENGLISH LABELS & SVG-READY KEYS)
+    # RBAC NAVIGATION (UPDATED LABELS, NO ICONS)
     # =========================================================================
     if st.session_state.jwt_access_token:
         menu_options = {
-            "dashboard": {"label": "General Dashboard", "icon": "📊"},
-            "patients": {"label": "Patient Directory", "icon": "👥"},
-            "lims": {"label": "Sample Traceability (LIMS)", "icon": "🧪"},
-            "analysis": {"label": "Epigenetic Analysis", "icon": "⚙️"},
-            "reports": {"label": "Reports & Certificates", "icon": "📄"}
+            "dashboard": "Dashboard",
+            "patients": "Patients",
+            "lims": "LIMS / Samples",
+            "analysis": "Analysis",
+            "reports": "Reports"
         }
 
         if st.session_state.user_role == "admin":
-            menu_options["settings"] = {"label": "System Settings", "icon": "🛠️"}
+            menu_options["settings"] = "Settings"
 
         if "nav_selection" not in st.session_state:
             st.session_state.nav_selection = "dashboard"
@@ -364,7 +364,7 @@ with st.sidebar:
         selected_key = st.sidebar.radio(
             "Operational Scope Selector",
             options=list(menu_options.keys()),
-            format_func=lambda x: f"{menu_options[x]['icon']} {menu_options[x]['label']}",
+            format_func=lambda x: menu_options[x],
             key="nav_selection",
             label_visibility="collapsed"
         )
