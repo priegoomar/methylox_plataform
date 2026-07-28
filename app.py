@@ -747,10 +747,10 @@ elif nav_selection == "dashboard":
 
 # ============================================================================
 # ============================================================================
-# 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES)
+# 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
 # ============================================================================
 elif nav_selection == "patients":
-    # Encabezado principal con icono SVG vectorial integrado en lugar de emoji
+    # Encabezado principal con icono SVG vectorial integrado
     st.markdown("""
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -762,7 +762,7 @@ elif nav_selection == "patients":
             <h2 class='welcome-header' style="margin: 0; padding: 0;">Patient Cohort & Clinical Directory</h2>
         </div>
     """, unsafe_allow_html=True)
-
+    
     # Inicializar estado para mostrar u ocultar el formulario de registro y directorio
     if "show_new_patient_form" not in st.session_state:
         st.session_state.show_new_patient_form = False
@@ -781,7 +781,7 @@ elif nav_selection == "patients":
         col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
         
         with col_center:
-            # Estilos CSS avanzados para integrar el SVG perfectamente centrado a la orilla izquierda del input y eliminar bordes del botón
+            # Estilos CSS avanzados para integrar el SVG perfectamente centrado a la orilla izquierda del input
             st.markdown("""
             <style>
                 /* Estilo de la caja contenedora del input para alinear el padding izquierdo y centrar la lupa verticalmente */
@@ -880,7 +880,32 @@ elif nav_selection == "patients":
     # 📋 SECCIÓN CONDICIONAL: FORMULARIO Y DIRECTORIO (Al dar clic en New Patient)
     # -------------------------------------------------------------------------
     else:
-        # Botón superior para regresar a la pantalla de inicio
+        # Estilos específicos para transformar el botón de regreso en texto plano sin marcos ni fondos
+        st.markdown("""
+        <style>
+            div.row-widget.stButton > button[kind="secondary"][key="btn_back_search"],
+            div[data-testid="stButton"] button {
+                /* Si se requiere aislar el botón Back mediante selector general de texto plano */
+            }
+            /* Regla específica para limpiar el botón de regreso */
+            div.stButton button {
+                background: transparent !important;
+                border: none !important;
+                color: #2563EB !important;
+                font-weight: 600 !important;
+                font-size: 15px !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+            }
+            div.stButton button:hover {
+                color: #1D4ED8 !important;
+                background: transparent !important;
+                text-decoration: underline !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Botón superior para regresar a la pantalla de inicio convertido en texto plano
         if st.button("← Back to Search", key="btn_back_search"):
             st.session_state.show_new_patient_form = False
             st.rerun()
@@ -890,7 +915,7 @@ elif nav_selection == "patients":
         
         with p1:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">Register New Patient</div>', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical">➕ Register New Patient Profile</div>', unsafe_allow_html=True)
             
             if st.session_state.user_role == "cls":
                 st.warning("🔒 Restricted Access: Laboratory role does not have clinical privileges to enroll patients.")
@@ -930,14 +955,14 @@ elif nav_selection == "patients":
                         try:
                             res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
                             if res_p.status_code == 200:
-                                st.success(f"Patient record {new_p_id} successfully registered.")
+                                st.success(f"🧬 Patient record {new_p_id} successfully registered.")
                                 st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
                                 time.sleep(0.5)
                                 st.rerun()
                             else:
-                                st.error("Server Error: Could not complete registration.")
+                                st.error("🚨 Server Error: Could not complete registration.")
                         except Exception:
-                            st.error("Connectivity Error: Backend service unavailable.")
+                            st.error("🚨 Connectivity Error: Backend service unavailable.")
             st.markdown('</div>', unsafe_allow_html=True)
 
         with p2:
