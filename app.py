@@ -891,7 +891,7 @@ elif nav_selection == "patients":
         
         with p1:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical"> Register New Patient Profile</div>', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical"> Register New Patient</div>', unsafe_allow_html=True)
             
             if st.session_state.user_role == "cls":
                 st.warning("🔒 Restricted Access: Laboratory role does not have clinical privileges to enroll patients.")
@@ -900,7 +900,7 @@ elif nav_selection == "patients":
                 new_p_id = st.text_input("Unique patient ID", value=st.session_state.generated_patient_id)
                 
                 # Texto interactivo "Generate Automatic ID"
-                if st.button("+ Generate Automatic ID", key="btn_gen_auto_id"):
+                if st.button("Generate Automatic ID", key="btn_gen_auto_id"):
                     st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
                     st.rerun()
                 
@@ -942,12 +942,9 @@ elif nav_selection == "patients":
             st.markdown('</div>', unsafe_allow_html=True)
 
         with p2:
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            # Título y subtítulo en inglés profesional clínico
-            st.markdown('<div class="card-title-clinical">Patient Registry & Cohort Directory</div>', unsafe_allow_html=True)
-            st.markdown('<p style="color: #64748B; font-size: 13.5px; margin-bottom: 16px;">Enroll new patient profiles, manage existing medical records, and link individuals to biological sample tracking for downstream analysis.</p>', unsafe_allow_html=True)
-
-            try:
+                    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+                    st.markdown('<div class="card-title-clinical">Patient Records</div>', unsafe_allow_html=True)
+                    try:
                 res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
                 if res_cohort.status_code == 200 and res_cohort.json():
                     df_patients = pd.DataFrame(res_cohort.json())
