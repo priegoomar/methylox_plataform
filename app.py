@@ -753,67 +753,111 @@ elif nav_selection == "patients":
     st.markdown("<h2 class='welcome-header'>📊 Directorio de Cohorte y Pacientes</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Inscriba nuevos pacientes y supervise el historial de marcadores epigenéticos en el tiempo</p>", unsafe_allow_html=True)
     
+    # Inicializar estado para mostrar u ocultar el formulario de registro al hacer clic en "+ New Patient"
+    if "show_new_patient_form" not in st.session_state:
+        st.session_state.show_new_patient_form = False
+
     # Inicializar el ID automático en el estado de la sesión si no existe
     import random
     if "generated_patient_id" not in st.session_state:
         st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
+
+    # -------------------------------------------------------------------------
+    # SECCIÓN SUPERIOR: BARRA DE BÚSQUEDA Y BOTÓN "+ New Patient"
+    # -------------------------------------------------------------------------
+    col_search, col_btn_new = st.columns([3, 1], gap="medium")
+    
+    with col_search:
+        # Barra de búsqueda con icono SVG profesional de lupa
+        search_query = st.text_input(
+            "Search patient", 
+            placeholder="Search patient by ID, Record Number, or Institution...",
+            label_visibility="collapsed"
+        )
+        # Nota visual con el icono SVG integrado de lupa
+        st.markdown(
+            """
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: -12px; margin-bottom: 20px; color: #64748B; font-size: 13px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Search patient records in real-time</span>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
         
-    p1, p2 = st.columns(2)
+    with col_btn_new:
+        # Botón clickeable para alternar la vista del formulario de nuevo paciente
+        if st.button("➕ New Patient", use_container_width=True):
+            st.session_state.show_new_patient_form = not st.session_state.show_new_patient_form
+            st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # CONTENIDO CONDICIONAL: FORMULARIO Y DIRECTORIO
+    # -------------------------------------------------------------------------
+    p1, p2 = st.columns([1, 1.3], gap="large")
+    
     with p1:
-        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">➕ Registrar Nuevo Expediente de Paciente</div>', unsafe_allow_html=True)
-        
-        if st.session_state.user_role == "cls":
-            st.warning("🔒 Acceso Restringido: El rol de laboratorio no posee privilegios clínicos para dar de alta pacientes.")
+        # Solo se muestra el formulario si el usuario hizo clic en "+ New Patient"
+        if st.session_state.show_new_patient_form:
+            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical">➕ Register New Patient Profile</div>', unsafe_allow_html=True)
+            
+            if st.session_state.user_role == "cls":
+                st.warning("🔒 Restricted Access: Laboratory role does not have clinical privileges to enroll patients.")
+            else:
+                # Campo Unique patient ID
+                new_p_id = st.text_input("Unique patient ID", value=st.session_state.generated_patient_id)
+                
+                # Texto interactivo "Generate Automatic ID" ubicado abajito del recuadro
+                if st.button("🔄 Generate Automatic ID", key="btn_gen_auto_id"):
+                    st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
+                    st.rerun()
+                
+                # Modificado a "Record Number" con ejemplo en texto gris (placeholder)
+                new_p_name = st.text_input("Record Number", placeholder="e.g. REC-2026-0091")
+                
+                new_p_dob = st.date_input("Date of birth", min_value=datetime(1920, 1, 1))
+                
+                # Opciones de género estrictamente en inglés ("Male", "Female")
+                new_p_sexo = st.selectbox("Gender", ["Male", "Female"])
+                
+                # Campo de texto libre para ingresar el nombre de la institución
+                new_institution = st.text_input("Institution")
+                    
+                if st.button("Save and synchronize record", use_container_width=True):
+                    gender_backend = new_p_sexo
+                    
+                    if not new_p_id or not new_p_name or not new_institution:
+                        st.error("❌ Missing Data: Please complete all mandatory clinical fields.")
+                    else:
+                        payload_p = {
+                            "id_patient": new_p_id,
+                            "full_name": new_p_name,
+                            "date_of_birth": str(new_p_dob),
+                            "gender": gender_backend,
+                            "institution": new_institution
+                        }
+                        try:
+                            res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
+                            if res_p.status_code == 200:
+                                st.success(f"🧬 Patient record {new_p_id} successfully registered.")
+                                st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
+                                st.session_state.show_new_patient_form = False
+                                time.sleep(0.5)
+                                st.rerun()
+                            else:
+                                st.error("🚨 Server Error: Could not complete registration.")
+                        except Exception:
+                            st.error("🚨 Connectivity Error: Backend service unavailable.")
+            st.markdown('</div>', unsafe_allow_html=True)
         else:
-            # Campo Unique patient ID
-            new_p_id = st.text_input("Unique patient ID", value=st.session_state.generated_patient_id)
-            
-            # Texto interactivo "Generate Automatic ID" ubicado abajito del recuadro
-            if st.button("🔄 Generate Automatic ID", key="btn_gen_auto_id"):
-                st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
-                st.rerun()
-            
-            # Modificado a "Record Number" con ejemplo en texto gris (placeholder)
-            new_p_name = st.text_input("Record Number", placeholder="e.g. REC-2026-0091")
-            
-            new_p_dob = st.date_input("Date of birth", min_value=datetime(1920, 1, 1))
-            
-            # Opciones de género estrictamente en inglés ("Male", "Female")
-            new_p_sexo = st.selectbox("Gender", ["Male", "Female"])
-            
-            # Campo de texto libre para ingresar el nombre de la institución
-            new_institution = st.text_input("Institution")
-                
-            if st.button("Save and synchronize record", use_container_width=True):
-                gender_backend = new_p_sexo
-                
-                if not new_p_id or not new_p_name or not new_institution:
-                    st.error("❌ Faltan datos: Complete los campos obligatorios del expediente.")
-                else:
-                    payload_p = {
-                        "id_patient": new_p_id,
-                        "full_name": new_p_name,
-                        "date_of_birth": str(new_p_dob),
-                        "gender": gender_backend,
-                        "institution": new_institution
-                    }
-                    try:
-                        res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
-                        if res_p.status_code == 200:
-                            st.success(f"🧬 Expediente {new_p_id} registrado exitosamente.")
-                            st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
-                            time.sleep(0.5)
-                            st.rerun()
-                        else:
-                            st.error("🚨 Error del Servidor: No se pudo completar el registro.")
-                    except Exception:
-                        st.error("🚨 Error de Conectividad: Backend no disponible.")
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.info("ℹ️ Click on **'+ New Patient'** above to open the registration panel.")
 
     with p2:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">Patient directory</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">Patient Directory & Cohort Ledger</div>', unsafe_allow_html=True)
         try:
             res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
             if res_cohort.status_code == 200 and res_cohort.json():
@@ -823,7 +867,7 @@ elif nav_selection == "patients":
         except Exception:
             df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
             
-        # Renombrar las columnas de la tabla para que coincidan con el formulario y estén completamente en inglés
+        # Renombrar columnas de la tabla para que coincidan con el formulario en inglés
         if not df_patients.empty:
             column_mapping = {
                 'id_patient': 'Patient ID',
@@ -836,6 +880,11 @@ elif nav_selection == "patients":
                 'institution': 'Institution'
             }
             df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
+
+            # Filtrar la tabla en tiempo real si el usuario escribe en la barra de búsqueda
+            if search_query:
+                mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query, case=False, na=False)).any(axis=1)
+                df_patients = df_patients[mask]
 
         st.dataframe(df_patients, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
