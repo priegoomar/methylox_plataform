@@ -341,7 +341,7 @@ with st.sidebar:
 
 # =========================================================================
     # RBAC NAVIGATION (UPDATED LABELS, NO ICONS)
-    # =========================================================================
+# =========================================================================
     if st.session_state.jwt_access_token:
         menu_options = {
             "dashboard": "Dashboard",
@@ -404,6 +404,48 @@ with st.sidebar:
 headers = {
     "Authorization": f"Bearer {st.session_state.jwt_access_token}"
 } if st.session_state.jwt_access_token else {}
+
+# =============================================================================
+#   TAB: USERS (DYNAMIC RBAC AUTHORIZATION HUB)
+# =============================================================================
+elif nav_selection == "Users":
+    st.markdown("<h2 class='welcome-header'>Gestión de Usuarios</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Crea y asigna roles al nuevo personal del laboratorio de forma rápida</p>", unsafe_allow_html=True)
+   
+    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+    with st.form("universal_user_provisioning_form", clear_on_submit=True):
+        st.markdown("#### Registrar Nuevo Operador")
+        c1, c2 = st.columns(2)
+        with c1:
+            input_username = st.text_input("📧 Correo o Usuario", placeholder="operador@hospital.com")
+            input_full_name = st.text_input("👤 Nombre Completo", placeholder="Ej. Dr. Juan Pérez")
+        with c2:
+            input_password = st.text_input("🔑 Contraseña Temporal", type="password", placeholder="••••••••••••")
+            target_role_display = st.selectbox("🛡️ Rol de Acceso (admin, cls, md)", ["admin", "cls", "md"])
+             
+        target_hospital_id = st.number_input("🏥 ID del Hospital", min_value=1, value=int(st.session_state.id_hospital))
+        submit_btn = st.form_submit_button("Activar Usuario")
+       
+    if submit_btn:
+        if not input_username or not input_password or not input_full_name:
+            st.error("Todos los campos obligatorios deben estar llenos.")
+        else:
+            payload_u = {
+                "username": input_username,
+                "password": input_password,
+                "full_name": input_full_name,
+                "role": target_role_display,
+                "hospital_id": int(target_hospital_id)
+            }
+            try:
+                response = requests.post(f"{BACKEND_URL}/api/v1/auth/provision-user", json=payload_u, headers=headers)
+                if response.status_code == 200:
+                    st.success("¡Usuario creado y activado con éxito!")
+                else:
+                    st.error(f"Error al registrar: {response.json().get('detail', 'No autorizado')}")
+            except Exception:
+                st.error("Error de conexión: No se pudo guardar el perfil en la base de datos.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================================
 # 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
