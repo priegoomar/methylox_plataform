@@ -476,7 +476,7 @@ elif nav_selection == "users":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-#  TAB 1: GENERAL DASHBOARD MATRIX
+#   TAB 1: GENERAL DASHBOARD MATRIX
 # ----------------------------------------------------------------------------
 elif nav_selection == "dashboard":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
@@ -484,7 +484,7 @@ elif nav_selection == "dashboard":
    
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
-        res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
+        res_telemetry = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", headers=headers, timeout=15)
         if res_telemetry.status_code == 200:
             tel = res_telemetry.json()
             received_today = tel.get('received_today', 0)
@@ -496,7 +496,7 @@ elif nav_selection == "dashboard":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # RENDER TOP TELEMETRY CARDS WITH RECOVERED SVGs
+    # RENDER TOP TELEMETRY CARDS WITH FUNCTIONAL URL NAVIGATION
     st.markdown(f"""
     <div class='metric-container-hub'>
         <div class='metric-card-clinical-new'>
@@ -505,7 +505,7 @@ elif nav_selection == "dashboard":
             </div>
             <p class='metric-title-sub-new'>Samples Received</p>
             <p class='metric-num-big-new'>{received_today}</p>
-            <a class='metric-link-btn-new' href='#'>View all samples →</a>
+            <a class='metric-link-btn-new' href='?page=LIMS-Samples' target='_self'>View all samples →</a>
         </div>
         <div class='metric-card-clinical-new'>
             <div class='svg-top-container' style='color: #D97706;'>
@@ -513,7 +513,7 @@ elif nav_selection == "dashboard":
             </div>
             <p class='metric-title-sub-new'>In Progress</p>
             <p class='metric-num-big-new'>{in_progress}</p>
-            <a class='metric-link-btn-new' href='#'>View details →</a>
+            <a class='metric-link-btn-new' href='?page=METHYLOX-Engine' target='_self'>View details →</a>
         </div>
         <div class='metric-card-clinical-new'>
             <div class='svg-top-container' style='color: #16A34A;'>
@@ -521,7 +521,7 @@ elif nav_selection == "dashboard":
             </div>
             <p class='metric-title-sub-new'>Ready Reports</p>
             <p class='metric-num-big-new'>{ready_analyses}</p>
-            <a class='metric-link-btn-new' href='#'>View dossiers →</a>
+            <a class='metric-link-btn-new' href='?page=Reports' target='_self'>View dossiers →</a>
         </div>
         <div class='metric-card-clinical-new'>
             <div class='svg-top-container' style='color: #6366F1;'>
@@ -529,7 +529,7 @@ elif nav_selection == "dashboard":
             </div>
             <p class='metric-title-sub-new'>Quality Controls</p>
             <p class='metric-num-big-new'>{qc_pass_rate}%</p>
-            <a class='metric-link-btn-new' href='#'>View QC matrix →</a>
+            <a class='metric-link-btn-new' href='?page=LIMS-Samples' target='_self'>View QC matrix →</a>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -541,7 +541,7 @@ elif nav_selection == "dashboard":
    
     with c_left:
         try:
-            res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
+            res_s_dash = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
@@ -587,7 +587,7 @@ elif nav_selection == "dashboard":
         st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'>⚡ Live Interactive Data Stream</p>", unsafe_allow_html=True)
        
         try:
-            res_live_df = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
+            res_live_df = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
             live_list = res_live_df.json() if res_live_df.status_code == 200 else []
         except Exception:
             live_list = []
@@ -611,7 +611,7 @@ elif nav_selection == "dashboard":
 
         # DONUT CHART SECTION
         try:
-            res_rep = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
+            res_rep = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
