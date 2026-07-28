@@ -405,6 +405,19 @@ headers = {
     "Authorization": f"Bearer {st.session_state.jwt_access_token}"
 } if st.session_state.jwt_access_token else {}
 
+# ============================================================================
+# 🏛️ CENTRAL ARCHITECTURE MODULES
+# ============================================================================
+
+# Asignar la variable globalmente desde el session_state para evitar el NameError
+nav_selection = st.session_state.get("nav_selection", "dashboard")
+
+if selected_key == "restricted":
+    st.markdown('<div class="executive-card-white" style="text-align:center; padding:60px 40px; margin-top:40px;">', unsafe_allow_html=True)
+    st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:10px;'>Preventative Infrastructure Lockdown Active</h2>", unsafe_allow_html=True)
+    st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
 # =============================================================================
 #   TAB: USERS (DYNAMIC RBAC AUTHORIZATION HUB)
 # =============================================================================
@@ -445,19 +458,6 @@ elif nav_selection == "Users":
                     st.error(f"Error al registrar: {response.json().get('detail', 'No autorizado')}")
             except Exception:
                 st.error("Error de conexión: No se pudo guardar el perfil en la base de datos.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ============================================================================
-# 🏛️ CENTRAL ARCHITECTURE MODULES - TOTAL INTEGRITY (NO FALLBACKS)
-# ============================================================================
-
-# Asignar la variable globalmente desde el session_state para evitar el NameError
-nav_selection = st.session_state.get("nav_selection", "dashboard")
-
-if selected_key == "restricted":
-    st.markdown('<div class="executive-card-white" style="text-align:center; padding:60px 40px; margin-top:40px;">', unsafe_allow_html=True)
-    st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:10px;'>Preventative Infrastructure Lockdown Active</h2>", unsafe_allow_html=True)
-    st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
