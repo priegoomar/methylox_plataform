@@ -411,7 +411,7 @@ headers = {
 elif nav_selection == "Users":
     st.markdown("<h2 class='welcome-header'>Gestión de Usuarios</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Crea y asigna roles al nuevo personal del laboratorio de forma rápida</p>", unsafe_allow_html=True)
-   
+    
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     with st.form("universal_user_provisioning_form", clear_on_submit=True):
         st.markdown("#### Registrar Nuevo Operador")
@@ -422,10 +422,10 @@ elif nav_selection == "Users":
         with c2:
             input_password = st.text_input("🔑 Contraseña Temporal", type="password", placeholder="••••••••••••")
             target_role_display = st.selectbox("🛡️ Rol de Acceso (admin, cls, md)", ["admin", "cls", "md"])
-             
+            
         target_hospital_id = st.number_input("🏥 ID del Hospital", min_value=1, value=int(st.session_state.id_hospital))
         submit_btn = st.form_submit_button("Activar Usuario")
-       
+        
     if submit_btn:
         if not input_username or not input_password or not input_full_name:
             st.error("Todos los campos obligatorios deben estar llenos.")
