@@ -1015,18 +1015,18 @@ elif nav_selection == "Access Control":
    
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     with st.form("universal_user_provisioning_form", clear_on_submit=True):
-        st.markdown("#### Create New Abstract Operator Account")
-        c1, c2 = st.columns(2)
-        with c1:
-            input_username = st.text_input("Account Identifier (Email / Username)", placeholder="operator@hospital.com")
-            input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., Dr. John Doe, MD")
-        with c2:
-            input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
-            target_role_display = st.selectbox("System Assigned Operational Role Privilege", ["admin", "cls", "md"])
-             
-        target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
-        submit_btn = st.form_submit_button("Activate Identity & Delegate Tasks")
-       
+            st.markdown("#### Register New Authorized Staff Member")
+            c1, c2 = st.columns(2)
+            with c1:
+                input_username = st.text_input("Email or Username", placeholder="doctor@hospital.com")
+                input_full_name = st.text_input("Full Name", placeholder="e.g., Dr. John Doe, MD")
+            with c2:
+                input_password = st.text_input("Temporary Password", type="password", placeholder="••••••••••••")
+                target_role_display = st.selectbox("System Role and Permissions", ["admin", "cls", "md"], format_func=lambda x: {"admin": "Administrator", "cls": "Laboratory Technician (CLS)", "md": "Clinical Doctor (MD)"}[x])
+                 
+            target_hospital_name = st.text_input("Hospital or Clinic Name", placeholder="e.g., Memorial General Hospital")
+            submit_btn = st.form_submit_button("Activate User & Grant Access")
+           
     if submit_btn:
         if not input_username or not input_password or not input_full_name:
             st.error("All clinical identity fields are mandatory.")
