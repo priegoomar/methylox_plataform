@@ -781,7 +781,7 @@ elif nav_selection == "patients":
         col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
         
         with col_center:
-            # Estilos CSS avanzados para integrar el SVG perfectamente centrado a la orilla izquierda del input
+            # Estilos CSS avanzados para integrar el SVG perfectamente centrado a la izquierda del input (restaurando botones originales a negro/gris)
             st.markdown("""
             <style>
                 /* Estilo de la caja contenedora del input para alinear el padding izquierdo y centrar la lupa verticalmente */
@@ -797,11 +797,11 @@ elif nav_selection == "patients":
                     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
                 }
                 
-                /* Eliminar por completo cualquier recuadro, fondo o sombra del botón "+ New Patient" convirtiéndolo en texto plano azul */
+                /* Estilo de texto plano en negro/gris para el botón "+ New Patient" */
                 div.row-widget.stButton > button[kind="secondary"] {
                     background: transparent !important;
                     border: none !important;
-                    color: #2563EB !important;
+                    color: #334155 !important;
                     font-weight: 600 !important;
                     font-size: 16px !important;
                     padding: 0 !important;
@@ -812,30 +812,23 @@ elif nav_selection == "patients":
                     width: 100% !important;
                 }
                 div.row-widget.stButton > button[kind="secondary"]:hover {
-                    color: #1D4ED8 !important;
+                    color: #0F172A !important;
                     background: transparent !important;
                     text-decoration: underline !important;
                 }
             </style>
-            
-            <!-- SVG de lupa posicionado de manera absoluta, perfectamente centrado a la orilla izquierda del recuadro -->
-            <div style="position: relative; width: 100%;">
-                <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 5; pointer-events: none; display: flex; align-items: center;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                </div>
-            </div>
             """, unsafe_allow_html=True)
 
-            # Campo de texto principal con el placeholder exacto solicitado
+            # Contenedor de la barra de búsqueda con la lupa posicionada correctamente a la izquierda dentro del input
             search_query_main = st.text_input(
                 "Search patient", 
-                placeholder="Search patient (write ID)...",
+                placeholder="🔍   Search patient (write ID)...",
                 label_visibility="collapsed"
             )
             
             st.markdown("<br>", unsafe_allow_html=True)
             
-            # Opción "+ New Patient" como texto plano en azul sin ningún tipo de recuadro
+            # Opción "+ New Patient" como texto plano en negro/gris sin recuadro
             col_btn_sub1, col_btn_sub_target, col_btn_sub2 = st.columns([1, 2, 1])
             with col_btn_sub_target:
                 if st.button("+ New Patient", key="btn_toggle_new_patient"):
@@ -880,25 +873,20 @@ elif nav_selection == "patients":
     # 📋 SECCIÓN CONDICIONAL: FORMULARIO Y DIRECTORIO (Al dar clic en New Patient)
     # -------------------------------------------------------------------------
     else:
-        # Estilos específicos para transformar el botón de regreso en texto plano sin marcos ni fondos
+        # Estilos específicos para transformar el botón de regreso en texto plano negro/gris sin marcos ni fondos
         st.markdown("""
         <style>
-            div.row-widget.stButton > button[kind="secondary"][key="btn_back_search"],
-            div[data-testid="stButton"] button {
-                /* Si se requiere aislar el botón Back mediante selector general de texto plano */
-            }
-            /* Regla específica para limpiar el botón de regreso */
             div.stButton button {
                 background: transparent !important;
                 border: none !important;
-                color: #2563EB !important;
+                color: #334155 !important;
                 font-weight: 600 !important;
                 font-size: 15px !important;
                 padding: 0 !important;
                 box-shadow: none !important;
             }
             div.stButton button:hover {
-                color: #1D4ED8 !important;
+                color: #0F172A !important;
                 background: transparent !important;
                 text-decoration: underline !important;
             }
