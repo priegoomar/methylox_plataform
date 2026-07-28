@@ -342,15 +342,16 @@ with st.sidebar:
 # =========================================================================
     # RBAC NAVIGATION (UPDATED LABELS, NO ICONS)
 # =========================================================================
-    if st.session_state.jwt_access_token:
-        menu_options = {
-            "dashboard": "Dashboard",
-            "patients": "Patients",
-            "lims": "LIMS / Samples",
-            "analysis": "Analysis",
-            "reports": "Reports"
-        }
+    # Definir menu_options por defecto fuera del bloque condicional para evitar NameErrors posteriores
+    menu_options = {
+        "dashboard": "Dashboard",
+        "patients": "Patients",
+        "lims": "LIMS / Samples",
+        "analysis": "Analysis",
+        "reports": "Reports"
+    }
 
+    if st.session_state.jwt_access_token:
         if st.session_state.user_role == "admin":
             menu_options["Access Control"] = "Access Control"
             menu_options["settings"] = "Settings"
