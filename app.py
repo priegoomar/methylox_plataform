@@ -505,44 +505,29 @@ elif nav_selection == "patients":
         st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
 
     # -------------------------------------------------------------------------
-    # 🔍 PANTALLA INICIAL ESTILO GOOGLE (Solo si no está activo el formulario)
+    # 🔍 PANTALLA INICIAL ESTILO GOOGLE
     # -------------------------------------------------------------------------
     if not st.session_state.show_new_patient_form:
-        # Centramos todo el contenido vertical y horizontalmente para simular la página de inicio
         st.markdown("<br><br>", unsafe_allow_html=True)
         
         col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
         
         with col_center:
-            # Estilos CSS para simular la barra de búsqueda estilo Google y el texto plano sin recuadro
+            # Estilos CSS avanzados para eliminar cualquier recuadro del botón y dejarlo como texto plano interactivo
             st.markdown("""
             <style>
-                /* Estilo minimalista para el input de búsqueda tipo Google */
-                div[data-baseweb="input"] {
-                    border-radius: 30px !important;
-                    border: 1px solid #E2E8F0 !important;
-                    background-color: #FFFFFF !important;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-                    padding: 4px 12px !important;
-                }
-                div[data-baseweb="input"]:hover, div[data-baseweb="input"]:focus-within {
-                    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
-                    border-color: #3B82F6 !important;
-                }
-                /* Eliminar recuadro del botón "+ New Patient" convirtiéndolo en texto plano interactivo */
+                /* Ocultar bordes de contenedor de botones para que "+ New Patient" sea texto plano sin recuadro */
                 div.row-widget.stButton > button[kind="secondary"] {
                     background: transparent !important;
                     border: none !important;
                     color: #2563EB !important;
                     font-weight: 600 !important;
-                    font-size: 15px !important;
+                    font-size: 16px !important;
                     padding: 0 !important;
                     margin: 0 !important;
                     box-shadow: none !important;
-                    display: inline-flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    gap: 8px !important;
+                    display: inline-block !important;
+                    text-align: center !important;
                     width: 100% !important;
                 }
                 div.row-widget.stButton > button[kind="secondary"]:hover {
@@ -553,25 +538,36 @@ elif nav_selection == "patients":
             </style>
             """, unsafe_allow_html=True)
 
-            # Barra de búsqueda con icono SVG interno y texto integrado
+            # Etiqueta "Search patient" con su icono SVG profesional de lupa a la izquierda
+            st.markdown(
+                """
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-weight: 600; color: #1E293B; font-size: 15px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <span>Search patient</span>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
+            
+            # Recuadro de texto para escribir el ID o nombre
             search_query_main = st.text_input(
-                "Search patient", 
-                placeholder="🔍  Search patient or write ID...",
+                "Search patient input", 
+                placeholder="Write ID, Record Number, or Institution...",
                 label_visibility="collapsed"
             )
             
             st.markdown("<br>", unsafe_allow_html=True)
             
-            # Contenedor centrado para la palabra "+ New Patient" sin recuadro
+            # Opción "+ New Patient" como texto plano clickeable sin recuadro
             col_btn_sub1, col_btn_sub_target, col_btn_sub2 = st.columns([1, 2, 1])
             with col_btn_sub_target:
-                if st.button("➕ New Patient   👤+", key="btn_toggle_new_patient"):
+                if st.button("+ New Patient", key="btn_toggle_new_patient"):
                     st.session_state.show_new_patient_form = True
                     st.rerun()
 
         st.markdown("<br><br>", unsafe_allow_html=True)
 
-        # Mostrar el directorio de pacientes filtrable en la vista principal si se escribe algo
+        # Mostrar el directorio de pacientes filtrable en la vista principal si se escribe algo en el buscador
         try:
             res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
             if res_cohort.status_code == 200 and res_cohort.json():
@@ -607,7 +603,7 @@ elif nav_selection == "patients":
     # 📋 SECCIÓN CONDICIONAL: FORMULARIO Y DIRECTORIO (Al dar clic en New Patient)
     # -------------------------------------------------------------------------
     else:
-        # Botón superior para regresar a la pantalla de inicio estilo Google
+        # Botón superior para regresar a la pantalla de inicio
         if st.button("← Back to Search", key="btn_back_search"):
             st.session_state.show_new_patient_form = False
             st.rerun()
