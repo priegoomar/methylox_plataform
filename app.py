@@ -753,6 +753,11 @@ elif nav_selection == "patients":
     st.markdown("<h2 class='welcome-header'>📊 Directorio de Cohorte y Pacientes</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Inscriba nuevos pacientes y supervise el historial de marcadores epigenéticos en el tiempo</p>", unsafe_allow_html=True)
     
+    # Inicializar el ID automático en el estado de la sesión si no existe
+    import random
+    if "generated_patient_id" not in st.session_state:
+        st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
+        
     p1, p2 = st.columns(2)
     with p1:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
@@ -761,10 +766,24 @@ elif nav_selection == "patients":
         if st.session_state.user_role == "cls":
             st.warning("🔒 Acceso Restringido: El rol de laboratorio no posee privilegios clínicos para dar de alta pacientes.")
         else:
-            new_p_id = st.text_input("Unique patient ID")
-            new_p_name = st.text_input("Anonymized corporate patient code name")
+            # Fila superior para Unique Patient ID y el botón azul de generación automática
+            col_id_lbl, col_id_btn = st.columns([1.5, 1])
+            with col_id_lbl:
+                st.markdown("<span style='font-size: 13px; font-weight: 600; color: #1E3A8A; cursor: pointer;'>Generate Automatic ID</span>", unsafe_allow_html=True)
+            with col_id_btn:
+                if st.button("Generate", key="btn_gen_auto_id", use_container_width=True):
+                    st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
+                    st.rerun()
+            
+            new_p_id = st.text_input("Unique patient ID", value=st.session_state.generated_patient_id)
+            
+            # Modificado a "Record Number" con ejemplo en texto gris (placeholder)
+            new_p_name = st.text_input("Record Number", placeholder="e.g. REC-2026-0091")
+            
             new_p_dob = st.date_input("Date of birth", min_value=datetime(1920, 1, 1))
-            new_p_sexo = st.selectbox("Genero", ["Female", "Male"], format_func=lambda x: "Femenino" if x == "Female" else "Masculino")
+            
+            # Opciones de género estrictamente en inglés ("Male", "Female")
+            new_p_sexo = st.selectbox("Gender", ["Male", "Female"])
             
             # Campo de texto libre para ingresar el nombre de la institución
             new_institution = st.text_input("Institution")
@@ -786,6 +805,7 @@ elif nav_selection == "patients":
                         res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
                         if res_p.status_code == 200:
                             st.success(f"🧬 Expediente {new_p_id} registrado exitosamente.")
+                            st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
                             time.sleep(0.5)
                             st.rerun()
                         else:
@@ -802,10 +822,24 @@ elif nav_selection == "patients":
             if res_cohort.status_code == 200 and res_cohort.json():
                 df_patients = pd.DataFrame(res_cohort.json())
             else:
-                df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Institution"])
+                df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
         except Exception:
-            df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Institution"])
+            df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
             
+        # Renombrar las columnas de la tabla para que coincidan con el formulario y estén completamente en inglés
+        if not df_patients.empty:
+            column_mapping = {
+                'id_patient': 'Patient ID',
+                'patient_id': 'Patient ID',
+                'full_name': 'Record Number',
+                'anonymous_code': 'Record Number',
+                'date_of_birth': 'Date of Birth',
+                'dob': 'Date of Birth',
+                'gender': 'Gender',
+                'institution': 'Institution'
+            }
+            df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
+
         st.dataframe(df_patients, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
