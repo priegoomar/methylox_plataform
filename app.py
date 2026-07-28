@@ -513,10 +513,23 @@ elif nav_selection == "patients":
         col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
         
         with col_center:
-            # Estilos CSS avanzados para eliminar cualquier recuadro del botón y dejarlo como texto plano interactivo
+            # Estilos CSS avanzados para integrar el SVG a la orilla izquierda del input y eliminar bordes del botón "+ New Patient"
             st.markdown("""
             <style>
-                /* Ocultar bordes de contenedor de botones para que "+ New Patient" sea texto plano sin recuadro */
+                /* Estilo de la caja contenedora del input para alinear el padding izquierdo */
+                div[data-baseweb="input"] {
+                    border-radius: 30px !important;
+                    border: 1px solid #CBD5E1 !important;
+                    background-color: #FFFFFF !important;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+                    padding-left: 36px !important; /* Espacio para que el texto no pise el SVG */
+                }
+                div[data-baseweb="input"]:hover, div[data-baseweb="input"]:focus-within {
+                    border-color: #2563EB !important;
+                    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+                }
+                
+                /* Eliminar por completo cualquier recuadro, fondo o sombra del botón "+ New Patient" convirtiéndolo en texto plano azul */
                 div.row-widget.stButton > button[kind="secondary"] {
                     background: transparent !important;
                     border: none !important;
@@ -536,29 +549,25 @@ elif nav_selection == "patients":
                     text-decoration: underline !important;
                 }
             </style>
+            
+            <!-- SVG de lupa posicionado de manera absoluta a la orilla izquierda del recuadro del input -->
+            <div style="position: relative; width: 100%;">
+                <div style="position: absolute; left: 14px; top: 12px; z-index: 5; pointer-events: none; display: flex; align-items: center;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+            </div>
             """, unsafe_allow_html=True)
 
-            # Etiqueta "Search patient" con su icono SVG profesional de lupa a la izquierda
-            st.markdown(
-                """
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-weight: 600; color: #1E293B; font-size: 15px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <span>Search patient</span>
-                </div>
-                """, 
-                unsafe_allow_html=True
-            )
-            
-            # Recuadro de texto para escribir el ID o nombre
+            # Campo de texto principal con el placeholder exacto solicitado
             search_query_main = st.text_input(
-                "Search patient input", 
-                placeholder="Write ID, Record Number, or Institution...",
+                "Search patient", 
+                placeholder="Search patient (write ID)...",
                 label_visibility="collapsed"
             )
             
             st.markdown("<br>", unsafe_allow_html=True)
             
-            # Opción "+ New Patient" como texto plano clickeable sin recuadro
+            # Opción "+ New Patient" como texto plano en azul sin ningún tipo de recuadro
             col_btn_sub1, col_btn_sub_target, col_btn_sub2 = st.columns([1, 2, 1])
             with col_btn_sub_target:
                 if st.button("+ New Patient", key="btn_toggle_new_patient"):
@@ -590,8 +599,8 @@ elif nav_selection == "patients":
             }
             df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
 
-            if search_query_main:
-                mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query_main, case=False, na=False)).any(axis=1)
+            if search_query_main.strip():
+                mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query_main.strip(), case=False, na=False)).any(axis=1)
                 df_patients = df_patients[mask]
                 
                 st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
