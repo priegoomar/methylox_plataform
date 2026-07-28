@@ -763,45 +763,109 @@ elif nav_selection == "patients":
         st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
 
     # -------------------------------------------------------------------------
-    # 🔍 SECCIÓN SUPERIOR CENTRADA EN TARJETA BLANCA: Search patient y + New Patient
+    # 🔍 SECCIÓN SUPERIOR: SOLO SE MUESTRA SI NO ESTÁ ACTIVO EL FORMULARIO
     # -------------------------------------------------------------------------
-    st.markdown('<div class="executive-card-white" style="text-align: center; padding: 30px;">', unsafe_allow_html=True)
-    
-    # Contenedor centrado para el buscador y el botón
-    col_center_spacer1, col_main_content, col_center_spacer2 = st.columns([1, 2.5, 1])
-    
-    with col_main_content:
-        # Icono SVG profesional y etiqueta "Search patient" centrados o alineados profesionalmente
-        st.markdown(
-            """
-            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; font-weight: 600; color: #1E293B; font-size: 15px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <span>Search patient</span>
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
+    if not st.session_state.show_new_patient_form:
+        st.markdown('<div class="executive-card-white" style="padding: 30px;">', unsafe_allow_html=True)
         
-        search_query = st.text_input(
-            "Search patient input", 
-            placeholder="Type patient ID, Record Number, or Institution...",
-            label_visibility="collapsed"
-        )
+        col_center_spacer1, col_main_content, col_center_spacer2 = st.columns([1, 3, 1])
         
-        st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
-        
-        # Elemento "+ New Patient" ubicado abajito del recuadro, clickeable
-        if st.button("➕ New Patient", use_container_width=True, key="btn_toggle_new_patient"):
-            st.session_state.show_new_patient_form = not st.session_state.show_new_patient_form
-            st.rerun()
+        with col_main_content:
+            # 1. Search patient con icono SVG de lupa a la izquierda y su recuadro de texto abajo
+            st.markdown(
+                """
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-weight: 600; color: #1E293B; font-size: 14px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <span>Search patient</span>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
             
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
+            search_query_main = st.text_input(
+                "Search patient input", 
+                placeholder="Type patient ID, Record Number, or Institution...",
+                label_visibility="collapsed"
+            )
+            
+            st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+            
+            # Estilo CSS para el enlace interactivo "+ New Patient" con icono SVG a la derecha
+            st.markdown("""
+            <style>
+                div.row-widget.stButton > button[kind="secondary"] {
+                    background: transparent !important;
+                    border: none !important;
+                    color: #2563EB !important;
+                    font-weight: 600 !important;
+                    font-size: 15px !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    text-align: left !important;
+                    box-shadow: none !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 8px !important;
+                }
+                div.row-widget.stButton > button[kind="secondary"]:hover {
+                    color: #1D4ED8 !important;
+                    background: transparent !important;
+                    text-decoration: underline !important;
+                }
+            </style>
+            """, unsafe_allow_html=True)
+
+            # 2. + New Patient clickeable con icono SVG a la derecha de la palabra
+            if st.button("➕ New Patient   👤+", key="btn_toggle_new_patient"):
+                st.session_state.show_new_patient_form = True
+                st.rerun()
+                
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # Mostrar directorio principal con filtros si no está abierto el formulario
+        try:
+            res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
+            if res_cohort.status_code == 200 and res_cohort.json():
+                df_patients = pd.DataFrame(res_cohort.json())
+            else:
+                df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
+        except Exception:
+            df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
+            
+        if not df_patients.empty:
+            column_mapping = {
+                'id_patient': 'Patient ID',
+                'patient_id': 'Patient ID',
+                'full_name': 'Record Number',
+                'anonymous_code': 'Record Number',
+                'date_of_birth': 'Date of Birth',
+                'dob': 'Date of Birth',
+                'gender': 'Gender',
+                'institution': 'Institution'
+            }
+            df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
+
+            # Filtrado inteligente y global por cualquier campo (ID, Fecha, Institución, etc.)
+            if search_query_main:
+                mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query_main, case=False, na=False)).any(axis=1)
+                df_patients = df_patients[mask]
+
+        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">Active Patient Registry & Filtering</div>', unsafe_allow_html=True)
+        st.dataframe(df_patients, use_container_width=True, hide_index=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
-    # 📋 CONTENIDO CONDICIONAL: SE DESPLIEGA AL DAR CLIC EN "+ New Patient"
+    # 📋 SECCIÓN CONDICIONAL: FORMULARIO Y DIRECTORIO FILTRABLE (Al dar clic en New)
     # -------------------------------------------------------------------------
-    if st.session_state.show_new_patient_form:
+    else:
+        # Botón superior para regresar al buscador principal
+        if st.button("← Back to Search", key="btn_back_search"):
+            st.session_state.show_new_patient_form = False
+            st.rerun()
+
+        st.markdown("<br>", unsafe_allow_html=True)
         p1, p2 = st.columns([1, 1.3], gap="large")
         
         with p1:
@@ -814,20 +878,20 @@ elif nav_selection == "patients":
                 # Campo Unique patient ID
                 new_p_id = st.text_input("Unique patient ID", value=st.session_state.generated_patient_id)
                 
-                # Texto interactivo "Generate Automatic ID" ubicado abajito del recuadro
+                # Texto interactivo "Generate Automatic ID"
                 if st.button("🔄 Generate Automatic ID", key="btn_gen_auto_id"):
                     st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
                     st.rerun()
                 
-                # Modificado a "Record Number" con ejemplo en texto gris (placeholder)
+                # Record Number con placeholder
                 new_p_name = st.text_input("Record Number", placeholder="e.g. REC-2026-0091")
                 
                 new_p_dob = st.date_input("Date of birth", min_value=datetime(1920, 1, 1))
                 
-                # Opciones de género estrictamente en inglés ("Male", "Female")
+                # Opciones de género en inglés
                 new_p_sexo = st.selectbox("Gender", ["Male", "Female"])
                 
-                # Campo de texto libre para ingresar el nombre de la institución
+                # Institución
                 new_institution = st.text_input("Institution")
                     
                 if st.button("Save and synchronize record", use_container_width=True):
@@ -858,7 +922,15 @@ elif nav_selection == "patients":
 
         with p2:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">Patient Directory & Cohort Ledger</div>', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical">Patient Directory & Advanced Filtering</div>', unsafe_allow_html=True)
+            
+            # Barra de filtrado avanzada dentro de la vista del formulario
+            sub_filter_col1, sub_filter_col2 = st.columns([2, 1])
+            with sub_filter_col1:
+                filter_text = st.text_input("Filter directory", placeholder="Filter by ID, Date, Record, Institution...", key="filter_table_input")
+            with sub_filter_col2:
+                filter_gender = st.selectbox("Filter Gender", ["All", "Male", "Female"], key="filter_gender_select")
+
             try:
                 res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
                 if res_cohort.status_code == 200 and res_cohort.json():
@@ -868,7 +940,6 @@ elif nav_selection == "patients":
             except Exception:
                 df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
                 
-            # Renombrar columnas de la tabla para que coincidan con el formulario en inglés
             if not df_patients.empty:
                 column_mapping = {
                     'id_patient': 'Patient ID',
@@ -882,41 +953,17 @@ elif nav_selection == "patients":
                 }
                 df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
 
-                # Filtrar la tabla en tiempo real si el usuario escribe en la barra de búsqueda superior
-                if search_query:
-                    mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query, case=False, na=False)).any(axis=1)
+                # Aplicar filtro de texto (ID, Fecha, etc.)
+                if filter_text:
+                    mask = df_patients.astype(str).apply(lambda x: x.str.contains(filter_text, case=False, na=False)).any(axis=1)
                     df_patients = df_patients[mask]
+                
+                # Aplicar filtro de género si se selecciona uno específico
+                if filter_gender != "All" and "Gender" in df_patients.columns:
+                    df_patients = df_patients[df_patients["Gender"].str.lower() == filter_gender.lower()]
 
             st.dataframe(df_patients, use_container_width=True, hide_index=True)
             st.markdown('</div>', unsafe_allow_html=True)
-    else:
-        # Si no se ha dado clic a "+ New Patient", se muestra opcionalmente el directorio completo de forma limpia abajo
-        try:
-            res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
-            if res_cohort.status_code == 200 and res_cohort.json():
-                df_patients = pd.DataFrame(res_cohort.json())
-                if not df_patients.empty:
-                    column_mapping = {
-                        'id_patient': 'Patient ID',
-                        'patient_id': 'Patient ID',
-                        'full_name': 'Record Number',
-                        'anonymous_code': 'Record Number',
-                        'date_of_birth': 'Date of Birth',
-                        'dob': 'Date of Birth',
-                        'gender': 'Gender',
-                        'institution': 'Institution'
-                    }
-                    df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
-                    if search_query:
-                        mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query, case=False, na=False)).any(axis=1)
-                        df_patients = df_patients[mask]
-                    
-                    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-                    st.markdown('<div class="card-title-clinical">Active Patient Registry</div>', unsafe_allow_html=True)
-                    st.dataframe(df_patients, use_container_width=True, hide_index=True)
-                    st.markdown('</div>', unsafe_allow_html=True)
-        except Exception:
-            pass
 
 # ----------------------------------------------------------------------------
 # 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
