@@ -340,41 +340,27 @@ with st.sidebar:
     st.markdown("---")
 
 # =========================================================================
-    # RBAC NAVIGATION (UPDATED LABELS, NO ICONS)
+# RBAC NAVIGATION & URL ROUTING (CORRECTED)
 # =========================================================================
-    # Definir menu_options por defecto fuera del bloque condicional para evitar NameErrors posteriores
-    menu_options = {
-        "dashboard": "Dashboard",
-        "patients": "Patients",
-        "lims": "LIMS / Samples",
-        "analysis": "Analysis",
-        "reports": "Reports"
-    }
 
-    if st.session_state.jwt_access_token:
-        if st.session_state.user_role == "admin":
-            menu_options["Access Control"] = "Access Control"
-            menu_options["settings"] = "Settings"
+# Definir menu_options por defecto
+menu_options = {
+    "dashboard": "Dashboard",
+    "patients": "Patients",
+    "lims": "LIMS / Samples",
+    "analysis": "Analysis",
+    "reports": "Reports"
+}
 
-        if "nav_selection" not in st.session_state:
-            st.session_state.nav_selection = "dashboard"
+if st.session_state.get("jwt_access_token"):
+    if st.session_state.get("user_role") == "admin":
+        menu_options["Access Control"] = "Access Control"
+        menu_options["settings"] = "Settings"
 
-        current_selection = st.session_state.nav_selection
-        if current_selection not in menu_options:
-            current_selection = "dashboard"
+    if "nav_selection" not in st.session_state:
+        st.session_state.nav_selection = "dashboard"
 
-        selected_key = st.sidebar.radio(
-            "Operational Scope Selector",
-            options=list(menu_options.keys()),
-            format_func=lambda x: menu_options[x],
-            key="nav_selection",
-            label_visibility="collapsed"
-        )
-    else:
-        selected_key = "restricted"
-
-    st.markdown("---")
-
+    # Procesar parámetros de URL solo si hay sesión activa
     if "page" in st.query_params:
         query_page = st.query_params["page"]
         if query_page == "Patients" and "patients" in menu_options:
@@ -388,23 +374,41 @@ with st.sidebar:
         elif query_page == "Access Control" and "Access Control" in menu_options:
             st.session_state.nav_selection = "Access Control"
 
-    st.markdown(
-        """
-        <div style="padding:5px 10px;">
-            <p style="font-size:10px;color:#64748B;font-weight:700;">
-            SYSTEM STATUS
-            </p>
-            <div>
-            🟢 Core Engine Active
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
+    current_selection = st.session_state.nav_selection
+    if current_selection not in menu_options:
+        current_selection = "dashboard"
+
+    selected_key = st.sidebar.radio(
+        "Operational Scope Selector",
+        options=list(menu_options.keys()),
+        format_func=lambda x: menu_options[x],
+        key="nav_selection",
+        label_visibility="collapsed"
     )
+else:
+    selected_key = "restricted"
+    # Si no hay token, limpiamos los parámetros de la URL para evitar bucles de redirección
+    st.query_params.clear()
+
+st.markdown("---")
+
+st.markdown(
+    """
+    <div style="padding:5px 10px;">
+        <p style="font-size:10px;color:#64748B;font-weight:700;">
+        SYSTEM STATUS
+        </p>
+        <div>
+        🟢 Core Engine Active
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 headers = {
     "Authorization": f"Bearer {st.session_state.jwt_access_token}"
-} if st.session_state.jwt_access_token else {}
+} if st.session_state.get("jwt_access_token") else {}
 
 # ============================================================================
 # 🏛️ CENTRAL ARCHITECTURE MODULES
