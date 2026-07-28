@@ -339,7 +339,7 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # =========================================================================
+# =========================================================================
     # RBAC NAVIGATION (UPDATED LABELS, NO ICONS)
     # =========================================================================
     if st.session_state.jwt_access_token:
@@ -352,6 +352,7 @@ with st.sidebar:
         }
 
         if st.session_state.user_role == "admin":
+            menu_options["Access Control"] = "Access Control"
             menu_options["settings"] = "Settings"
 
         if "nav_selection" not in st.session_state:
@@ -383,6 +384,8 @@ with st.sidebar:
             st.session_state.nav_selection = "analysis"
         elif query_page == "Reports" and "reports" in menu_options:
             st.session_state.nav_selection = "reports"
+        elif query_page == "Access Control" and "Access Control" in menu_options:
+            st.session_state.nav_selection = "Access Control"
 
     st.markdown(
         """
