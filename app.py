@@ -766,16 +766,13 @@ elif nav_selection == "patients":
         if st.session_state.user_role == "cls":
             st.warning("🔒 Acceso Restringido: El rol de laboratorio no posee privilegios clínicos para dar de alta pacientes.")
         else:
-            # Fila superior para Unique Patient ID y el botón azul de generación automática
-            col_id_lbl, col_id_btn = st.columns([1.5, 1])
-            with col_id_lbl:
-                st.markdown("<span style='font-size: 13px; font-weight: 600; color: #1E3A8A; cursor: pointer;'>Generate Automatic ID</span>", unsafe_allow_html=True)
-            with col_id_btn:
-                if st.button("Generate", key="btn_gen_auto_id", use_container_width=True):
-                    st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
-                    st.rerun()
-            
+            # Campo Unique patient ID
             new_p_id = st.text_input("Unique patient ID", value=st.session_state.generated_patient_id)
+            
+            # Texto interactivo "Generate Automatic ID" ubicado abajito del recuadro
+            if st.button("🔄 Generate Automatic ID", key="btn_gen_auto_id"):
+                st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
+                st.rerun()
             
             # Modificado a "Record Number" con ejemplo en texto gris (placeholder)
             new_p_name = st.text_input("Record Number", placeholder="e.g. REC-2026-0091")
