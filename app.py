@@ -750,7 +750,18 @@ elif nav_selection == "dashboard":
 # 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
 # ============================================================================
 elif nav_selection == "patients":
-    st.markdown("<h2 class='welcome-header'>📊 Patient Cohort & Clinical Directory</h2>", unsafe_allow_html=True)
+    # Encabezado principal con icono SVG vectorial integrado en lugar de emoji
+    st.markdown("""
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <h2 class='welcome-header' style="margin: 0; padding: 0;">Patient Cohort & Clinical Directory</h2>
+        </div>
+    """, unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Enroll new patients and monitor epigenetic biomarker histories over time</p>", unsafe_allow_html=True)
     
     # Inicializar estado para mostrar u ocultar el formulario de registro y directorio
@@ -771,16 +782,16 @@ elif nav_selection == "patients":
         col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
         
         with col_center:
-            # Estilos CSS avanzados para integrar el SVG a la orilla izquierda del input y eliminar bordes del botón "+ New Patient"
+            # Estilos CSS avanzados para integrar el SVG perfectamente centrado a la orilla izquierda del input y eliminar bordes del botón
             st.markdown("""
             <style>
-                /* Estilo de la caja contenedora del input para alinear el padding izquierdo */
+                /* Estilo de la caja contenedora del input para alinear el padding izquierdo y centrar la lupa verticalmente */
                 div[data-baseweb="input"] {
                     border-radius: 30px !important;
-                    border: 1px solid #CBD5E1 !important;
+                    border: 1.5px solid #CBD5E1 !important;
                     background-color: #FFFFFF !important;
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-                    padding-left: 36px !important; /* Espacio para que el texto no pise el SVG */
+                    padding-left: 42px !important; /* Espacio exacto para el icono SVG */
                 }
                 div[data-baseweb="input"]:hover, div[data-baseweb="input"]:focus-within {
                     border-color: #2563EB !important;
@@ -808,9 +819,9 @@ elif nav_selection == "patients":
                 }
             </style>
             
-            <!-- SVG de lupa posicionado de manera absoluta a la orilla izquierda del recuadro del input -->
+            <!-- SVG de lupa posicionado de manera absoluta, perfectamente centrado a la orilla izquierda del recuadro -->
             <div style="position: relative; width: 100%;">
-                <div style="position: absolute; left: 14px; top: 12px; z-index: 5; pointer-events: none; display: flex; align-items: center;">
+                <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 5; pointer-events: none; display: flex; align-items: center;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </div>
             </div>
@@ -932,16 +943,9 @@ elif nav_selection == "patients":
 
         with p2:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            # Título y subtítulo actualizados en inglés profesional clínico
+            # Título y subtítulo en inglés profesional clínico
             st.markdown('<div class="card-title-clinical">Patient Registry & Cohort Directory</div>', unsafe_allow_html=True)
             st.markdown('<p style="color: #64748B; font-size: 13.5px; margin-bottom: 16px;">Enroll new patient profiles, manage existing medical records, and link individuals to biological sample tracking for downstream analysis.</p>', unsafe_allow_html=True)
-            
-            # Barra de filtrado avanzada dentro de la vista del formulario
-            sub_filter_col1, sub_filter_col2 = st.columns([2, 1])
-            with sub_filter_col1:
-                filter_text = st.text_input("Filter directory", placeholder="Filter by ID, Date, Record, Institution...", key="filter_table_input")
-            with sub_filter_col2:
-                filter_gender = st.selectbox("Filter Gender", ["All", "Male", "Female"], key="filter_gender_select")
 
             try:
                 res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
@@ -964,15 +968,6 @@ elif nav_selection == "patients":
                     'institution': 'Institution'
                 }
                 df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
-
-                # Aplicar filtro de texto
-                if filter_text:
-                    mask = df_patients.astype(str).apply(lambda x: x.str.contains(filter_text, case=False, na=False)).any(axis=1)
-                    df_patients = df_patients[mask]
-                
-                # Aplicar filtro de género
-                if filter_gender != "All" and "Gender" in df_patients.columns:
-                    df_patients = df_patients[df_patients["Gender"].str.lower() == filter_gender.lower()]
 
             st.dataframe(df_patients, use_container_width=True, hide_index=True)
             st.markdown('</div>', unsafe_allow_html=True)
