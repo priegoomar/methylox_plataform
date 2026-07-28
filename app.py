@@ -115,13 +115,11 @@ st.markdown("""
         align-items: center;
     }
 
-    /* UNIFICACIÓN TOTAL EN UN SOLO RECUADRO MONOLÍTICO PARA LA TABLA Y DONA */
-    .unified-main-board-box {
+    .executive-card-white {
         background: white;
         border: 1px solid #E2E8F0;
         border-radius: 12px;
         padding: 24px;
-        min-height: 340px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         margin-bottom: 20px;
     }
@@ -148,63 +146,15 @@ st.markdown("""
         border-bottom: 1px solid #F1F5F9;
         text-align: center !important;
     }
-   
-    /* Premium Action Grid System */
-    .quick-action-grid {
-        display: flex;
-        gap: 15px;
-        margin-top: 25px;
-        width: 100%;
-    }
-    .action-card-svg {
-        background: white;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 16px;
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    }
-    .icon-circle-svg {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .action-text-container {
-        display: flex;
-        flex-direction: column;
-    }
-    .action-title-svg {
-        font-size: 14px;
-        font-weight: 700;
-        color: #0F172A;
-        margin: 0;
-    }
-    .action-desc-svg {
-        font-size: 11px;
-        color: #64748B;
-        margin: 2px 0 0 0;
-    }
-
-    .bg-neon-blue { background: #E0F2FE; color: #0EA5E9; }
-    .bg-neon-orange { background: #FFEDD5; color: #F97316; }
-    .bg-neon-green { background: #DCFCE7; color: #22C55E; }
-    .bg-neon-purple { background: #F3E8FF; color: #A855F7; }
 </style>
 """, unsafe_allow_html=True)
 
 # --- BACKEND API BACKBONE ROUTING ---
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 # ============================================================================
 # QUICK ACTION SVG BUTTON COMPONENT
 # ============================================================================
-
 def svg_button(svg_code, title, subtitle, bg_color, target_page):
     st.markdown(f"""
     <div class="action-card-svg">
@@ -229,7 +179,6 @@ def svg_button(svg_code, title, subtitle, bg_color, target_page):
 # ============================================================================
 # 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
 # ============================================================================
-
 with st.sidebar:
     st.markdown(
         """
@@ -245,7 +194,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # SESSION STATE
+    # SESSION STATE INITIALIZATION
     if "jwt_access_token" not in st.session_state:
         st.session_state.jwt_access_token = None
 
@@ -258,7 +207,7 @@ with st.sidebar:
     if "id_hospital" not in st.session_state:
         st.session_state.id_hospital = 1
 
-    # LOGIN
+    # LOGIN FORM
     if not st.session_state.jwt_access_token:
         with st.form("institutional_login_form"):
             st.markdown(
@@ -290,7 +239,7 @@ with st.sidebar:
                     }
 
                     res = requests.post(
-                        f"{BACKEND_URL}/auth/login",
+                        f"{BACKEND_URL}/api/v1/auth/login",
                         data=payload_auth,
                         timeout=5
                     )
@@ -303,7 +252,6 @@ with st.sidebar:
                             "role",
                             "tech"
                         ).lower()
-
                         st.rerun()
                     else:
                         st.error("Authentication denied")
@@ -339,16 +287,16 @@ with st.sidebar:
 
     st.markdown("---")
 
-# =========================================================================
-    # RBAC NAVIGATION (UPDATED LABELS, NO ICONS)
-# =========================================================================
+    # RBAC NAVIGATION
+    menu_options = {}
     if st.session_state.jwt_access_token:
         menu_options = {
             "dashboard": "Dashboard",
             "patients": "Patients",
             "lims": "LIMS / Samples",
             "analysis": "Analysis",
-            "reports": "Reports"
+            "reports": "Reports",
+            "users": "Users"
         }
 
         if st.session_state.user_role == "admin":
@@ -358,7 +306,7 @@ with st.sidebar:
         if "nav_selection" not in st.session_state:
             st.session_state.nav_selection = "dashboard"
 
-        current_selection = st.session_state.nav_selection
+        current_selection = st.session_state.get("nav_selection", "dashboard")
         if current_selection not in menu_options:
             current_selection = "dashboard"
 
@@ -374,6 +322,7 @@ with st.sidebar:
 
     st.markdown("---")
 
+    # QUERY PARAMETER ROUTING HANDLER
     if "page" in st.query_params:
         query_page = st.query_params["page"]
         if query_page == "Patients" and "patients" in menu_options:
@@ -406,10 +355,8 @@ headers = {
 } if st.session_state.jwt_access_token else {}
 
 # ============================================================================
-# 🏛️ CENTRAL ARCHITECTURE MODULES
+# 🏛️ CENTRAL ARCHITECTURE MODULES ROUTER
 # ============================================================================
-
-# Asignar la variable globalmente desde el session_state para evitar el NameError
 nav_selection = st.session_state.get("nav_selection", "dashboard")
 
 if selected_key == "restricted":
@@ -418,10 +365,10 @@ if selected_key == "restricted":
     st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# =============================================================================
-#   TAB: USERS (DYNAMIC RBAC AUTHORIZATION HUB)
-# =============================================================================
-elif nav_selection == "Users":
+# ----------------------------------------------------------------------------
+# TAB: USERS (DYNAMIC RBAC AUTHORIZATION HUB)
+# ----------------------------------------------------------------------------
+elif nav_selection == "users":
     st.markdown("<h2 class='welcome-header'>Gestión de Usuarios</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Crea y asigna roles al nuevo personal del laboratorio de forma rápida</p>", unsafe_allow_html=True)
     
@@ -461,7 +408,7 @@ elif nav_selection == "Users":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-#  TAB 1: GENERAL DASHBOARD MATRIX
+# TAB 1: GENERAL DASHBOARD MATRIX
 # ----------------------------------------------------------------------------
 elif nav_selection == "dashboard":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
@@ -469,7 +416,7 @@ elif nav_selection == "dashboard":
    
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
-        res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=15)
+        res_telemetry = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=5)
         if res_telemetry.status_code == 200:
             tel = res_telemetry.json()
             received_today = tel.get('received_today', 0)
@@ -481,7 +428,7 @@ elif nav_selection == "dashboard":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # RENDER TOP TELEMETRY CARDS WITH RECOVERED SVGs
+    # RENDER TOP TELEMETRY CARDS
     st.markdown(f"""
     <div class='metric-container-hub'>
         <div class='metric-card-clinical-new'>
@@ -530,7 +477,7 @@ elif nav_selection == "dashboard":
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
-           
+            
         rows_html = ""
         if not samples_list:
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
@@ -567,7 +514,6 @@ elif nav_selection == "dashboard":
         """, unsafe_allow_html=True)
 
     with c_right:
-        # LIVE INTERACTIVE STREAM TABLE
         st.markdown("<div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
         st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'>⚡ Live Interactive Data Stream</p>", unsafe_allow_html=True)
        
@@ -600,7 +546,7 @@ elif nav_selection == "dashboard":
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
-           
+            
         total_cases = len(rep_data)
         positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
         negatives = total_cases - positives
