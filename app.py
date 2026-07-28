@@ -962,6 +962,49 @@ elif nav_selection == "reports":
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
+#   TAB 6: ACCESS CONTROL (DYNAMIC RBAC AUTHORIZATION HUB)
+# ----------------------------------------------------------------------------
+elif nav_selection == "Access Control":
+    st.markdown("<h2 class='welcome-header'>Identity Governance & Task Delegation</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Provision custom laboratory operational roles dynamically without hardcoding</p>", unsafe_allow_html=True)
+   
+    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+    with st.form("universal_user_provisioning_form", clear_on_submit=True):
+        st.markdown("#### Create New Abstract Operator Account")
+        c1, c2 = st.columns(2)
+        with c1:
+            input_username = st.text_input("Account Identifier (Email / Username)", placeholder="operator@hospital.com")
+            input_full_name = st.text_input("Legal Professional Full Name", placeholder="e.g., Dr. John Doe, MD")
+        with c2:
+            input_password = st.text_input("Temporary Clinical Password", type="password", placeholder="••••••••••••")
+            target_role_display = st.selectbox("System Assigned Operational Role Privilege", ["admin", "cls", "md"])
+             
+        target_hospital_id = st.number_input("Target Corporate Hospital ID Mapping Link", min_value=1, value=int(st.session_state.id_hospital))
+        submit_btn = st.form_submit_button("Activate Identity & Delegate Tasks")
+       
+    if submit_btn:
+        if not input_username or not input_password or not input_full_name:
+            st.error("All clinical identity fields are mandatory.")
+        else:
+            payload_u = {
+                "username": input_username,
+                "password": input_password,
+                "full_name": input_full_name,
+                "role": target_role_display,
+                "hospital_id": int(target_hospital_id)
+            }
+            try:
+                response = requests.post(f"{BACKEND_URL}/api/v1/auth/provision-user", json=payload_u, headers=headers)
+                if response.status_code == 200:
+                    st.success("Staff Identity Successfully Activated & Tasks Delegated Real-Time.")
+                else:
+                    st.error(f"Identity Provisioning Rejection: {response.json().get('detail', 'Unauthorized operational sequence')}")
+            except Exception:
+                st.error("Deployment Connectivity Error: User profile could not be logged into database repository.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# ----------------------------------------------------------------------------
 # ⚙️ TAB 7: SYSTEM SETTINGS (KERNEL INTEGRITY AUDIT TRAIL MONITOR)
 # ----------------------------------------------------------------------------
 elif nav_selection == "settings":
