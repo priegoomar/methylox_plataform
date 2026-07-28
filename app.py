@@ -746,11 +746,12 @@ elif nav_selection == "dashboard":
         """, unsafe_allow_html=True)
 
 # ============================================================================
+# ============================================================================
 # 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
 # ============================================================================
 elif nav_selection == "patients":
-    st.markdown("<h2 class='welcome-header'>📊 Directorio de Cohorte y Pacientes</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Inscriba nuevos pacientes y supervise el historial de marcadores epigenéticos en el tiempo</p>", unsafe_allow_html=True)
+    st.markdown("<h2 class='welcome-header'>📊 Patient Cohort & Clinical Directory</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Enroll new patients and monitor epigenetic biomarker histories over time</p>", unsafe_allow_html=True)
     
     # Inicializar estado para mostrar u ocultar el formulario de registro y directorio
     if "show_new_patient_form" not in st.session_state:
