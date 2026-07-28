@@ -418,30 +418,45 @@ if selected_key == "restricted":
     st.caption("METHYLOX™ algorithmic node is encrypted. Enter authorized clinician credentials in the sidebar to allocate active pipelines.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# =============================================================================
-#   TAB: USERS (DYNAMIC RBAC AUTHORIZATION HUB)
-# =============================================================================
-elif nav_selection == "Users":
-    st.markdown("<h2 class='welcome-header'>Gestión de Usuarios</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Crea y asigna roles al nuevo personal del laboratorio de forma rápida</p>", unsafe_allow_html=True)
-    
+# ----------------------------------------------------------------------------
+#   TAB: ACCESS CONTROL (DYNAMIC RBAC AUTHORIZATION HUB)
+# ----------------------------------------------------------------------------
+elif nav_selection == "users":
+    st.markdown("<h2 class='welcome-header'>Identity Governance & Task Delegation</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Provision custom laboratory operational roles dynamically without hardcoding</p>", unsafe_allow_html=True)
+   
+    # Consultamos el directorio de hospitales del backend para asociar el nombre con su ID correspondiente
+    try:
+        res_hospitals = requests.get(f"{BACKEND_URL}/hospitals/directory", headers=headers, timeout=5)
+        hospital_dict = {h["name"]: h["id"] for h in res_hospitals.json()} if res_hospitals.status_code == 200 and res_hospitals.json() else {}
+    except Exception:
+        hospital_dict = {}
+
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     with st.form("universal_user_provisioning_form", clear_on_submit=True):
-        st.markdown("#### Registrar Nuevo Operador")
+        st.markdown("#### Register New Authorized Staff Member")
         c1, c2 = st.columns(2)
         with c1:
-            input_username = st.text_input("📧 Correo o Usuario", placeholder="operador@hospital.com")
-            input_full_name = st.text_input("👤 Nombre Completo", placeholder="Ej. Dr. Juan Pérez")
+            input_username = st.text_input("Email or Username", placeholder="doctor@hospital.com")
+            input_full_name = st.text_input("Full Name", placeholder="e.g., Dr. John Doe, MD")
         with c2:
-            input_password = st.text_input("🔑 Contraseña Temporal", type="password", placeholder="••••••••••••")
-            target_role_display = st.selectbox("🛡️ Rol de Acceso (admin, cls, md)", ["admin", "cls", "md"])
-            
-        target_hospital_id = st.number_input("🏥 ID del Hospital", min_value=1, value=int(st.session_state.id_hospital))
-        submit_btn = st.form_submit_button("Activar Usuario")
-        
+            input_password = st.text_input("Temporary Password", type="password", placeholder="••••••••••••")
+            target_role_display = st.selectbox("System Role and Permissions", ["admin", "cls", "md"], format_func=lambda x: {"admin": "Administrator", "cls": "Laboratory Technician (CLS)", "md": "Clinical Doctor (MD)"}[x])
+             
+        # Si hay hospitales en la base de datos, permitimos seleccionarlo o escribirlo limpiamente
+        if hospital_dict:
+            selected_hospital_name = st.selectbox("Hospital or Clinic Name", options=list(hospital_dict.keys()))
+            target_hospital_id = hospital_dict[selected_hospital_name]
+        else:
+            # Fallback seguro si la red falla o está vacío
+            target_hospital_name = st.text_input("Hospital or Clinic Name", placeholder="e.g., Memorial General Hospital")
+            target_hospital_id = int(st.session_state.get("id_hospital", 1))
+
+        submit_btn = st.form_submit_button("Activate User & Grant Access")
+       
     if submit_btn:
         if not input_username or not input_password or not input_full_name:
-            st.error("Todos los campos obligatorios deben estar llenos.")
+            st.error("All clinical identity fields are mandatory.")
         else:
             payload_u = {
                 "username": input_username,
@@ -451,13 +466,13 @@ elif nav_selection == "Users":
                 "hospital_id": int(target_hospital_id)
             }
             try:
-                response = requests.post(f"{BACKEND_URL}/api/v1/auth/provision-user", json=payload_u, headers=headers)
+                response = requests.post(f"{BACKEND_URL}/auth/provision-user", json=payload_u, headers=headers)
                 if response.status_code == 200:
-                    st.success("¡Usuario creado y activado con éxito!")
+                    st.success("Staff Identity Successfully Activated & Tasks Delegated Real-Time.")
                 else:
-                    st.error(f"Error al registrar: {response.json().get('detail', 'No autorizado')}")
+                    st.error(f"Identity Provisioning Rejection: {response.json().get('detail', 'Unauthorized operational sequence')}")
             except Exception:
-                st.error("Error de conexión: No se pudo guardar el perfil en la base de datos.")
+                st.error("Deployment Connectivity Error: User profile could not be logged into database repository.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
