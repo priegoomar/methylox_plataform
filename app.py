@@ -781,7 +781,7 @@ elif nav_selection == "patients":
         col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
         
         with col_center:
-            # Estilos CSS avanzados para integrar el SVG perfectamente centrado a la izquierda del input (restaurando botones originales a negro/gris)
+            # Estilos CSS avanzados para integrar el SVG perfectamente centrado a la izquierda del input
             st.markdown("""
             <style>
                 /* Estilo de la caja contenedora del input para alinear el padding izquierdo y centrar la lupa verticalmente */
@@ -817,12 +817,19 @@ elif nav_selection == "patients":
                     text-decoration: underline !important;
                 }
             </style>
+            
+            <!-- SVG de lupa posicionado de manera absoluta, perfectamente centrado a la orilla izquierda del recuadro -->
+            <div style="position: relative; width: 100%;">
+                <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 5; pointer-events: none; display: flex; align-items: center;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+            </div>
             """, unsafe_allow_html=True)
 
-            # Contenedor de la barra de búsqueda con la lupa posicionada correctamente a la izquierda dentro del input
+            # Campo de texto principal con el placeholder limpio
             search_query_main = st.text_input(
                 "Search patient", 
-                placeholder="🔍   Search patient (write ID)...",
+                placeholder="Search patient (write ID)...",
                 label_visibility="collapsed"
             )
             
@@ -873,10 +880,11 @@ elif nav_selection == "patients":
     # 📋 SECCIÓN CONDICIONAL: FORMULARIO Y DIRECTORIO (Al dar clic en New Patient)
     # -------------------------------------------------------------------------
     else:
-        # Estilos específicos para transformar el botón de regreso en texto plano negro/gris sin marcos ni fondos
+        # Estilos para que únicamente el botón de regreso sea texto plano negro/gris sin recuadro
         st.markdown("""
         <style>
-            div.stButton button {
+            div[data-testid="stButton"] button[key="btn_back_search"],
+            div.row-widget.stButton:has(button:contains("← Back to Search")) button {
                 background: transparent !important;
                 border: none !important;
                 color: #334155 !important;
@@ -884,11 +892,6 @@ elif nav_selection == "patients":
                 font-size: 15px !important;
                 padding: 0 !important;
                 box-shadow: none !important;
-            }
-            div.stButton button:hover {
-                color: #0F172A !important;
-                background: transparent !important;
-                text-decoration: underline !important;
             }
         </style>
         """, unsafe_allow_html=True)
@@ -927,6 +930,7 @@ elif nav_selection == "patients":
                 # Institución
                 new_institution = st.text_input("Institution")
                     
+                # Botón de guardar con su recuadro y estilo original de Streamlit
                 if st.button("Save and synchronize record", use_container_width=True):
                     gender_backend = new_p_sexo
                     
