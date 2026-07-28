@@ -396,15 +396,16 @@ else:
     selected_key = "restricted"
     st.query_params.clear()
 
-st.markdown("---")
+# Movido a st.sidebar para que aparezca abajo en la barra lateral y no en la pantalla principal
+st.sidebar.markdown("---")
 
-st.markdown(
+st.sidebar.markdown(
     """
-    <div style="padding:5px 10px;">
-        <p style="font-size:10px;color:#64748B;font-weight:700;">
+    <div style="padding:5px 10px; text-align: center;">
+        <p style="font-size:10px; color:#64748B; font-weight:700; margin-bottom: 4px;">
         SYSTEM STATUS
         </p>
-        <div>
+        <div style="font-size: 12px; font-weight: 600;">
         🟢 Core Engine Active
         </div>
     </div>
