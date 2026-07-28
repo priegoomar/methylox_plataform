@@ -487,264 +487,6 @@ elif nav_selection == "users":
                 st.error("Deployment Connectivity Error: User profile could not be logged into database repository.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ----------------------------------------------------------------------------
-#   TAB 1: GENERAL DASHBOARD MATRIX
-# ----------------------------------------------------------------------------
-elif nav_selection == "dashboard":
-    st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
-   
-    # FETCH LIVE DATA FROM ENDPOINTS
-    try:
-        res_telemetry = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", headers=headers, timeout=15)
-        if res_telemetry.status_code == 200:
-            tel = res_telemetry.json()
-            received_today = tel.get('received_today', 0)
-            in_progress = tel.get('in_progress', 0)
-            ready_analyses = tel.get('ready_analyses', 0)
-            qc_pass_rate = tel.get('qc_pass_rate', 0.0)
-        else:
-            received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
-    except Exception:
-        received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
-
-    # RENDER TOP TELEMETRY CARDS WITH FUNCTIONAL URL NAVIGATION
-    st.markdown(f"""
-    <div class='metric-container-hub'>
-        <div class='metric-card-clinical-new'>
-            <div class='svg-top-container' style='color: #2563EB;'>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <p class='metric-title-sub-new'>Samples Received</p>
-            <p class='metric-num-big-new'>{received_today}</p>
-            <a class='metric-link-btn-new' href='?page=LIMS-Samples' target='_self'>View all samples →</a>
-        </div>
-        <div class='metric-card-clinical-new'>
-            <div class='svg-top-container' style='color: #D97706;'>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            </div>
-            <p class='metric-title-sub-new'>In Progress</p>
-            <p class='metric-num-big-new'>{in_progress}</p>
-            <a class='metric-link-btn-new' href='?page=METHYLOX-Engine' target='_self'>View details →</a>
-        </div>
-        <div class='metric-card-clinical-new'>
-            <div class='svg-top-container' style='color: #16A34A;'>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
-            </div>
-            <p class='metric-title-sub-new'>Ready Reports</p>
-            <p class='metric-num-big-new'>{ready_analyses}</p>
-            <a class='metric-link-btn-new' href='?page=Reports' target='_self'>View dossiers →</a>
-        </div>
-        <div class='metric-card-clinical-new'>
-            <div class='svg-top-container' style='color: #6366F1;'>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <p class='metric-title-sub-new'>Quality Controls</p>
-            <p class='metric-num-big-new'>{qc_pass_rate}%</p>
-            <a class='metric-link-btn-new' href='?page=LIMS-Samples' target='_self'>View QC matrix →</a>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.write("##")
-
-    # PARALLEL COLUMNS WITH SECURE CONTAINERS
-    c_left, c_right = st.columns([1.4, 1.0])
-   
-    with c_left:
-        try:
-            res_s_dash = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
-            samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
-        except Exception:
-            samples_list = []
-           
-        rows_html = ""
-        if not samples_list:
-            rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
-        else:
-            for s in samples_list[:5]:
-                state = s.get("workflow_state", "Sample Received")
-                badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
-                rows_html += f"""
-                <tr style='border-bottom: 1px solid #F1F5F9;'>
-                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_id', '--')}</td>
-                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('patient_id', '--')}</td>
-                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('specimen_type', 'Plasma')}</td>
-                    <td style='padding: 14px 10px; text-align: center; border: none;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
-                </tr>
-                """
-
-        st.markdown(f"""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'> Recent Laboratory Activity Trail</p>
-            <table class='clinical-table-new'>
-                <thead>
-                    <tr style='background-color: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 2px solid #E2E8F0;'>
-                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Sample ID</th>
-                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Patient ID</th>
-                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Matrix</th>
-                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows_html}
-                </tbody>
-            </table>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with c_right:
-        # LIVE INTERACTIVE STREAM TABLE
-        st.markdown("<div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'>⚡ Live Interactive Data Stream</p>", unsafe_allow_html=True)
-       
-        try:
-            res_live_df = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
-            live_list = res_live_df.json() if res_live_df.status_code == 200 else []
-        except Exception:
-            live_list = []
-
-        if live_list:
-            df_live = pd.DataFrame(live_list)
-            selected_live_event = st.dataframe(
-                df_live[['sample_id', 'workflow_state']],
-                use_container_width=True,
-                hide_index=True,
-                height=110,
-                on_select="rerun",
-                selection_mode="single-row"
-            )
-            if selected_live_event and selected_live_event.selection.rows:
-                sel_idx = selected_live_event.selection.rows[0]
-                st.session_state.active_live_sample = df_live.iloc[sel_idx].get('sample_id')
-        else:
-            st.caption("Awaiting live registry telemetry stream...")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        # DONUT CHART SECTION
-        try:
-            res_rep = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=5)
-            rep_data = res_rep.json() if res_rep.status_code == 200 else []
-        except Exception:
-            rep_data = []
-           
-        total_cases = len(rep_data)
-        positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
-        negatives = total_cases - positives
-        in_pipeline = in_progress
-       
-        if total_cases == 0 and in_pipeline == 0:
-            labels_pie = ['Awaiting Data Ingestion']
-            values_pie = [1]
-            colors_pie = ['#F1F5F9']
-        else:
-            labels_pie = ['Positive Panels', 'Stable Controls', 'In Pipeline']
-            values_pie = [positives, negatives, in_pipeline]
-            colors_pie = ['#EF4444', '#10B981', '#3B82F6']
-
-        fig_donut = go.Figure(data=[go.Pie(
-            labels=labels_pie, values=values_pie, hole=.6,
-            marker=dict(colors=colors_pie), textinfo='none', showlegend=True
-        )])
-        fig_donut.update_layout(
-            height=180, margin=dict(l=0, r=0, t=10, b=10),
-            legend=dict(orientation="h", y=-0.2, x=0),
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            annotations=[dict(text=f"<b style='font-size:20px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=11, showarrow=False)]
-        )
-
-        st.markdown("""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'> Onco-Genetic Diagnostic Summary</p>
-        """, unsafe_allow_html=True)
-        st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # QUICK ACTION WORKFLOWS GRID
-    st.write("##")
-    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-
-    st.markdown("""
-    <style>
-        .svg-action-link {
-            background-color: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            min-height: 75px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            box-sizing: border-box;
-            text-decoration: none !important;
-            transition: all 0.2s ease-in-out;
-        }
-        .svg-action-link:hover {
-            border-color: #3B82F6;
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
-            background-color: #F8FAFC;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-
-    act_col1, act_col2, act_col3, act_col4 = st.columns(4)
-
-    with act_col1:
-        st.markdown("""
-        <a href="?page=Patients" target="_self" class="svg-action-link">
-            <div style="background: #EFF6FF; padding: 10px; border-radius: 10px; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
-            </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Enroll Subject</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">New Patient Profile</p>
-            </div>
-        </a>
-        """, unsafe_allow_html=True)
-
-    with act_col2:
-        st.markdown("""
-        <a href="?page=LIMS-Samples" target="_self" class="svg-action-link">
-            <div style="background: #FFF7ED; padding: 10px; border-radius: 10px; color: #EA580C; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
-            </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Asset Intake</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Log LIMS Custody</p>
-            </div>
-        </a>
-        """, unsafe_allow_html=True)
-
-    with act_col3:
-        st.markdown("""
-        <a href="?page=METHYLOX-Engine" target="_self" class="svg-action-link">
-            <div style="background: #F0FDF4; padding: 10px; border-radius: 10px; color: #16A34A; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Launch Kernel</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Run Epigenetic Pipeline</p>
-            </div>
-        </a>
-        """, unsafe_allow_html=True)
-
-    with act_col4:
-        st.markdown("""
-        <a href="?page=Reports" target="_self" class="svg-action-link">
-            <div style="background: #FAF5FF; padding: 10px; border-radius: 10px; color: #9333EA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Dossier Sheet</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Export Medical PDF</p>
-            </div>
-        </a>
-        """, unsafe_allow_html=True)
-
 # ============================================================================
 # ============================================================================
 # 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
@@ -763,36 +505,31 @@ elif nav_selection == "patients":
         st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
 
     # -------------------------------------------------------------------------
-    # 🔍 SECCIÓN SUPERIOR: SOLO SE MUESTRA SI NO ESTÁ ACTIVO EL FORMULARIO
+    # 🔍 PANTALLA INICIAL ESTILO GOOGLE (Solo si no está activo el formulario)
     # -------------------------------------------------------------------------
     if not st.session_state.show_new_patient_form:
-        st.markdown('<div class="executive-card-white" style="padding: 30px;">', unsafe_allow_html=True)
+        # Centramos todo el contenido vertical y horizontalmente para simular la página de inicio
+        st.markdown("<br><br>", unsafe_allow_html=True)
         
-        col_center_spacer1, col_main_content, col_center_spacer2 = st.columns([1, 3, 1])
+        col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
         
-        with col_main_content:
-            # 1. Search patient con icono SVG de lupa a la izquierda y su recuadro de texto abajo
-            st.markdown(
-                """
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-weight: 600; color: #1E293B; font-size: 14px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <span>Search patient</span>
-                </div>
-                """, 
-                unsafe_allow_html=True
-            )
-            
-            search_query_main = st.text_input(
-                "Search patient input", 
-                placeholder="Type patient ID, Record Number, or Institution...",
-                label_visibility="collapsed"
-            )
-            
-            st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
-            
-            # Estilo CSS para el enlace interactivo "+ New Patient" con icono SVG a la derecha
+        with col_center:
+            # Estilos CSS para simular la barra de búsqueda estilo Google y el texto plano sin recuadro
             st.markdown("""
             <style>
+                /* Estilo minimalista para el input de búsqueda tipo Google */
+                div[data-baseweb="input"] {
+                    border-radius: 30px !important;
+                    border: 1px solid #E2E8F0 !important;
+                    background-color: #FFFFFF !important;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+                    padding: 4px 12px !important;
+                }
+                div[data-baseweb="input"]:hover, div[data-baseweb="input"]:focus-within {
+                    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+                    border-color: #3B82F6 !important;
+                }
+                /* Eliminar recuadro del botón "+ New Patient" convirtiéndolo en texto plano interactivo */
                 div.row-widget.stButton > button[kind="secondary"] {
                     background: transparent !important;
                     border: none !important;
@@ -801,11 +538,12 @@ elif nav_selection == "patients":
                     font-size: 15px !important;
                     padding: 0 !important;
                     margin: 0 !important;
-                    text-align: left !important;
                     box-shadow: none !important;
-                    display: flex !important;
+                    display: inline-flex !important;
                     align-items: center !important;
+                    justify-content: center !important;
                     gap: 8px !important;
+                    width: 100% !important;
                 }
                 div.row-widget.stButton > button[kind="secondary"]:hover {
                     color: #1D4ED8 !important;
@@ -815,15 +553,25 @@ elif nav_selection == "patients":
             </style>
             """, unsafe_allow_html=True)
 
-            # 2. + New Patient clickeable con icono SVG a la derecha de la palabra
-            if st.button("➕ New Patient   👤+", key="btn_toggle_new_patient"):
-                st.session_state.show_new_patient_form = True
-                st.rerun()
-                
-        st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
+            # Barra de búsqueda con icono SVG interno y texto integrado
+            search_query_main = st.text_input(
+                "Search patient", 
+                placeholder="🔍  Search patient or write ID...",
+                label_visibility="collapsed"
+            )
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # Contenedor centrado para la palabra "+ New Patient" sin recuadro
+            col_btn_sub1, col_btn_sub_target, col_btn_sub2 = st.columns([1, 2, 1])
+            with col_btn_sub_target:
+                if st.button("➕ New Patient   👤+", key="btn_toggle_new_patient"):
+                    st.session_state.show_new_patient_form = True
+                    st.rerun()
 
-        # Mostrar directorio principal con filtros si no está abierto el formulario
+        st.markdown("<br><br>", unsafe_allow_html=True)
+
+        # Mostrar el directorio de pacientes filtrable en la vista principal si se escribe algo
         try:
             res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
             if res_cohort.status_code == 200 and res_cohort.json():
@@ -846,21 +594,20 @@ elif nav_selection == "patients":
             }
             df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
 
-            # Filtrado inteligente y global por cualquier campo (ID, Fecha, Institución, etc.)
             if search_query_main:
                 mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query_main, case=False, na=False)).any(axis=1)
                 df_patients = df_patients[mask]
-
-        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical">Active Patient Registry & Filtering</div>', unsafe_allow_html=True)
-        st.dataframe(df_patients, use_container_width=True, hide_index=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+                
+                st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+                st.markdown('<div class="card-title-clinical">Search Results & Patient Directory</div>', unsafe_allow_html=True)
+                st.dataframe(df_patients, use_container_width=True, hide_index=True)
+                st.markdown('</div>', unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
-    # 📋 SECCIÓN CONDICIONAL: FORMULARIO Y DIRECTORIO FILTRABLE (Al dar clic en New)
+    # 📋 SECCIÓN CONDICIONAL: FORMULARIO Y DIRECTORIO (Al dar clic en New Patient)
     # -------------------------------------------------------------------------
     else:
-        # Botón superior para regresar al buscador principal
+        # Botón superior para regresar a la pantalla de inicio estilo Google
         if st.button("← Back to Search", key="btn_back_search"):
             st.session_state.show_new_patient_form = False
             st.rerun()
@@ -953,12 +700,12 @@ elif nav_selection == "patients":
                 }
                 df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
 
-                # Aplicar filtro de texto (ID, Fecha, etc.)
+                # Aplicar filtro de texto
                 if filter_text:
                     mask = df_patients.astype(str).apply(lambda x: x.str.contains(filter_text, case=False, na=False)).any(axis=1)
                     df_patients = df_patients[mask]
                 
-                # Aplicar filtro de género si se selecciona uno específico
+                # Aplicar filtro de género
                 if filter_gender != "All" and "Gender" in df_patients.columns:
                     df_patients = df_patients[df_patients["Gender"].str.lower() == filter_gender.lower()]
 
