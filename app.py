@@ -649,90 +649,76 @@ elif nav_selection == "dashboard":
         st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-# QUICK ACTION WORKFLOWS GRID (Con SVGs y Enrutamiento JavaScript Seguro)
+# QUICK ACTION WORKFLOWS GRID (Solución Definitiva con Estado Interno)
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
-
-    st.markdown("""
-    <style>
-        .svg-action-link {
-            background-color: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            min-height: 75px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            box-sizing: border-box;
-            text-decoration: none !important;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-        .svg-action-link:hover {
-            border-color: #3B82F6;
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
-            background-color: #F8FAFC;
-        }
-    </style>
-    """, unsafe_allow_html=True)
 
     act_col1, act_col2, act_col3, act_col4 = st.columns(4)
 
     with act_col1:
+        # Contenedor visual + Botón nativo de Streamlit que controla la redirección
         st.markdown("""
-        <div onclick="window.location.href='?page=Patients';" class="svg-action-link">
-            <div style="background: #EFF6FF; padding: 10px; border-radius: 10px; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+        <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 10px; height: 75px;">
+            <div style="background: #EFF6FF; padding: 8px; border-radius: 8px; color: #2563EB; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
             </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Enroll Subject</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">New Patient Profile</p>
+            <div>
+                <p style="font-size: 12px; font-weight: 700; color: #0F172A; margin: 0;">Enroll Subject</p>
+                <p style="font-size: 10px; color: #64748B; margin: 2px 0 0 0;">New Patient</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
+        if st.button("Abrir Enroll Subject", key="nav_btn_patients", use_container_width=True):
+            st.session_state.nav_selection = "Patients"
+            st.rerun()
 
     with act_col2:
         st.markdown("""
-        <div onclick="window.location.href='?page=LIMS-Samples';" class="svg-action-link">
-            <div style="background: #FFF7ED; padding: 10px; border-radius: 10px; color: #EA580C; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+        <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 10px; height: 75px;">
+            <div style="background: #FFF7ED; padding: 8px; border-radius: 8px; color: #EA580C; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
             </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Asset Intake</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Log LIMS Custody</p>
+            <div>
+                <p style="font-size: 12px; font-weight: 700; color: #0F172A; margin: 0;">Asset Intake</p>
+                <p style="font-size: 10px; color: #64748B; margin: 2px 0 0 0;">Log LIMS Custody</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
+        if st.button("Abrir Asset Intake", key="nav_btn_lims", use_container_width=True):
+            st.session_state.nav_selection = "LIMS-Samples"
+            st.rerun()
 
     with act_col3:
         st.markdown("""
-        <div onclick="window.location.href='?page=METHYLOX-Engine';" class="svg-action-link">
-            <div style="background: #F0FDF4; padding: 10px; border-radius: 10px; color: #16A34A; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 10px; height: 75px;">
+            <div style="background: #F0FDF4; padding: 8px; border-radius: 8px; color: #16A34A; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Launch Kernel</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Run Epigenetic Pipeline</p>
+            <div>
+                <p style="font-size: 12px; font-weight: 700; color: #0F172A; margin: 0;">Launch Kernel</p>
+                <p style="font-size: 10px; color: #64748B; margin: 2px 0 0 0;">Run Pipeline</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
+        if st.button("Abrir Launch Kernel", key="nav_btn_kernel", use_container_width=True):
+            st.session_state.nav_selection = "METHYLOX-Engine"
+            st.rerun()
 
     with act_col4:
         st.markdown("""
-        <div onclick="window.location.href='?page=Reports';" class="svg-action-link">
-            <div style="background: #FAF5FF; padding: 10px; border-radius: 10px; color: #9333EA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <div style="background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 10px; height: 75px;">
+            <div style="background: #FAF5FF; padding: 8px; border-radius: 8px; color: #9333EA; display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
-            <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Dossier Sheet</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Export Medical PDF</p>
+            <div>
+                <p style="font-size: 12px; font-weight: 700; color: #0F172A; margin: 0;">Dossier Sheet</p>
+                <p style="font-size: 10px; color: #64748B; margin: 2px 0 0 0;">Export PDF</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
+        if st.button("Abrir Dossier Sheet", key="nav_btn_reports", use_container_width=True):
+            st.session_state.nav_selection = "Reports"
+            st.rerun()
 
 # ============================================================================
 # ============================================================================
