@@ -340,7 +340,7 @@ with st.sidebar:
     st.markdown("---")
 
 # =========================================================================
-# RBAC NAVIGATION & URL ROUTING (CORRECTED)
+# RBAC NAVIGATION & URL ROUTING (FINAL FIX)
 # =========================================================================
 
 # Definir menu_options por defecto
@@ -360,19 +360,26 @@ if st.session_state.get("jwt_access_token"):
     if "nav_selection" not in st.session_state:
         st.session_state.nav_selection = "dashboard"
 
-    # Procesar parámetros de URL solo si hay sesión activa
+    # Procesar parámetros de URL si existen
     if "page" in st.query_params:
         query_page = st.query_params["page"]
+        target_nav = None
+        
         if query_page == "Patients" and "patients" in menu_options:
-            st.session_state.nav_selection = "patients"
+            target_nav = "patients"
         elif query_page == "LIMS-Samples" and "lims" in menu_options:
-            st.session_state.nav_selection = "lims"
+            target_nav = "lims"
         elif query_page == "METHYLOX-Engine" and "analysis" in menu_options:
-            st.session_state.nav_selection = "analysis"
+            target_nav = "analysis"
         elif query_page == "Reports" and "reports" in menu_options:
-            st.session_state.nav_selection = "reports"
+            target_nav = "reports"
         elif query_page == "Access Control" and "Access Control" in menu_options:
-            st.session_state.nav_selection = "Access Control"
+            target_nav = "Access Control"
+            
+        if target_nav:
+            st.session_state.nav_selection = target_nav
+            # Limpiamos el parámetro para evitar bucles o que se quede estancado en recargas futuras
+            st.query_params.clear()
 
     current_selection = st.session_state.nav_selection
     if current_selection not in menu_options:
@@ -387,7 +394,6 @@ if st.session_state.get("jwt_access_token"):
     )
 else:
     selected_key = "restricted"
-    # Si no hay token, limpiamos los parámetros de la URL para evitar bucles de redirección
     st.query_params.clear()
 
 st.markdown("---")
