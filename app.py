@@ -674,6 +674,7 @@ elif nav_selection == "dashboard":
         """, unsafe_allow_html=True)
 
 # ============================================================================
+# ============================================================================
 # 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
 # ============================================================================
 elif nav_selection == "patients":
@@ -691,24 +692,15 @@ elif nav_selection == "patients":
             new_p_id = st.text_input("Unique patient ID")
             new_p_name = st.text_input("Anonymized corporate patient code name")
             new_p_dob = st.date_input("Date of birth", min_value=datetime(1920, 1, 1))
-            new_p_sexo = st.selectbox("Biological sex", ["Female", "Male"], format_func=lambda x: "Femenino" if x == "Female" else "Masculino")
+            new_p_sexo = st.selectbox("Genero", ["Female", "Male"], format_func=lambda x: "Femenino" if x == "Female" else "Masculino")
             
-            # GESTIÓN DE NODOS HOSPITALARIOS
-            try:
-                res_h_dir = requests.get(f"{BACKEND_URL}/api/v1/hospitals/directory", timeout=5)
-                if res_h_dir.status_code == 200 and res_h_dir.json():
-                    hospitals_mapped = {h["name"]: h["id"] for h in res_h_dir.json()}
-                else:
-                    hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
-            except Exception:
-                hospitals_mapped = {"METHYLOX CENTRAL CORE": 1}
-                
-            selected_h_node = st.selectbox("Clinical center or hospital", list(hospitals_mapped.keys()))
+            # Campo de texto libre para ingresar el nombre de la institución
+            new_institution = st.text_input("Institution")
                 
             if st.button("Save and synchronize record", use_container_width=True):
                 gender_backend = new_p_sexo
                 
-                if not new_p_id or not new_p_name:
+                if not new_p_id or not new_p_name or not new_institution:
                     st.error("❌ Faltan datos: Complete los campos obligatorios del expediente.")
                 else:
                     payload_p = {
@@ -716,7 +708,7 @@ elif nav_selection == "patients":
                         "full_name": new_p_name,
                         "date_of_birth": str(new_p_dob),
                         "gender": gender_backend,
-                        "hospital_id": int(hospitals_mapped[selected_h_node])
+                        "institution": new_institution
                     }
                     try:
                         res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
@@ -738,9 +730,9 @@ elif nav_selection == "patients":
             if res_cohort.status_code == 200 and res_cohort.json():
                 df_patients = pd.DataFrame(res_cohort.json())
             else:
-                df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender"])
+                df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Institution"])
         except Exception:
-            df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender"])
+            df_patients = pd.DataFrame(columns=["Patient ID", "Anonymous Code", "Age", "Gender", "Institution"])
             
         st.dataframe(df_patients, use_container_width=True, hide_index=True)
         st.markdown('</div>', unsafe_allow_html=True)
