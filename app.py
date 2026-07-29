@@ -1010,9 +1010,20 @@ elif nav_selection == "patients":
 # 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
 # ----------------------------------------------------------------------------
 elif nav_selection == "lims":
-    # Estilos CSS específicos para centrar etiquetas de inputs en esta sección
+    # Estilos CSS específicos para centrar títulos de tarjetas y etiquetas de inputs en esta sección
     st.markdown("""
         <style>
+            /* Centrar los títulos principales de las tarjetas clínicas */
+            .card-title-clinical {
+                text-align: center !important;
+                font-weight: 700 !important;
+                font-size: 1.1rem !important;
+                margin-bottom: 1rem !important;
+                display: block !important;
+                width: 100% !important;
+            }
+
+            /* Centrar las etiquetas (labels) de todos los campos de entrada de Streamlit en esta vista */
             div[data-testid="stTextInput"] label,
             div[data-testid="stSelectbox"] label {
                 display: block !important;
@@ -1023,7 +1034,7 @@ elif nav_selection == "lims":
     """, unsafe_allow_html=True)
 
     st.markdown("<h2 class='welcome-header'>🧪 LIMS Sample Management</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Manage and monitor laboratory samples.</p>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Track laboratory samples and monitor chain of custody.</p>", unsafe_allow_html=True)
     
     try:
         res_p_list = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
