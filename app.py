@@ -744,6 +744,7 @@ elif nav_selection == "dashboard":
             </div>
         </a>
         """, unsafe_allow_html=True)
+
 # ============================================================================
 # ============================================================================
 # 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
@@ -769,13 +770,14 @@ elif nav_selection == "patients":
                 width: 100% !important;
             }
 
-            /* Contenedor del input de búsqueda tipo Google perfectamente ajustado */
+            /* Contenedor del input de búsqueda tipo Google perfectamente ajustado con la lupa dentro a la orilla izquierda */
             div[data-baseweb="input"] {
                 border-radius: 30px !important;
                 border: 1.5px solid #CBD5E1 !important;
                 background-color: #FFFFFF !important;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-                padding-left: 38px !important; /* Espacio exacto para el icono SVG */
+                padding-left: 36px !important; /* Espacio exacto dentro del recuadro para el icono SVG */
+                position: relative !important;
             }
             div[data-baseweb="input"]:hover, div[data-baseweb="input"]:focus-within {
                 border-color: #2563EB !important;
@@ -835,16 +837,16 @@ elif nav_selection == "patients":
         col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
         
         with col_center:
-            # SVG de lupa posicionado de manera absoluta, perfectamente centrado a la orilla izquierda del recuadro
+            # Contenedor relativo que inyecta el SVG de la lupa estrictamente DENTRO y a la orilla izquierda del input de Streamlit
             st.markdown("""
                 <div style="position: relative; width: 100%;">
-                    <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 5; pointer-events: none; display: flex; align-items: center;">
+                    <div style="position: absolute; left: 14px; top: 29px; transform: translateY(-50%); z-index: 10; pointer-events: none; display: flex; align-items: center;">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     </div>
                 </div>
             """, unsafe_allow_html=True)
 
-            # Campo de texto principal con el placeholder nativo limpio (desaparece al escribir o enfocar)
+            # Campo de texto principal con placeholder nativo (se oculta al hacer clic/escribir y reaparece si se sale sin texto)
             search_query_main = st.text_input(
                 "Search patient", 
                 placeholder="Search patient (write ID)...",
