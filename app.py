@@ -1135,8 +1135,28 @@ elif nav_selection == "analysis":
 # ----------------------------------------------------------------------------
 elif nav_selection == "reports":
     from fpdf import FPDF
-    st.markdown("<h2 class='welcome-header'>📜 Issuance of Defendible Clinical Dossiers & Technical Reports</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Verify mathematical calls and download FDA/HIPAA compliant cryptographic sheets</p>", unsafe_allow_html=True)
+    
+    # Estilos CSS específicos para centrar títulos y etiquetas en esta sección
+    st.markdown("""
+        <style>
+            .card-title-clinical {
+                text-align: center !important;
+                font-weight: 700 !important;
+                font-size: 1.1rem !important;
+                margin-bottom: 1rem !important;
+                display: block !important;
+                width: 100% !important;
+            }
+            div[data-testid="stSelectbox"] label {
+                display: block !important;
+                text-align: center !important;
+                width: 100% !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<h2 class='welcome-header'>📜 Clinical Reports</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Access and download generated analysis reports.</p>", unsafe_allow_html=True)
     
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     try:
@@ -1149,7 +1169,7 @@ elif nav_selection == "reports":
         reports_data = []
     
     if not reports_data:
-        st.info("ℹ️ Clean Ledger: No clinical report matrix sequences compiled in PostgreSQL database yet. The system is ready in clean-slate production to record and emit real diagnostics.")
+        st.info("ℹ️ No reports available. Analyze a sample to generate a report.")
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         df_rep_list = pd.DataFrame(reports_data)
