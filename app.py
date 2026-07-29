@@ -926,10 +926,10 @@ elif nav_selection == "patients":
         
         with p1:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">➕ Register New Patient Profile</div>', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical">Register New Patient</div>', unsafe_allow_html=True)
             
             if st.session_state.user_role == "cls":
-                st.warning("🔒 Restricted Access: Laboratory role does not have clinical privileges to enroll patients.")
+                st.warning("Restricted Access: Laboratory role does not have clinical privileges to enroll patients.")
             else:
                 # Campo Unique patient ID
                 new_p_id = st.text_input("Unique patient ID", value=st.session_state.generated_patient_id)
