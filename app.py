@@ -1023,7 +1023,7 @@ elif nav_selection == "lims":
     """, unsafe_allow_html=True)
 
     st.markdown("<h2 class='welcome-header'>🧪 LIMS Sample Management</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Track laboratory samples and monitor chain of custody.</p>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Manage and monitor laboratory samples.</p>", unsafe_allow_html=True)
     
     try:
         res_p_list = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
