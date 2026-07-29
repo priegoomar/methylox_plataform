@@ -1092,18 +1092,14 @@ elif nav_selection == "lims":
             st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧬 TAB 4: "Analysys"
+# 🧬 TAB 4: METHYLOX ENGINE (COMPUTATIONAL KERNEL CORES)
 # ----------------------------------------------------------------------------
 elif nav_selection == "analysis":
     # Estilos CSS específicos para centrar encabezados, títulos y etiquetas en esta sección
     st.markdown("""
         <style>
-            /* Centrar encabezado principal y subtítulo de la pestaña */
+            /* Centrar encabezado principal de la pestaña */
             .welcome-header {
-                text-align: center !important;
-                width: 100% !important;
-            }
-            .welcome-caption {
                 text-align: center !important;
                 width: 100% !important;
             }
@@ -1127,10 +1123,9 @@ elif nav_selection == "analysis":
     """, unsafe_allow_html=True)
 
     st.markdown("<h2 class='welcome-header'>🧬 Sample Analysis</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Analyze laboratory samples and generate molecular results.</p>", unsafe_allow_html=True)
     
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-    st.markdown('<div class="card-title-clinical">🚀 Quantitative Epigenetic Run Over Raw Methylation Matrices</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card-title-clinical">Analyze Laboratory Sample</div>', unsafe_allow_html=True)
     
     if st.session_state.user_role == "md":
         st.warning("🔒 Access Denied: Medical roles do not possess computational clearance to launch sequencing.")
@@ -1142,7 +1137,7 @@ elif nav_selection == "analysis":
             pending_samples = []
 
         if not pending_samples:
-            st.info("ℹ️ Pipeline Standby: No pending samples in queue requiring CRISPR bioinformatic scoring calculation.")
+            st.info("ℹ️ Register a sample in the Samples section before starting an analysis.")
         else:
             m_target = st.selectbox("Select Pending Asset ID for Pipeline Queue:", pending_samples)
             uploaded_file = st.file_uploader("Upload Sequencer Raw CpG Methylation File (.CSV)", type=["csv"])
