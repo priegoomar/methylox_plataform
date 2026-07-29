@@ -557,7 +557,7 @@ elif nav_selection == "dashboard":
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
-           
+            
         rows_html = ""
         if not samples_list:
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
@@ -865,7 +865,8 @@ elif nav_selection == "patients":
 
         # Mostrar el directorio de pacientes filtrable en la vista principal si se escribe algo en el buscador
         try:
-            res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
+            # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
+            res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
             if res_cohort.status_code == 200 and res_cohort.json():
                 df_patients = pd.DataFrame(res_cohort.json())
             else:
@@ -964,7 +965,8 @@ elif nav_selection == "patients":
                             "institution": new_institution
                         }
                         try:
-                            res_p = requests.post(f"{BACKEND_URL}/api/v1/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
+                            # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
+                            res_p = requests.post(f"{BACKEND_URL}/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
                             if res_p.status_code == 200:
                                 st.success(f"🧬 Patient record {new_p_id} successfully registered.")
                                 st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
@@ -981,7 +983,8 @@ elif nav_selection == "patients":
             st.markdown('<div class="card-title-clinical">Patient Records</div>', unsafe_allow_html=True)
 
             try:
-                res_cohort = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
+                # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
+                res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
                 if res_cohort.status_code == 200 and res_cohort.json():
                     df_patients = pd.DataFrame(res_cohort.json())
                 else:
@@ -1036,7 +1039,8 @@ elif nav_selection == "lims":
     st.markdown("<p class='welcome-caption'>Track laboratory samples and monitor chain of custody.</p>", unsafe_allow_html=True)
     
     try:
-        res_p_list = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
+        # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
+        res_p_list = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
         registered_patients = [p["Patient ID"] for p in res_p_list.json()] if res_p_list.status_code == 200 and res_p_list.json() else []
     except Exception:
         registered_patients = []
@@ -1067,7 +1071,8 @@ elif nav_selection == "lims":
                             "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name
                         }
                         try:
-                            res_intake = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
+                            # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
+                            res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
                             if res_intake.status_code == 200:
                                 st.success("Asset logged successfully.")
                                 time.sleep(0.5)
@@ -1082,7 +1087,8 @@ elif nav_selection == "lims":
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">🗃️ Sample Inventory</div>', unsafe_allow_html=True)
             try:
-                res_s = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
+                # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
+                res_s = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
                 df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
             except Exception:
                 df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
@@ -1130,7 +1136,8 @@ elif nav_selection == "analysis":
         st.warning("🔒 Access Denied: Medical roles do not possess computational clearance to launch sequencing.")
     else:
         try:
-            res_p_samples = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/pending-evaluation", headers=headers, timeout=5)
+            # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
+            res_p_samples = requests.get(f"{BACKEND_URL}/lims/samples/pending-evaluation", headers=headers, timeout=5)
             pending_samples = res_p_samples.json() if res_p_samples.status_code == 200 and res_p_samples.json() else []
         except Exception:
             pending_samples = []
@@ -1144,7 +1151,8 @@ elif nav_selection == "analysis":
                 if st.button("Execute Automated Analytical Pipeline Run", use_container_width=True):
                     files_payload = {"file": (uploaded_file.name, uploaded_file.getvalue(), "text/csv")}
                     try:
-                        res_calc = requests.post(f"{BACKEND_URL}/api/v1/lims/samples/evaluate/{m_target}", files=files_payload, headers=headers, timeout=15)
+                        # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
+                        res_calc = requests.post(f"{BACKEND_URL}/lims/samples/evaluate/{m_target}", files=files_payload, headers=headers, timeout=15)
                         if res_calc.status_code == 200:
                             calc_result = res_calc.json()
                             st.success(f"⚡ Analytics unraveled. Mean Beta Score: {calc_result['mean_beta']:.4f}")
@@ -1196,7 +1204,8 @@ elif nav_selection == "reports":
     
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     try:
-        res_reports = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
+        # CORRECCIÓN: Se ajustó la ruta para eliminar duplicidades con BACKEND_URL si aplica
+        res_reports = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=5)
         if res_reports.status_code == 200:
             reports_data = res_reports.json()
         else:
@@ -1339,10 +1348,11 @@ elif nav_selection == "Access Control":
                 "password": input_password,
                 "full_name": input_full_name,
                 "role": target_role_display,
-                "hospital_id": int(target_hospital_id)
+                "hospital_id": int(target_hospital_id) if 'target_hospital_id' in locals() and target_hospital_id else 1
             }
             try:
-                response = requests.post(f"{BACKEND_URL}/api/v1/auth/provision-user", json=payload_u, headers=headers)
+                # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
+                response = requests.post(f"{BACKEND_URL}/auth/provision-user", json=payload_u, headers=headers)
                 if response.status_code == 200:
                     st.success("Staff Identity Successfully Activated & Tasks Delegated Real-Time.")
                 else:
@@ -1350,7 +1360,6 @@ elif nav_selection == "Access Control":
             except Exception:
                 st.error("Deployment Connectivity Error: User profile could not be logged into database repository.")
     st.markdown('</div>', unsafe_allow_html=True)
-
 
 # ----------------------------------------------------------------------------
 # ⚙️ TAB 7: SYSTEM SETTINGS (KERNEL INTEGRITY AUDIT TRAIL MONITOR)
