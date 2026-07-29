@@ -750,6 +750,52 @@ elif nav_selection == "dashboard":
 # 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
 # ============================================================================
 elif nav_selection == "patients":
+    # Estilos CSS globales para centrar títulos de tarjetas y refinar la barra de búsqueda tipo Google
+    st.markdown("""
+        <style>
+            /* Centrar los títulos de las tarjetas clínicas */
+            .card-title-clinical {
+                text-align: center !important;
+                font-weight: 700 !important;
+                font-size: 1.1rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            /* Contenedor del input de búsqueda tipo Google perfectamente ajustado */
+            div[data-baseweb="input"] {
+                border-radius: 30px !important;
+                border: 1.5px solid #CBD5E1 !important;
+                background-color: #FFFFFF !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+                padding-left: 38px !important; /* Espacio exacto para el icono SVG */
+            }
+            div[data-baseweb="input"]:hover, div[data-baseweb="input"]:focus-within {
+                border-color: #2563EB !important;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+            }
+            
+            /* Estilo de texto plano en negro/gris para los botones de navegación */
+            div.row-widget.stButton > button[kind="secondary"] {
+                background: transparent !important;
+                border: none !important;
+                color: #334155 !important;
+                font-weight: 600 !important;
+                font-size: 16px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                display: inline-block !important;
+                text-align: center !important;
+                width: 100% !important;
+            }
+            div.row-widget.stButton > button[kind="secondary"]:hover {
+                color: #0F172A !important;
+                background: transparent !important;
+                text-decoration: underline !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
     # Encabezado principal con icono SVG vectorial integrado
     st.markdown("""
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
@@ -781,52 +827,16 @@ elif nav_selection == "patients":
         col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
         
         with col_center:
-            # Estilos CSS avanzados para integrar el SVG perfectamente centrado a la izquierda del input
+            # SVG de lupa posicionado de manera absoluta, perfectamente centrado a la orilla izquierda del recuadro
             st.markdown("""
-            <style>
-                /* Estilo de la caja contenedora del input para alinear el padding izquierdo y centrar la lupa verticalmente */
-                div[data-baseweb="input"] {
-                    border-radius: 30px !important;
-                    border: 1.5px solid #CBD5E1 !important;
-                    background-color: #FFFFFF !important;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-                    padding-left: 42px !important; /* Espacio exacto para el icono SVG */
-                }
-                div[data-baseweb="input"]:hover, div[data-baseweb="input"]:focus-within {
-                    border-color: #2563EB !important;
-                    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
-                }
-                
-                /* Estilo de texto plano en negro/gris para el botón "+ New Patient" */
-                div.row-widget.stButton > button[kind="secondary"] {
-                    background: transparent !important;
-                    border: none !important;
-                    color: #334155 !important;
-                    font-weight: 600 !important;
-                    font-size: 16px !important;
-                    padding: 0 !important;
-                    margin: 0 !important;
-                    box-shadow: none !important;
-                    display: inline-block !important;
-                    text-align: center !important;
-                    width: 100% !important;
-                }
-                div.row-widget.stButton > button[kind="secondary"]:hover {
-                    color: #0F172A !important;
-                    background: transparent !important;
-                    text-decoration: underline !important;
-                }
-            </style>
-            
-            <!-- SVG de lupa posicionado de manera absoluta, perfectamente centrado a la orilla izquierda del recuadro -->
-            <div style="position: relative; width: 100%;">
-                <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 5; pointer-events: none; display: flex; align-items: center;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <div style="position: relative; width: 100%;">
+                    <div style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 5; pointer-events: none; display: flex; align-items: center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
                 </div>
-            </div>
             """, unsafe_allow_html=True)
 
-            # Campo de texto principal con el placeholder limpio
+            # Campo de texto principal con el placeholder nativo limpio (desaparece al escribir o enfocar)
             search_query_main = st.text_input(
                 "Search patient", 
                 placeholder="Search patient (write ID)...",
