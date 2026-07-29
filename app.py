@@ -744,16 +744,15 @@ elif nav_selection == "dashboard":
             </div>
         </a>
         """, unsafe_allow_html=True)
-
 # ============================================================================
 # ============================================================================
 # 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
 # ============================================================================
 elif nav_selection == "patients":
-    # Estilos CSS globales para centrar títulos de tarjetas y refinar la barra de búsqueda tipo Google
+    # Estilos CSS globales para centrar títulos de tarjetas, etiquetas de inputs y refinar la barra de búsqueda tipo Google
     st.markdown("""
         <style>
-            /* Centrar los títulos de las tarjetas clínicas */
+            /* Centrar los títulos principales de las tarjetas clínicas */
             .card-title-clinical {
                 text-align: center !important;
                 font-weight: 700 !important;
@@ -761,6 +760,15 @@ elif nav_selection == "patients":
                 margin-bottom: 1rem !important;
             }
             
+            /* Centrar las etiquetas (labels) de todos los campos de entrada de Streamlit en esta vista */
+            div[data-testid="stTextInput"] label,
+            div[data-testid="stDateInput"] label,
+            div[data-testid="stSelectbox"] label {
+                display: block !important;
+                text-align: center !important;
+                width: 100% !important;
+            }
+
             /* Contenedor del input de búsqueda tipo Google perfectamente ajustado */
             div[data-baseweb="input"] {
                 border-radius: 30px !important;
