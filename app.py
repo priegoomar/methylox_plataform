@@ -36,7 +36,7 @@ st.markdown("""
         padding-left: 3rem !important;
         padding-right: 3rem !important;
     }
-   
+    
     /* Dark Compliance Corporate Sidebar */
     [data-testid="stSidebar"] {
         background-color: #0B0F19 !important;
@@ -50,7 +50,7 @@ st.markdown("""
         font-weight: 500 !important;
         font-size: 14px !important;
     }
-   
+    
     /* Typography System */
     .welcome-header {
         font-size: 28px !important;
@@ -63,7 +63,7 @@ st.markdown("""
         color: #64748B !important;
         margin-bottom: 25px !important;
     }
-   
+    
     /* Premium Grid Telemetry Panels */
     .metric-container-hub {
         display: flex;
@@ -148,7 +148,7 @@ st.markdown("""
         border-bottom: 1px solid #F1F5F9;
         text-align: center !important;
     }
-   
+    
     /* Premium Action Grid System */
     .quick-action-grid {
         display: flex;
@@ -343,7 +343,7 @@ with st.sidebar:
 # RBAC NAVIGATION & URL ROUTING (FINAL FIX)
 # =========================================================================
 
-# Definir menu_options por defecto
+# Definir menu_options por defecto incluyendo "Access Control" y "users" de forma unificada y segura
 menu_options = {
     "dashboard": "Dashboard",
     "patients": "Patients",
@@ -354,7 +354,7 @@ menu_options = {
 
 if st.session_state.get("jwt_access_token"):
     if st.session_state.get("user_role") == "admin":
-        menu_options["Access Control"] = "Access Control"
+        menu_options["users"] = "Access Control"
         menu_options["settings"] = "Settings"
 
     if "nav_selection" not in st.session_state:
@@ -373,8 +373,8 @@ if st.session_state.get("jwt_access_token"):
             target_nav = "analysis"
         elif query_page == "Reports" and "reports" in menu_options:
             target_nav = "reports"
-        elif query_page == "Access Control" and "Access Control" in menu_options:
-            target_nav = "Access Control"
+        elif query_page in ["Access Control", "users"] and "users" in menu_options:
+            target_nav = "users"
             
         if target_nav:
             st.session_state.nav_selection = target_nav
@@ -745,7 +745,6 @@ elif nav_selection == "dashboard":
         </a>
         """, unsafe_allow_html=True)
 
-# ============================================================================
 # ============================================================================
 # 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
 # ============================================================================
