@@ -1010,8 +1010,20 @@ elif nav_selection == "patients":
 # 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
 # ----------------------------------------------------------------------------
 elif nav_selection == "lims":
-    st.markdown("<h2 class='welcome-header'>🧪 LIMS Access Control & Chain of Custody</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Validate chronological workflow history pathways and operational audit logs</p>", unsafe_allow_html=True)
+    # Estilos CSS específicos para centrar etiquetas de inputs en esta sección
+    st.markdown("""
+        <style>
+            div[data-testid="stTextInput"] label,
+            div[data-testid="stSelectbox"] label {
+                display: block !important;
+                text-align: center !important;
+                width: 100% !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<h2 class='welcome-header'>🧪 LIMS Sample Management</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Track laboratory samples and monitor chain of custody.</p>", unsafe_allow_html=True)
     
     try:
         res_p_list = requests.get(f"{BACKEND_URL}/api/v1/lims/cohort-directory", headers=headers, timeout=5)
@@ -1023,12 +1035,12 @@ elif nav_selection == "lims":
         m1, m2 = st.columns(2)
         with m1:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">📥 Log New Clinical Asset Intake</div>', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical">📥 New Sample Intake</div>', unsafe_allow_html=True)
             
             if st.session_state.user_role == "md":
                 st.warning("🔒 Access Denied: Medical personnel are restricted from altering LIMS physical custody states.")
             elif not registered_patients:
-                st.warning("⚠️ Action Locked: You must enroll at least one patient record before conducting laboratory asset intake operations.")
+                st.warning("⚠️ No patients available\n\nRegister a patient before creating a new sample.")
             else:
                 new_m_id = st.text_input("Unique Sample Asset ID")
                 asoc_p_id = st.selectbox("Associated Patient Subject Profile Link", registered_patients)
@@ -1058,7 +1070,7 @@ elif nav_selection == "lims":
             
         with m2:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">🗃️ Real-Time Audit Trail & Asset Inventory Status</div>', unsafe_allow_html=True)
+            st.markdown('<div class="card-title-clinical">🗃️ Sample Inventory</div>', unsafe_allow_html=True)
             try:
                 res_s = requests.get(f"{BACKEND_URL}/api/v1/lims/samples/directory", headers=headers, timeout=5)
                 df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
