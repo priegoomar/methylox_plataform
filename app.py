@@ -1136,9 +1136,19 @@ elif nav_selection == "analysis":
 elif nav_selection == "reports":
     from fpdf import FPDF
     
-    # Estilos CSS específicos para centrar títulos y etiquetas en esta sección
+    # Estilos CSS específicos para centrar títulos, encabezados y etiquetas
     st.markdown("""
         <style>
+            /* Centrar encabezado principal y subtítulo de la pestaña */
+            .welcome-header {
+                text-align: center !important;
+                width: 100% !important;
+            }
+            .welcome-caption {
+                text-align: center !important;
+                width: 100% !important;
+            }
+            /* Centrar los títulos principales de las tarjetas clínicas */
             .card-title-clinical {
                 text-align: center !important;
                 font-weight: 700 !important;
@@ -1147,6 +1157,7 @@ elif nav_selection == "reports":
                 display: block !important;
                 width: 100% !important;
             }
+            /* Centrar selectores */
             div[data-testid="stSelectbox"] label {
                 display: block !important;
                 text-align: center !important;
