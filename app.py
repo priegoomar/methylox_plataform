@@ -1092,11 +1092,42 @@ elif nav_selection == "lims":
             st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧬 TAB 4: METHYLOX ENGINE (COMPUTATIONAL KERNEL CORES)
+# 🧬 TAB 4: "Analysys"
 # ----------------------------------------------------------------------------
 elif nav_selection == "analysis":
-    st.markdown("<h2 class='welcome-header'>🧬 Computational Pipeline Kernel Execution</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Execute high-density CRISPR-Cas12a calling matrices against sequence parameters</p>", unsafe_allow_html=True)
+    # Estilos CSS específicos para centrar encabezados, títulos y etiquetas en esta sección
+    st.markdown("""
+        <style>
+            /* Centrar encabezado principal y subtítulo de la pestaña */
+            .welcome-header {
+                text-align: center !important;
+                width: 100% !important;
+            }
+            .welcome-caption {
+                text-align: center !important;
+                width: 100% !important;
+            }
+            /* Centrar los títulos principales de las tarjetas clínicas */
+            .card-title-clinical {
+                text-align: center !important;
+                font-weight: 700 !important;
+                font-size: 1.1rem !important;
+                margin-bottom: 1rem !important;
+                display: block !important;
+                width: 100% !important;
+            }
+            /* Centrar etiquetas de selectores y subidores de archivos */
+            div[data-testid="stSelectbox"] label,
+            div[data-testid="stFileUploader"] label {
+                display: block !important;
+                text-align: center !important;
+                width: 100% !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<h2 class='welcome-header'>🧬 Sample Analysis</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Analyze laboratory samples and generate molecular results.</p>", unsafe_allow_html=True)
     
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     st.markdown('<div class="card-title-clinical">🚀 Quantitative Epigenetic Run Over Raw Methylation Matrices</div>', unsafe_allow_html=True)
