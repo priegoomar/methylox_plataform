@@ -756,280 +756,206 @@ elif nav_selection == "dashboard":
         """, unsafe_allow_html=True)
 
 # ============================================================================
-# 📊 TAB 2: PATIENTS (COHORTE DE PACIENTES - CLÍNICA)
+#   TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT) - OPTIMIZED & ALIGNED
 # ============================================================================
 elif nav_selection == "patients":
-    # Estilos CSS globales para centrar títulos de tarjetas, etiquetas de inputs y refinar la barra de búsqueda tipo Google
-    st.markdown("""
-        <style>
-            /* Centrar los títulos principales de las tarjetas clínicas */
-            .card-title-clinical {
-                text-align: center !important;
-                font-weight: 700 !important;
-                font-size: 1.1rem !important;
-                margin-bottom: 1rem !important;
-            }
-            
-            /* Centrar las etiquetas (labels) de todos los campos de entrada de Streamlit en esta vista */
-            div[data-testid="stTextInput"] label,
-            div[data-testid="stDateInput"] label,
-            div[data-testid="stSelectbox"] label {
-                display: block !important;
-                text-align: center !important;
-                width: 100% !important;
-            }
+    import random
 
-            /* Contenedor del input de búsqueda tipo Google perfectamente ajustado con la lupa dentro a la orilla izquierda */
-            div[data-baseweb="input"] {
-                border-radius: 30px !important;
-                border: 1.5px solid #CBD5E1 !important;
-                background-color: #FFFFFF !important;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-                padding-left: 36px !important; /* Espacio exacto dentro del recuadro para el icono SVG */
-                position: relative !important;
-            }
-            div[data-baseweb="input"]:hover, div[data-baseweb="input"]:focus-within {
-                border-color: #2563EB !important;
-                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
-            }
-            
-            /* Estilo de texto plano en negro/gris para los botones de navegación */
-            div.row-widget.stButton > button[kind="secondary"] {
-                background: transparent !important;
-                border: none !important;
-                color: #334155 !important;
-                font-weight: 600 !important;
-                font-size: 16px !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                display: inline-block !important;
-                text-align: center !important;
-                width: 100% !important;
-            }
-            div.row-widget.stButton > button[kind="secondary"]:hover {
-                color: #0F172A !important;
-                background: transparent !important;
-                text-decoration: underline !important;
-            }
-        </style>
+    # -------------------------------------------------------------------------
+    # CSS CLINICAL PATIENT MODULE
+    # -------------------------------------------------------------------------
+    st.markdown("""
+    <style>
+    .card-title-clinical { text-align:center !important; font-weight:700 !important; font-size:1.1rem !important; margin-bottom:1rem !important; width:100% !important; display:block !important; }
+    div[data-testid="stTextInput"] label, div[data-testid="stDateInput"] label, div[data-testid="stSelectbox"] label { display:block !important; text-align:center !important; width:100% !important; }
+    div[data-baseweb="input"] { border-radius:30px !important; border:1.5px solid #CBD5E1 !important; background:white !important; padding-left:35px !important; }
+    div[data-baseweb="input"]:focus-within { border-color:#2563EB !important; box-shadow:0 0 0 2px rgba(37,99,235,0.15) !important; }
+    </style>
     """, unsafe_allow_html=True)
 
-    # Encabezado principal con icono SVG vectorial integrado
+    # -------------------------------------------------------------------------
+    # HEADER
+    # -------------------------------------------------------------------------
     st.markdown("""
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            <h2 class='welcome-header' style="margin: 0; padding: 0;">Patient Cohort & Clinical Directory</h2>
-        </div>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+        </svg>
+        <h2 style="margin:0;">Patient Cohort & Clinical Directory</h2>
+    </div>
     """, unsafe_allow_html=True)
-    
-    # Inicializar estado para mostrar u ocultar el formulario de registro y directorio
+
+    # -------------------------------------------------------------------------
+    # SESSION STATES
+    # -------------------------------------------------------------------------
     if "show_new_patient_form" not in st.session_state:
         st.session_state.show_new_patient_form = False
-
-    # Inicializar el ID automático en el estado de la sesión si no existe
-    import random
     if "generated_patient_id" not in st.session_state:
-        st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
+        st.session_state.generated_patient_id = f"PAT-{random.randint(10000,99999)}"
+    if "generated_anonymous_code" not in st.session_state:
+        st.session_state.generated_anonymous_code = f"MOX-{random.randint(10000,99999)}"
 
     # -------------------------------------------------------------------------
-    # 🔍 PANTALLA INICIAL ESTILO GOOGLE
+    # FUNCTION LOAD PATIENT DIRECTORY
     # -------------------------------------------------------------------------
-    if not st.session_state.show_new_patient_form:
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        
-        col_pad1, col_center, col_pad2 = st.columns([1, 2.2, 1])
-        
-        with col_center:
-            # Contenedor relativo que inyecta el SVG de la lupa estrictamente DENTRO y a la orilla izquierda del input de Streamlit
-            st.markdown("""
-                <div style="position: relative; width: 100%;">
-                    <div style="position: absolute; left: 14px; top: 29px; transform: translateY(-50%); z-index: 10; pointer-events: none; display: flex; align-items: center;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            # Campo de texto principal con placeholder nativo (se oculta al hacer clic/escribir y reaparece si se sale sin texto)
-            search_query_main = st.text_input(
-                "Search patient", 
-                placeholder="Search patient (write ID)...",
-                label_visibility="collapsed"
-            )
-            
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            # Opción "+ New Patient" como texto plano en negro/gris sin recuadro
-            col_btn_sub1, col_btn_sub_target, col_btn_sub2 = st.columns([1, 2, 1])
-            with col_btn_sub_target:
-                if st.button("+ New Patient", key="btn_toggle_new_patient"):
-                    st.session_state.show_new_patient_form = True
-                    st.rerun()
-
-        st.markdown("<br><br>", unsafe_allow_html=True)
-
-        # Mostrar el directorio de pacientes filtrable en la vista principal si se escribe algo en el buscador
+    def load_patient_directory():
         try:
-            # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
-            res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
-            if res_cohort.status_code == 200 and res_cohort.json():
-                df_patients = pd.DataFrame(res_cohort.json())
-            else:
-                df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
+            response = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                if data:
+                    return pd.DataFrame(data)
         except Exception:
-            df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
-            
+            pass
+        return pd.DataFrame()
+
+    # =========================================================================
+    # SEARCH VIEW
+    # =========================================================================
+    if not st.session_state.show_new_patient_form:
+        st.markdown("<br>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 2.2, 1])
+
+        with col2:
+            search_query = st.text_input("Search patient", placeholder="Search Patient ID, Record Number or Anonymous Code", label_visibility="collapsed")
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("+ New Patient", key="open_new_patient"):
+                st.session_state.show_new_patient_form = True
+                st.rerun()
+
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        df_patients = load_patient_directory()
+
         if not df_patients.empty:
-            column_mapping = {
-                'id_patient': 'Patient ID',
-                'patient_id': 'Patient ID',
-                'full_name': 'Record Number',
-                'anonymous_code': 'Record Number',
-                'date_of_birth': 'Date of Birth',
-                'dob': 'Date of Birth',
-                'gender': 'Gender',
-                'institution': 'Institution'
+            rename_map = {
+                "id_patient": "Patient ID", "patient_id": "Patient ID",
+                "anonymous_code": "Anonymous Code", "full_name": "Full Name",
+                "record_number": "Record Number", "date_of_birth": "Date of Birth",
+                "dob": "Date of Birth", "gender": "Gender", "institution": "Institution"
             }
-            df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
+            df_patients = df_patients.rename(columns={k: v for k, v in rename_map.items() if k in df_patients.columns})
 
-            if search_query_main.strip():
-                mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query_main.strip(), case=False, na=False)).any(axis=1)
-                df_patients = df_patients[mask]
-                
-                st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-                st.markdown('<div class="card-title-clinical">Search Results & Patient Directory</div>', unsafe_allow_html=True)
-                st.dataframe(df_patients, use_container_width=True, hide_index=True)
-                st.markdown('</div>', unsafe_allow_html=True)
+            if search_query.strip():
+                mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query, case=False, na=False)).any(axis=1)
+                filtered = df_patients[mask]
 
-    # -------------------------------------------------------------------------
-    # 📋 SECCIÓN CONDICIONAL: FORMULARIO Y DIRECTORIO (Al dar clic en New Patient)
-    # -------------------------------------------------------------------------
+                if not filtered.empty:
+                    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+                    st.markdown('<div class="card-title-clinical">Search Results</div>', unsafe_allow_html=True)
+                    st.dataframe(filtered, use_container_width=True, hide_index=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
+        else:
+            st.info("No registered patients available.")
+
+    # =========================================================================
+    # NEW PATIENT REGISTRATION VIEW
+    # =========================================================================
     else:
-        # Estilos para que únicamente el botón de regreso sea texto plano negro/gris sin recuadro
-        st.markdown("""
-        <style>
-            div[data-testid="stButton"] button[key="btn_back_search"],
-            div.row-widget.stButton:has(button:contains("← Back to Search")) button {
-                background: transparent !important;
-                border: none !important;
-                color: #334155 !important;
-                font-weight: 600 !important;
-                font-size: 15px !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-            }
-        </style>
-        """, unsafe_allow_html=True)
-
-        # Botón superior para regresar a la pantalla de inicio convertido en texto plano
-        if st.button("← Back to Search", key="btn_back_search"):
+        if st.button("← Back to Search", key="btn_back_patients"):
             st.session_state.show_new_patient_form = False
             st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
-        p1, p2 = st.columns([1, 1.3], gap="large")
-        
-        with p1:
+        left, right = st.columns([1, 1.3], gap="large")
+
+        # =====================================================================
+        # PATIENT REGISTRATION CARD
+        # =====================================================================
+        with left:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">Register New Patient</div>', unsafe_allow_html=True)
-            
+
             if st.session_state.user_role == "cls":
-                st.warning("Restricted Access: Laboratory role does not have clinical privileges to enroll patients.")
+                st.warning("Restricted Access: Laboratory users cannot enroll patients.")
             else:
-                # Campo Unique patient ID
-                new_p_id = st.text_input("Unique patient ID", value=st.session_state.generated_patient_id)
-                
-                # Texto interactivo "Generate Automatic ID"
-                if st.button("🔄 Generate Automatic ID", key="btn_gen_auto_id"):
-                    st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
+                patient_id = st.text_input("Patient ID", value=st.session_state.generated_patient_id, disabled=True)
+                if st.button("  Generate New Patient ID", key="generate_patient_id"):
+                    st.session_state.generated_patient_id = f"PAT-{random.randint(10000,99999)}"
                     st.rerun()
-                
-                # Record Number con placeholder
-                new_p_name = st.text_input("Record Number", placeholder="e.g. REC-2026-0091")
-                
-                new_p_dob = st.date_input("Date of birth", min_value=datetime(1920, 1, 1))
-                
-                # Opciones de género en inglés
-                new_p_sexo = st.selectbox("Gender", ["Male", "Female"])
-                
-                # Institución
-                new_institution = st.text_input("Institution")
-                    
-                # Botón de guardar con su recuadro y estilo original de Streamlit
-                if st.button("Save and synchronize record", use_container_width=True):
-                    gender_backend = new_p_sexo
-                    
-                    if not new_p_id or not new_p_name or not new_institution:
-                        st.error("❌ Missing Data: Please complete all mandatory clinical fields.")
+
+                anonymous_code = st.text_input("Anonymous Clinical Code", value=st.session_state.generated_anonymous_code, disabled=True)
+                if st.button("Generate Anonymous Code", key="generate_anonymous_code"):
+                    st.session_state.generated_anonymous_code = f"MOX-{random.randint(10000,99999)}"
+                    st.rerun()
+
+                full_name = st.text_input("Full Name", placeholder="Patient legal name")
+                record_number = st.text_input("Record Number", placeholder="Example: REC-2026-0091")
+                date_birth = st.date_input("Date of Birth", min_value=datetime(1920, 1, 1))
+                gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+                institution = st.text_input("Institution", placeholder="Hospital / Laboratory")
+
+                if st.button("Save and Synchronize Patient Record", use_container_width=True, key="save_patient_record"):
+                    required_fields = [full_name, record_number, institution]
+                    if not all(required_fields):
+                        st.error("Missing Data: Complete all mandatory fields.")
                     else:
-                        payload_p = {
-                            "id_patient": new_p_id,
-                            "full_name": new_p_name,
-                            "date_of_birth": str(new_p_dob),
-                            "gender": gender_backend,
-                            "institution": new_institution
+                        payload_patient = {
+                            "id_patient": patient_id, "anonymous_code": anonymous_code,
+                            "full_name": full_name, "record_number": record_number,
+                            "date_of_birth": str(date_birth), "gender": gender, "institution": institution
                         }
                         try:
-                            # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
-                            res_p = requests.post(f"{BACKEND_URL}/lims/enroll-patient", json=payload_p, headers=headers, timeout=5)
-                            if res_p.status_code == 200:
-                                st.success(f"🧬 Patient record {new_p_id} successfully registered.")
-                                st.session_state.generated_patient_id = f"PAT-{random.randint(10000, 99999)}"
+                            response = requests.post(f"{BACKEND_URL}/lims/enroll-patient", json=payload_patient, headers=headers, timeout=5)
+                            if response.status_code == 200:
+                                st.success(f"Patient {patient_id} successfully registered.")
+                                st.session_state.generated_patient_id = f"PAT-{random.randint(10000,99999)}"
+                                st.session_state.generated_anonymous_code = f"MOX-{random.randint(10000,99999)}"
                                 time.sleep(0.5)
                                 st.rerun()
                             else:
-                                st.error("🚨 Server Error: Could not complete registration.")
+                                st.error("Backend rejected patient registration.")
                         except Exception:
-                            st.error("🚨 Connectivity Error: Backend service unavailable.")
-            st.markdown('</div>', unsafe_allow_html=True)
+                            st.error("Backend unavailable.")
 
-        with p2:
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        # =====================================================================
+        # PATIENT DIRECTORY TABLE
+        # =====================================================================
+        with right:
             st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
             st.markdown('<div class="card-title-clinical">Patient Records</div>', unsafe_allow_html=True)
 
-            try:
-                # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
-                res_cohort = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
-                if res_cohort.status_code == 200 and res_cohort.json():
-                    df_patients = pd.DataFrame(res_cohort.json())
-                else:
-                    df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
-            except Exception:
-                df_patients = pd.DataFrame(columns=["Patient ID", "Record Number", "Date of Birth", "Gender", "Institution"])
-                
+            df_patients = load_patient_directory()
+
             if not df_patients.empty:
-                column_mapping = {
-                    'id_patient': 'Patient ID',
-                    'patient_id': 'Patient ID',
-                    'full_name': 'Record Number',
-                    'anonymous_code': 'Record Number',
-                    'date_of_birth': 'Date of Birth',
-                    'dob': 'Date of Birth',
-                    'gender': 'Gender',
-                    'institution': 'Institution'
+                rename_map = {
+                    "id_patient": "Patient ID", "patient_id": "Patient ID",
+                    "anonymous_code": "Anonymous Code", "full_name": "Full Name",
+                    "record_number": "Record Number", "date_of_birth": "Date of Birth",
+                    "gender": "Gender", "institution": "Institution"
                 }
-                df_patients = df_patients.rename(columns={k: v for k, v in column_mapping.items() if k in df_patients.columns})
+                df_patients = df_patients.rename(columns={k: v for k, v in rename_map.items() if k in df_patients.columns})
+                display_cols = ["Patient ID", "Anonymous Code", "Record Number", "Gender", "Institution"]
+                display_cols = [c for c in display_cols if c in df_patients.columns]
 
-            st.dataframe(df_patients, use_container_width=True, hide_index=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+                st.dataframe(df_patients[display_cols], use_container_width=True, hide_index=True)
+            else:
+                st.info("No patient records available.")
 
-# ----------------------------------------------------------------------------
-#   TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY MANAGEMENT)
-# ----------------------------------------------------------------------------
+            st.markdown("</div>", unsafe_allow_html=True)
+
+# ============================================================================
+#   TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY MANAGEMENT) - OPTIMIZED
+# ============================================================================
 elif nav_selection == "lims":
+
+    # -------------------------------------------------------------------------
+    # CSS LOCAL TAB 3
+    # -------------------------------------------------------------------------
     st.markdown("""
-        <style>
-        .card-title-clinical { text-align:center !important; font-weight:700 !important; font-size:1.1rem !important; margin-bottom:1rem !important; width:100% !important; }
-        div[data-testid="stTextInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stDateInput"] label { display:block !important; text-align:center !important; width:100% !important; }
-        .status-box { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:15px; margin-top:15px; }
-        </style>
+    <style>
+    .card-title-clinical { text-align:center !important; font-weight:700 !important; font-size:1.1rem !important; margin-bottom:1rem !important; width:100% !important; }
+    div[data-testid="stTextInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stDateInput"] label { display:block !important; text-align:center !important; width:100% !important; }
+    .status-box { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:15px; margin-top:15px; }
+    </style>
     """, unsafe_allow_html=True)
 
+    # -------------------------------------------------------------------------
+    # HEADER
+    # -------------------------------------------------------------------------
     st.markdown("<h2 class='welcome-header'> LIMS Sample Management</h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Clinical specimen registration, custody tracking and laboratory workflow control.</p>", unsafe_allow_html=True)
 
@@ -1037,31 +963,37 @@ elif nav_selection == "lims":
     # LOAD REGISTERED PATIENTS
     # -------------------------------------------------------------------------
     try:
-        res_patients = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
-        registered_patients = [
-            p.get("Patient ID") or p.get("id_patient") for p in res_patients.json()
-            if res_patients.status_code == 200 and (p.get("Patient ID") or p.get("id_patient"))
-        ] if res_patients.status_code == 200 else []
+        response_patients = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
+        if response_patients.status_code == 200:
+            patients_json = response_patients.json()
+            registered_patients = [patient.get("id_patient") for patient in patients_json if patient.get("id_patient")]
+        else:
+            registered_patients = []
     except Exception:
         registered_patients = []
 
     # -------------------------------------------------------------------------
-    # AUTOMATIC SAMPLE ID GENERATOR
+    # AUTOMATIC SAMPLE ID
     # -------------------------------------------------------------------------
     import random
     if "generated_sample_id" not in st.session_state:
         st.session_state.generated_sample_id = f"SMP-{random.randint(10000,99999)}"
- 
-    # -------------------------------------------------------------------------
-    # NEW SAMPLE INTAKE CARD
-    # -------------------------------------------------------------------------
-    m1, m2 = st.columns([1, 1])
 
-    with m1:
+    # -------------------------------------------------------------------------
+    # MAIN LAYOUT
+    # -------------------------------------------------------------------------
+    col_left, col_right = st.columns([1, 1], gap="large")
+
+    # =========================================================================
+    # NEW SAMPLE INTAKE
+    # =========================================================================
+    with col_left:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical"> New Sample Intake</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">New Sample Intake</div>', unsafe_allow_html=True)
 
-        if st.session_state.user_role == "md":
+        user_role = st.session_state.get("user_role", "unknown")
+
+        if user_role == "md":
             st.warning(" Clinical doctors cannot modify laboratory custody records.")
         elif not registered_patients:
             st.warning(" No patient profiles available. Register a patient first.")
@@ -1075,7 +1007,7 @@ elif nav_selection == "lims":
             qc_status = st.selectbox("Initial Sample Quality Control", ["Accepted", "Rejected", "Insufficient Volume", "Hemolysis Detected"])
             st.info("Initial workflow state: Sample Received")
 
-            if st.button(" Register Sample Into LIMS", use_container_width=True):
+            if st.button("Register Sample Into LIMS", use_container_width=True):
                 if not barcode or not collection_site:
                     st.error("Barcode and Collection Site are mandatory.")
                 else:
@@ -1088,125 +1020,123 @@ elif nav_selection == "lims":
                         "collection_date": str(collection_date),
                         "collection_site": collection_site,
                         "qc_status": qc_status,
-                        "received_by": st.session_state.operator_display_name,
-                        "practitioner_signature": st.session_state.operator_display_name
+                        "received_by": st.session_state.get("operator_display_name", "SYSTEM"),
+                        "practitioner_signature": st.session_state.get("operator_display_name", "SYSTEM")
                     }
                     try:
-                        response = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
-                        if response.status_code == 200:
+                        response_sample = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
+                        if response_sample.status_code == 200:
                             st.success(f" Sample {sample_id} registered successfully.")
                             st.session_state.generated_sample_id = f"SMP-{random.randint(10000,99999)}"
-
                             time.sleep(0.5)
                             st.rerun()
                         else:
-                            st.error("LIMS rejected sample registration.")
+                            st.error(" LIMS rejected sample registration.")
                     except Exception:
-                        st.error("Backend connection failure.")
+                        st.error(" Backend connection failure.")
 
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # -------------------------------------------------------------------------
+    # =========================================================================
     # SAMPLE INVENTORY
-    # -------------------------------------------------------------------------
-    with m2:
+    # =========================================================================
+    with col_right:
         st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-        st.markdown('<div class="card-title-clinical"> Sample Inventory</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical">Sample Inventory</div>', unsafe_allow_html=True)
 
         try:
-            res_samples = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
-            samples_data = res_samples.json() if res_samples.status_code == 200 else []
+            response_samples = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+            samples_data = response_samples.json() if response_samples.status_code == 200 else []
         except Exception:
             samples_data = []
 
         if samples_data:
             df_samples = pd.DataFrame(samples_data)
             column_map = {
-                "sample_id": "Sample ID", "patient_id": "Patient ID", "barcode_qr": "Barcode",
-                "specimen_type": "Specimen", "workflow_state": "Status", "qc_status": "QC", "collection_date": "Collection Date"
+                "sample_id": "Sample ID", "patient_id": "Patient ID",
+                "barcode_qr": "Barcode", "specimen_type": "Specimen",
+                "workflow_state": "Status", "qc_status": "QC",
+                "collection_date": "Collection Date"
             }
             df_samples = df_samples.rename(columns={k: v for k, v in column_map.items() if k in df_samples.columns})
-            display_columns = [c for c in ["Sample ID", "Patient ID", "Specimen", "Status", "QC"] if c in df_samples.columns]
-            
-            st.dataframe(df_samples[display_columns], use_container_width=True, hide_index=True, height=320, on_select="rerun", selection_mode="single-row")
+            visible_columns = [c for c in ["Sample ID", "Patient ID", "Specimen", "Status", "QC"] if c in df_samples.columns]
+
+            st.dataframe(df_samples[visible_columns], use_container_width=True, hide_index=True, height=320)
         else:
             st.info("No samples registered in LIMS repository.")
 
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # -------------------------------------------------------------------------
-    # SAMPLE TRACEABILITY DETAIL PANEL
-    # -------------------------------------------------------------------------
+    # =========================================================================
+    # TRACEABILITY PANEL
+    # =========================================================================
     st.markdown("<br><h3 style='color:#0F172A;'> Sample Traceability & Custody Timeline</h3>", unsafe_allow_html=True)
 
     try:
-        res_trace = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
-        trace_samples = res_trace.json() if res_trace.status_code == 200 else []
+        response_trace = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+        trace_samples = response_trace.json() if response_trace.status_code == 200 else []
     except Exception:
         trace_samples = []
 
     if trace_samples:
-        sample_options = [s.get("sample_id") for s in trace_samples if s.get("sample_id")]
-        selected_sample = st.selectbox("Select Sample for Audit Review", options=sample_options)
-        current_sample = next((s for s in trace_samples if s.get("sample_id") == selected_sample), {})
+        sample_ids = [s.get("sample_id") for s in trace_samples if s.get("sample_id")]
+        selected_trace_sample = st.selectbox("Select Sample for Audit Review", options=sample_ids, key="trace_selector")
+        selected_sample_data = next((s for s in trace_samples if s.get("sample_id") == selected_trace_sample), {})
 
-        col_a, col_b, col_c = st.columns(3)
-        col_a.metric("Sample ID", current_sample.get("sample_id", "--"))
-        col_b.metric("Current Status", current_sample.get("workflow_state", "Unknown"))
-        col_c.metric("QC Status", current_sample.get("qc_status", "Pending"))
+        metric_a, metric_b, metric_c = st.columns(3)
+        metric_a.metric("Sample ID", selected_sample_data.get("sample_id", "--"))
+        metric_b.metric("Current Status", selected_sample_data.get("workflow_state", "Unknown"))
+        metric_c.metric("QC Status", selected_sample_data.get("qc_status", "Pending"))
 
         st.markdown('<div class="status-box"><b>Chain of Custody Timeline</b><br><br>', unsafe_allow_html=True)
 
-        timeline_events = [
-            ("", "Sample Registered", current_sample.get("collection_date", "Date unavailable")),
-            ("", "Pre-Analytical Processing", "Workflow stage"),
-            ("", "Molecular Data Generation", "Workflow stage"),
-            ("", "Analysis Running", "Workflow stage"),
-            ("", "Quality Control Review", "Workflow stage"),
-            ("", "Clinical Review", "Workflow stage"),
-            ("", "Report Ready", "Workflow completed")
+        workflow_timeline = [
+            ("Sample Registered", selected_sample_data.get("collection_date", "Date unavailable")),
+            ("Pre-Analytical Processing", "Pending workflow stage"),
+            ("Molecular Data Generation", "Pending workflow stage"),
+            ("Analysis Running", "Pending workflow stage"),
+            ("Quality Control Review", "Pending workflow stage"),
+            ("Clinical Review", "Pending workflow stage"),
+            ("Report Ready", "Pending workflow stage")
         ]
 
-        for icon, title, detail in timeline_events:
-            st.markdown(f'<div style="padding:10px; border-left:3px solid #2563EB; margin-bottom:10px; background:#FFFFFF;"><b>{icon} {title}</b><br><span style="color:#64748B;font-size:13px;">{detail}</span></div>', unsafe_allow_html=True)
+        for title, detail in workflow_timeline:
+            st.markdown(f"""
+                <div style="padding:10px; border-left:3px solid #2563EB; margin-bottom:10px; background:#FFFFFF;">
+                <b>{title}</b><br>
+                <span style="color:#64748B; font-size:13px;">{detail}</span>
+                </div>
+            """, unsafe_allow_html=True)
 
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info("No samples available for traceability review.")
 
-    # -------------------------------------------------------------------------
-    # CHAIN OF CUSTODY WORKFLOW
-    # -------------------------------------------------------------------------
-    st.markdown("<br><div class='executive-card-white'><div class='card-title-clinical'>Sample Workflow Tracking</div>", unsafe_allow_html=True)
+    # =========================================================================
+    # WORKFLOW STATUS UPDATE
+    # =========================================================================
+    st.markdown('<div class="executive-card-white"><div class="card-title-clinical">Sample Workflow Tracking</div>', unsafe_allow_html=True)
 
-    try:
-        res_samples = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
-        workflow_samples = res_samples.json() if res_samples.status_code == 200 else []
-    except Exception:
-        workflow_samples = []
+    if trace_samples:
+        workflow_ids = [s.get("sample_id") for s in trace_samples if s.get("sample_id")]
+        selected_workflow_sample = st.selectbox("Select Sample", options=workflow_ids, key="workflow_selector")
+        current_workflow_sample = next((s for s in trace_samples if s.get("sample_id") == selected_workflow_sample), {})
 
-    if workflow_samples:
-        sample_options = [s["sample_id"] for s in workflow_samples if "sample_id" in s]
-        selected_sample = st.selectbox("Select Sample", sample_options, key="select_sample_workflow")
-        
-        current_sample = next((s for s in workflow_samples if s.get("sample_id") == selected_sample), {})
-        current_state = current_sample.get("workflow_state", "Sample Registered")
-        
+        current_state = current_workflow_sample.get("workflow_state", "Sample Received")
         st.info(f"Current Status: {current_state}")
 
-        states_list = [
-            "Sample Registered", "Pre-Analytical Processing", "Molecular Data Generation",
+        available_states = [
+            "Sample Received", "Pre-Analytical Processing", "Molecular Data Generation",
             "Analysis Running", "Quality Control Review", "Clinical Review", "Report Ready"
         ]
-        next_state = st.selectbox("Update Workflow Status", states_list, key="select_next_state_workflow")
+        new_state = st.selectbox("Update Workflow Status", options=available_states, key="workflow_update")
 
         if st.button("Update Sample Status", use_container_width=True):
+            payload_update = {"sample_id": selected_workflow_sample, "workflow_state": new_state}
             try:
-                payload_update = {"sample_id": selected_sample, "workflow_state": next_state}
-                response = requests.put(f"{BACKEND_URL}/lims/samples/update-status", json=payload_update, headers=headers, timeout=5)
-                
-                if response.status_code == 200:
-                    st.success("Workflow status updated successfully.")
+                update_response = requests.put(f"{BACKEND_URL}/lims/samples/update-status", json=payload_update, headers=headers, timeout=5)
+                if update_response.status_code == 200:
+                    st.success(" Workflow status updated successfully.")
                     time.sleep(0.5)
                     st.rerun()
                 else:
@@ -1216,7 +1146,7 @@ elif nav_selection == "lims":
     else:
         st.info("No registered samples available.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 # 🧬 TAB 4: METHYLOX ENGINE (COMPUTATIONAL KERNEL CORES)
