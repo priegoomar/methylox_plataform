@@ -47,9 +47,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 # ==============================================================================
 # 🗄️ INFRASTRUCTURE UTILITIES & MODELS
 # ==============================================================================
+from psycopg2.extras import RealDictCursor
+
 def get_db_connection():
     try:
-        return psycopg2.connect(DATABASE_URL)
+        return psycopg2.connect(
+            DATABASE_URL,
+            cursor_factory=RealDictCursor
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -126,6 +131,8 @@ async def provision_clinical_staff(
     cur = conn.cursor(cursor_factory=RealDictCursor)
 
     try:
+        hashed_password = pwd_context.hash(user.password)
+
         # Advanced Upsert Protocol optimized for the clean database schema
         cur.execute(
             """
@@ -154,7 +161,7 @@ async def provision_clinical_staff(
 @app.post("/api/v1/auth/login", tags=["Governance & Security"])
 async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
 
     try:
         clean_username = str(form_data.username).strip().lower()
@@ -169,7 +176,10 @@ async def institutional_login(form_data: OAuth2PasswordRequestForm = Depends()):
         user = cur.fetchone()
        
         # Direct plaintext validation stream matching target Linux execution environment limits
-        if not user or str(form_data.password).strip() != str(user['password']).strip():
+        if not user or not pwd_context.verify(
+            str(form_data.password).strip(),
+            str(user["password"])
+        ):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Authentication denied: Invalid clinical credentials."
