@@ -1222,15 +1222,12 @@ st.markdown("</div>", unsafe_allow_html=True)
 # 🧬 TAB 4: METHYLOX ENGINE (COMPUTATIONAL KERNEL CORES)
 # ----------------------------------------------------------------------------
 elif nav_selection == "analysis":
-    # Estilos CSS específicos para centrar encabezados, títulos y etiquetas en esta sección
     st.markdown("""
         <style>
-            /* Centrar encabezado principal de la pestaña */
             .welcome-header {
                 text-align: center !important;
                 width: 100% !important;
             }
-            /* Centrar los títulos principales de las tarjetas clínicas */
             .card-title-clinical {
                 text-align: center !important;
                 font-weight: 700 !important;
@@ -1239,7 +1236,6 @@ elif nav_selection == "analysis":
                 display: block !important;
                 width: 100% !important;
             }
-            /* Centrar etiquetas de selectores y subidores de archivos */
             div[data-testid="stSelectbox"] label,
             div[data-testid="stFileUploader"] label {
                 display: block !important;
@@ -1258,7 +1254,6 @@ elif nav_selection == "analysis":
         st.warning("🔒 Access Denied: Medical roles do not possess computational clearance to launch sequencing.")
     else:
         try:
-            # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
             res_p_samples = requests.get(f"{BACKEND_URL}/lims/samples/pending-evaluation", headers=headers, timeout=5)
             pending_samples = res_p_samples.json() if res_p_samples.status_code == 200 and res_p_samples.json() else []
         except Exception:
@@ -1269,11 +1264,11 @@ elif nav_selection == "analysis":
         else:
             m_target = st.selectbox("Select Pending Asset ID for Pipeline Queue:", pending_samples)
             uploaded_file = st.file_uploader("Upload Sequencer Raw CpG Methylation File (.CSV)", type=["csv"])
+            
             if uploaded_file is not None:
                 if st.button("Execute Automated Analytical Pipeline Run", use_container_width=True):
                     files_payload = {"file": (uploaded_file.name, uploaded_file.getvalue(), "text/csv")}
                     try:
-                        # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
                         res_calc = requests.post(f"{BACKEND_URL}/lims/samples/evaluate/{m_target}", files=files_payload, headers=headers, timeout=15)
                         if res_calc.status_code == 200:
                             calc_result = res_calc.json()
@@ -1283,6 +1278,7 @@ elif nav_selection == "analysis":
                             st.error("❌ Computational Alignment Exception.")
                     except Exception:
                         st.error("❌ Kernel Processing Core Error.")
+                        
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
