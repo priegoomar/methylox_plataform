@@ -493,7 +493,7 @@ elif nav_selection == "users":
 elif nav_selection == "dashboard":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Operations Dashboard Real-Time Clinical Workflow Monitoring</p>", unsafe_allow_html=True)
-   
+    
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", headers=headers, timeout=15)
@@ -550,7 +550,7 @@ elif nav_selection == "dashboard":
 
     # PARALLEL COLUMNS WITH SECURE CONTAINERS
     c_left, c_right = st.columns([1.4, 1.0])
-   
+    
     with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
@@ -565,26 +565,16 @@ elif nav_selection == "dashboard":
             for s in samples_list[:5]:
                 state = s.get("workflow_state", "Sample Received")
                 if state in ["Sample Registered"]:
-    badge_style = "background-color:#EFF6FF; color:#2563EB;"
-
-elif state in [
-    "Pre-Analytical Processing",
-    "Molecular Data Generation",
-    "Analysis Running"
-]:
-    badge_style = "background-color:#FFFBEB; color:#D97706;"
-
-elif state in [
-    "Quality Control Review",
-    "Clinical Review"
-]:
-    badge_style = "background-color:#F5F3FF; color:#7C3AED;"
-
-elif state == "Report Ready":
-    badge_style = "background-color:#F0FDF4; color:#16A34A;"
-
-else:
-    badge_style = "background-color:#F8FAFC; color:#64748B;"
+                    badge_style = "background-color:#EFF6FF; color:#2563EB;"
+                elif state in ["Pre-Analytical Processing", "Molecular Data Generation", "Analysis Running"]:
+                    badge_style = "background-color:#FFFBEB; color:#D97706;"
+                elif state in ["Quality Control Review", "Clinical Review"]:
+                    badge_style = "background-color:#F5F3FF; color:#7C3AED;"
+                elif state == "Report Ready":
+                    badge_style = "background-color:#F0FDF4; color:#16A34A;"
+                else:
+                    badge_style = "background-color:#F8FAFC; color:#64748B;"
+                
                 rows_html += f"""
                 <tr style='border-bottom: 1px solid #F1F5F9;'>
                     <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_id', '--')}</td>
@@ -617,7 +607,7 @@ else:
         # LIVE INTERACTIVE STREAM TABLE
         st.markdown("<div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
         st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'>⚡ Live Interactive Data Stream</p>", unsafe_allow_html=True)
-       
+        
         try:
             res_live_df = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
             live_list = res_live_df.json() if res_live_df.status_code == 200 else []
@@ -647,7 +637,7 @@ else:
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
-           
+            
         total_cases = len(rep_data)
         positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
         negatives = total_cases - positives
