@@ -492,7 +492,7 @@ elif nav_selection == "users":
 # ----------------------------------------------------------------------------
 elif nav_selection == "dashboard":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Laboratory Activity Summary - Real-time Onco-Genetic Telemetry Engine</p>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Laboratory Operations Dashboard Real-Time Clinical Workflow Monitoring</p>", unsafe_allow_html=True)
    
     # FETCH LIVE DATA FROM ENDPOINTS
     try:
@@ -523,9 +523,9 @@ elif nav_selection == "dashboard":
             <div class='svg-top-container' style='color: #D97706;'>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </div>
-            <p class='metric-title-sub-new'>In Progress</p>
+            <p class='metric-title-sub-new'>Active Workflow</p>
             <p class='metric-num-big-new'>{in_progress}</p>
-            <a class='metric-link-btn-new' href='?page=METHYLOX-Engine' target='_self'>View details →</a>
+            <a class='metric-link-btn-new' href='?page=METHYLOX-Engine' target='_self'>View workflow →</a>
         </div>
         <div class='metric-card-clinical-new'>
             <div class='svg-top-container' style='color: #16A34A;'>
@@ -560,11 +560,31 @@ elif nav_selection == "dashboard":
             
         rows_html = ""
         if not samples_list:
-            rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No active samples detected. Dashboard standby node waiting for live data registration...</td></tr>"
+            rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No laboratory samples currently registered.</td></tr>"
         else:
             for s in samples_list[:5]:
                 state = s.get("workflow_state", "Sample Received")
-                badge_style = "background-color: #EFF6FF; color: #2563EB;" if "Received" in state else "background-color: #FFFBEB; color: #D97706;" if "Extraction" in state or "Sequencing" in state else "background-color: #F0FDF4; color: #16A34A;"
+                if state in ["Sample Registered"]:
+    badge_style = "background-color:#EFF6FF; color:#2563EB;"
+
+elif state in [
+    "Pre-Analytical Processing",
+    "Molecular Data Generation",
+    "Analysis Running"
+]:
+    badge_style = "background-color:#FFFBEB; color:#D97706;"
+
+elif state in [
+    "Quality Control Review",
+    "Clinical Review"
+]:
+    badge_style = "background-color:#F5F3FF; color:#7C3AED;"
+
+elif state == "Report Ready":
+    badge_style = "background-color:#F0FDF4; color:#16A34A;"
+
+else:
+    badge_style = "background-color:#F8FAFC; color:#64748B;"
                 rows_html += f"""
                 <tr style='border-bottom: 1px solid #F1F5F9;'>
                     <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_id', '--')}</td>
@@ -638,7 +658,7 @@ elif nav_selection == "dashboard":
             values_pie = [1]
             colors_pie = ['#F1F5F9']
         else:
-            labels_pie = ['Positive Panels', 'Stable Controls', 'In Pipeline']
+            labels_pie = ['Positive Findings', 'Negative Findings', 'Active Workflow']
             values_pie = [positives, negatives, in_pipeline]
             colors_pie = ['#EF4444', '#10B981', '#3B82F6']
 
@@ -726,8 +746,8 @@ elif nav_selection == "dashboard":
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
             </div>
             <div style="text-align: left; overflow: hidden;">
-                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Launch Kernel</p>
-                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Run Epigenetic Pipeline</p>
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Start Analysis</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Run Molecular Pipeline</p>
             </div>
         </a>
         """, unsafe_allow_html=True)
@@ -1009,92 +1029,204 @@ elif nav_selection == "patients":
             st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 🧪 TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY AUDIT COMPLIANCE)
+#   TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY MANAGEMENT)
 # ----------------------------------------------------------------------------
 elif nav_selection == "lims":
-    # Estilos CSS específicos para centrar títulos de tarjetas y etiquetas de inputs en esta sección
     st.markdown("""
         <style>
-            /* Centrar los títulos principales de las tarjetas clínicas */
-            .card-title-clinical {
-                text-align: center !important;
-                font-weight: 700 !important;
-                font-size: 1.1rem !important;
-                margin-bottom: 1rem !important;
-                display: block !important;
-                width: 100% !important;
-            }
-
-            /* Centrar las etiquetas (labels) de todos los campos de entrada de Streamlit en esta vista */
-            div[data-testid="stTextInput"] label,
-            div[data-testid="stSelectbox"] label {
-                display: block !important;
-                text-align: center !important;
-                width: 100% !important;
-            }
+        .card-title-clinical { text-align:center !important; font-weight:700 !important; font-size:1.1rem !important; margin-bottom:1rem !important; width:100% !important; }
+        div[data-testid="stTextInput"] label, div[data-testid="stSelectbox"] label, div[data-testid="stDateInput"] label { display:block !important; text-align:center !important; width:100% !important; }
+        .status-box { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:15px; margin-top:15px; }
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("<h2 class='welcome-header'>🧪 LIMS Sample Management</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Track laboratory samples and monitor chain of custody.</p>", unsafe_allow_html=True)
-    
+    st.markdown("<h2 class='welcome-header'> LIMS Sample Management</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Clinical specimen registration, custody tracking and laboratory workflow control.</p>", unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # LOAD REGISTERED PATIENTS
+    # -------------------------------------------------------------------------
     try:
-        # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
-        res_p_list = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
-        registered_patients = [p["Patient ID"] for p in res_p_list.json()] if res_p_list.status_code == 200 and res_p_list.json() else []
+        res_patients = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
+        registered_patients = [
+            p.get("Patient ID") or p.get("id_patient") for p in res_patients.json()
+            if res_patients.status_code == 200 and (p.get("Patient ID") or p.get("id_patient"))
+        ] if res_patients.status_code == 200 else []
     except Exception:
         registered_patients = []
 
-    with st.container():
-        m1, m2 = st.columns(2)
-        with m1:
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">📥 New Sample Intake</div>', unsafe_allow_html=True)
+    # -------------------------------------------------------------------------
+    # AUTOMATIC SAMPLE ID GENERATOR
+    # -------------------------------------------------------------------------
+    import random
+    if "generated_sample_id" not in st.session_state:
+        st.session_state.generated_sample_id = f"SMP-{random.randint(10000,99999)}"
+ 
+    # -------------------------------------------------------------------------
+    # NEW SAMPLE INTAKE CARD
+    # -------------------------------------------------------------------------
+    m1, m2 = st.columns([1, 1])
+
+    with m1:
+        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical"> New Sample Intake</div>', unsafe_allow_html=True)
+
+        if st.session_state.user_role == "md":
+            st.warning(" Clinical doctors cannot modify laboratory custody records.")
+        elif not registered_patients:
+            st.warning(" No patient profiles available. Register a patient first.")
+        else:
+            sample_id = st.text_input("Sample Asset ID", value=st.session_state.generated_sample_id, disabled=True)
+            barcode = st.text_input("Barcode / QR Identifier", placeholder="Scan laboratory barcode")
+            patient_id = st.selectbox("Associated Patient Profile", options=registered_patients)
+            specimen_type = st.selectbox("Specimen Type", ["Plasma", "Whole Blood", "Tissue", "cfDNA Extract"])
+            collection_date = st.date_input("Collection Date", value=date.today())
+            collection_site = st.text_input("Collection Site", placeholder="Hospital / Laboratory")
+            qc_status = st.selectbox("Initial Sample Quality Control", ["Accepted", "Rejected", "Insufficient Volume", "Hemolysis Detected"])
+            st.info("Initial workflow state: Sample Received")
+
+            if st.button(" Register Sample Into LIMS", use_container_width=True):
+                if not barcode or not collection_site:
+                    st.error("Barcode and Collection Site are mandatory.")
+                else:
+                    payload_sample = {
+                        "sample_id": sample_id,
+                        "patient_id": patient_id,
+                        "barcode_qr": barcode,
+                        "specimen_type": specimen_type,
+                        "workflow_state": "Sample Received",
+                        "collection_date": str(collection_date),
+                        "collection_site": collection_site,
+                        "qc_status": qc_status,
+                        "received_by": st.session_state.operator_display_name,
+                        "practitioner_signature": st.session_state.operator_display_name
+                    }
+                    try:
+                        response = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
+                        if response.status_code == 200:
+                            st.success(f" Sample {sample_id} registered successfully.")
+                            st.session_state.generated_sample_id = f"SMP-{random.randint(10000,99999)}"
+
+                            time.sleep(0.5)
+                            st.rerun()
+                        else:
+                            st.error("LIMS rejected sample registration.")
+                    except Exception:
+                        st.error("Backend connection failure.")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # SAMPLE INVENTORY
+    # -------------------------------------------------------------------------
+    with m2:
+        st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+        st.markdown('<div class="card-title-clinical"> Sample Inventory</div>', unsafe_allow_html=True)
+
+        try:
+            res_samples = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+            samples_data = res_samples.json() if res_samples.status_code == 200 else []
+        except Exception:
+            samples_data = []
+
+        if samples_data:
+            df_samples = pd.DataFrame(samples_data)
+            column_map = {
+                "sample_id": "Sample ID", "patient_id": "Patient ID", "barcode_qr": "Barcode",
+                "specimen_type": "Specimen", "workflow_state": "Status", "qc_status": "QC", "collection_date": "Collection Date"
+            }
+            df_samples = df_samples.rename(columns={k: v for k, v in column_map.items() if k in df_samples.columns})
+            display_columns = [c for c in ["Sample ID", "Patient ID", "Specimen", "Status", "QC"] if c in df_samples.columns]
             
-            if st.session_state.user_role == "md":
-                st.warning("🔒 Access Denied: Medical personnel are restricted from altering LIMS physical custody states.")
-            elif not registered_patients:
-                st.warning("⚠️ No patients available\n\nRegister a patient before creating a new sample.")
+            st.dataframe(df_samples[display_columns], use_container_width=True, hide_index=True, height=320, on_select="rerun", selection_mode="single-row")
+        else:
+            st.info("No samples registered in LIMS repository.")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# -------------------------------------------------------------------------
+# SAMPLE TRACEABILITY DETAIL PANEL
+# -------------------------------------------------------------------------
+st.markdown("<br><h3 style='color:#0F172A;'> Sample Traceability & Custody Timeline</h3>", unsafe_allow_html=True)
+
+try:
+    res_trace = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+    trace_samples = res_trace.json() if res_trace.status_code == 200 else []
+except Exception:
+    trace_samples = []
+
+if trace_samples:
+    sample_options = [s.get("sample_id") for s in trace_samples if s.get("sample_id")]
+    selected_sample = st.selectbox("Select Sample for Audit Review", options=sample_options)
+    current_sample = next((s for s in trace_samples if s.get("sample_id") == selected_sample), {})
+
+    col_a, col_b, col_c = st.columns(3)
+    col_a.metric("Sample ID", current_sample.get("sample_id", "--"))
+    col_b.metric("Current Status", current_sample.get("workflow_state", "Unknown"))
+    col_c.metric("QC Status", current_sample.get("qc_status", "Pending"))
+
+    st.markdown('<div class="status-box"><b>Chain of Custody Timeline</b><br><br>', unsafe_allow_html=True)
+
+    timeline_events = [
+        ("", "Sample Registered", current_sample.get("collection_date", "Date unavailable")),
+        ("", "Pre-Analytical Processing", "Workflow stage"),
+        ("", "Molecular Data Generation", "Workflow stage"),
+        ("", "Analysis Running", "Workflow stage"),
+        ("", "Quality Control Review", "Workflow stage"),
+        ("", "Clinical Review", "Workflow stage"),
+        ("", "Report Ready", "Workflow completed")
+    ]
+
+    for icon, title, detail in timeline_events:
+        st.markdown(f'<div style="padding:10px; border-left:3px solid #2563EB; margin-bottom:10px; background:#FFFFFF;"><b>{icon} {title}</b><br><span style="color:#64748B;font-size:13px;">{detail}</span></div>', unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+else:
+    st.info("No samples available for traceability review.")
+
+# -------------------------------------------------------------------------
+#   CHAIN OF CUSTODY WORKFLOW
+# -------------------------------------------------------------------------
+st.markdown("<br><div class='executive-card-white'><div class='card-title-clinical'>Sample Workflow Tracking</div>", unsafe_allow_html=True)
+
+try:
+    res_samples = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+    workflow_samples = res_samples.json() if res_samples.status_code == 200 else []
+except Exception:
+    workflow_samples = []
+
+if workflow_samples:
+    sample_options = [s["sample_id"] for s in workflow_samples if "sample_id" in s]
+    selected_sample = st.selectbox("Select Sample", sample_options)
+    
+    current_sample = next((s for s in workflow_samples if s.get("sample_id") == selected_sample), {})
+    current_state = current_sample.get("workflow_state", "Sample Registered")
+    
+    st.info(f"Current Status: {current_state}")
+
+    states_list = [
+        "Sample Registered", "Pre-Analytical Processing", "Molecular Data Generation",
+        "Analysis Running", "Quality Control Review", "Clinical Review", "Report Ready"
+    ]
+    next_state = st.selectbox("Update Workflow Status", states_list)
+
+    if st.button("Update Sample Status", use_container_width=True):
+        try:
+            payload_update = {"sample_id": selected_sample, "workflow_state": next_state}
+            response = requests.put(f"{BACKEND_URL}/lims/samples/update-status", json=payload_update, headers=headers, timeout=5)
+            
+            if response.status_code == 200:
+                st.success("Workflow status updated successfully.")
+                time.sleep(0.5)
+                st.rerun()
             else:
-                new_m_id = st.text_input("Unique Sample Asset ID")
-                asoc_p_id = st.selectbox("Associated Patient Subject Profile Link", registered_patients)
-                new_m_qr = st.text_input("Barcode Hardware QR Matrix Identifier")
-                new_m_tipo = st.selectbox("Extraction Matrix Assay Specimen Type", ["Plasma", "Whole Blood", "Tissue"])
-                new_m_est = st.selectbox("Chain of Custody Operational Workflow State", ["Sample Received", "DNA/RNA Extraction", "Target Amplicons Sequencing", "Bioinformatic Processing", "Clinical Report Compiled"])
-                
-                if st.button("Synchronize Sample Entry into Central LIMS Core", use_container_width=True):
-                    if not new_m_id or not new_m_qr:
-                        st.error("❌ Input Constraint: Asset ID and Hardware Barcodes are required.")
-                    else:
-                        payload_sample = {
-                            "sample_id": new_m_id, "patient_id": asoc_p_id, "barcode_qr": new_m_qr,
-                            "specimen_type": new_m_tipo, "workflow_state": new_m_est, "practitioner_signature": st.session_state.operator_display_name
-                        }
-                        try:
-                            # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
-                            res_intake = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
-                            if res_intake.status_code == 200:
-                                st.success("Asset logged successfully.")
-                                time.sleep(0.5)
-                                st.rerun()
-                            else:
-                                st.error(f"❌ LIMS Node Rejection: {res_intake.json().get('detail', 'Invalid parameter constraints')}")
-                        except Exception:
-                            st.error("❌ Connectivity Failure: Could not commit asset state transaction to Render.")
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-        with m2:
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">🗃️ Sample Inventory</div>', unsafe_allow_html=True)
-            try:
-                # CORRECCIÓN: Se eliminó el prefijo redundante `/api/v1` para evitar duplicidad con BACKEND_URL
-                res_s = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
-                df_samples = pd.DataFrame(res_s.json()) if res_s.status_code == 200 and res_s.json() else pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
-            except Exception:
-                df_samples = pd.DataFrame(columns=["Sample ID", "Patient Context", "Hardware QR Code", "Specimen Matrix", "Current LIMS State"])
-                
-            st.dataframe(df_samples, use_container_width=True, hide_index=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+                st.error("Unable to update workflow state.")
+        except Exception:
+            st.error("Backend connection unavailable.")
+else:
+    st.info("No registered samples available.")
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 # 🧬 TAB 4: METHYLOX ENGINE (COMPUTATIONAL KERNEL CORES)
