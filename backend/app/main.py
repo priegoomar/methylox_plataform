@@ -14,7 +14,7 @@ from passlib.context import CryptContext
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from pydantic import BaseModel, EmailStr
-
+from app.config import settings
 # ==============================================================================
 # CORE & SECURITY CONFIGURATION
 # ==============================================================================
@@ -29,19 +29,30 @@ app.add_middleware(
     CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"]
 )
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://methylox_user:METHYLOX_DB_PASS_2026@localhost:5432/methylox_production")
-SECRET_KEY = os.getenv("SECRET_KEY", "FDA_COMPLIANCE_ENCRYPTION_KEY_METHYLOX_2026")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 480
+DATABASE_URL = settings.DATABASE_URL
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 def get_db_connection():
     try:
-        return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+        return psycopg2.connect(settings.DATABASE_URL, cursor_factory=RealDictCursor)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Database connection failed: {str(e)}")
+
+class PatientCreate(BaseModel):
+    id_patient: str; full_name: str; date_of_birth: str; gender: str; hospital_id: int
+
+
+class TokenData(BaseModel):
+    id_user: int; id_hospital: int; username: str; role: str
+
+
+class TelemetrySummaryResponse(BaseModel):
+    received_today: int; in_progress: int; ready_analyses: int; qc_pass_rate: float
 
 # ==============================================================================
 # ELASTIC GOVERNANCE MIDDLEWARE (JWT + RBAC)
@@ -50,7 +61,7 @@ def get_db_connection():
 async def get_current_user_claims(token: str = Depends(oauth2_scheme)) -> TokenData:
     auth_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid global session credentials or expired session.")
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         username, id_user, id_hospital, role = payload.get("sub"), payload.get("id_user"), payload.get("id_hospital"), payload.get("role")
         if None in (username, id_user, id_hospital, role):
             raise auth_exception
