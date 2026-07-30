@@ -1134,89 +1134,89 @@ elif nav_selection == "lims":
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-# -------------------------------------------------------------------------
-# SAMPLE TRACEABILITY DETAIL PANEL
-# -------------------------------------------------------------------------
-st.markdown("<br><h3 style='color:#0F172A;'> Sample Traceability & Custody Timeline</h3>", unsafe_allow_html=True)
+    # -------------------------------------------------------------------------
+    # SAMPLE TRACEABILITY DETAIL PANEL
+    # -------------------------------------------------------------------------
+    st.markdown("<br><h3 style='color:#0F172A;'> Sample Traceability & Custody Timeline</h3>", unsafe_allow_html=True)
 
-try:
-    res_trace = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
-    trace_samples = res_trace.json() if res_trace.status_code == 200 else []
-except Exception:
-    trace_samples = []
+    try:
+        res_trace = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+        trace_samples = res_trace.json() if res_trace.status_code == 200 else []
+    except Exception:
+        trace_samples = []
 
-if trace_samples:
-    sample_options = [s.get("sample_id") for s in trace_samples if s.get("sample_id")]
-    selected_sample = st.selectbox("Select Sample for Audit Review", options=sample_options)
-    current_sample = next((s for s in trace_samples if s.get("sample_id") == selected_sample), {})
+    if trace_samples:
+        sample_options = [s.get("sample_id") for s in trace_samples if s.get("sample_id")]
+        selected_sample = st.selectbox("Select Sample for Audit Review", options=sample_options)
+        current_sample = next((s for s in trace_samples if s.get("sample_id") == selected_sample), {})
 
-    col_a, col_b, col_c = st.columns(3)
-    col_a.metric("Sample ID", current_sample.get("sample_id", "--"))
-    col_b.metric("Current Status", current_sample.get("workflow_state", "Unknown"))
-    col_c.metric("QC Status", current_sample.get("qc_status", "Pending"))
+        col_a, col_b, col_c = st.columns(3)
+        col_a.metric("Sample ID", current_sample.get("sample_id", "--"))
+        col_b.metric("Current Status", current_sample.get("workflow_state", "Unknown"))
+        col_c.metric("QC Status", current_sample.get("qc_status", "Pending"))
 
-    st.markdown('<div class="status-box"><b>Chain of Custody Timeline</b><br><br>', unsafe_allow_html=True)
+        st.markdown('<div class="status-box"><b>Chain of Custody Timeline</b><br><br>', unsafe_allow_html=True)
 
-    timeline_events = [
-        ("", "Sample Registered", current_sample.get("collection_date", "Date unavailable")),
-        ("", "Pre-Analytical Processing", "Workflow stage"),
-        ("", "Molecular Data Generation", "Workflow stage"),
-        ("", "Analysis Running", "Workflow stage"),
-        ("", "Quality Control Review", "Workflow stage"),
-        ("", "Clinical Review", "Workflow stage"),
-        ("", "Report Ready", "Workflow completed")
-    ]
+        timeline_events = [
+            ("", "Sample Registered", current_sample.get("collection_date", "Date unavailable")),
+            ("", "Pre-Analytical Processing", "Workflow stage"),
+            ("", "Molecular Data Generation", "Workflow stage"),
+            ("", "Analysis Running", "Workflow stage"),
+            ("", "Quality Control Review", "Workflow stage"),
+            ("", "Clinical Review", "Workflow stage"),
+            ("", "Report Ready", "Workflow completed")
+        ]
 
-    for icon, title, detail in timeline_events:
-        st.markdown(f'<div style="padding:10px; border-left:3px solid #2563EB; margin-bottom:10px; background:#FFFFFF;"><b>{icon} {title}</b><br><span style="color:#64748B;font-size:13px;">{detail}</span></div>', unsafe_allow_html=True)
+        for icon, title, detail in timeline_events:
+            st.markdown(f'<div style="padding:10px; border-left:3px solid #2563EB; margin-bottom:10px; background:#FFFFFF;"><b>{icon} {title}</b><br><span style="color:#64748B;font-size:13px;">{detail}</span></div>', unsafe_allow_html=True)
+
+        st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        st.info("No samples available for traceability review.")
+
+    # -------------------------------------------------------------------------
+    # CHAIN OF CUSTODY WORKFLOW
+    # -------------------------------------------------------------------------
+    st.markdown("<br><div class='executive-card-white'><div class='card-title-clinical'>Sample Workflow Tracking</div>", unsafe_allow_html=True)
+
+    try:
+        res_samples = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+        workflow_samples = res_samples.json() if res_samples.status_code == 200 else []
+    except Exception:
+        workflow_samples = []
+
+    if workflow_samples:
+        sample_options = [s["sample_id"] for s in workflow_samples if "sample_id" in s]
+        selected_sample = st.selectbox("Select Sample", sample_options, key="select_sample_workflow")
+        
+        current_sample = next((s for s in workflow_samples if s.get("sample_id") == selected_sample), {})
+        current_state = current_sample.get("workflow_state", "Sample Registered")
+        
+        st.info(f"Current Status: {current_state}")
+
+        states_list = [
+            "Sample Registered", "Pre-Analytical Processing", "Molecular Data Generation",
+            "Analysis Running", "Quality Control Review", "Clinical Review", "Report Ready"
+        ]
+        next_state = st.selectbox("Update Workflow Status", states_list, key="select_next_state_workflow")
+
+        if st.button("Update Sample Status", use_container_width=True):
+            try:
+                payload_update = {"sample_id": selected_sample, "workflow_state": next_state}
+                response = requests.put(f"{BACKEND_URL}/lims/samples/update-status", json=payload_update, headers=headers, timeout=5)
+                
+                if response.status_code == 200:
+                    st.success("Workflow status updated successfully.")
+                    time.sleep(0.5)
+                    st.rerun()
+                else:
+                    st.error("Unable to update workflow state.")
+            except Exception:
+                st.error("Backend connection unavailable.")
+    else:
+        st.info("No registered samples available.")
 
     st.markdown("</div>", unsafe_allow_html=True)
-else:
-    st.info("No samples available for traceability review.")
-
-# -------------------------------------------------------------------------
-#   CHAIN OF CUSTODY WORKFLOW
-# -------------------------------------------------------------------------
-st.markdown("<br><div class='executive-card-white'><div class='card-title-clinical'>Sample Workflow Tracking</div>", unsafe_allow_html=True)
-
-try:
-    res_samples = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
-    workflow_samples = res_samples.json() if res_samples.status_code == 200 else []
-except Exception:
-    workflow_samples = []
-
-if workflow_samples:
-    sample_options = [s["sample_id"] for s in workflow_samples if "sample_id" in s]
-    selected_sample = st.selectbox("Select Sample", sample_options)
-    
-    current_sample = next((s for s in workflow_samples if s.get("sample_id") == selected_sample), {})
-    current_state = current_sample.get("workflow_state", "Sample Registered")
-    
-    st.info(f"Current Status: {current_state}")
-
-    states_list = [
-        "Sample Registered", "Pre-Analytical Processing", "Molecular Data Generation",
-        "Analysis Running", "Quality Control Review", "Clinical Review", "Report Ready"
-    ]
-    next_state = st.selectbox("Update Workflow Status", states_list)
-
-    if st.button("Update Sample Status", use_container_width=True):
-        try:
-            payload_update = {"sample_id": selected_sample, "workflow_state": next_state}
-            response = requests.put(f"{BACKEND_URL}/lims/samples/update-status", json=payload_update, headers=headers, timeout=5)
-            
-            if response.status_code == 200:
-                st.success("Workflow status updated successfully.")
-                time.sleep(0.5)
-                st.rerun()
-            else:
-                st.error("Unable to update workflow state.")
-        except Exception:
-            st.error("Backend connection unavailable.")
-else:
-    st.info("No registered samples available.")
-
-st.markdown("</div>", unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 # 🧬 TAB 4: METHYLOX ENGINE (COMPUTATIONAL KERNEL CORES)
