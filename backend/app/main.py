@@ -1,35 +1,44 @@
 # ==============================================================================
-# METHYLOX™ GLOBAL ENTERPRISE SaMD ENGINE | backend/app/main.py
+# METHYLOX™ GLOBAL ENTERPRISE SaMD ENGINE
+# backend/app/main.py
+# VERSION 3.0.1 - Backend Harmonized Edition
 # ==============================================================================
 
-import csv, io, os, random
-from datetime import datetime, timedelta, timezone
+import csv
+import io
+import random
+from datetime import datetime, timezone, timedelta
 from typing import List
+
+import jwt
+import psycopg2
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fpdf import FPDF
-import jwt
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-import psycopg2
 from psycopg2.extras import RealDictCursor
 from pydantic import BaseModel, EmailStr
+
 from app.config import settings
+
 # ==============================================================================
-# CORE & SECURITY CONFIGURATION
+# APPLICATION CORE
 # ==============================================================================
 
 app = FastAPI(
     title="METHYLOX™ Global Enterprise SaMD Engine",
-    version="3.0.0",
-    description="Unified central backend governance for clinical analytical pipelines, LIMS, RBAC, and commercial portals."
+    version="3.0.1",
+    description="Clinical molecular intelligence backend integrating LIMS, RBAC, epigenetic analytics and reporting."
 )
 
 app.add_middleware(
-    CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"]
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-DATABASE_URL = settings.DATABASE_URL
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
@@ -37,32 +46,76 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
+# ==============================================================================
+# DATABASE CONNECTION
+# ==============================================================================
+
 def get_db_connection():
     try:
         return psycopg2.connect(settings.DATABASE_URL, cursor_factory=RealDictCursor)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Database connection failed: {str(e)}")
+        raise HTTPException(status_code=503, detail=f"Database connection failed: {str(e)}")
 
-class PatientCreate(BaseModel):
-    id_patient: str; full_name: str; date_of_birth: str; gender: str; hospital_id: int
-
+# ==============================================================================
+# PYDANTIC MODELS
+# ==============================================================================
 
 class TokenData(BaseModel):
-    id_user: int; id_hospital: int; username: str; role: str
+    id_user: int
+    id_hospital: int
+    username: str
+    role: str
 
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str
+
+class PatientCreate(BaseModel):
+    id_patient: str
+    full_name: str
+    date_of_birth: str
+    gender: str
+    hospital_id: int
+
+class UserProvision(BaseModel):
+    username: EmailStr
+    password: str
+    full_name: str
+    role: str
+    hospital_id: int
+
+class SampleCreate(BaseModel):
+    sample_id: str
+    patient_id: str
+    barcode_qr: str
+    specimen_type: str
 
 class TelemetrySummaryResponse(BaseModel):
-    received_today: int; in_progress: int; ready_analyses: int; qc_pass_rate: float
+    received_today: int
+    in_progress: int
+    ready_analyses: int
+    qc_pass_rate: float
 
 # ==============================================================================
-# ELASTIC GOVERNANCE MIDDLEWARE (JWT + RBAC)
+# SECURITY JWT
 # ==============================================================================
+
+def create_access_token(data: dict):
+    payload = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    payload.update({"exp": expire})
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 async def get_current_user_claims(token: str = Depends(oauth2_scheme)) -> TokenData:
-    auth_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid global session credentials or expired session.")
+    auth_exception = HTTPException(status_code=401, detail="Invalid session credentials.")
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        username, id_user, id_hospital, role = payload.get("sub"), payload.get("id_user"), payload.get("id_hospital"), payload.get("role")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username, id_user, id_hospital, role = (
+            payload.get("sub"),
+            payload.get("id_user"),
+            payload.get("id_hospital"),
+            payload.get("role")
+        )
         if None in (username, id_user, id_hospital, role):
             raise auth_exception
         return TokenData(id_user=id_user, id_hospital=id_hospital, username=username, role=role)
@@ -72,48 +125,65 @@ async def get_current_user_claims(token: str = Depends(oauth2_scheme)) -> TokenD
 class RoleGuard:
     def __init__(self, allowed_roles: List[str]):
         self.allowed_roles = allowed_roles
+
     def __call__(self, current_user: TokenData = Depends(get_current_user_claims)):
         if current_user.role not in self.allowed_roles:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied: Insufficient role privileges.")
+            raise HTTPException(status_code=403, detail="Insufficient permissions.")
         return current_user
 
 # ==============================================================================
-# CLINICAL TELEMETRY ENGINE
+# AUTHENTICATION
 # ==============================================================================
 
-@app.get("/api/v1/analysis/telemetry-summary", response_model=TelemetrySummaryResponse, tags=["Clinical Telemetry"])
-async def get_hospital_telemetry_summary(current_user: TokenData = Depends(get_current_user_claims)):
+@app.post("/api/v1/auth/login", response_model=LoginResponse, tags=["Authentication"])
+async def login_user(payload: dict):
+    username = payload.get("username")
+    password = payload.get("password")
+    
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        today_date = datetime.now().strftime("%Y-%m-%d")
-        cur.execute("SELECT COALESCE(COUNT(*)::int,0) AS count FROM samples WHERE hospital_id=%s AND created_at::date=%s::date", (current_user.id_hospital, today_date))
-        received_today = cur.fetchone()["count"]
+        cur.execute("SELECT * FROM users WHERE username=%s", (username,))
+        user = cur.fetchone()
+        
+        if not user or not pwd_context.verify(password, user["password_hash"]):
+            raise HTTPException(status_code=401, detail="Invalid credentials.")
+            
+        token = create_access_token({
+            "sub": user["username"],
+            "id_user": user["id"],
+            "id_hospital": user["hospital_id"],
+            "role": user["role"]
+        })
+        return {"access_token": token, "token_type": "bearer"}
+    finally:
+        cur.close()
+        conn.close()
 
-        cur.execute("SELECT COALESCE(COUNT(*)::int,0) AS count FROM samples WHERE hospital_id=%s AND workflow_state != 'Clinical Report Compiled'", (current_user.id_hospital,))
-        in_progress = cur.fetchone()["count"]
-
-        cur.execute("SELECT COALESCE(COUNT(*)::int,0) AS count FROM samples WHERE hospital_id=%s AND workflow_state='Clinical Report Compiled'", (current_user.id_hospital,))
-        ready_analyses = cur.fetchone()["count"]
-
-        cur.execute("SELECT COALESCE(COUNT(*)::int,0) AS total FROM samples WHERE hospital_id=%s", (current_user.id_hospital,))
-        total_qc_runs = cur.fetchone()["total"]
-        qc_pass_rate = 0.0 if total_qc_runs == 0 else 100.0
-
-        return {
-            "received_today": int(received_today),
-            "in_progress": int(in_progress),
-            "ready_analyses": int(ready_analyses),
-            "qc_pass_rate": round(float(qc_pass_rate), 1),
-        }
+@app.post("/api/v1/auth/provision-user", tags=["Authentication"])
+async def provision_user(user: UserProvision, current_user: TokenData = Depends(RoleGuard(["admin"]))):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        password_hash = pwd_context.hash(user.password)
+        cur.execute(
+            """
+            INSERT INTO users (username, full_name, password_hash, role, hospital_id)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (user.username, user.full_name, password_hash, user.role, user.hospital_id)
+        )
+        conn.commit()
+        return {"status": "SUCCESS", "message": "User activated."}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Telemetry compilation failed: {str(e)}")
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         cur.close()
         conn.close()
 
 # ==============================================================================
-# MEDICAL INFRASTRUCTURE
+# HOSPITAL DIRECTORY
 # ==============================================================================
 
 @app.get("/api/v1/hospitals/directory", tags=["LIMS Operations"])
@@ -141,10 +211,16 @@ async def enroll_patient_profile(patient: PatientCreate, current_user: TokenData
             INSERT INTO patients (id_patient, full_name, date_of_birth, gender, hospital_id)
             VALUES (%s, %s, %s, %s, %s)
             """,
-            (patient.id_patient, patient.full_name, datetime.strptime(patient.date_of_birth, "%Y-%m-%d").date(), patient.gender, patient.hospital_id)
+            (
+                patient.id_patient,
+                patient.full_name,
+                datetime.strptime(patient.date_of_birth, "%Y-%m-%d").date(),
+                patient.gender,
+                current_user.id_hospital
+            )
         )
         conn.commit()
-        return {"status": "SUCCESS", "message": "Patient profile initialized securely."}
+        return {"status": "SUCCESS", "message": "Patient profile created."}
     except Exception as e:
         conn.rollback()
         raise HTTPException(status_code=400, detail=str(e))
@@ -153,7 +229,7 @@ async def enroll_patient_profile(patient: PatientCreate, current_user: TokenData
         conn.close()
 
 # ==============================================================================
-# LIMS COHORT DIRECTORY
+# PATIENT COHORT DIRECTORY
 # ==============================================================================
 
 @app.get("/api/v1/lims/cohort-directory", tags=["LIMS Operations"])
@@ -163,10 +239,9 @@ async def get_cohort_directory(current_user: TokenData = Depends(get_current_use
     try:
         cur.execute(
             """
-            SELECT p.id_patient AS "Patient ID", p.full_name AS "Anonymous Code",
-                   EXTRACT(YEAR FROM AGE(p.date_of_birth))::int AS "Age",
-                   p.gender AS "Gender", h.name AS "Facility Link",
-                   '0.0000' AS "Current Mean Beta (β)"
+            SELECT p.id_patient AS patient_id, p.full_name AS anonymous_code,
+                   EXTRACT(YEAR FROM AGE(p.date_of_birth))::int AS age,
+                   p.gender AS sexo, h.name AS institucion
             FROM patients p
             JOIN hospitals h ON p.hospital_id = h.id
             WHERE p.hospital_id = %s
@@ -179,7 +254,7 @@ async def get_cohort_directory(current_user: TokenData = Depends(get_current_use
         conn.close()
 
 # ==============================================================================
-# SAMPLE DIRECTORY & INTAKE
+# LIMS SAMPLE DIRECTORY
 # ==============================================================================
 
 @app.get("/api/v1/lims/samples/directory", tags=["LIMS Operations"])
@@ -189,11 +264,8 @@ async def get_samples_directory(current_user: TokenData = Depends(get_current_us
     try:
         cur.execute(
             """
-            SELECT sample_id AS "Sample ID", patient_id AS "Patient Context",
-                   barcode_qr AS "Hardware QR Code", specimen_type AS "Specimen Matrix",
-                   workflow_state AS "Current LIMS State"
-            FROM samples
-            WHERE patient_id IN (SELECT id_patient FROM patients WHERE hospital_id = %s)
+            SELECT sample_id, patient_id, barcode_qr, specimen_type, workflow_state
+            FROM samples WHERE hospital_id = %s ORDER BY created_at DESC
             """,
             (current_user.id_hospital,)
         )
@@ -202,20 +274,41 @@ async def get_samples_directory(current_user: TokenData = Depends(get_current_us
         cur.close()
         conn.close()
 
-@app.post("/api/v1/lims/samples/intake", tags=["LIMS Operations"])
-async def sample_intake_admission(payload: dict, current_user: TokenData = Depends(RoleGuard(["admin", "cls"]))):
+@app.get("/api/v1/lims/samples/pending-evaluation", tags=["METHYLOX Engine"])
+async def pending_samples(current_user: TokenData = Depends(get_current_user_claims)):
     conn = get_db_connection()
     cur = conn.cursor()
     try:
         cur.execute(
             """
-            INSERT INTO samples (sample_id, patient_id, barcode_qr, specimen_type, workflow_state, practitioner_signature, hospital_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            SELECT sample_id FROM samples
+            WHERE hospital_id = %s AND workflow_state != 'Clinical Report Compiled'
             """,
-            (payload["sample_id"], payload["patient_id"], payload["barcode_qr"], payload["specimen_type"], payload["workflow_state"], payload["practitioner_signature"], current_user.id_hospital)
+            (current_user.id_hospital,)
+        )
+        return [x["sample_id"] for x in cur.fetchall()]
+    finally:
+        cur.close()
+        conn.close()
+
+# ==============================================================================
+# SAMPLE INTAKE
+# ==============================================================================
+
+@app.post("/api/v1/lims/samples/intake", tags=["LIMS Operations"])
+async def sample_intake(sample: SampleCreate, current_user: TokenData = Depends(RoleGuard(["admin", "cls"]))):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            """
+            INSERT INTO samples (sample_id, patient_id, barcode_qr, specimen_type, workflow_state, hospital_id)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+            (sample.sample_id, sample.patient_id, sample.barcode_qr, sample.specimen_type, "Sample Registered", current_user.id_hospital)
         )
         conn.commit()
-        return {"status": "SUCCESS", "message": f"Sample {payload['sample_id']} synchronized."}
+        return {"status": "SUCCESS", "message": "Sample synchronized."}
     except Exception as e:
         conn.rollback()
         raise HTTPException(status_code=400, detail=str(e))
@@ -224,88 +317,79 @@ async def sample_intake_admission(payload: dict, current_user: TokenData = Depen
         conn.close()
 
 # ==============================================================================
-# METHYLOX™ COMPUTATIONAL ENGINE
+# METHYLOX COMPUTATIONAL ENGINE
 # ==============================================================================
 
 @app.post("/api/v1/lims/samples/evaluate/{sample_id}", tags=["METHYLOX Engine Core"])
-async def evaluate_crispr_pipeline(sample_id: str, file: UploadFile = File(...), current_user: TokenData = Depends(RoleGuard(["admin", "cls"]))):
-    conn, cur = None, None
+async def evaluate_methylox_pipeline(
+    sample_id: str,
+    file: UploadFile = File(...),
+    current_user: TokenData = Depends(RoleGuard(["admin", "cls"]))
+):
+    contents = await file.read()
+    reader = csv.DictReader(io.StringIO(contents.decode("utf-8")))
+    
+    beta_values = []
+    for row in reader:
+        if "Methylated_Intensity" in row and "Unmethylated_Intensity" in row:
+            m = float(row["Methylated_Intensity"])
+            u = float(row["Unmethylated_Intensity"])
+            beta_values.append(m / (m + u + 100))
+            
+    if not beta_values:
+        raise HTTPException(status_code=400, detail="Invalid methylation file.")
+        
+    mean_beta = sum(beta_values) / len(beta_values)
+    verdict = (
+        "Epigenetic profile compatible with METHYLOX tumor panel"
+        if mean_beta >= 0.1000
+        else "Stable Baseline Control Range"
+    )
+    
+    conn = get_db_connection()
+    cur = conn.cursor()
     try:
-        contents = await file.read()
-        buffer = io.StringIO(contents.decode("utf-8"))
-        reader = csv.DictReader(buffer)
-        
-        methylated, unmethylated = [], []
-        for row in reader:
-            if "Methylated_Intensity" in row and "Unmethylated_Intensity" in row:
-                methylated.append(float(row["Methylated_Intensity"]))
-                unmethylated.append(float(row["Unmethylated_Intensity"]))
-
-        if not methylated:
-            raise HTTPException(status_code=400, detail="Invalid methylation CSV format.")
-
-        offset = 100.0
-        beta_values = [m / (m + u + offset) for m, u in zip(methylated, unmethylated)]
-        mean_beta = sum(beta_values) / len(beta_values)
-
-        classification = (
-            "Epigenetic profile compatible with METHYLOX tumor panel"
-            if mean_beta >= 0.1000
-            else "Stable Baseline Control Range (Tumor Negative Screen)"
+        cur.execute(
+            "UPDATE samples SET workflow_state = 'Clinical Report Compiled' WHERE sample_id = %s",
+            (sample_id,)
         )
-
-        guide_telemetry = {
-            f"MOX-SG-{i:02d}": (random.randint(1, 4) if mean_beta >= 0.1000 else random.randint(0, 1))
-            for i in range(1, 16)
-        }
-
-        conn = get_db_connection()
-        cur = conn.cursor()
-        
-        cur.execute("UPDATE samples SET workflow_state='Clinical Report Compiled' WHERE sample_id=%s", (sample_id,))
-        hash_security = f"HSH-{random.randint(10000,99999)}"
-        
+        security_hash = f"HSH-{random.randint(10000, 99999)}"
         cur.execute(
             """
-            INSERT INTO reports (muestra_id, paciente_id, score, clasificacion, guias_activas, operador, hash_seguridad)
-            VALUES (%s, (SELECT patient_id FROM samples WHERE sample_id=%s), %s, %s, %s, %s, %s)
+            INSERT INTO reports (muestra_id, paciente_id, score, clasificacion, operador, hash_seguridad)
+            VALUES (%s, (SELECT patient_id FROM samples WHERE sample_id = %s), %s, %s, %s, %s)
             """,
-            (sample_id, sample_id, mean_beta, classification, ";".join([k for k, v in guide_telemetry.items() if v > 1]), current_user.username, hash_security)
+            (sample_id, sample_id, mean_beta, verdict, current_user.username, security_hash)
         )
         conn.commit()
-
-        return {
-            "status": "SUCCESS",
-            "mean_beta": float(mean_beta),
-            "verdict": classification,
-            "guide_signals": guide_telemetry,
-        }
+        return {"status": "SUCCESS", "mean_beta": mean_beta, "verdict": verdict}
     except Exception as e:
-        if conn: conn.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
-        if cur: cur.close()
-        if conn: conn.close()
+        cur.close()
+        conn.close()
 
 # ==============================================================================
 # REPORT DIRECTORY
 # ==============================================================================
 
-@app.get("/api/v1/analysis/reports-directory", tags=["LIMS Operations"])
-async def get_reports_directory(current_user: TokenData = Depends(get_current_user_claims)):
+@app.get("/api/v1/analysis/reports-directory", tags=["Reports"])
+async def reports_directory(current_user: TokenData = Depends(get_current_user_claims)):
     conn = get_db_connection()
     cur = conn.cursor()
     try:
         cur.execute(
             """
-            SELECT r.muestra_id, r.paciente_id, p.full_name AS nombre_codigo, r.score,
-                   r.clasificacion, r.guias_activas, TO_CHAR(r.created_at, 'YYYY-MM-DD HH24:MI') AS fecha_analisis,
-                   r.operador, r.hash_seguridad, h.name AS institucion
+            SELECT r.muestra_id, r.paciente_id, p.full_name AS nombre_codigo,
+                   r.score, r.clasificacion, r.operador, r.hash_seguridad,
+                   TO_CHAR(r.created_at, 'YYYY-MM-DD HH24:MI') AS fecha_analisis,
+                   p.date_of_birth, p.gender AS sexo, h.name AS institucion
             FROM reports r
             JOIN samples s ON r.muestra_id = s.sample_id
             JOIN patients p ON s.patient_id = p.id_patient
             JOIN hospitals h ON p.hospital_id = h.id
-            WHERE p.hospital_id = %s
+            WHERE h.id = %s
             """,
             (current_user.id_hospital,)
         )
@@ -315,13 +399,13 @@ async def get_reports_directory(current_user: TokenData = Depends(get_current_us
         conn.close()
 
 # ==============================================================================
-# SYSTEM HEALTH
+# HEALTH CHECK
 # ==============================================================================
 
-@app.get("/api/v1/health", tags=["System Status"])
-async def system_health_check():
+@app.get("/api/v1/health", tags=["System"])
+async def health():
     return {
         "status": "ONLINE",
-        "timestamp": datetime.now(timezone.utc),
-        "engine": "METHYLOX v3.0",
+        "engine": "METHYLOX v3.0.1",
+        "timestamp": datetime.now(timezone.utc)
     }
