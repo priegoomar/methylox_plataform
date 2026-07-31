@@ -161,7 +161,7 @@ async def provision_user(user: UserProvision, current_user: TokenData = Depends(
             INSERT INTO users (username, full_name, password, role, hospital_id)
             VALUES (%s, %s, %s, %s, %s)
             """,
-            (user.username, user.full_name, password, user.role, user.hospital_id)
+            (user.username, user.full_name, user.password, user.role, user.hospital_id)
         )
         conn.commit()
         return {"status": "SUCCESS", "message": "User activated."}
