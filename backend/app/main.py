@@ -339,6 +339,13 @@ async def evaluate_methylox_pipeline(
     conn = get_db_connection()
     cur = conn.cursor()
     try:
+        cur.execute("SELECT workflow_state FROM samples WHERE sample_id = %s", (sample_id,))
+        sample_record = cur.fetchone()
+        
+        if not sample_record:
+            raise HTTPException(status_code=404, detail="Sample not found.")
+        if sample_record["workflow_state"] == "Clinical Report Compiled":
+            raise HTTPException(status_code=409, detail="Sample already evaluated.")
         cur.execute(
             "UPDATE samples SET workflow_state = 'Clinical Report Compiled' WHERE sample_id = %s",
             (sample_id,)
