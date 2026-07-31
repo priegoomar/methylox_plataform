@@ -158,7 +158,7 @@ async def provision_user(user: UserProvision, current_user: TokenData = Depends(
     try:
         cur.execute(
             """
-            INSERT INTO users (username, full_name, password_hash, role, hospital_id)
+            INSERT INTO users (username, full_name, password, role, hospital_id)
             VALUES (%s, %s, %s, %s, %s)
             """,
             (user.username, user.full_name, password, user.role, user.hospital_id)
