@@ -82,6 +82,7 @@ class SampleCreate(BaseModel):
     patient_id: str
     barcode_qr: str
     specimen_type: str
+    practitioner_signature: str
 
 class TelemetrySummaryResponse(BaseModel):
     received_today: int
@@ -295,7 +296,7 @@ async def sample_intake(sample: SampleCreate, current_user: TokenData = Depends(
             INSERT INTO samples (sample_id, patient_id, barcode_qr, specimen_type, workflow_state, hospital_id)
             VALUES (%s, %s, %s, %s, %s, %s)
             """,
-            (sample.sample_id, sample.patient_id, sample.barcode_qr, sample.specimen_type, "Sample Registered", current_user.id_hospital)
+            (sample.sample_id, sample.patient_id, sample.barcode_qr, sample.specimen_type, "Sample Registered", sample.practitioner_signature,current_user.id_hospital)
         )
         conn.commit()
         return {"status": "SUCCESS", "message": "Sample synchronized."}
