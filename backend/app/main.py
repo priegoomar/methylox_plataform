@@ -384,7 +384,7 @@ async def reports_directory(current_user: TokenData = Depends(get_current_user_c
             JOIN patients p ON s.patient_id = p.id_patient
             JOIN hospitals h ON p.hospital_id = h.id
             WHERE h.id = %s
-            ORDER BY. r.created_at DEC
+            ORDER BY r.created_at DEC
             """,
             (current_user.id_hospital,)
         )
