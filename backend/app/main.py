@@ -129,14 +129,12 @@ class RoleGuard:
 # ==============================================================================
 
 @app.post("/api/v1/auth/login", response_model=LoginResponse, tags=["Authentication"])
-async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
-    username = form_data.username
-    password = form_data.username
-    
+async def login_user(payload: dict):
+    username, password = payload.get("username"), payload.get("password")
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        cur.execute("SELECT * FROM users WHERE username=%s", (username,))
+        cur.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cur.fetchone()
         
         if not user or password != user["password"]:
