@@ -347,10 +347,9 @@ async def evaluate_methylox_pipeline(
             raise HTTPException(status_code=404, detail="Sample not found.")
         if sample_record["workflow_state"] == "Clinical Report Compiled":
             raise HTTPException(status_code=409, detail="Sample already evaluated.")
-        cur.execute(
-            "UPDATE samples SET workflow_state = 'Clinical Report Compiled' WHERE sample_id = %s",
-            (sample_id,)
-        )
+        cur.execute("UPDATE samples SET workflow_state = 'Clinical Report Compiled' WHERE sample_id = %s AND hospital_id = %s", (sample_id, current_user.id_hospital))
+        if cur.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Sample not found for this hospital.")
         security_hash = uuid.uuid4().hex[:16].upper()
         cur.execute(
             """
