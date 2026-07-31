@@ -378,15 +378,13 @@ async def reports_directory(current_user: TokenData = Depends(get_current_user_c
     try:
         cur.execute(
             """
-            SELECT r.muestra_id, r.paciente_id, p.full_name AS nombre_codigo,
-                   r.score, r.clasificacion, r.operador, r.hash_seguridad,
-                   TO_CHAR(r.created_at, 'YYYY-MM-DD HH24:MI') AS fecha_analisis,
-                   p.date_of_birth, p.gender AS sexo, h.name AS institucion
+            SELECT r.muestra_id, r.paciente_id, p.full_name AS patient_code, s.workflow_state, r.score, r.clasificacion, r.operador, r.hash_seguridad, TO_CHAR(r.created_at, 'YYYY-MM-DD HH24:MI') AS analysis_date, p.date_of_birth, p.gender AS gender, h.name AS institution
             FROM reports r
             JOIN samples s ON r.muestra_id = s.sample_id
             JOIN patients p ON s.patient_id = p.id_patient
             JOIN hospitals h ON p.hospital_id = h.id
             WHERE h.id = %s
+            ORDER BY. r.created_at DEC
             """,
             (current_user.id_hospital,)
         )
