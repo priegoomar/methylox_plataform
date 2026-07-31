@@ -1,9 +1,3 @@
-# ==============================================================================
-# METHYLOX™ GLOBAL ENTERPRISE SaMD ENGINE
-# backend/app/main.py
-# VERSION 3.0.1 - Backend Harmonized Edition
-# ==============================================================================
-
 import csv
 import io
 import random
@@ -145,7 +139,8 @@ async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
         cur.execute("SELECT * FROM users WHERE username=%s", (username,))
         user = cur.fetchone()
         
-        if not user or password !=user["password"]:
+        if not user or password != user["password"]:
+            raise HTTPException(status_code=401, detail="Invalid credentials.")
             raise HTTPException(status_code=401, detail="Invalid credentials.")
             
         token = create_access_token({
