@@ -14,11 +14,10 @@ import jwt
 import psycopg2
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from psycopg2.extras import RealDictCursor
 from pydantic import BaseModel, EmailStr
-
 from app.config import settings
 
 # ==============================================================================
