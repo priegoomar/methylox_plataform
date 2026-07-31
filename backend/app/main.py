@@ -293,10 +293,10 @@ async def sample_intake(sample: SampleCreate, current_user: TokenData = Depends(
     try:
         cur.execute(
             """
-            INSERT INTO samples (sample_id, patient_id, barcode_qr, specimen_type, workflow_state, hospital_id)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO samples (sample_id, patient_id, barcode_qr, specimen_type, workflow_state, practitioner_signature, hospital_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             """,
-            (sample.sample_id, sample.patient_id, sample.barcode_qr, sample.specimen_type, "Sample Registered", sample.practitioner_signature,current_user.id_hospital)
+            (sample.sample_id, sample.patient_id, sample.barcode_qr, sample.specimen_type, "Sample Registered", sample.practitioner_signature, current_user.id_hospital)
         )
         conn.commit()
         return {"status": "SUCCESS", "message": "Sample synchronized."}
