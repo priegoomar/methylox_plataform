@@ -136,9 +136,9 @@ class RoleGuard:
 # ==============================================================================
 
 @app.post("/api/v1/auth/login", response_model=LoginResponse, tags=["Authentication"])
-async def login_user(payload: dict):
-    username = payload.get("username")
-    password = payload.get("password")
+async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
+    username = form_data.username
+    password = form_data.username
     
     conn = get_db_connection()
     cur = conn.cursor()
