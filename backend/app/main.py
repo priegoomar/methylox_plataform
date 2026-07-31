@@ -145,10 +145,8 @@ async def login_user(payload: dict):
     try:
         cur.execute("SELECT * FROM users WHERE username=%s", (username,))
         user = cur.fetchone()
-
-        print("USER DATABASE:", user)
         
-        if not user or not pwd_context.verify(password, user["password_hash"]):
+        if not user or password !=user["password"]:
             raise HTTPException(status_code=401, detail="Invalid credentials.")
             
         token = create_access_token({
