@@ -1,6 +1,7 @@
 import csv
 import io
 import random
+import uuid
 from datetime import datetime, timezone, timedelta
 from typing import List
 
@@ -350,7 +351,7 @@ async def evaluate_methylox_pipeline(
             "UPDATE samples SET workflow_state = 'Clinical Report Compiled' WHERE sample_id = %s",
             (sample_id,)
         )
-        security_hash = f"HSH-{random.randint(10000, 99999)}"
+        security_hash = uuid.uuid4().hex[:16].upper()
         cur.execute(
             """
             INSERT INTO reports (muestra_id, paciente_id, score, clasificacion, operador, hash_seguridad)
