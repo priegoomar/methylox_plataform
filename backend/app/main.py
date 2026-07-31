@@ -129,15 +129,14 @@ class RoleGuard:
 # ==============================================================================
 
 @app.post("/api/v1/auth/login", response_model=LoginResponse, tags=["Authentication"])
-async def login_user(payload: dict):
-    username, password = payload.get("username"), payload.get("password")
+async def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        cur.execute("SELECT * FROM users WHERE username = %s", (username,))
+        cur.execute("SELECT * FROM users WHERE username = %s", (form_data.username,))
         user = cur.fetchone()
         
-        if not user or password != user["password"]:
+        if not user or form_data.password != user["password"]:
             raise HTTPException(status_code=401, detail="Invalid credentials.")
             
         token = create_access_token({
