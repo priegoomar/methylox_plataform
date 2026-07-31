@@ -156,7 +156,6 @@ async def provision_user(user: UserProvision, current_user: TokenData = Depends(
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        password_hash = pwd_context.hash(user.password)
         cur.execute(
             """
             INSERT INTO users (username, full_name, password_hash, role, hospital_id)
