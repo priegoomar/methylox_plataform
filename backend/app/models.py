@@ -21,6 +21,12 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     last_login = Column(DateTime(timezone=True), nullable=True)
 
+    permissions = relationship(
+        "UserPermission",
+        foreign_keys="UserPermission.user_id",
+        back_populates="user"
+    )
+
 
 # ==========================================
 # PATIENT MODEL
@@ -33,9 +39,9 @@ class Patient(Base):
     patient_code = Column(String(100), unique=True, nullable=False, index=True)
     demographics = Column(JSON, nullable=True)
     clinical_notes = Column(Text, nullable=True)
-    created_by = Column(Integer, ForeignKey("users.id"))
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+
     samples = relationship("Sample", back_populates="patient")
 
 
@@ -54,7 +60,7 @@ class Sample(Base):
     received_date = Column(DateTime(timezone=True), nullable=True)
     status = Column(String(50), default="Collected")
     storage_location = Column(String(150), nullable=True)
-    created_by = Column(Integer, ForeignKey("users.id"))
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -71,11 +77,11 @@ class AnalysisResult(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     sample_id = Column(Integer, ForeignKey("samples.id"), nullable=False)
-    pipeline_version = Column(String(100), default="METHYLOX Engine v1.0")
+    pipeline_version = Column(String(100), default="METHYLOX Analysis v1.0")
     qc_status = Column(String(50), nullable=True)
     metrics = Column(JSON, nullable=True)
     classification = Column(String(150), nullable=True)
-    created_by = Column(Integer, ForeignKey("users.id"))
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     sample = relationship("Sample", back_populates="analysis_results")
@@ -92,6 +98,39 @@ class AuditLog(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     action = Column(String(150), nullable=False)
     module = Column(String(100), nullable=False)
-    entity = Column(String(100), nullable=True)
+    entity = Column(String(150), nullable=True)
     changes = Column(JSON, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+# ==========================================
+# PERMISSION MODEL
+# ==========================================
+
+class Permission(Base):
+    __tablename__ = "permissions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), unique=True, nullable=False)
+    module = Column(String(100), nullable=False)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user_permissions = relationship("UserPermission", back_populates="permission")
+
+
+# ==========================================
+# USER PERMISSION MODEL
+# ==========================================
+
+class UserPermission(Base):
+    __tablename__ = "user_permissions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    permission_id = Column(Integer, ForeignKey("permissions.id"), nullable=False)
+    granted_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", foreign_keys=[user_id], back_populates="permissions")
+    permission = relationship("Permission", back_populates="user_permissions")
