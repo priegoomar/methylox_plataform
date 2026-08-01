@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
+from app.security import get_current_user_claims, TokenData
 
 
 router = APIRouter(
@@ -15,14 +16,20 @@ router = APIRouter(
 # CREATE PATIENT
 # ==========================================
 
-@router.post("/", response_model=schemas.PatientResponse)
+@router.post(
+    "/",
+    response_model=schemas.PatientResponse
+)
 def create_patient(
     patient: schemas.PatientCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     existing = (
         db.query(models.Patient)
-        .filter(models.Patient.patient_code == patient.patient_code)
+        .filter(
+            models.Patient.patient_code == patient.patient_code
+        )
         .first()
     )
 
@@ -35,7 +42,8 @@ def create_patient(
     new_patient = models.Patient(
         patient_code=patient.patient_code,
         demographics=patient.demographics,
-        clinical_notes=patient.clinical_notes
+        clinical_notes=patient.clinical_notes,
+        created_by=current_user.id_user
     )
 
     db.add(new_patient)
@@ -49,11 +57,19 @@ def create_patient(
 # GET ALL PATIENTS
 # ==========================================
 
-@router.get("/", response_model=list[schemas.PatientResponse])
+@router.get(
+    "/",
+    response_model=list[schemas.PatientResponse]
+)
 def get_patients(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
-    patients = db.query(models.Patient).all()
+    patients = (
+        db.query(models.Patient)
+        .all()
+    )
+
     return patients
 
 
@@ -61,14 +77,20 @@ def get_patients(
 # GET PATIENT BY ID
 # ==========================================
 
-@router.get("/{patient_id}", response_model=schemas.PatientResponse)
+@router.get(
+    "/{patient_id}",
+    response_model=schemas.PatientResponse
+)
 def get_patient(
     patient_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     patient = (
         db.query(models.Patient)
-        .filter(models.Patient.id == patient_id)
+        .filter(
+            models.Patient.id == patient_id
+        )
         .first()
     )
 
