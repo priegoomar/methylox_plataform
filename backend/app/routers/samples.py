@@ -144,7 +144,9 @@ def update_sample(
     sample_id: int,
     update: schemas.SampleUpdate,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user_claims)
+    current_user: TokenData = Depends(
+        PermissionGuard("sample_update")
+    )
 ):
     sample = (
         db.query(models.Sample)
