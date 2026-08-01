@@ -84,7 +84,9 @@ def create_sample(
 def get_samples(
     status: str | None = None,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user_claims)
+    current_user: TokenData = Depends(
+        PermissionGuard("sample_read")
+    )
 ):
     query = db.query(models.Sample)
 
