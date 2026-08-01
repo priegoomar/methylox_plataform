@@ -1,3 +1,7 @@
+from sqlalchemy.orm import Session
+
+from app import models
+from app.database import get_db
 from datetime import datetime, timedelta, timezone
 from typing import List
 
@@ -111,6 +115,40 @@ class RoleGuard:
             raise HTTPException(
                 status_code=403,
                 detail="Insufficient permissions"
+            )
+
+        return current_user
+
+# ==========================================
+# PERMISSION GUARD
+# ==========================================
+
+class PermissionGuard:
+
+    def __init__(self, permission_name: str):
+        self.permission_name = permission_name
+
+    def __call__(
+        self,
+        current_user: TokenData = Depends(get_current_user_claims),
+        db: Session = Depends(get_db)
+    ):
+        permission = (
+            db.query(models.Permission)
+            .join(
+                models.UserPermission
+            )
+            .filter(
+                models.UserPermission.user_id == current_user.id_user,
+                models.Permission.name == self.permission_name
+            )
+            .first()
+        )
+
+        if not permission:
+            raise HTTPException(
+                status_code=403,
+                detail="Permission denied"
             )
 
         return current_user
