@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
-from app.security import get_current_user_claims, TokenData
+from app.security import (get_current_user_claims, TokenData, PermissionGuard)
 
 
 router = APIRouter(
