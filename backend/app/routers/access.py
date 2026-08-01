@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
+from app.security import get_current_user_claims, TokenData, RoleGuard
 
 
 router = APIRouter(
@@ -21,13 +22,13 @@ router = APIRouter(
 )
 def create_permission(
     permission: schemas.PermissionCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(RoleGuard(["admin"]))
 ):
     existing = (
         db.query(models.Permission)
         .filter(
-            models.Permission.name ==
-            permission.name
+            models.Permission.name == permission.name
         )
         .first()
     )
@@ -61,13 +62,13 @@ def create_permission(
 )
 def assign_permission(
     data: schemas.UserPermissionCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(RoleGuard(["admin"]))
 ):
     user = (
         db.query(models.User)
         .filter(
-            models.User.id ==
-            data.user_id
+            models.User.id == data.user_id
         )
         .first()
     )
@@ -81,8 +82,7 @@ def assign_permission(
     permission = (
         db.query(models.Permission)
         .filter(
-            models.Permission.id ==
-            data.permission_id
+            models.Permission.id == data.permission_id
         )
         .first()
     )
@@ -96,7 +96,7 @@ def assign_permission(
     new_assignment = models.UserPermission(
         user_id=data.user_id,
         permission_id=data.permission_id,
-        granted_by=data.granted_by
+        granted_by=current_user.id_user
     )
 
     db.add(new_assignment)
@@ -115,7 +115,8 @@ def assign_permission(
 )
 def get_user_permissions(
     user_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     permissions = (
         db.query(models.Permission)
@@ -123,8 +124,7 @@ def get_user_permissions(
             models.UserPermission
         )
         .filter(
-            models.UserPermission.user_id ==
-            user_id
+            models.UserPermission.user_id == user_id
         )
         .all()
     )
