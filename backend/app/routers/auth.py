@@ -1,17 +1,19 @@
 from datetime import datetime
-from app.security import create_access_token
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
+
 from app.database import get_db
-from app.config import settings
 from app import models, schemas
+from app.security import create_access_token
 
 
 router = APIRouter(
     prefix="/api/v1/auth",
     tags=["Authentication"]
 )
+
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -27,22 +29,33 @@ def hash_password(password: str):
     return pwd_context.hash(password)
 
 
-def verify_password(plain_password: str, hashed_password: str):
-    return pwd_context.verify(plain_password, hashed_password)
+def verify_password(
+    plain_password: str,
+    hashed_password: str
+):
+    return pwd_context.verify(
+        plain_password,
+        hashed_password
+    )
 
 
 # ==========================================
 # CREATE USER
 # ==========================================
 
-@router.post("/provision-user", response_model=schemas.UserResponse)
+@router.post(
+    "/provision-user",
+    response_model=schemas.UserResponse
+)
 def provision_user(
     user: schemas.UserCreate,
     db: Session = Depends(get_db)
 ):
     existing_user = (
         db.query(models.User)
-        .filter(models.User.username == user.username)
+        .filter(
+            models.User.username == user.username
+        )
         .first()
     )
 
@@ -68,17 +81,22 @@ def provision_user(
 
 
 # ==========================================
-# LOGIN
+# LOGIN OAuth2
 # ==========================================
 
-@router.post("/login", response_model=schemas.Token)
+@router.post(
+    "/login",
+    response_model=schemas.Token
+)
 def login(
-    credentials: schemas.LoginRequest,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
     user = (
         db.query(models.User)
-        .filter(models.User.username == credentials.username)
+        .filter(
+            models.User.username == form_data.username
+        )
         .first()
     )
 
@@ -88,7 +106,10 @@ def login(
             detail="Invalid credentials"
         )
 
-    if not verify_password(credentials.password, user.password_hash):
+    if not verify_password(
+        form_data.password,
+        user.password_hash
+    ):
         raise HTTPException(
             status_code=401,
             detail="Invalid credentials"
@@ -101,12 +122,16 @@ def login(
         )
 
     user.last_login = datetime.utcnow()
+
     db.commit()
 
-    token = create_access_token({
-        "sub": str(user.id),
-        "role": user.role
-    })
+    token = create_access_token(
+        {
+            "sub": user.username,
+            "id_user": user.id,
+            "role": user.role
+        }
+    )
 
     return {
         "access_token": token,
