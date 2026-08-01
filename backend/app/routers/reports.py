@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models
+from app.security import get_current_user_claims, TokenData
 
 
 router = APIRouter(
@@ -20,13 +21,13 @@ router = APIRouter(
 )
 def get_sample_report(
     sample_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     sample = (
         db.query(models.Sample)
         .filter(
-            models.Sample.id ==
-            sample_id
+            models.Sample.id == sample_id
         )
         .first()
     )
@@ -40,8 +41,7 @@ def get_sample_report(
     analyses = (
         db.query(models.AnalysisResult)
         .filter(
-            models.AnalysisResult.sample_id ==
-            sample_id
+            models.AnalysisResult.sample_id == sample_id
         )
         .all()
     )
@@ -49,25 +49,25 @@ def get_sample_report(
     return {
         "sample": {
             "id": sample.id,
-            "sample_code":
-            sample.sample_code,
-            "type":
-            sample.sample_type,
-            "status":
-            sample.status
+            "sample_code": sample.sample_code,
+            "type": sample.sample_type,
+            "status": sample.status
         },
         "analysis_results": [
             {
                 "id": result.id,
-                "pipeline":
-                result.pipeline_version,
-                "qc_status":
-                result.qc_status,
-                "metrics":
-                result.metrics,
-                "classification":
-                result.classification
+                "pipeline": result.pipeline_version,
+                "qc_status": result.qc_status,
+                "metrics": result.metrics,
+                "classification": result.classification,
+                "created_by": result.created_by,
+                "created_at": result.created_at
             }
             for result in analyses
-        ]
+        ],
+        "generated_by": {
+            "user_id": current_user.id_user,
+            "username": current_user.username,
+            "role": current_user.role
+        }
     }
