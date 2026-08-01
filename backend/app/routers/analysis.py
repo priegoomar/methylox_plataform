@@ -66,7 +66,10 @@ def create_analysis(
 def get_sample_analysis(
     sample_id: int,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(permissionGuard("analysis_read"))):
+    current_user: TokenData = Depends(
+        PermissionGuard("analysis_read")
+    )
+):
     results = (
         db.query(models.AnalysisResult)
         .filter(
