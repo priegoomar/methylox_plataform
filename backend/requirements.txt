@@ -11,3 +11,10 @@ fpdf2>=2.7.8
 pandas>=2.0.0
 numpy>=1.24.0
 bcrypt==4.1.3
+sqlalchemy
+psycopg2-binary
+alembic
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]
+email-validator
