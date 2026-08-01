@@ -25,7 +25,9 @@ router = APIRouter(
 def create_sample(
     sample: schemas.SampleCreate,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user_claims)
+    current_user: TokenData = Depends(
+        PermissionGuard("sample_create")
+    )
 ):
     existing = (
         db.query(models.Sample)
