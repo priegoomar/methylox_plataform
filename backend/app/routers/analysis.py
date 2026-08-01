@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
+from app.security import get_current_user_claims, TokenData
 
 
 router = APIRouter(
@@ -21,13 +22,13 @@ router = APIRouter(
 )
 def create_analysis(
     analysis: schemas.AnalysisCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     sample = (
         db.query(models.Sample)
         .filter(
-            models.Sample.id ==
-            analysis.sample_id
+            models.Sample.id == analysis.sample_id
         )
         .first()
     )
@@ -40,14 +41,11 @@ def create_analysis(
 
     new_analysis = models.AnalysisResult(
         sample_id=analysis.sample_id,
-        pipeline_version=
-        analysis.pipeline_version,
-        qc_status=
-        analysis.qc_status,
-        metrics=
-        analysis.metrics,
-        classification=
-        analysis.classification
+        pipeline_version=analysis.pipeline_version,
+        qc_status=analysis.qc_status,
+        metrics=analysis.metrics,
+        classification=analysis.classification,
+        created_by=current_user.id_user
     )
 
     db.add(new_analysis)
@@ -67,14 +65,15 @@ def create_analysis(
 )
 def get_sample_analysis(
     sample_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     results = (
         db.query(models.AnalysisResult)
         .filter(
-            models.AnalysisResult.sample_id ==
-            sample_id
+            models.AnalysisResult.sample_id == sample_id
         )
         .all()
     )
+
     return results
