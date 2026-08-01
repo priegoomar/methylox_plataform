@@ -1,10 +1,8 @@
-from datetime import datetime, timedelta
-
+from app.security import create_access_token
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from jose import jwt
-
+from jose
 from app.database import get_db
 from app.config import settings
 from app import models, schemas
@@ -31,21 +29,6 @@ def hash_password(password: str):
 
 def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
-
-
-# ==========================================
-# JWT CREATION
-# ==========================================
-
-def create_access_token(data: dict):
-    payload = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    payload["exp"] = expire
-    return jwt.encode(
-        payload,
-        settings.SECRET_KEY,
-        algorithm=settings.ALGORITHM
-    )
 
 
 # ==========================================
