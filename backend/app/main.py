@@ -3,12 +3,21 @@ from datetime import datetime, timezone
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.database import engine
+from app.models import Base
 from app.routers import auth
 from app.routers import patients
 from app.routers import samples
 from app.routers import analysis
 from app.routers import reports
 from app.routers import access
+
+
+# ==========================================
+# CREATE DATABASE TABLES
+# ==========================================
+
+Base.metadata.create_all(bind=engine)
 
 
 # ==========================================
@@ -43,29 +52,12 @@ app.add_middleware(
 # ROUTERS
 # ==========================================
 
-app.include_router(
-    auth.router
-)
-
-app.include_router(
-    patients.router
-)
-
-app.include_router(
-    samples.router
-)
-
-app.include_router(
-    analysis.router
-)
-
-app.include_router(
-    reports.router
-)
-
-app.include_router(
-    access.router
-)
+app.include_router(auth.router)
+app.include_router(patients.router)
+app.include_router(samples.router)
+app.include_router(analysis.router)
+app.include_router(reports.router)
+app.include_router(access.router)
 
 
 # ==========================================
