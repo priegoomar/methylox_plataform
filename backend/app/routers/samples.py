@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
+from app.security import get_current_user_claims, TokenData
 
 
 router = APIRouter(
@@ -17,14 +18,20 @@ router = APIRouter(
 # CREATE SAMPLE
 # ==========================================
 
-@router.post("/", response_model=schemas.SampleResponse)
+@router.post(
+    "/",
+    response_model=schemas.SampleResponse
+)
 def create_sample(
     sample: schemas.SampleCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     existing = (
         db.query(models.Sample)
-        .filter(models.Sample.sample_code == sample.sample_code)
+        .filter(
+            models.Sample.sample_code == sample.sample_code
+        )
         .first()
     )
 
@@ -36,7 +43,9 @@ def create_sample(
 
     patient = (
         db.query(models.Patient)
-        .filter(models.Patient.id == sample.patient_id)
+        .filter(
+            models.Patient.id == sample.patient_id
+        )
         .first()
     )
 
@@ -53,7 +62,8 @@ def create_sample(
         collection_date=sample.collection_date,
         received_date=sample.received_date,
         status=sample.status,
-        storage_location=sample.storage_location
+        storage_location=sample.storage_location,
+        created_by=current_user.id_user
     )
 
     db.add(new_sample)
@@ -67,15 +77,21 @@ def create_sample(
 # GET SAMPLES
 # ==========================================
 
-@router.get("/", response_model=list[schemas.SampleResponse])
+@router.get(
+    "/",
+    response_model=list[schemas.SampleResponse]
+)
 def get_samples(
     status: str | None = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     query = db.query(models.Sample)
 
     if status:
-        query = query.filter(models.Sample.status == status)
+        query = query.filter(
+            models.Sample.status == status
+        )
 
     return query.all()
 
@@ -84,14 +100,20 @@ def get_samples(
 # GET SAMPLE BY ID
 # ==========================================
 
-@router.get("/{sample_id}", response_model=schemas.SampleResponse)
+@router.get(
+    "/{sample_id}",
+    response_model=schemas.SampleResponse
+)
 def get_sample(
     sample_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     sample = (
         db.query(models.Sample)
-        .filter(models.Sample.id == sample_id)
+        .filter(
+            models.Sample.id == sample_id
+        )
         .first()
     )
 
@@ -108,15 +130,21 @@ def get_sample(
 # UPDATE SAMPLE STATUS
 # ==========================================
 
-@router.patch("/{sample_id}", response_model=schemas.SampleResponse)
+@router.patch(
+    "/{sample_id}",
+    response_model=schemas.SampleResponse
+)
 def update_sample(
     sample_id: int,
     update: schemas.SampleUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user_claims)
 ):
     sample = (
         db.query(models.Sample)
-        .filter(models.Sample.id == sample_id)
+        .filter(
+            models.Sample.id == sample_id
+        )
         .first()
     )
 
@@ -135,8 +163,9 @@ def update_sample(
     if update.received_date:
         sample.received_date = update.received_date
 
-    sample.updated_at = datetime.utcnow()
+    sample.updated_at = datetime.now(timezone.utc)
 
     db.commit()
     db.refresh(sample)
+
     return sample
