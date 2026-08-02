@@ -12,6 +12,7 @@ from app.routers import analysis
 from app.routers import reports
 from app.routers import access
 from app.routers import users
+from app.routers import audit
 
 
 # ==========================================
@@ -60,6 +61,7 @@ app.include_router(analysis.router)
 app.include_router(reports.router)
 app.include_router(access.router)
 app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
+app.include_router(audit.router, prefix="/api/v1/audit", tags=["Audit Trail"])
 
 
 # ==========================================
