@@ -104,9 +104,7 @@ def login(
         {
             "sub": user.username,
             "id_user": user.id,
-            "role": user.role,
-            "id_hospital": user.
-    id_hospital
+            "role": user.role
         }
     )
 
