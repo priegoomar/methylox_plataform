@@ -4,7 +4,7 @@ from app.database import get_db
 from app import models, schemas
 from app.security import get_current_user_claims
 from app.utils.password import hash_password
-from app.utils.audit import create_audit_long
+from app.utils.audit import create_audit_log
 router = APIRouter()
 
 def serialize_user(user):
