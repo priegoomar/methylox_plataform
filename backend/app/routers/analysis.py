@@ -56,9 +56,12 @@ def create_analysis(
     db.add(new_analysis)
     db.commit()
     db.refresh(new_analysis)
-
+    
+    audit = models.AuditLog(user_id=current_user.id_user, action="CREATE_ANALYSIS", module="analysis", entity=str(new_analysis.id), changes={"analysis_id": new_analysis.id, "sample_id": new_analysis.sample_id, "classification": new_analysis.classification})
+    db.add(audit)
+    db.commit()
+    
     return new_analysis
-
 
 # ==========================================
 # GET ANALYSIS BY SAMPLE
