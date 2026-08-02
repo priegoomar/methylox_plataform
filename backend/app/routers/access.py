@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
-from app.security import get_current_user_claims, TokenData, RoleGuard
+from app.security import RoleGuard, TokenData
 
 
 router = APIRouter(
@@ -93,6 +93,22 @@ def assign_permission(
             detail="Permission not found"
         )
 
+    # Prevent duplicate permissions
+    existing_assignment = (
+        db.query(models.UserPermission)
+        .filter(
+            models.UserPermission.user_id == data.user_id,
+            models.UserPermission.permission_id == data.permission_id
+        )
+        .first()
+    )
+
+    if existing_assignment:
+        raise HTTPException(
+            status_code=400,
+            detail="Permission already assigned"
+        )
+
     new_assignment = models.UserPermission(
         user_id=data.user_id,
         permission_id=data.permission_id,
@@ -116,8 +132,22 @@ def assign_permission(
 def get_user_permissions(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user_claims)
+    current_user: TokenData = Depends(RoleGuard(["admin"]))
 ):
+    user = (
+        db.query(models.User)
+        .filter(
+            models.User.id == user_id
+        )
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
     permissions = (
         db.query(models.Permission)
         .join(
