@@ -1212,33 +1212,17 @@ elif nav_selection == "analysis":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-# 📋 TAB 5: REPORTS (EXHAUSTIVE DEFENSIBLE PDF CLINICAL DOSSIER ENGINE)
+# TAB 5: REPORTS (METHYLOX™ CLINICAL REPORT GENERATION)
 # ----------------------------------------------------------------------------
 elif nav_selection == "reports":
     from fpdf import FPDF
-    
-    # Estilos CSS específicos para centrar títulos, encabezados y etiquetas
+
     st.markdown("""
         <style>
-            /* Centrar encabezado principal y subtítulo de la pestaña */
-            .welcome-header {
+            .welcome-header, .welcome-caption {
                 text-align: center !important;
                 width: 100% !important;
             }
-            .welcome-caption {
-                text-align: center !important;
-                width: 100% !important;
-            }
-            /* Centrar los títulos principales de las tarjetas clínicas */
-            .card-title-clinical {
-                text-align: center !important;
-                font-weight: 700 !important;
-                font-size: 1.1rem !important;
-                margin-bottom: 1rem !important;
-                display: block !important;
-                width: 100% !important;
-            }
-            /* Centrar selectores */
             div[data-testid="stSelectbox"] label {
                 display: block !important;
                 text-align: center !important;
@@ -1247,124 +1231,152 @@ elif nav_selection == "reports":
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("<h2 class='welcome-header'>📜 Clinical Reports</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Access and download generated analysis reports.</p>", unsafe_allow_html=True)
-    
+    st.markdown("<h2 class='welcome-header'> Clinical Reports</h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Generate validated molecular analysis reports from METHYLOX™ laboratory records.</p>", unsafe_allow_html=True)
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+
+    # ============================================================
+    # LOAD AVAILABLE SAMPLES FROM BACKEND
+    # ============================================================
     try:
-        # CORRECCIÓN: Se ajustó la ruta para eliminar duplicidades con BACKEND_URL si aplica
-        res_reports = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=5)
-        if res_reports.status_code == 200:
-            reports_data = res_reports.json()
-        else:
-            reports_data = []
+        samples_response = requests.get(f"{BACKEND_URL}/samples/", headers=headers, timeout=5)
+        samples_data = samples_response.json() if samples_response.status_code == 200 else []
     except Exception:
-        reports_data = []
-    
-    if not reports_data:
-        st.info("ℹ️ No reports available. Analyze a sample to generate a report.")
-        st.markdown('</div>', unsafe_allow_html=True)
+        samples_data = []
+
+    if not samples_data:
+        st.info("No samples available. Create and analyze a sample before generating reports.")
+        st.markdown("</div>", unsafe_allow_html=True)
     else:
-        df_rep_list = pd.DataFrame(reports_data)
-        st.dataframe(df_rep_list[['muestra_id', 'paciente_id', 'score', 'clasificacion', 'fecha_analisis', 'hash_seguridad']].rename(
-            columns={
-                'muestra_id': 'Sample ID',
-                'paciente_id': 'Patient ID',
-                'score': 'Beta Score',
-                'clasificacion': 'Result Assessment',
-                'fecha_analisis': 'Timestamp',
-                'hash_seguridad': 'Security Hash'
-            }
-        ), use_container_width=True, hide_index=True)
-        
-        st.write("---")
-        m_select = st.selectbox("Select Target Sample ID for Report Verification & Electronic Signature Ingestion:", df_rep_list["muestra_id"].unique())
-        datos_rep = df_rep_list[df_rep_list["muestra_id"] == m_select].iloc[-1]
-        tipo_informe = st.radio("Select Standardized Document Layout Format Structure", ["Institutional Executive Summary", "Technical Biomarker Deep Dive"], horizontal=True)
-        
-        st.write("##")
-        
-        # FPDF CORE ENGINE RECONSTRUCTION (HIGH-FIDELITY MEDICAL PDF)
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Helvetica", "B", 14)
-        pdf.set_text_color(30, 58, 138)
-        pdf.cell(190, 10, "METHYLOX(TM) LABORATORY INTELLIGENCE PLATFORM REPORT", ln=True, align="L")
-        
-        pdf.set_font("Helvetica", "", 8)
-        pdf.set_text_color(100, 116, 139)
-        pdf.cell(190, 5, "BIOMEDICAL SYSTEMS OPERATION KERNEL | SOFTWARE DEVICE STAGE: METHYLOX v3.0-PRODUCTION SaMD", ln=True)
-        pdf.ln(3)
-        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
-        pdf.ln(4)
-        
-        pdf.set_font("Helvetica", "B", 10)
-        pdf.set_text_color(15, 23, 42)
-        pdf.cell(190, 6, "1. DIGITAL CHAIN OF CUSTODY AUDIT TRAIL (LIMS TELEMETRY)", ln=True)
-        pdf.set_font("Helvetica", "", 9)
-        pdf.cell(95, 5, f"Sample Asset ID: {str(datos_rep['muestra_id'])}", border=0)
-        pdf.cell(95, 5, f"Verification Security Hash: {str(datos_rep['hash_seguridad'])}", border=0, ln=True)
-        pdf.cell(95, 5, f"Authorized Operator Signature: {str(datos_rep['operador'])}", border=0)
-        pdf.cell(95, 5, f"Server Transaction Timestamp: {str(datos_rep['fecha_analisis'])}", border=0, ln=True)
-        pdf.ln(3)
-        
-        pdf.set_font("Helvetica", "B", 10)
-        pdf.cell(190, 6, "2. ANONYMIZED PATIENT MOLECULAR DIRECTORY PROFILE", ln=True)
-        pdf.set_font("Helvetica", "", 9)
-        pdf.cell(95, 5, f"Patient Context ID: {str(datos_rep['paciente_id'])}", border=0)
-        pdf.cell(95, 5, f"Security Anonymous Code String: {str(datos_rep['nombre_codigo'])}", border=0, ln=True)
-        pdf.cell(95, 5, f"Age: {str(datos_rep['age'])} Years", border=0)
-        pdf.cell(95, 5, f"Biological Gender Parameter: {str(datos_rep['sexo'])}", border=0, ln=True)
-        pdf.cell(190, 5, f"Medical Corporate Facility Node: {str(datos_rep['institucion'])}", ln=True)
-        pdf.ln(3)
-        
-        pdf.set_font("Helvetica", "B", 10)
-        pdf.cell(190, 6, "3. QUANTITATIVE EPIGENETIC METHYLATION READOUT (CORE SAMD ENGINE)", ln=True)
-        pdf.set_font("Helvetica", "", 9)
-        pdf.cell(190, 5, f"Global Mean Methylation Beta Score (Multiplexed MOX Panel): {float(datos_rep['score']):.4f}", ln=True)
-        
-        if float(datos_rep['score']) >= 0.1000:
-            pdf.set_text_color(220, 38, 38)
-            pdf.set_font("Helvetica", "B", 9)
-            pdf.cell(190, 5, f"ALGORITHMIC CLINICAL VERDICT: {str(datos_rep['clasificacion'])}", ln=True)
-            pdf.set_font("Helvetica", "I", 9)
-            pdf.set_text_color(100, 116, 139)
-            pdf.cell(190, 5, "INTERPRETATION SCORE: Positive ctDNA calling threshold surpassed. Complementary tissue biopsy suggested.", ln=True)
-        else:
-            pdf.set_text_color(22, 163, 74)
-            pdf.set_font("Helvetica", "B", 9)
-            pdf.cell(190, 5, "ALGORITHMIC CLINICAL VERDICT: Stable Baseline Control Range (Tumor Negative Screen)", ln=True)
-            
-        pdf.set_text_color(15, 23, 42)
-        pdf.set_font("Helvetica", "", 9)
-        
-        if "TECHNICAL" in tipo_informe.upper():
-            pdf.ln(3)
-            pdf.set_font("Helvetica", "B", 10)
-            pdf.cell(190, 6, "4. TECHNICAL BIOINFORMATIC BIOCHEMICAL APPENDIX", ln=True)
-            pdf.set_font("Helvetica", "", 9)
-            pdf.cell(190, 5, f"Active Patent CRISPR Probes Panel Signatures: {str(datos_rep['guias_activas'])}", ln=True)
-            pdf.cell(190, 5, "Genomic Alignment Quality Quality: Passes Phred Quality Score Q30 parameters.", ln=True)
-            
-        pdf.ln(10)
-        pdf.set_font("Helvetica", "I", 8)
-        pdf.set_text_color(148, 163, 184)
-        pdf.cell(190, 4, "Regulatory Compliance Notice: This system operates as a Software as a Medical Device (SaMD) compliant with HIPAA and FDA 21 CFR Part 11 guidelines.", ln=True, align="C")
-        pdf.cell(190, 4, "Restricted pre-clinical research use only. Confidential proprietary assets of METHYLOX Platform 2026.", ln=True, align="C")
-        
+        samples_df = pd.DataFrame(samples_data)
+        st.markdown("### Select Sample for Report Generation")
+        selected_sample_id = st.selectbox("Sample ID", options=samples_df["id"].tolist())
+
+        # ========================================================
+        # REQUEST REPORT DATA FROM BACKEND
+        # ========================================================
         try:
-            final_pdf_payload = pdf.output(dest='S').encode('latin1')
+            report_response = requests.get(f"{BACKEND_URL}/reports/sample/{selected_sample_id}", headers=headers, timeout=5)
+            if report_response.status_code == 200:
+                report_data = report_response.json()
+            else:
+                report_data = None
+                st.error("Unable to retrieve report information from backend.")
         except Exception:
-            final_pdf_payload = bytes(pdf.output())
-            
-        st.download_button(
-            label=f"🔬 Verify Electronic Signature & Download Defendible Dossier for Sample {m_select}",
-            data=final_pdf_payload,
-            file_name=f"METHYLOX_Defendible_Report_{m_select}.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
+            report_data = None
+            st.error("Backend connection error while retrieving report.")
+
+        if report_data:
+            sample_info = report_data.get("sample", {})
+            analysis_results = report_data.get("analysis_results", [])
+            generated_by = report_data.get("generated_by", {})
+
+            st.markdown("---")
+            st.markdown("### Report Preview")
+
+            preview_data = {
+                "Sample Code": sample_info.get("sample_code", "N/A"),
+                "Sample Type": sample_info.get("type", "N/A"),
+                "Status": sample_info.get("status", "N/A"),
+                "Analysis Count": len(analysis_results)
+            }
+
+            st.dataframe(pd.DataFrame([preview_data]), use_container_width=True, hide_index=True)
+
+            # ========================================================
+            # REPORT FORMAT SELECTION
+            # ========================================================
+            report_format = st.radio("Document Format", ["Institutional Clinical Summary", "Technical Molecular Analysis"], horizontal=True)
+            st.write("")
+
+            # ========================================================
+            # PDF GENERATION ENGINE
+            # ========================================================
+            pdf = FPDF()
+            pdf.add_page()
+
+            # HEADER
+            pdf.set_font("Helvetica", "B", 14)
+            pdf.set_text_color(30, 58, 138)
+            pdf.cell(190, 10, "METHYLOX(TM) CLINICAL MOLECULAR REPORT", ln=True)
+
+            pdf.set_font("Helvetica", "", 8)
+            pdf.set_text_color(100, 116, 139)
+            pdf.cell(190, 5, "Epigenetic AI Laboratory Intelligence Platform | METHYLOX v3.0", ln=True)
+
+            pdf.ln(5)
+            pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+            pdf.ln(5)
+
+            # SECTION 1 - SAMPLE INFORMATION
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.set_text_color(15, 23, 42)
+            pdf.cell(190, 6, "1. SAMPLE INFORMATION", ln=True)
+
+            pdf.set_font("Helvetica", "", 9)
+            pdf.cell(95, 5, f"Sample ID: {sample_info.get('id')}", ln=True)
+            pdf.cell(95, 5, f"Sample Code: {sample_info.get('sample_code')}", ln=True)
+            pdf.cell(95, 5, f"Sample Type: {sample_info.get('type')}", ln=True)
+            pdf.cell(95, 5, f"Sample Status: {sample_info.get('status')}", ln=True)
+            pdf.ln(4)
+
+            # SECTION 2 - MOLECULAR ANALYSIS RESULTS
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.cell(190, 6, "2. MOLECULAR ANALYSIS RESULTS", ln=True)
+            pdf.set_font("Helvetica", "", 9)
+
+            if analysis_results:
+                for result in analysis_results:
+                    metrics = result.get("metrics", {})
+                    pdf.cell(190, 5, f"Pipeline Version: {result.get('pipeline')}", ln=True)
+                    pdf.cell(190, 5, f"Quality Control Status: {result.get('qc_status')}", ln=True)
+                    pdf.cell(190, 5, f"Beta Score: {metrics.get('beta_score', 'N/A')}", ln=True)
+                    pdf.cell(190, 5, f"AUC Performance: {metrics.get('auc', 'N/A')}", ln=True)
+                    pdf.cell(190, 5, f"Classification: {result.get('classification')}", ln=True)
+                    pdf.ln(3)
+            else:
+                pdf.cell(190, 5, "No molecular analysis results available.", ln=True)
+
+            # SECTION 3 - TECHNICAL APPENDIX
+            if "Technical" in report_format:
+                pdf.ln(3)
+                pdf.set_font("Helvetica", "B", 10)
+                pdf.cell(190, 6, "3. TECHNICAL MOLECULAR APPENDIX", ln=True)
+                pdf.set_font("Helvetica", "", 9)
+                pdf.cell(190, 5, "METHYLOX computational pipeline evaluation.", ln=True)
+                pdf.cell(190, 5, "Epigenetic biomarker analysis and quality assessment performed by the platform engine.", ln=True)
+
+            # SECTION 4 - REPORT TRACEABILITY
+            pdf.ln(4)
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.cell(190, 6, "4. REPORT TRACEABILITY", ln=True)
+            pdf.set_font("Helvetica", "", 9)
+            pdf.cell(190, 5, f"Generated by User ID: {generated_by.get('user_id', 'N/A')}", ln=True)
+            pdf.cell(190, 5, f"Operator: {generated_by.get('username', 'N/A')}", ln=True)
+            pdf.cell(190, 5, f"Role: {generated_by.get('role', 'N/A')}", ln=True)
+            pdf.ln(8)
+
+            # DISCLAIMER
+            pdf.set_font("Helvetica", "I", 8)
+            pdf.set_text_color(100, 116, 139)
+            pdf.cell(190, 4, "Research and laboratory intelligence platform. Results require clinical validation according to applicable institutional procedures.", ln=True, align="C")
+            pdf.cell(190, 4, "Confidential proprietary information of METHYLOX(TM) Platform.", ln=True, align="C")
+
+            # CREATE DOWNLOAD FILE
+            try:
+                pdf_output = pdf.output(dest="S").encode("latin1")
+            except Exception:
+                pdf_output = bytes(pdf.output())
+
+            st.download_button(
+                label=f" Generate & Download METHYLOX™ Report - Sample {selected_sample_id}",
+                data=pdf_output,
+                file_name=f"METHYLOX_Clinical_Report_{selected_sample_id}.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 #   TAB 6: ACCESS CONTROL (DYNAMIC RBAC AUTHORIZATION HUB)
