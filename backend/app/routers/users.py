@@ -22,7 +22,6 @@ def get_users(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user_claims)
 ):
-    # Solo administrador puede consultar usuarios
     if current_user.role != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -33,5 +32,9 @@ def get_users(
         db.query(User)
         .all()
     )
+
+    # Cargar permisos directos
+    for user in users:
+        user.permissions = user.direct_permissions
 
     return users
