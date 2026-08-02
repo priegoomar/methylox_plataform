@@ -24,6 +24,10 @@ class UserUpdate(BaseModel):
     role: Optional[str] = None
 
 
+class UserStatusUpdate(BaseModel):
+    active: bool
+
+
 class LoginRequest(BaseModel):
     username: str
     password: str
