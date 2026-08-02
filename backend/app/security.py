@@ -133,24 +133,24 @@ class PermissionGuard:
         current_user: TokenData = Depends(get_current_user_claims),
         db: Session = Depends(get_db)
     ):
-    if current_user.role == "admin":
-        return current_user
+    
+        if current_user.role == "admin":
+            return current_user
+    
         permission = (
             db.query(models.Permission)
-            .join(
-                models.UserPermission
-            )
+            .join(models.UserPermission)
             .filter(
                 models.UserPermission.user_id == current_user.id_user,
                 models.Permission.name == self.permission_name
             )
             .first()
         )
-
+    
         if not permission:
             raise HTTPException(
                 status_code=403,
                 detail="Permission denied"
             )
-
+    
         return current_user
