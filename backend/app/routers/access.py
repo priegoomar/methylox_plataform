@@ -160,3 +160,8 @@ def get_user_permissions(
     )
 
     return permissions
+
+
+@router.get("/permissions")
+def get_permissions(db: Session = Depends(get_db), current_user: TokenData = Depends(RoleGuard(["admin"]))):
+    return db.query(models.Permission).all()
