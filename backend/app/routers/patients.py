@@ -2,108 +2,77 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app import models, schemas
-from app.security import (get_current_user_claims, TokenData, PermissionGuard)
+from app import models
+from app.security import (
+    TokenData,
+    PermissionGuard
+)
 
 
 router = APIRouter(
-    prefix="/api/v1/patients",
-    tags=["Patients"]
+    prefix="/api/v1/reports",
+    tags=["Reports"]
 )
 
 
 # ==========================================
-# CREATE PATIENT
+# GET REPORT DATA
 # ==========================================
 
-@router.post(
-    "/",
-    response_model=schemas.PatientResponse
+@router.get(
+    "/sample/{sample_id}"
 )
-def create_patient(
-    patient: schemas.PatientCreate,
+def get_sample_report(
+    sample_id: int,
     db: Session = Depends(get_db),
     current_user: TokenData = Depends(
-        PermissionGuard("patient_create")
+        PermissionGuard("report_read")
     )
 ):
-    existing = (
-        db.query(models.Patient)
+    sample = (
+        db.query(models.Sample)
         .filter(
-            models.Patient.patient_code == patient.patient_code
+            models.Sample.id == sample_id
         )
         .first()
     )
 
-    if existing:
+    if not sample:
         raise HTTPException(
-            status_code=400,
-            detail="Patient code already exists"
+            status_code=404,
+            detail="Sample not found"
         )
 
-    new_patient = models.Patient(
-        patient_code=patient.patient_code,
-        demographics=patient.demographics,
-        clinical_notes=patient.clinical_notes,
-        created_by=current_user.id_user
-    )
-
-    db.add(new_patient)
-    db.commit()
-    db.refresh(new_patient)
-
-    return new_patient
-
-
-# ==========================================
-# GET ALL PATIENTS
-# ==========================================
-
-@router.get(
-    "/",
-    response_model=list[schemas.PatientResponse]
-)
-def get_patients(
-    db: Session = Depends(get_db),
-    current_user: TokenData = Depends(
-        PermissionGuard("patient_read")
-    )
-):
-    patients = (
-        db.query(models.Patient)
+    analyses = (
+        db.query(models.AnalysisResult)
+        .filter(
+            models.AnalysisResult.sample_id == sample_id
+        )
         .all()
     )
 
-    return patients
-
-
-# ==========================================
-# GET PATIENT BY ID
-# ==========================================
-
-@router.get(
-    "/{patient_id}",
-    response_model=schemas.PatientResponse
-)
-def get_patient(
-    patient_id: int,
-    db: Session = Depends(get_db),
-    current_user: TokenData = Depends(
-        PermissionGuard("patient_read")
-    )
-):
-    patient = (
-        db.query(models.Patient)
-        .filter(
-            models.Patient.id == patient_id
-        )
-        .first()
-    )
-
-    if not patient:
-        raise HTTPException(
-            status_code=404,
-            detail="Patient not found"
-        )
-
-    return patient
+    return {
+        "sample": {
+            "id": sample.id,
+            "sample_code": sample.sample_code,
+            "type": sample.sample_type,
+            "status": sample.status
+        },
+        "analysis_results": [
+            {
+                "id": result.id,
+                "pipeline": result.pipeline_version,
+                "qc_status": result.qc_status,
+                "metrics": result.metrics,
+                "classification": result.classification,
+                "created_by": result.created_by,
+                "created_at": result.created_at
+            }
+            for result in analyses
+        ],
+        "generated_by": {
+            "user_id": current_user.id_user,
+            "username": current_user.username,
+            "role": current_user.role
+        }
+    }
