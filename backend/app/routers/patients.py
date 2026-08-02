@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
-from app.security import get_current_user_claims, TokenData
+from app.security import (get_current_user_claims, TokenData, PermissionGuard)
 
 
 router = APIRouter(
@@ -23,7 +23,9 @@ router = APIRouter(
 def create_patient(
     patient: schemas.PatientCreate,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user_claims)
+    current_user: TokenData = Depends(
+        PermissionGuard("patient_create")
+    )
 ):
     existing = (
         db.query(models.Patient)
@@ -63,7 +65,9 @@ def create_patient(
 )
 def get_patients(
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user_claims)
+    current_user: TokenData = Depends(
+        PermissionGuard("patient_read")
+    )
 ):
     patients = (
         db.query(models.Patient)
@@ -84,7 +88,9 @@ def get_patients(
 def get_patient(
     patient_id: int,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user_claims)
+    current_user: TokenData = Depends(
+        PermissionGuard("patient_read")
+    )
 ):
     patient = (
         db.query(models.Patient)
