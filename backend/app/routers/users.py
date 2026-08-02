@@ -4,7 +4,7 @@ from app.database import get_db
 from app import models, schemas
 from app.security import get_current_user_claims
 from app.utils.password import hash_password
-
+from app.utils.audit import create_audit_long
 router = APIRouter()
 
 def serialize_user(user):
@@ -44,6 +44,7 @@ def create_user(payload: schemas.UserCreate, db: Session = Depends(get_db), curr
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+    create_audit_log(db=db, user_id=current_user.id_user, action="CREATE_USER", module="users", entity=str(new_user.id), changes={"username": new_user.username, "role": new_user.role, "email": new_user.email})
     return {"message": "User created successfully", "user_id": new_user.id}
 
 @router.patch("/{user_id}")
