@@ -3,7 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
-from app.security import (get_current_user_claims, TokenData, PermissionGuard)
+from app.security import (
+    TokenData,
+    PermissionGuard
+)
 
 
 router = APIRouter(
@@ -23,7 +26,9 @@ router = APIRouter(
 def create_analysis(
     analysis: schemas.AnalysisCreate,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user_claims)
+    current_user: TokenData = Depends(
+        PermissionGuard("analysis_create")
+    )
 ):
     sample = (
         db.query(models.Sample)
