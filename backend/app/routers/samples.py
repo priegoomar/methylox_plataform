@@ -71,9 +71,12 @@ def create_sample(
     db.add(new_sample)
     db.commit()
     db.refresh(new_sample)
-
+    
+    audit = models.AuditLog(user_id=current_user.id_user, action="CREATE_SAMPLE", module="samples", entity=new_sample.sample_code, changes={"sample_id": new_sample.id, "sample_code": new_sample.sample_code, "patient_id": new_sample.patient_id})
+    db.add(audit)
+    db.commit()
+    
     return new_sample
-
 
 # ==========================================
 # GET SAMPLES
@@ -172,8 +175,11 @@ def update_sample(
         sample.received_date = update.received_date
 
     sample.updated_at = datetime.now(timezone.utc)
-
     db.commit()
     db.refresh(sample)
-
+    
+    audit = models.AuditLog(user_id=current_user.id_user, action="UPDATE_SAMPLE", module="samples", entity=sample.sample_code, changes={"status": sample.status, "storage_location": sample.storage_location})
+    db.add(audit)
+    db.commit()
+    
     return sample
