@@ -2,42 +2,17 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from passlib.context import CryptContext
 
 from app.database import get_db
 from app import models, schemas
 from app.security import create_access_token
+from app.utils.password import hash_password, verify_password
 
 
 router = APIRouter(
     prefix="/api/v1/auth",
     tags=["Authentication"]
 )
-
-
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto"
-)
-
-
-# ==========================================
-# PASSWORD SECURITY
-# ==========================================
-
-def hash_password(password: str):
-    return pwd_context.hash(password)
-
-
-def verify_password(
-    plain_password: str,
-    hashed_password: str
-):
-    return pwd_context.verify(
-        plain_password,
-        hashed_password
-    )
-
 
 # ==========================================
 # CREATE USER
