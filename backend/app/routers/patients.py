@@ -48,12 +48,24 @@ def create_patient(
         clinical_notes=patient.clinical_notes,
         created_by=current_user.id_user
     )
-
     db.add(new_patient)
     db.commit()
     db.refresh(new_patient)
-    create_audit_log(db=db, user_id=current_user.id_user, action="CREATE_PATIENT", module="patients", entity=str(new_patient.id), changes={"patient_code": new_patient.patient_code})
-
+    
+    audit = models.AuditLog(
+        user_id=current_user.id_user,
+        action="CREATE_PATIENT",
+        module="patients",
+        entity=new_patient.patient_code,
+        changes={
+            "patient_id": new_patient.id,
+            "patient_code": new_patient.patient_code
+        }
+    )
+    
+    db.add(audit)
+    db.commit()
+    
     return new_patient
 
 
