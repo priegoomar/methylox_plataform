@@ -2,77 +2,110 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app import models
-from app.security import (
-    TokenData,
-    PermissionGuard
-)
+from app import models, schemas
+from app.security import (get_current_user_claims, TokenData, PermissionGuard)
+from app.utils.audit import create_audit_log
 
 
 router = APIRouter(
-    prefix="/api/v1/reports",
-    tags=["Reports"]
+    prefix="/api/v1/patients",
+    tags=["Patients"]
 )
 
 
 # ==========================================
-# GET REPORT DATA
+# CREATE PATIENT
 # ==========================================
 
-@router.get(
-    "/sample/{sample_id}"
+@router.post(
+    "/",
+    response_model=schemas.PatientResponse
 )
-def get_sample_report(
-    sample_id: int,
+def create_patient(
+    patient: schemas.PatientCreate,
     db: Session = Depends(get_db),
     current_user: TokenData = Depends(
-        PermissionGuard("report_read")
+        PermissionGuard("patient_create")
     )
 ):
-    sample = (
-        db.query(models.Sample)
+    existing = (
+        db.query(models.Patient)
         .filter(
-            models.Sample.id == sample_id
+            models.Patient.patient_code == patient.patient_code
         )
         .first()
     )
 
-    if not sample:
+    if existing:
         raise HTTPException(
-            status_code=404,
-            detail="Sample not found"
+            status_code=400,
+            detail="Patient code already exists"
         )
 
-    analyses = (
-        db.query(models.AnalysisResult)
-        .filter(
-            models.AnalysisResult.sample_id == sample_id
-        )
+    new_patient = models.Patient(
+        patient_code=patient.patient_code,
+        demographics=patient.demographics,
+        clinical_notes=patient.clinical_notes,
+        created_by=current_user.id_user
+    )
+
+    db.add(new_patient)
+    db.commit()
+    db.refresh(new_patient)
+    create_audit_log(db=db, user_id=current_user.id_user, action="CREATE_PATIENT", module="patients", entity=str(new_patient.id), changes={"patient_code": new_patient.patient_code})
+
+    return new_patient
+
+
+# ==========================================
+# GET ALL PATIENTS
+# ==========================================
+
+@router.get(
+    "/",
+    response_model=list[schemas.PatientResponse]
+)
+def get_patients(
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(
+        PermissionGuard("patient_read")
+    )
+):
+    patients = (
+        db.query(models.Patient)
         .all()
     )
 
-    return {
-        "sample": {
-            "id": sample.id,
-            "sample_code": sample.sample_code,
-            "type": sample.sample_type,
-            "status": sample.status
-        },
-        "analysis_results": [
-            {
-                "id": result.id,
-                "pipeline": result.pipeline_version,
-                "qc_status": result.qc_status,
-                "metrics": result.metrics,
-                "classification": result.classification,
-                "created_by": result.created_by,
-                "created_at": result.created_at
-            }
-            for result in analyses
-        ],
-        "generated_by": {
-            "user_id": current_user.id_user,
-            "username": current_user.username,
-            "role": current_user.role
-        }
-    }
+    return patients
+
+
+# ==========================================
+# GET PATIENT BY ID
+# ==========================================
+
+@router.get(
+    "/{patient_id}",
+    response_model=schemas.PatientResponse
+)
+def get_patient(
+    patient_id: int,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(
+        PermissionGuard("patient_read")
+    )
+):
+    patient = (
+        db.query(models.Patient)
+        .filter(
+            models.Patient.id == patient_id
+        )
+        .first()
+    )
+
+    if not patient:
+        raise HTTPException(
+            status_code=404,
+            detail="Patient not found"
+        )
+
+    return patient
