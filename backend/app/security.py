@@ -133,6 +133,8 @@ class PermissionGuard:
         current_user: TokenData = Depends(get_current_user_claims),
         db: Session = Depends(get_db)
     ):
+    if current_user.role == "admin":
+        return current_user
         permission = (
             db.query(models.Permission)
             .join(
