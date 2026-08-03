@@ -171,7 +171,7 @@ with st.sidebar:
                         st.session_state.jwt_access_token = data["access_token"]
                         st.session_state.operator_display_name = username
                         st.session_state.user_role = data.get("role", "cls").lower()
-                        st.rerun()
+                        st.stop()
                     else:
                         st.error("Authentication failed")
                 except Exception:
