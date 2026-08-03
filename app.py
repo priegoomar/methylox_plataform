@@ -9,6 +9,7 @@ from datetime import datetime, date
 import pandas as pd
 import requests
 import streamlit as st
+import jwt
 
 # ============================================================================
 # STREAMLIT CONFIGURATION
@@ -165,19 +166,16 @@ with st.sidebar:
     
                     if response.status_code == 200:
                         data = response.json()
-                    
-                        st.json(data)
-                     
                         st.session_state.jwt_access_token = data["access_token"]
                         st.session_state.operator_display_name = username
-                        st.session_state.user_role = data.get("role", "cls").lower()
-                        st.stop()
-                    else:
-                        st.error("Authentication failed")
-                except Exception:
-                    st.error("Backend unavailable")
-            else:
-                st.warning("Enter credentials")
+                    
+                        decoded_token = jwt.decode(
+                            data["access_token"],
+                            options={"verify_signature": False}
+                        )
+                    
+                        st.session_state.user_role = decoded_token.get("role", "cls").lower()
+                        st.rerun()
     
     # ============================================================
     # ACTIVE SESSION
