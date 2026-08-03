@@ -624,7 +624,11 @@ elif nav_selection == "patients":
     # -------------------------------------------------------------------------
     def load_patient_directory():
         try:
-            response = requests.get(f"{BACKEND_URL}/lims/cohort-directory", headers=headers, timeout=5)
+            response = requests.get(
+                f"{BACKEND_URL}/api/v1/patients/",
+                headers=headers,
+                timeout=5
+            )
             if response.status_code == 200:
                 data = response.json()
                 if data:
@@ -714,12 +718,24 @@ elif nav_selection == "patients":
                         st.error("Missing Data: Complete all mandatory fields.")
                     else:
                         payload_patient = {
-                            "id_patient": patient_id, "anonymous_code": anonymous_code,
-                            "full_name": full_name, "record_number": record_number,
-                            "date_of_birth": str(date_birth), "gender": gender, "institution": institution
+                            "patient_code": patient_id,
+                            "demographics": {
+                                "anonymous_code": anonymous_code,
+                                "full_name": full_name,
+                                "record_number": record_number,
+                                "date_of_birth": str(date_birth),
+                                "gender": gender,
+                                "institution": institution
+                            },
+                            "clinical_notes": None
                         }
                         try:
-                            response = requests.post(f"{BACKEND_URL}/lims/enroll-patient", json=payload_patient, headers=headers, timeout=5)
+                            response = requests.post(
+                                f"{BACKEND_URL}/api/v1/patients/",
+                                json=payload_patient,
+                                headers=headers,
+                                timeout=5
+                            )
                             if response.status_code == 200:
                                 st.success(f"Patient {patient_id} successfully registered.")
                                 st.session_state.generated_patient_id = f"PAT-{random.randint(10000,99999)}"
@@ -744,7 +760,7 @@ elif nav_selection == "patients":
 
             if not df_patients.empty:
                 rename_map = {
-                    "id_patient": "Patient ID", "patient_id": "Patient ID",
+                    "patient_code": "Patient ID", "patient_id": "Patient ID",
                     "anonymous_code": "Anonymous Code", "full_name": "Full Name",
                     "record_number": "Record Number", "date_of_birth": "Date of Birth",
                     "gender": "Gender", "institution": "Institution"
