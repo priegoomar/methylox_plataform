@@ -176,8 +176,6 @@ with st.sidebar:
                     
                         st.session_state.user_role = decoded_token.get("role", "cls").lower()
                         st.rerun()
-                except Exception as e:
-                    pass
     
     # ============================================================
     # ACTIVE SESSION
