@@ -376,6 +376,7 @@ elif nav_selection == "dashboard":
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/samples", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
+            st.write(samples_list)
         except Exception:
             samples_list = []
             
