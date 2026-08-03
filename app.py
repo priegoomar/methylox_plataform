@@ -397,25 +397,21 @@ elif nav_selection == "dashboard":
                     <td style='padding: 14px 10px; text-align: center; border: none;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
                 </tr>
                 """
-
-        st.markdown(f"""
-        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
-            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'> Recent Laboratory Activity Trail</p>
-            <table class='clinical-table-new'>
-                <thead>
-                    <tr style='background-color: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 2px solid #E2E8F0;'>
-                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Sample ID</th>
-                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Patient ID</th>
-                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Matrix</th>
-                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows_html}
-                </tbody>
-            </table>
-        </div>
-        """, unsafe_allow_html=True)
+                
+        st.markdown(f"""<div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
+        <p style="font-size:15px; font-weight:700; color:#0F172A; margin:0 0 12px 0;">Recent Laboratory Activity Trail</p>
+        <table style="width:100%; border-collapse:collapse; overflow:hidden;">
+        <thead>
+        <tr style="background:#F8FAFC; border-bottom:2px solid #E2E8F0;">
+        <th style="padding:10px; text-align:center; color:#64748B; font-weight:700; font-size:13px;">Sample ID</th>
+        <th style="padding:10px; text-align:center; color:#64748B; font-weight:700; font-size:13px;">Patient ID</th>
+        <th style="padding:10px; text-align:center; color:#64748B; font-weight:700; font-size:13px;">Matrix</th>
+        <th style="padding:10px; text-align:center; color:#64748B; font-weight:700; font-size:13px;">Status</th>
+        </tr>
+        </thead>
+        <tbody>{rows_html}</tbody>
+        </table>
+        </div>""", unsafe_allow_html=True)
 
     with c_right:
         st.markdown("<div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
