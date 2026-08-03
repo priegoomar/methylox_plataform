@@ -165,7 +165,10 @@ with st.sidebar:
     
                     if response.status_code == 200:
                         data = response.json()
-                        st.write(data)
+                    
+                        st.write("RESPUESTA LOGIN:")
+                        st.json(data)
+                    
                         st.session_state.jwt_access_token = data["access_token"]
                         st.session_state.operator_display_name = username
                         st.session_state.user_role = data.get("role", "cls").lower()
