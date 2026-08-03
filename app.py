@@ -439,7 +439,7 @@ elif nav_selection == "dashboard":
         if live_list:
             df_live = pd.DataFrame(live_list)
             selected_live_event = st.dataframe(
-                df_live[['sample_id', 'workflow_state']],
+                df_live[['sample_code', 'satatus']],
                 use_container_width=True,
                 hide_index=True,
                 height=110,
@@ -448,7 +448,7 @@ elif nav_selection == "dashboard":
             )
             if selected_live_event and selected_live_event.selection.rows:
                 sel_idx = selected_live_event.selection.rows[0]
-                st.session_state.active_live_sample = df_live.iloc[sel_idx].get('sample_id')
+                st.session_state.active_live_sample = df_live.iloc[sel_idx].get('sample_code')
         else:
             st.caption("Awaiting live registry telemetry stream...")
         st.markdown("</div>", unsafe_allow_html=True)
