@@ -384,7 +384,7 @@ elif nav_selection == "dashboard":
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No laboratory samples currently registered.</td></tr>"
         else:
             for s in samples_list[:5]:
-                state = s.get("workflow_state", "Sample Received")
+                state = s.get("status", "Collected")
                 if state in ["Sample Registered"]:
                     badge_style = "background-color:#EFF6FF; color:#2563EB;"
                 elif state in ["Pre-Analytical Processing", "Molecular Data Generation", "Analysis Running"]:
@@ -398,9 +398,9 @@ elif nav_selection == "dashboard":
                 
                 rows_html += f"""
                 <tr style='border-bottom: 1px solid #F1F5F9;'>
-                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_id', '--')}</td>
+                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_code', '--')}</td>
                     <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('patient_id', '--')}</td>
-                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('specimen_type', 'Plasma')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_type', 'Plasma')}</td>
                     <td style='padding: 14px 10px; text-align: center; border: none;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
                 </tr>
                 """
