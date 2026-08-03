@@ -134,73 +134,73 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-# ============================================================================
-# SYSTEM STATUS
-# ============================================================================
-
-if backend_status:
-    st.sidebar.success("Backend Online")
-else:
-    st.sidebar.error("Backend Offline")
-
-# ============================================================
-# LOGIN GATE
-# ============================================================
-
-if not st.session_state.jwt_access_token:
-    with st.form("login_form"):
-        st.markdown('<p style="color:#94A3B8; font-size:12px; font-weight:700;">SECURE AUTHENTICATION</p>', unsafe_allow_html=True)
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        login = st.form_submit_button("Authenticate", use_container_width=True)
-
-    if login:
-        if username and password:
-            try:
-                response = requests.post(
-                    f"{BACKEND_URL}/auth/login",
-                    data={"username": username, "password": password},
-                    timeout=5
-                )
-
-                if response.status_code == 200:
-                    data = response.json()
-                    st.session_state.jwt_access_token = data["access_token"]
-                    st.session_state.operator_display_name = username
-                    st.session_state.user_role = data.get("role", "cls").lower()
-                    st.rerun()
-                else:
-                    st.error("Authentication failed")
-            except Exception:
-                st.error("Backend unavailable")
-        else:
-            st.warning("Enter credentials")
-
-# ============================================================
-# ACTIVE SESSION
-# ============================================================
-
-else:
-    st.markdown(
-        f"""
-        <div style="background:#1E293B; padding:15px; border-radius:10px;">
-        <span style="color:#94A3B8;font-size:11px;">ACTIVE USER</span>
-        <br>
-        <b style="color:white;">{st.session_state.operator_display_name}</b>
-        <br>
-        <span style="color:#38BDF8;font-size:12px;">ROLE: {st.session_state.user_role.upper()}</span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    if st.button("Disconnect", use_container_width=True):
-        st.session_state.jwt_access_token = None
-        st.session_state.user_role = None
-        st.session_state.operator_display_name = "Guest Operator"
-        st.rerun()
-
-st.sidebar.markdown("---")
+    # ============================================================================
+    # SYSTEM STATUS
+    # ============================================================================
+    
+    if backend_status:
+        st.sidebar.success("Backend Online")
+    else:
+        st.sidebar.error("Backend Offline")
+    
+    # ============================================================
+    # LOGIN GATE
+    # ============================================================
+    
+    if not st.session_state.jwt_access_token:
+        with st.form("login_form"):
+            st.markdown('<p style="color:#94A3B8; font-size:12px; font-weight:700;">SECURE AUTHENTICATION</p>', unsafe_allow_html=True)
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
+            login = st.form_submit_button("Authenticate", use_container_width=True)
+    
+        if login:
+            if username and password:
+                try:
+                    response = requests.post(
+                        f"{BACKEND_URL}/auth/login",
+                        data={"username": username, "password": password},
+                        timeout=5
+                    )
+    
+                    if response.status_code == 200:
+                        data = response.json()
+                        st.session_state.jwt_access_token = data["access_token"]
+                        st.session_state.operator_display_name = username
+                        st.session_state.user_role = data.get("role", "cls").lower()
+                        st.rerun()
+                    else:
+                        st.error("Authentication failed")
+                except Exception:
+                    st.error("Backend unavailable")
+            else:
+                st.warning("Enter credentials")
+    
+    # ============================================================
+    # ACTIVE SESSION
+    # ============================================================
+    
+    else:
+        st.markdown(
+            f"""
+            <div style="background:#1E293B; padding:15px; border-radius:10px;">
+            <span style="color:#94A3B8;font-size:11px;">ACTIVE USER</span>
+            <br>
+            <b style="color:white;">{st.session_state.operator_display_name}</b>
+            <br>
+            <span style="color:#38BDF8;font-size:12px;">ROLE: {st.session_state.user_role.upper()}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    
+        if st.button("Disconnect", use_container_width=True):
+            st.session_state.jwt_access_token = None
+            st.session_state.user_role = None
+            st.session_state.operator_display_name = "Guest Operator"
+            st.rerun()
+    
+    st.sidebar.markdown("---")
 
 # ============================================================================
 # RBAC MENU
