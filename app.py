@@ -303,196 +303,244 @@ elif nav_selection == "users":
 
     st.markdown("</div>", unsafe_allow_html=True)
 
+# ----------------------------------------------------------------------------
+#   TAB 1: GENERAL DASHBOARD MATRIX
+# ----------------------------------------------------------------------------
+
 elif nav_selection == "dashboard":
-
-    st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name}</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Laboratory Operations Dashboard | Real-Time Clinical Workflow Monitoring</p>", unsafe_allow_html=True)
-
-    # ============================================================
-    # LIVE BACKEND DATA
-    # ============================================================
-
-    samples_data, patients_data, reports_ready, active_analysis = [], [], 0, 0
+    st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Laboratory Operations Dashboard Real-Time Clinical Workflow Monitoring</p>", unsafe_allow_html=True)
 
     try:
-        res = requests.get(f"{BACKEND_URL}/samples/", headers=headers, timeout=10)
-        if res.status_code == 200:
-            samples_data = res.json()
+        res_telemetry = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", headers=headers, timeout=15)
+        if res_telemetry.status_code == 200:
+            tel = res_telemetry.json()
+            received_today = tel.get('received_today', 0)
+            in_progress = tel.get('in_progress', 0)
+            ready_analyses = tel.get('ready_analyses', 0)
+            qc_pass_rate = tel.get('qc_pass_rate', 0.0)
+        else:
+            received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
     except Exception:
-        samples_data = []
-
-    try:
-        res = requests.get(f"{BACKEND_URL}/patients/", headers=headers, timeout=10)
-        if res.status_code == 200:
-            patients_data = res.json()
-    except Exception:
-        patients_data = []
-
-    samples_received = len(samples_data)
-    
-    for sample in samples_data:
-        status = sample.get("status", "").lower()
-        if status in ["analysis", "processing", "in progress", "running"]:
-            active_analysis += 1
-        if status in ["report ready", "completed"]:
-            reports_ready += 1
-
-    qc_status = "Available" if samples_data else "Waiting"
-
-    # ============================================================
-    # TOP METRIC CARDS
-    # ============================================================
+        received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
     st.markdown(f"""
-    <div class="metric-container-hub">
-        <div class="metric-card-clinical-new">
-            <p class="metric-title-sub-new">Samples Received</p>
-            <p class="metric-num-big-new">{samples_received}</p>
-            <span>Live LIMS Registry</span>
+    <div class='metric-container-hub'>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #2563EB;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Samples Received</p>
+            <p class='metric-num-big-new'>{received_today}</p>
+            <a class='metric-link-btn-new' href='?page=LIMS-Samples' target='_self'>View all samples →</a>
         </div>
-        <div class="metric-card-clinical-new">
-            <p class="metric-title-sub-new">Active Analysis</p>
-            <p class="metric-num-big-new">{active_analysis}</p>
-            <span>Molecular Workflow</span>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #D97706;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Active Workflow</p>
+            <p class='metric-num-big-new'>{in_progress}</p>
+            <a class='metric-link-btn-new' href='?page=METHYLOX-Engine' target='_self'>View workflow →</a>
         </div>
-        <div class="metric-card-clinical-new">
-            <p class="metric-title-sub-new">Reports Ready</p>
-            <p class="metric-num-big-new">{reports_ready}</p>
-            <span>Clinical Reports</span>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #16A34A;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Ready Reports</p>
+            <p class='metric-num-big-new'>{ready_analyses}</p>
+            <a class='metric-link-btn-new' href='?page=Reports' target='_self'>View dossiers →</a>
         </div>
-        <div class="metric-card-clinical-new">
-            <p class="metric-title-sub-new">QC Status</p>
-            <p class="metric-num-big-new">{qc_status}</p>
-            <span>Quality Monitoring</span>
+        <div class='metric-card-clinical-new'>
+            <div class='svg-top-container' style='color: #6366F1;'>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <p class='metric-title-sub-new'>Quality Controls</p>
+            <p class='metric-num-big-new'>{qc_pass_rate}%</p>
+            <a class='metric-link-btn-new' href='?page=LIMS-Samples' target='_self'>View QC matrix →</a>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.write("")
+    st.write("##")
 
-    # ============================================================
-    # RECENT LABORATORY ACTIVITY TRAIL
-    # ============================================================
+    c_left, c_right = st.columns([1.4, 1.0])
 
-    rows_html = ""
-    if not samples_data:
-        rows_html = '<tr><td colspan="4" style="padding:30px; text-align:center; color:#94A3B8;">No laboratory samples registered.</td></tr>'
-    else:
-        for sample in samples_data[:10]:
-            rows_html += f"""
-            <tr>
-                <td>{sample.get("sample_code", "--")}</td>
-                <td>{sample.get("patient_id", "--")}</td>
-                <td>{sample.get("sample_type", "--")}</td>
-                <td>{sample.get("status", "--")}</td>
-            </tr>
-            """
+    with c_left:
+        try:
+            res_s_dash = requests.get(f"{BACKEND_URL}/samples", headers=headers, timeout=5)
+            samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
+        except Exception:
+            samples_list = []
 
-    st.markdown(f"""
-    <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
-        <p style="font-size:15px; font-weight:700; color:#0F172A; margin:0 0 12px 0;">Recent Laboratory Activity Trail</p>
-        <table style="width:100%; border-collapse:collapse;">
-            <thead>
-                <tr style="background:#F8FAFC; border-bottom:2px solid #E2E8F0;">
-                    <th style="padding:10px; text-align:center; color:#64748B;">Sample ID</th>
-                    <th style="padding:10px; text-align:center; color:#64748B;">Patient ID</th>
-                    <th style="padding:10px; text-align:center; color:#64748B;">Matrix</th>
-                    <th style="padding:10px; text-align:center; color:#64748B;">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {rows_html}
-            </tbody>
-        </table>
-    </div>
-    """, unsafe_allow_html=True)
+        rows_html = ""
+        if not samples_list:
+            rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No laboratory samples currently registered.</td></tr>"
+        else:
+            for s in samples_list[:5]:
+                state = s.get("status", "Collected")
+                if state in ["Sample Registered"]:
+                    badge_style = "background-color:#EFF6FF; color:#2563EB;"
+                elif state in ["Pre-Analytical Processing", "Molecular Data Generation", "Analysis Running"]:
+                    badge_style = "background-color:#FFFBEB; color:#D97706;"
+                elif state in ["Quality Control Review", "Clinical Review"]:
+                    badge_style = "background-color:#F5F3FF; color:#7C3AED;"
+                elif state == "Report Ready":
+                    badge_style = "background-color:#F0FDF4; color:#16A34A;"
+                else:
+                    badge_style = "background-color:#F8FAFC; color:#64748B;"
 
-    # ============================================================
-    # LIVE LABORATORY MONITORING & DIAGNOSTIC SUMMARY
-    # ============================================================
-
-    st.write("")
-    col_left, col_right = st.columns([1.2, 1])
-
-    with col_left:
-        live_rows = ""
-        if samples_data:
-            for sample in samples_data[:8]:
-                live_rows += f"""
-                <tr>
-                    <td style="padding:10px; text-align:center;">{sample.get("sample_code", "--")}</td>
-                    <td style="padding:10px; text-align:center;">{sample.get("status", "--")}</td>
-                    <td style="padding:10px; text-align:center;">{sample.get("created_at", "--")}</td>
+                rows_html += f"""
+                <tr style='border-bottom: 1px solid #F1F5F9;'>
+                    <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_code', '--')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('patient_id', '--')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_type', 'Plasma')}</td>
+                    <td style='padding: 14px 10px; text-align: center; border: none;'><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:700; {badge_style}'>{state}</span></td>
                 </tr>
                 """
 
-        table_content = f"""
-        <table style="width:100%; border-collapse:collapse;">
-            <thead>
-                <tr style="background:#F8FAFC;">
-                    <th style="padding:10px;">Sample</th>
-                    <th style="padding:10px;">Status</th>
-                    <th style="padding:10px;">Created</th>
-                </tr>
-            </thead>
-            <tbody>
-                {live_rows}
-            </tbody>
-        </table>
-        """ if samples_data else '<p style="color:#94A3B8; text-align:center; padding:20px;">No live laboratory records available.</p>'
-
         st.markdown(f"""
-        <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:16px;">
-            <p style="font-size:15px; font-weight:700; color:#0F172A; margin:0 0 12px 0;">Live Laboratory Monitoring</p>
-            {table_content}
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 24px; min-height: 360px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;'> Recent Laboratory Activity Trail</p>
+            <table class='clinical-table-new'>
+                <thead>
+                    <tr style='background-color: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 2px solid #E2E8F0;'>
+                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Sample ID</th>
+                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Patient ID</th>
+                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Matrix</th>
+                        <th style='padding: 14px 10px; color: #64748B; font-weight: 700; text-align: center; border: none;'>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows_html}
+                </tbody>
+            </table>
         </div>
         """, unsafe_allow_html=True)
 
-    with col_right:
-        status_counter = {}
-        for sample in samples_data:
-            status = sample.get("status", "Unknown")
-            status_counter[status] = status_counter.get(status, 0) + 1
+    with c_right:
+        st.markdown("<div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'> Live Interactive Data Stream</p>", unsafe_allow_html=True)
 
-        labels = list(status_counter.keys()) if status_counter else ["No Data"]
-        values = list(status_counter.values()) if status_counter else [1]
-
-        fig_donut = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.65, textinfo="label+percent")])
-        fig_donut.update_layout(height=240, margin=dict(l=0, r=0, t=10, b=0), showlegend=False)
-
-        st.markdown("""
-        <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:16px;">
-            <p style="font-size:15px; font-weight:700; color:#0F172A; margin:0 0 12px 0;">Laboratory Workflow Distribution</p>
-        """, unsafe_allow_html=True)
-        st.plotly_chart(fig_donut, use_container_width=True)
+        if samples_list:
+            df_live = pd.DataFrame(samples_list)
+            available_live_cols = [col for col in ["sample_code", "status"] if col in df_live.columns]
+            if available_live_cols:
+                selected_live_event = st.dataframe(
+                    df_live[available_live_cols],
+                    use_container_width=True, hide_index=True, height=110,
+                    on_select="rerun", selection_mode="single-row"
+                )
+                if selected_live_event and selected_live_event.selection.rows:
+                    sel_idx = selected_live_event.selection.rows[0]
+                    st.session_state.active_live_sample = df_live.iloc[sel_idx].get('sample_code')
+            else:
+                st.caption("Required dataframe columns missing for live stream.")
+        else:
+            st.caption("Awaiting live registry telemetry stream...")
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # ============================================================
-    # QUICK ACTIONS
-    # ============================================================
+        try:
+            res_rep = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=5)
+            rep_data = res_rep.json() if res_rep.status_code == 200 else []
+        except Exception:
+            rep_data = []
 
-    st.write("")
-    st.markdown("<p style='font-size:15px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Clinical Workflows</p>", unsafe_allow_html=True)
+        total_cases = len(rep_data)
+        positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
+        negatives = total_cases - positives
+        in_pipeline = in_progress
 
-    q1, q2, q3, q4 = st.columns(4)
+        if total_cases == 0 and in_pipeline == 0:
+            labels_pie, values_pie, colors_pie = ['Awaiting Data Ingestion'], [1], ['#F1F5F9']
+        else:
+            labels_pie, values_pie, colors_pie = ['Positive Findings', 'Negative Findings', 'Active Workflow'], [positives, negatives, in_pipeline], ['#EF4444', '#10B981', '#3B82F6']
 
-    with q1:
-        if st.button("Patients", use_container_width=True):
-            st.session_state.nav_selection = "patients"
-            st.rerun()
-    with q2:
-        if st.button("LIMS Samples", use_container_width=True):
-            st.session_state.nav_selection = "lims"
-            st.rerun()
-    with q3:
-        if st.button("Analysis", use_container_width=True):
-            st.session_state.nav_selection = "analysis"
-            st.rerun()
-    with q4:
-        if st.button("Reports", use_container_width=True):
-            st.session_state.nav_selection = "reports"
-            st.rerun()
+        fig_donut = go.Figure(data=[go.Pie(labels=labels_pie, values=values_pie, hole=.6, marker=dict(colors=colors_pie), textinfo='none', showlegend=True)])
+        fig_donut.update_layout(
+            height=180, margin=dict(l=0, r=0, t=10, b=10),
+            legend=dict(orientation="h", y=-0.2, x=0),
+            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+            annotations=[dict(text=f"<b style='font-size:20px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=11, showarrow=False)]
+        )
 
+        st.markdown("""
+        <div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>
+            <p style='font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;'> Onco-Genetic Diagnostic Summary</p>
+        """, unsafe_allow_html=True)
+        st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.write("##")
+    st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
+
+    st.markdown("""
+    <style>
+        .svg-action-link {
+            background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px;
+            display: flex; align-items: center; gap: 12px; width: 100%; min-height: 75px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02); box-sizing: border-box; text-decoration: none !important;
+            transition: all 0.2s ease-in-out;
+        }
+        .svg-action-link:hover {
+            border-color: #3B82F6; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px); background-color: #F8FAFC;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    act_col1, act_col2, act_col3, act_col4 = st.columns(4)
+
+    with act_col1:
+        st.markdown("""
+        <a href="?page=Patients" target="_self" class="svg-action-link">
+            <div style="background: #EFF6FF; padding: 10px; border-radius: 10px; color: #2563EB; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Enroll Subject</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">New Patient Profile</p>
+            </div>
+        </a>
+        """, unsafe_allow_html=True)
+
+    with act_col2:
+        st.markdown("""
+        <a href="?page=LIMS-Samples" target="_self" class="svg-action-link">
+            <div style="background: #FFF7ED; padding: 10px; border-radius: 10px; color: #EA580C; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/></svg>
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Asset Intake</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Log LIMS Custody</p>
+            </div>
+        </a>
+        """, unsafe_allow_html=True)
+
+    with act_col3:
+        st.markdown("""
+        <a href="?page=METHYLOX-Engine" target="_self" class="svg-action-link">
+            <div style="background: #F0FDF4; padding: 10px; border-radius: 10px; color: #16A34A; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Start Analysis</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Run Molecular Pipeline</p>
+            </div>
+        </a>
+        """, unsafe_allow_html=True)
+
+    with act_col4:
+        st.markdown("""
+        <a href="?page=Reports" target="_self" class="svg-action-link">
+            <div style="background: #FAF5FF; padding: 10px; border-radius: 10px; color: #9333EA; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div style="text-align: left; overflow: hidden;">
+                <p style="font-size: 13px; font-weight: 700; color: #0F172A; margin: 0; line-height: 1.2;">Dossier Sheet</p>
+                <p style="font-size: 11px; color: #64748B; margin: 2px 0 0 0; line-height: 1.2;">Export Medical PDF</p>
+            </div>
+        </a>
+        """, unsafe_allow_html=True)
 
 # ============================================================================
 #   TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT) - OPTIMIZED & ALIGNED
