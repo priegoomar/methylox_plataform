@@ -252,70 +252,65 @@ if selected_key == "restricted":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
-#   TAB: ACCESS CONTROL (DYNAMIC RBAC AUTHORIZATION HUB)
+# TAB: ACCESS CONTROL (DYNAMIC RBAC AUTHORIZATION HUB)
 # ----------------------------------------------------------------------------
 elif nav_selection == "users":
     st.markdown("<h2 class='welcome-header'>Identity Governance & Task Delegation</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Provision custom laboratory operational roles dynamically without hardcoding</p>", unsafe_allow_html=True)
-   
-    # Consultamos el directorio de hospitales del backend para asociar el nombre con su ID correspondiente
-    try:
-        res_hospitals = requests.get(f"{BACKEND_URL}/hospitals/directory", headers=headers, timeout=5)
-        hospital_dict = {h["name"]: h["id"] for h in res_hospitals.json()} if res_hospitals.status_code == 200 and res_hospitals.json() else {}
-    except Exception:
-        hospital_dict = {}
-
+    st.markdown("<p class='welcome-caption'>Provision authorized personnel and assign operational roles within METHYLOX™.</p>", unsafe_allow_html=True)
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+
     with st.form("universal_user_provisioning_form", clear_on_submit=True):
         st.markdown("#### Register New Authorized Staff Member")
         c1, c2 = st.columns(2)
+
         with c1:
-            input_username = st.text_input("Email or Username", placeholder="doctor@hospital.com")
+            input_username = st.text_input("Email", placeholder="doctor@hospital.com")
             input_full_name = st.text_input("Full Name", placeholder="e.g., Dr. John Doe, MD")
+
         with c2:
             input_password = st.text_input("Temporary Password", type="password", placeholder="••••••••••••")
-            target_role_display = st.selectbox("System Role and Permissions", ["admin", "cls", "md"], format_func=lambda x: {"admin": "Administrator", "cls": "Laboratory Technician (CLS)", "md": "Clinical Doctor (MD)"}[x])
-             
-        # Si hay hospitales en la base de datos, permitimos seleccionarlo o escribirlo limpiamente
-        if hospital_dict:
-            selected_hospital_name = st.selectbox("Hospital or Clinic Name", options=list(hospital_dict.keys()))
-            target_hospital_id = hospital_dict[selected_hospital_name]
-        else:
-            # Fallback seguro si la red falla o está vacío
-            target_hospital_name = st.text_input("Hospital or Clinic Name", placeholder="e.g., Memorial General Hospital")
-            target_hospital_id = int(st.session_state.get("id_hospital", 1))
+            target_role_display = st.selectbox(
+                "System Role and Permissions",
+                ["admin", "cls", "md"],
+                format_func=lambda x: {"admin": "Administrator", "cls": "Laboratory Scientist (CLS)", "md": "Clinical Doctor (MD)"}[x]
+            )
 
         submit_btn = st.form_submit_button("Activate User & Grant Access")
-       
+
     if submit_btn:
         if not input_username or not input_password or not input_full_name:
-            st.error("All clinical identity fields are mandatory.")
+            st.error("All user registration fields are required.")
         else:
             payload_u = {
                 "username": input_username,
+                "email": input_username,
                 "password": input_password,
                 "full_name": input_full_name,
-                "role": target_role_display,
-                "hospital_id": int(target_hospital_id)
+                "role": target_role_display
             }
             try:
-                response = requests.post(f"{BACKEND_URL}/auth/provision-user", json=payload_u, headers=headers)
+                response = requests.post(f"{BACKEND_URL}/auth/provision-user", json=payload_u, headers=headers, timeout=10)
                 if response.status_code == 200:
-                    st.success("Staff Identity Successfully Activated & Tasks Delegated Real-Time.")
+                    st.success("User account created successfully.")
                 else:
-                    st.error(f"Identity Provisioning Rejection: {response.json().get('detail', 'Unauthorized operational sequence')}")
+                    try:
+                        detail = response.json().get("detail", "Provisioning request rejected.")
+                    except Exception:
+                        detail = "Provisioning request rejected."
+                    st.error(detail)
             except Exception:
-                st.error("Deployment Connectivity Error: User profile could not be logged into database repository.")
-    st.markdown('</div>', unsafe_allow_html=True)
+                st.error("Backend connection unavailable.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ----------------------------------------------------------------------------
 #   TAB 1: GENERAL DASHBOARD MATRIX
 # ----------------------------------------------------------------------------
+
 elif nav_selection == "dashboard":
     st.markdown(f"<h2 class='welcome-header'>Welcome back, {st.session_state.operator_display_name} </h2>", unsafe_allow_html=True)
     st.markdown("<p class='welcome-caption'>Laboratory Operations Dashboard Real-Time Clinical Workflow Monitoring</p>", unsafe_allow_html=True)
-    
-    # FETCH LIVE DATA FROM ENDPOINTS
+
     try:
         res_telemetry = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", headers=headers, timeout=15)
         if res_telemetry.status_code == 200:
@@ -329,7 +324,6 @@ elif nav_selection == "dashboard":
     except Exception:
         received_today, in_progress, ready_analyses, qc_pass_rate = 0, 0, 0, 0.0
 
-    # RENDER TOP TELEMETRY CARDS WITH FUNCTIONAL URL NAVIGATION
     st.markdown(f"""
     <div class='metric-container-hub'>
         <div class='metric-card-clinical-new'>
@@ -369,17 +363,15 @@ elif nav_selection == "dashboard":
 
     st.write("##")
 
-    # PARALLEL COLUMNS WITH SECURE CONTAINERS
     c_left, c_right = st.columns([1.4, 1.0])
-    
+
     with c_left:
         try:
             res_s_dash = requests.get(f"{BACKEND_URL}/samples", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
-            st.write(samples_list)
         except Exception:
             samples_list = []
-            
+
         rows_html = ""
         if not samples_list:
             rows_html = "<tr><td colspan='4' style='color: #94A3B8; padding: 60px 10px; font-style: italic; text-align: center; border: none;'>No laboratory samples currently registered.</td></tr>"
@@ -396,7 +388,7 @@ elif nav_selection == "dashboard":
                     badge_style = "background-color:#F0FDF4; color:#16A34A;"
                 else:
                     badge_style = "background-color:#F8FAFC; color:#64748B;"
-                
+
                 rows_html += f"""
                 <tr style='border-bottom: 1px solid #F1F5F9;'>
                     <td style='font-weight: 700; color: #2563EB; padding: 14px 10px; text-align: center; border: none;'>{s.get('sample_code', '--')}</td>
@@ -426,63 +418,48 @@ elif nav_selection == "dashboard":
         """, unsafe_allow_html=True)
 
     with c_right:
-        # LIVE INTERACTIVE STREAM TABLE
         st.markdown("<div style='background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);'>", unsafe_allow_html=True)
-        st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'>⚡ Live Interactive Data Stream</p>", unsafe_allow_html=True)
-        
-        try:
-            res_live_df = requests.get(f"{BACKEND_URL}/samples", headers=headers, timeout=5)
-            live_list = res_live_df.json() if res_live_df.status_code == 200 else []
-        except Exception:
-            live_list = []
+        st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'> Live Interactive Data Stream</p>", unsafe_allow_html=True)
 
-        if live_list:
-            df_live = pd.DataFrame(live_list)
-            selected_live_event = st.dataframe(
-                df_live[['sample_code', 'satatus']],
-                use_container_width=True,
-                hide_index=True,
-                height=110,
-                on_select="rerun",
-                selection_mode="single-row"
-            )
-            if selected_live_event and selected_live_event.selection.rows:
-                sel_idx = selected_live_event.selection.rows[0]
-                st.session_state.active_live_sample = df_live.iloc[sel_idx].get('sample_code')
+        if samples_list:
+            df_live = pd.DataFrame(samples_list)
+            available_live_cols = [col for col in ["sample_code", "status"] if col in df_live.columns]
+            if available_live_cols:
+                selected_live_event = st.dataframe(
+                    df_live[available_live_cols],
+                    use_container_width=True, hide_index=True, height=110,
+                    on_select="rerun", selection_mode="single-row"
+                )
+                if selected_live_event and selected_live_event.selection.rows:
+                    sel_idx = selected_live_event.selection.rows[0]
+                    st.session_state.active_live_sample = df_live.iloc[sel_idx].get('sample_code')
+            else:
+                st.caption("Required dataframe columns missing for live stream.")
         else:
             st.caption("Awaiting live registry telemetry stream...")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # DONUT CHART SECTION
         try:
             res_rep = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=5)
             rep_data = res_rep.json() if res_rep.status_code == 200 else []
         except Exception:
             rep_data = []
-            
+
         total_cases = len(rep_data)
         positives = sum(1 for r in rep_data if float(r.get('score', 0)) >= 0.1000)
         negatives = total_cases - positives
         in_pipeline = in_progress
-       
-        if total_cases == 0 and in_pipeline == 0:
-            labels_pie = ['Awaiting Data Ingestion']
-            values_pie = [1]
-            colors_pie = ['#F1F5F9']
-        else:
-            labels_pie = ['Positive Findings', 'Negative Findings', 'Active Workflow']
-            values_pie = [positives, negatives, in_pipeline]
-            colors_pie = ['#EF4444', '#10B981', '#3B82F6']
 
-        fig_donut = go.Figure(data=[go.Pie(
-            labels=labels_pie, values=values_pie, hole=.6,
-            marker=dict(colors=colors_pie), textinfo='none', showlegend=True
-        )])
+        if total_cases == 0 and in_pipeline == 0:
+            labels_pie, values_pie, colors_pie = ['Awaiting Data Ingestion'], [1], ['#F1F5F9']
+        else:
+            labels_pie, values_pie, colors_pie = ['Positive Findings', 'Negative Findings', 'Active Workflow'], [positives, negatives, in_pipeline], ['#EF4444', '#10B981', '#3B82F6']
+
+        fig_donut = go.Figure(data=[go.Pie(labels=labels_pie, values=values_pie, hole=.6, marker=dict(colors=colors_pie), textinfo='none', showlegend=True)])
         fig_donut.update_layout(
             height=180, margin=dict(l=0, r=0, t=10, b=10),
             legend=dict(orientation="h", y=-0.2, x=0),
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
             annotations=[dict(text=f"<b style='font-size:20px; color:#0F172A;'>{total_cases + in_pipeline}</b><br><span style='font-size:10px; color:#64748B;'>Total</span>", x=0.5, y=0.5, font_size=11, showarrow=False)]
         )
 
@@ -493,32 +470,20 @@ elif nav_selection == "dashboard":
         st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # QUICK ACTION WORKFLOWS GRID
     st.write("##")
     st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin-bottom:10px;'>Quick Action Clinical Workflows</p>", unsafe_allow_html=True)
 
     st.markdown("""
     <style>
         .svg-action-link {
-            background-color: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            min-height: 75px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            box-sizing: border-box;
-            text-decoration: none !important;
+            background-color: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px;
+            display: flex; align-items: center; gap: 12px; width: 100%; min-height: 75px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02); box-sizing: border-box; text-decoration: none !important;
             transition: all 0.2s ease-in-out;
         }
         .svg-action-link:hover {
-            border-color: #3B82F6;
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
-            background-color: #F8FAFC;
+            border-color: #3B82F6; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px); background-color: #F8FAFC;
         }
     </style>
     """, unsafe_allow_html=True)
