@@ -656,10 +656,15 @@ elif nav_selection == "patients":
 
         if not df_patients.empty:
             rename_map = {
-                "id_patient": "Patient ID", "patient_id": "Patient ID",
-                "anonymous_code": "Anonymous Code", "full_name": "Full Name",
-                "record_number": "Record Number", "date_of_birth": "Date of Birth",
-                "dob": "Date of Birth", "gender": "Gender", "institution": "Institution"
+                "patient_code": "Patient ID",
+                "patient_id": "Patient ID",
+                "anonymous_code": "Anonymous Code",
+                "full_name": "Full Name",
+                "record_number": "Record Number",
+                "date_of_birth": "Date of Birth",
+                "dob": "Date of Birth",
+                "gender": "Gender",
+                "institution": "Institution"
             }
             df_patients = df_patients.rename(columns={k: v for k, v in rename_map.items() if k in df_patients.columns})
 
@@ -849,20 +854,19 @@ elif nav_selection == "lims":
                 if not barcode or not collection_site:
                     st.error("Barcode and Collection Site are mandatory.")
                 else:
+
+
                     payload_sample = {
-                        "sample_id": sample_id,
+                        "sample_code": sample_id,
                         "patient_id": patient_id,
-                        "barcode_qr": barcode,
-                        "specimen_type": specimen_type,
-                        "workflow_state": "Sample Received",
+                        "sample_type": specimen_type,
                         "collection_date": str(collection_date),
-                        "collection_site": collection_site,
-                        "qc_status": qc_status,
-                        "received_by": st.session_state.get("operator_display_name", "SYSTEM"),
-                        "practitioner_signature": st.session_state.get("operator_display_name", "SYSTEM")
-                    }
+                        "received_date": str(collection_date),
+                        "status": "Collected",
+                        "storage_location": collection_site
+                    }                    
                     try:
-                        response_sample = requests.post(f"{BACKEND_URL}/lims/samples/intake", json=payload_sample, headers=headers, timeout=5)
+                        response_sample = requests.post(f"{BACKEND_URL}/api/v1/samples/", json=payload_sample, headers=headers, timeout=5)
                         if response_sample.status_code == 200:
                             st.success(f" Sample {sample_id} registered successfully.")
                             st.session_state.generated_sample_id = f"SMP-{random.randint(10000,99999)}"
@@ -883,7 +887,7 @@ elif nav_selection == "lims":
         st.markdown('<div class="card-title-clinical">Sample Inventory</div>', unsafe_allow_html=True)
 
         try:
-            response_samples = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+            response_samples = requests.get(f"{BACKEND_URL}/api/v1/samples", headers=headers, timeout=5)
             samples_data = response_samples.json() if response_samples.status_code == 200 else []
         except Exception:
             samples_data = []
@@ -891,10 +895,11 @@ elif nav_selection == "lims":
         if samples_data:
             df_samples = pd.DataFrame(samples_data)
             column_map = {
-                "sample_id": "Sample ID", "patient_id": "Patient ID",
-                "barcode_qr": "Barcode", "specimen_type": "Specimen",
-                "workflow_state": "Status", "qc_status": "QC",
-                "collection_date": "Collection Date"
+                "sample_code": "Sample ID",
+                "patient_id": "Patient ID",
+                "sample_type": "Specimen",
+                "status": "Status",
+                "storage_location": "Location"
             }
             df_samples = df_samples.rename(columns={k: v for k, v in column_map.items() if k in df_samples.columns})
             visible_columns = [c for c in ["Sample ID", "Patient ID", "Specimen", "Status", "QC"] if c in df_samples.columns]
