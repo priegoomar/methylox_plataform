@@ -108,6 +108,21 @@ def get_auth_headers():
 headers = get_auth_headers()
 
 # ============================================================================
+# BACKEND CONNECTIVITY MONITOR
+# ============================================================================
+
+def check_backend_connection():
+    try:
+        response = requests.get(f"{BACKEND_URL}/health", timeout=5)
+        if response.status_code == 200:
+            return True, response.json()
+        return False, {"status": response.status_code}
+    except Exception as e:
+        return False, {"error": str(e)}
+
+backend_status, backend_info = check_backend_connection()
+
+# ============================================================================
 # SECURE SIDEBAR AUTHENTICATION & RBAC NAVIGATION
 # ============================================================================
 
@@ -118,6 +133,15 @@ with st.sidebar:
         <p style="color:#38BDF8; font-size:12px; margin:0;">Epigenetic Intelligence Platform</p>
     </div>
     """, unsafe_allow_html=True)
+
+# ============================================================================
+# SYSTEM STATUS
+# ============================================================================
+
+if backend_status:
+    st.sidebar.success("Backend Online")
+else:
+    st.sidebar.error("Backend Offline")
 
     # ============================================================
     # LOGIN GATE
