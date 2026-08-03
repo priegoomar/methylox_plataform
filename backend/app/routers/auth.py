@@ -111,4 +111,6 @@ def login(
     return {
         "access_token": token,
         "token_type": "bearer"
+        "role": user.role,
+        "username": user.username
     }
