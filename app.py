@@ -374,7 +374,7 @@ elif nav_selection == "dashboard":
     
     with c_left:
         try:
-            res_s_dash = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+            res_s_dash = requests.get(f"{BACKEND_URL}/samples", headers=headers, timeout=5)
             samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
         except Exception:
             samples_list = []
@@ -430,7 +430,7 @@ elif nav_selection == "dashboard":
         st.markdown("<p style='font-size:14px; font-weight:700; color:#0F172A; margin:0 0 8px 0;'>⚡ Live Interactive Data Stream</p>", unsafe_allow_html=True)
         
         try:
-            res_live_df = requests.get(f"{BACKEND_URL}/lims/samples/directory", headers=headers, timeout=5)
+            res_live_df = requests.get(f"{BACKEND_URL}/samples", headers=headers, timeout=5)
             live_list = res_live_df.json() if res_live_df.status_code == 200 else []
         except Exception:
             live_list = []
