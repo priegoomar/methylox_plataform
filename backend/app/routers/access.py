@@ -165,3 +165,13 @@ def get_user_permissions(
 @router.get("/permissions")
 def get_permissions(db: Session = Depends(get_db), current_user: TokenData = Depends(RoleGuard(["admin"]))):
     return db.query(models.Permission).all()
+
+@router.delete("/revoke")
+def revoke_permission(user_id: int, permission_id: int, db: Session = Depends(get_db), current_user: TokenData = Depends(RoleGuard(["admin"]))):
+    assignment = db.query(models.UserPermission).filter(models.UserPermission.user_id == user_id, models.UserPermission.permission_id == permission_id).first()
+    if not assignment:
+        raise HTTPException(status_code=404, detail="Permission assignment not found")
+
+    db.delete(assignment)
+    db.commit()
+    return {"message": "Permission revoked successfully"}
