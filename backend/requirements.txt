@@ -18,4 +18,4 @@ pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
 email-validator
-jwt
+PyJWT
