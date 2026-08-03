@@ -1,421 +1,205 @@
-import io
+# ============================================================================
+# METHYLOX™ PLATFORM v3.0 - ENTERPRISE FRONTEND CORE
+# ============================================================================
+
 import os
 import time
+import random
 from datetime import datetime, date
 import pandas as pd
-import plotly.graph_objects as go
-import streamlit as st
 import requests
-import base64
+import streamlit as st
 
 # ============================================================================
-# 🧬 METHYLOX(TM) PLATFORM v3.0 - ENTERPRISE SaMD FULL PRODUCTION FRONTEND
+# STREAMLIT CONFIGURATION
 # ============================================================================
+
 st.set_page_config(
-    page_title="MethylOxTM | Epigenetic AI SaMD Platform",
-    page_icon="🧬",
+    page_title="METHYLOX™ | Epigenetic Intelligence Platform",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- UNIFIED ADVANCED CLINICAL DESIGN SYSTEM & CSS RECTIFICATION ---
+# ============================================================================
+# GLOBAL DESIGN SYSTEM
+# ============================================================================
+
 st.markdown("""
 <style>
-    /* Global Viewport Architecture */
-    .stApp {
-        background-color: #F8FAFC !important;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    }
-    [data-testid="stHeader"] {
-        display: none !important;
-        height: 0px !important;
-    }
-    [data-testid="stMainBlockContainer"] {
-        padding-top: 2rem !important;
-        padding-bottom: 2rem !important;
-        padding-left: 3rem !important;
-        padding-right: 3rem !important;
-    }
-    
-    /* Dark Compliance Corporate Sidebar */
-    [data-testid="stSidebar"] {
-        background-color: #0B0F19 !important;
-        border-right: 1px solid #1E293B;
-    }
-    div[data-testid="stSidebarUserContent"] .stRadio > div {
-        gap: 6px !important;
-    }
-    div[data-testid="stSidebarUserContent"] label {
-        color: #94A3B8 !important;
-        font-weight: 500 !important;
-        font-size: 14px !important;
-    }
-    
-    /* Typography System */
-    .welcome-header {
-        font-size: 28px !important;
-        font-weight: 800 !important;
-        color: #0F172A !important;
-        margin-bottom: 2px !important;
-    }
-    .welcome-caption {
-        font-size: 14px !important;
-        color: #64748B !important;
-        margin-bottom: 25px !important;
-    }
-    
-    /* Premium Grid Telemetry Panels */
-    .metric-container-hub {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 25px;
-        width: 100%;
-    }
-    .metric-card-clinical-new {
-        background: white;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 24px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        text-align: center;
-        flex: 1;
-        min-height: 140px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-    .metric-title-sub-new {
-        font-size: 12px !important;
-        font-weight: 700 !important;
-        color: #64748B !important;
-        margin: 0 0 6px 0 !important;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .metric-num-big-new {
-        font-size: 36px !important;
-        font-weight: 800 !important;
-        color: #0F172A !important;
-        margin: 5px 0 !important;
-        line-height: 1 !important;
-    }
-    .metric-link-btn-new {
-        font-size: 11px !important;
-        font-weight: 600 !important;
-        color: #2563EB !important;
-        text-decoration: none;
-        display: inline-block;
-        margin-top: 8px;
-    }
-    .svg-top-container {
-        margin-bottom: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* UNIFICACIÓN TOTAL EN UN SOLO RECUADRO MONOLÍTICO PARA LA TABLA Y DONA */
-    .unified-main-board-box {
-        background: white;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 24px;
-        min-height: 340px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        margin-bottom: 20px;
-    }
-
-    /* Alineación y Centrado Absoluto de las Columnas de la Tabla */
-    .clinical-table-new {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px;
-        margin-top: 15px;
-    }
-    .clinical-table-new th {
-        color: #64748B;
-        font-weight: 700;
-        padding: 14px 10px;
-        border-top: 1px solid #E2E8F0;
-        border-bottom: 2px solid #E2E8F0;
-        background-color: #F8FAFC;
-        text-align: center !important;
-    }
-    .clinical-table-new td {
-        padding: 14px 10px;
-        color: #0F172A;
-        border-bottom: 1px solid #F1F5F9;
-        text-align: center !important;
-    }
-    
-    /* Premium Action Grid System */
-    .quick-action-grid {
-        display: flex;
-        gap: 15px;
-        margin-top: 25px;
-        width: 100%;
-    }
-    .action-card-svg {
-        background: white;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 16px;
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    }
-    .icon-circle-svg {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .action-text-container {
-        display: flex;
-        flex-direction: column;
-    }
-    .action-title-svg {
-        font-size: 14px;
-        font-weight: 700;
-        color: #0F172A;
-        margin: 0;
-    }
-    .action-desc-svg {
-        font-size: 11px;
-        color: #64748B;
-        margin: 2px 0 0 0;
-    }
-
-    .bg-neon-blue { background: #E0F2FE; color: #0EA5E9; }
-    .bg-neon-orange { background: #FFEDD5; color: #F97316; }
-    .bg-neon-green { background: #DCFCE7; color: #22C55E; }
-    .bg-neon-purple { background: #F3E8FF; color: #A855F7; }
+.stApp {
+    background-color: #F8FAFC;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+[data-testid="stHeader"] {
+    display: none;
+}
+[data-testid="stMainBlockContainer"] {
+    padding: 2rem 3rem;
+}
+[data-testid="stSidebar"] {
+    background: #0B0F19;
+}
+[data-testid="stSidebar"] label {
+    color: #CBD5E1 !important;
+}
+.welcome-header {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    text-align: center;
+}
+.welcome-caption {
+    font-size: 14px !important;
+    color: #64748B !important;
+    text-align: center;
+    margin-bottom: 25px;
+}
+.executive-card-white {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+.card-title-clinical {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 20px;
+}
+div[data-baseweb="input"] {
+    border-radius: 20px !important;
+    border: 1.5px solid #CBD5E1 !important;
+}
+div[data-baseweb="input"]:focus-within {
+    border-color: #2563EB !important;
+}
+[data-testid="stDataFrame"] {
+    border-radius: 12px;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# --- BACKEND API BACKBONE ROUTING ---
+# ============================================================================
+# BACKEND CONNECTION & SESSION STATE
+# ============================================================================
+
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
 
-# ============================================================================
-# QUICK ACTION SVG BUTTON COMPONENT
-# ============================================================================
+DEFAULT_SESSION = {
+    "jwt_access_token": None,
+    "operator_display_name": "Guest Operator",
+    "user_role": None,
+    "id_hospital": 1,
+    "nav_selection": "dashboard"
+}
 
-def svg_button(svg_code, title, subtitle, bg_color, target_page):
-    st.markdown(f"""
-    <div class="action-card-svg">
-        <div class="icon-circle-svg" style="background:{bg_color};">
-            {svg_code}
-        </div>
-        <div class="action-text-container">
-            <p class="action-title-svg">{title}</p>
-            <p class="action-desc-svg">{subtitle}</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+for key, value in DEFAULT_SESSION.items():
+    if key not in st.session_state:
+        st.session_state[key] = value
 
-    if st.button(
-        title,
-        key=f"quick_{target_page}",
-        use_container_width=True
-    ):
-        st.session_state.nav_selection = target_page
-        st.rerun()
+def get_auth_headers():
+    if st.session_state.jwt_access_token:
+        return {"Authorization": f"Bearer {st.session_state.jwt_access_token}", "Content-Type": "application/json"}
+    return {"Content-Type": "application/json"}
+
+headers = get_auth_headers()
 
 # ============================================================================
-# 🔒 SECURE CORPORATE SIDEBAR INTERACTION (DYNAMIC AUTH GATES)
+# SECURE SIDEBAR AUTHENTICATION & RBAC NAVIGATION
 # ============================================================================
 
 with st.sidebar:
-    st.markdown(
-        """
-        <div style="padding:10px 0px; border-bottom:1px solid #1E293B; margin-bottom:25px;">
-            <h3 style="margin:0; color:#FFFFFF; font-weight:900; font-size:22px;">
-                MethylOx™
-            </h3>
-            <p style="margin:0; color:#38BDF8; font-size:11px; font-weight:600;">
-                Epigenetic AI Platform
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.markdown("""
+    <div style="padding:15px 0px; border-bottom:1px solid #1E293B; margin-bottom:25px;">
+        <h2 style="color:white; margin:0; font-weight:900;">METHYLOX™</h2>
+        <p style="color:#38BDF8; font-size:12px; margin:0;">Epigenetic Intelligence Platform</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # SESSION STATE
-    if "jwt_access_token" not in st.session_state:
-        st.session_state.jwt_access_token = None
-
-    if "operator_display_name" not in st.session_state:
-        st.session_state.operator_display_name = "Guest Operator"
-
-    if "user_role" not in st.session_state:
-        st.session_state.user_role = None
-
-    if "id_hospital" not in st.session_state:
-        st.session_state.id_hospital = 1
-
-    # LOGIN
+    # ============================================================
+    # LOGIN GATE
+    # ============================================================
     if not st.session_state.jwt_access_token:
-        with st.form("institutional_login_form"):
-            st.markdown(
-                "<p style='color:#94A3B8;font-size:12px;font-weight:700;'>SECURE GATEWAY</p>",
-                unsafe_allow_html=True
-            )
+        with st.form("login_form"):
+            st.markdown('<p style="color:#94A3B8; font-size:12px; font-weight:700;">SECURE AUTHENTICATION</p>', unsafe_allow_html=True)
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
+            login = st.form_submit_button("Authenticate", use_container_width=True)
 
-            login_username = st.text_input(
-                "Clinical Email",
-                placeholder="operator@hospital.com"
-            )
-
-            login_password = st.text_input(
-                "Password",
-                type="password"
-            )
-
-            login_submit = st.form_submit_button(
-                "🔑 Authenticate",
-                use_container_width=True
-            )
-
-        if login_submit:
-            if login_username and login_password:
+        if login:
+            if username and password:
                 try:
-                    payload_auth = {
-                        "username": login_username.strip(),
-                        "password": login_password.strip()
-                    }
-
-                    res = requests.post(
-                        f"{BACKEND_URL}/auth/login",
-                        data=payload_auth,
-                        timeout=5
-                    )
-
-                    if res.status_code == 200:
-                        token_data = res.json()
-                        st.session_state.jwt_access_token = token_data["access_token"]
-                        st.session_state.operator_display_name = login_username
-                        st.session_state.user_role = token_data.get(
-                            "role",
-                            "tech"
-                        ).lower()
-
+                    response = requests.post(f"{BACKEND_URL}/auth/login", data={"username": username, "password": password}, timeout=5)
+                    if response.status_code == 200:
+                        data = response.json()
+                        st.session_state.jwt_access_token = data["access_token"]
+                        st.session_state.operator_display_name = username
+                        st.session_state.user_role = data.get("role", "cls").lower()
                         st.rerun()
                     else:
-                        st.error("Authentication denied")
-
+                        st.error("Authentication failed")
                 except Exception:
                     st.error("Backend unavailable")
             else:
-                st.error("Complete credentials")
-    else:
-        st.markdown(
-            f"""
-            <div style='background:#1E293B;padding:12px;border-radius:8px;'>
-                <p style='color:#94A3B8;font-size:11px;'>Authenticated Account:</p>
-                <p style='color:#FFFFFF;font-weight:700;'>
-                {st.session_state.operator_display_name}
-                </p>
-                <p style='color:#38BDF8;font-size:11px;'>
-                ROLE: {st.session_state.user_role}
-                </p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+                st.warning("Enter credentials")
 
-        if st.button(
-            "🚪 Disconnect Session",
-            use_container_width=True
-        ):
+    # ============================================================
+    # ACTIVE SESSION
+    # ============================================================
+    else:
+        st.markdown(f"""
+        <div style="background:#1E293B; padding:15px; border-radius:10px;">
+            <span style="color:#94A3B8; font-size:11px;">ACTIVE USER</span>
+            <br>
+            <b style="color:white;">{st.session_state.operator_display_name}</b>
+            <br>
+            <span style="color:#38BDF8; font-size:12px;">ROLE: {st.session_state.user_role.upper()}</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("Disconnect", use_container_width=True):
             st.session_state.jwt_access_token = None
-            st.session_state.operator_display_name = "Guest Operator"
             st.session_state.user_role = None
+            st.session_state.operator_display_name = "Guest Operator"
             st.rerun()
 
     st.markdown("---")
 
-# =========================================================================
-# RBAC NAVIGATION & URL ROUTING (FINAL FIX)
-# =========================================================================
+# ============================================================================
+# RBAC MENU
+# ============================================================================
 
-# Definir menu_options por defecto incluyendo "Access Control" y "users" de forma unificada y segura
 menu_options = {
     "dashboard": "Dashboard",
     "patients": "Patients",
-    "lims": "LIMS / Samples",
+    "lims": "LIMS Samples",
     "analysis": "Analysis",
     "reports": "Reports"
 }
 
-if st.session_state.get("jwt_access_token"):
-    if st.session_state.get("user_role") == "admin":
-        menu_options["users"] = "Access Control"
-        menu_options["settings"] = "Settings"
+# ADMIN ONLY MODULES
+if st.session_state.user_role == "admin":
+    menu_options.update({
+        "users": "Access Control",
+        "settings": "Settings"
+    })
 
-    if "nav_selection" not in st.session_state:
-        st.session_state.nav_selection = "dashboard"
-
-    # Procesar parámetros de URL si existen
-    if "page" in st.query_params:
-        query_page = st.query_params["page"]
-        target_nav = None
-        
-        if query_page == "Patients" and "patients" in menu_options:
-            target_nav = "patients"
-        elif query_page == "LIMS-Samples" and "lims" in menu_options:
-            target_nav = "lims"
-        elif query_page == "METHYLOX-Engine" and "analysis" in menu_options:
-            target_nav = "analysis"
-        elif query_page == "Reports" and "reports" in menu_options:
-            target_nav = "reports"
-        elif query_page in ["Access Control", "users"] and "users" in menu_options:
-            target_nav = "users"
-            
-        if target_nav:
-            st.session_state.nav_selection = target_nav
-            # Limpiamos el parámetro para evitar bucles o que se quede estancado en recargas futuras
-            st.query_params.clear()
-
-    current_selection = st.session_state.nav_selection
-    if current_selection not in menu_options:
-        current_selection = "dashboard"
-
+if st.session_state.jwt_access_token:
     selected_key = st.sidebar.radio(
-        "Operational Scope Selector",
+        "Navigation",
         options=list(menu_options.keys()),
         format_func=lambda x: menu_options[x],
-        key="nav_selection",
-        label_visibility="collapsed"
+        key="nav_selection"
     )
 else:
     selected_key = "restricted"
-    st.query_params.clear()
 
-# Movido a st.sidebar para que aparezca abajo en la barra lateral y no en la pantalla principal
-st.sidebar.markdown("---")
-
-st.sidebar.markdown(
-    """
-        <div style="padding:5px 10px;">
-            <p style="font-size:10px;color:#64748B;font-weight:700;">
-            SYSTEM STATUS
-            </p>
-            <div>
-            🟢 Core Engine Active
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-headers = {
-    "Authorization": f"Bearer {st.session_state.jwt_access_token}"
-} if st.session_state.jwt_access_token else {}
+# GLOBAL ROUTING VARIABLE
+nav_selection = selected_key
+headers = get_auth_headers()
 
 # ============================================================================
 # 🏛️ CENTRAL ARCHITECTURE MODULES
