@@ -307,26 +307,24 @@ elif nav_selection == "users":
 # ----------------------------------------------------------------------------
 # TAB 1: GENERAL DASHBOARD MATRIX
 # ----------------------------------------------------------------------------
-
 elif nav_selection == "dashboard":
-
     st.markdown("""
     <style>
-        .dashboard-title { text-align:center; color:#0F172A; font-weight:800; font-size:24px; margin-bottom:0px; }
-        .dashboard-subtitle { text-align:center; color:#64748B; font-size:13px; margin-bottom:15px; }
-        .metric-box { background:white; border:1px solid #E2E8F0; border-radius:12px; padding:12px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.02); }
-        .metric-number { font-size:26px; font-weight:800; color:#2563EB; line-height:1.2; }
-        .metric-label { font-size:12px; color:#64748B; font-weight:700; margin-bottom:2px; }
+    .welcome-header { text-align:center; color:#0F172A; font-weight:800; font-size:26px; margin-bottom:5px; }
+    .welcome-caption { text-align:center; color:#64748B; font-size:13px; margin-bottom:25px; }
+    .metric-card-clinical-new { background:#FFFFFF; border:1px solid #E2E8F0; border-radius:14px; padding:18px; text-align:center; min-height:150px; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+    .svg-top-container { margin-bottom:8px; }
+    .metric-title-sub-new { color:#64748B; font-size:12px; font-weight:700; margin:0; }
+    .metric-num-big-new { color:#0F172A; font-size:30px; font-weight:800; margin:8px 0 0 0; }
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"<h2 class='dashboard-title'>Welcome back, {st.session_state.operator_display_name}</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='dashboard-subtitle'>Laboratory Operations Dashboard | Real-Time Clinical Workflow Monitoring</p>", unsafe_allow_html=True)
+    st.markdown(f'<h2 class="welcome-header">Welcome back, {st.session_state.operator_display_name}</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="welcome-caption">Laboratory Operations Dashboard | Real-Time Clinical Workflow Monitoring</p>', unsafe_allow_html=True)
 
     # ============================================================
     # TELEMETRY
     # ============================================================
-
     try:
         telemetry_response = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=10)
         if telemetry_response.status_code == 200:
@@ -341,246 +339,150 @@ elif nav_selection == "dashboard":
         received_today, in_progress, ready_reports, qc_rate = 0, 0, 0, 0
 
     # ============================================================
-    # METRIC CARDS
+    # METRIC CARDS WITH SVG
     # ============================================================
-
     m1, m2, m3, m4 = st.columns(4)
 
     with m1:
         st.markdown(f"""
-        <div class="metric-box">
-            <div class="metric-label">Samples Received</div>
-            <div class="metric-number">{received_today}</div>
+        <div class="metric-card-clinical-new">
+        <div class="svg-top-container" style="color:#2563EB;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/>
+        <path d="M14 2h-4"/>
+        </svg>
+        </div>
+        <p class="metric-title-sub-new">Samples Received</p>
+        <p class="metric-num-big-new">{received_today}</p>
         </div>
         """, unsafe_allow_html=True)
 
     with m2:
         st.markdown(f"""
-        <div class="metric-box">
-            <div class="metric-label">Active Workflow</div>
-            <div class="metric-number">{in_progress}</div>
+        <div class="metric-card-clinical-new">
+        <div class="svg-top-container" style="color:#D97706;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        </div>
+        <p class="metric-title-sub-new">Active Workflow</p>
+        <p class="metric-num-big-new">{in_progress}</p>
         </div>
         """, unsafe_allow_html=True)
 
     with m3:
         st.markdown(f"""
-        <div class="metric-box">
-            <div class="metric-label">Ready Reports</div>
-            <div class="metric-number">{ready_reports}</div>
+        <div class="metric-card-clinical-new">
+        <div class="svg-top-container" style="color:#16A34A;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 2h9l3 3v17H6z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        </div>
+        <p class="metric-title-sub-new">Ready Reports</p>
+        <p class="metric-num-big-new">{ready_reports}</p>
         </div>
         """, unsafe_allow_html=True)
 
     with m4:
         st.markdown(f"""
-        <div class="metric-box">
-            <div class="metric-label">QC Pass Rate</div>
-            <div class="metric-number">{qc_rate}%</div>
+        <div class="metric-card-clinical-new">
+        <div class="svg-top-container" style="color:#6366F1;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        </div>
+        <p class="metric-title-sub-new">Quality Controls</p>
+        <p class="metric-num-big-new">{qc_rate}%</p>
         </div>
         """, unsafe_allow_html=True)
 
-    # ============================================================
-    # SAMPLE ACTIVITY TABLE
-    # ============================================================
+    st.write("")
 
+    # ============================================================
+    # RECENT LABORATORY ACTIVITY + LIVE DATA PANEL
+    # ============================================================
     try:
         samples_response = requests.get(f"{BACKEND_URL}/api/v1/samples/", headers=headers, timeout=10)
         samples = samples_response.json() if samples_response.status_code == 200 else []
     except Exception:
         samples = []
 
-    st.markdown("<h4 style='color:#0F172A; font-size:15px; margin:15px 0 8px 0;'>Recent Laboratory Activity Trail</h4>", unsafe_allow_html=True)
-
-    if samples:
-        dashboard_df = pd.DataFrame(samples)
-        display_columns = ["sample_code", "patient_id", "sample_type", "status"]
-        available_columns = [c for c in display_columns if c in dashboard_df.columns]
-        st.dataframe(dashboard_df[available_columns].head(10), use_container_width=True, hide_index=True)
-    else:
-        st.info("No laboratory samples currently registered.")
+    col_left, col_right = st.columns([1.45, 1])
 
     # ============================================================
-    # LIVE WORKFLOW SUMMARY
+    # LEFT COLUMN: RECENT LABORATORY ACTIVITY TRAIL
     # ============================================================
-
-    col_left, col_right = st.columns([1.3, 1])
-
     with col_left:
+        rows_html = ""
+        if samples:
+            for sample in samples[:5]:
+                status = sample.get("status", "Collected")
+                if status in ["Sample Registered"]:
+                    status_style = "background:#EFF6FF; color:#2563EB;"
+                elif status in ["Pre-Analytical Processing", "Molecular Data Generation", "Analysis Running"]:
+                    status_style = "background:#FFFBEB; color:#D97706;"
+                elif status in ["Quality Control Review", "Clinical Review"]:
+                    status_style = "background:#F5F3FF; color:#7C3AED;"
+                elif status == "Report Ready":
+                    status_style = "background:#F0FDF4; color:#16A34A;"
+                else:
+                    status_style = "background:#F8FAFC; color:#64748B;"
+
+                rows_html += f"""
+                <tr style="border-bottom:1px solid #F1F5F9;">
+                <td style="padding:14px 10px; text-align:center; color:#2563EB; font-weight:700; border:none;">{sample.get('sample_code','--')}</td>
+                <td style="padding:14px 10px; text-align:center; border:none;">{sample.get('patient_id','--')}</td>
+                <td style="padding:14px 10px; text-align:center; border:none;">{sample.get('sample_type','--')}</td>
+                <td style="padding:14px 10px; text-align:center; border:none;">
+                <span style="padding:5px 10px; border-radius:12px; font-size:11px; font-weight:700; {status_style}">{status}</span>
+                </td>
+                </tr>
+                """
+        else:
+            rows_html = '<tr><td colspan="4" style="text-align:center; padding:60px 10px; color:#94A3B8; border:none;">No laboratory samples currently registered.</td></tr>'
+
+        st.markdown(f"""
+        <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:24px; min-height:360px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
+        <p style="font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;">Recent Laboratory Activity Trail</p>
+        <table style="width:100%; border-collapse:collapse;">
+        <thead>
+        <tr style="background:#F8FAFC;">
+        <th style="padding:12px; font-size:12px; color:#64748B; border:none;">Sample ID</th>
+        <th style="padding:12px; font-size:12px; color:#64748B; border:none;">Patient ID</th>
+        <th style="padding:12px; font-size:12px; color:#64748B; border:none;">Matrix</th>
+        <th style="padding:12px; font-size:12px; color:#64748B; border:none;">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {rows_html}
+        </tbody>
+        </table>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # ============================================================
+    # RIGHT COLUMN: LIVE INTERACTIVE DATA STREAM
+    # ============================================================
+    with col_right:
         st.markdown("""
-        <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:15px;">
-        <h4 style="color:#0F172A; font-size:15px; margin-top:0; margin-bottom:10px;">Workflow Distribution</h4>
+        <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:20px; min-height:150px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
+        <p style="font-size:15px; font-weight:700; color:#0F172A; margin:0 0 12px 0;">Live Interactive Data Stream</p>
+        </div>
         """, unsafe_allow_html=True)
 
         if samples:
-            status_count = dashboard_df["status"].value_counts().reset_index()
-            status_count.columns = ["Status", "Count"]
-            fig_workflow = go.Figure(data=[go.Pie(labels=status_count["Status"], values=status_count["Count"], hole=0.55)])
-            fig_workflow.update_layout(height=240, margin=dict(l=0, r=0, t=10, b=0), showlegend=True)
-            st.plotly_chart(fig_workflow, use_container_width=True)
+            live_df = pd.DataFrame(samples)
+            live_columns = [c for c in ["sample_code", "status"] if c in live_df.columns]
+            if live_columns:
+                event_table = st.dataframe(live_df[live_columns].head(5), use_container_width=True, hide_index=True, height=150)
+                selected_rows = event_table.selection.rows if hasattr(event_table, "selection") else []
+                if selected_rows:
+                    index = selected_rows[0]
+                    st.session_state.active_live_sample = live_df.iloc[index].get("sample_code")
         else:
-            st.caption("Waiting for workflow data...")
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with col_right:
-        st.markdown("""
-        <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:15px;">
-        <h4 style="color:#0F172A; font-size:15px; margin-top:0; margin-bottom:10px;">System Activity</h4>
-        """, unsafe_allow_html=True)
-
-        activity_items = [
-            ("Samples Module", "Operational"),
-            ("Analysis Pipeline", "Ready"),
-            ("Reports Engine", "Available"),
-            ("Audit Trail", "Active")
-        ]
-
-        for title, state in activity_items:
-            st.markdown(f"""
-            <div style="padding:8px 12px; margin-bottom:8px; background:#F8FAFC; border-radius:8px; border-left:4px solid #2563EB;">
-                <b style="font-size:13px;">{title}</b><br>
-                <span style="color:#64748B; font-size:12px;">{state}</span>
-            </div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # ============================================================
-    # ONCO-GENETIC DIAGNOSTIC SUMMARY
-    # ============================================================
-
-    try:
-        reports_response = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=10)
-        report_data = reports_response.json() if reports_response.status_code == 200 else []
-    except Exception:
-        report_data = []
-
-    total_cases = len(report_data)
-    positives = 0
-    negatives = 0
-
-    for r in report_data:
-        try:
-            score = float(r.get("score", 0))
-            if score >= 0.1000:
-                positives += 1
-            else:
-                negatives += 1
-        except Exception:
-            pass
-
-    st.markdown("""
-    <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:15px; margin-top:20px;">
-    <h4 style="color:#0F172A; font-size:15px; margin-top:0; margin-bottom:10px;">Onco-Genetic Diagnostic Summary</h4>
-    """, unsafe_allow_html=True)
-
-    if total_cases > 0:
-        labels = ["Positive Findings", "Negative Findings"]
-        values = [positives, negatives]
-    else:
-        labels = ["Awaiting Data"]
-        values = [1]
-
-    fig_donut = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.60)])
-    fig_donut.update_layout(height=260, margin=dict(l=0, r=0, t=20, b=20), showlegend=True)
-
-    st.plotly_chart(fig_donut, use_container_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    # ============================================================
-    # QUICK ACTION WORKFLOWS
-    # ============================================================
-
-    st.markdown("<h4 style='color:#0F172A; font-size:15px; margin:15px 0 8px 0;'>Quick Clinical Workflows</h4>", unsafe_allow_html=True)
-
-    qa1, qa2, qa3, qa4 = st.columns(4)
-
-    with qa1:
-        if st.button("👤 Register Patient", use_container_width=True):
-            st.session_state.nav_selection = "patients"
-            st.rerun()
-
-    with qa2:
-        if st.button("🧪 Manage Samples", use_container_width=True):
-            st.session_state.nav_selection = "samples"
-            st.rerun()
-
-    with qa3:
-        if st.button("🧬 Run Analysis", use_container_width=True):
-            st.session_state.nav_selection = "analysis"
-            st.rerun()
-
-    with qa4:
-        if st.button("📄 Generate Reports", use_container_width=True):
-            st.session_state.nav_selection = "reports"
-            st.rerun()
-
-    # ============================================================
-    # ACTIVE SAMPLE DETAIL
-    # ============================================================
-
-    if "active_live_sample" in st.session_state:
-        st.markdown("<h3 style='color:#0F172A; font-size:15px; margin:15px 0 8px 0;'>Selected Sample Overview</h3>", unsafe_allow_html=True)
-        selected_code = st.session_state.active_live_sample
-        selected = next((x for x in samples if x.get("sample_code") == selected_code), None)
-        if selected:
-            st.json(selected)
-        else:
-            st.info("Sample information unavailable.")
-
-    # ============================================================
-    # DASHBOARD FOOTER STATUS
-    # ============================================================
-
-    st.markdown("""
-    <div style="margin-top:20px; padding:12px; text-align:center; background:#F8FAFC; border-radius:10px; border:1px solid #E2E8F0;">
-        <span style="color:#64748B; font-size:12px;">
-        METHYLOX™ Laboratory Intelligence Core | LIMS Workflow Monitoring Active | Audit Trace Enabled
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ============================================================================
-# NAVIGATION STATE SYNCHRONIZATION
-# ============================================================================
-
-if "nav_selection" not in st.session_state:
-    st.session_state.nav_selection = "dashboard"
-
-# ============================================================================
-# ROLE BASED VISIBILITY CONTROL
-# ============================================================================
-
-current_role = st.session_state.get("user_role", "viewer")
-
-if current_role == "md":
-    restricted_modules = ["analysis", "access"]
-elif current_role == "cls":
-    restricted_modules = ["access"]
-else:
-    restricted_modules = []
-
-# ============================================================================
-# SAFE MODULE ACCESS VALIDATION
-# ============================================================================
-
-if nav_selection in restricted_modules:
-    st.warning("🔒 Your current role does not have permission to access this module.")
-    st.info("Contact your system administrator to request additional permissions.")
-    st.stop()
-
-# ============================================================================
-# GLOBAL SYSTEM FOOTER
-# ============================================================================
-
-st.markdown("""
-<div style="text-align:center; padding:15px; margin-top:30px; border-top:1px solid #E2E8F0;">
-<p style="font-size:11px; color:#94A3B8; margin:0;">
-METHYLOX™ Molecular Intelligence Platform<br>
-Research Laboratory Software Environment<br>
-© 2026 METHYLOX Oncology. All rights reserved.
-</p>
-</div>
-""", unsafe_allow_html=True)
+            st.markdown('<p style="color:#94A3B8; font-size:12px; text-align:center; padding:25px;">Awaiting live registry telemetry stream...</p>', unsafe_allow_html=True)
 
 # ============================================================================
 #   TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT) - OPTIMIZED & ALIGNED
