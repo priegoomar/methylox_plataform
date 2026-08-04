@@ -578,20 +578,53 @@ elif nav_selection == "dashboard":
     """, unsafe_allow_html=True)
     
 # ============================================================================
-#   TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT) - OPTIMIZED & ALIGNED
+# TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT)
 # ============================================================================
+
 if nav_selection == "patients":
-    import random
+    import uuid
+    import time
+    from datetime import datetime
 
     # -------------------------------------------------------------------------
-    # CSS CLINICAL PATIENT MODULE
+    # CSS MODULE
     # -------------------------------------------------------------------------
     st.markdown("""
     <style>
-    .card-title-clinical { text-align:center !important; font-weight:700 !important; font-size:1.1rem !important; margin-bottom:1rem !important; width:100% !important; display:block !important; }
-    div[data-testid="stTextInput"] label, div[data-testid="stDateInput"] label, div[data-testid="stSelectbox"] label { display:block !important; text-align:center !important; width:100% !important; }
-    div[data-baseweb="input"] { border-radius:30px !important; border:1.5px solid #CBD5E1 !important; background:white !important; padding-left:35px !important; }
-    div[data-baseweb="input"]:focus-within { border-color:#2563EB !important; box-shadow:0 0 0 2px rgba(37,99,235,0.15) !important; }
+    .patient-header {
+        display:flex;
+        align-items:center;
+        gap:12px;
+        margin-bottom:8px;
+    }
+    .patient-card {
+        background:white;
+        border:1px solid #E2E8F0;
+        border-radius:12px;
+        padding:12px 16px;
+        box-shadow:0 1px 2px rgba(0,0,0,0.03);
+        margin-bottom:8px;
+    }
+    .patient-card-title {
+        font-size:14px;
+        font-weight:700;
+        color:#0F172A;
+        margin-bottom:8px;
+    }
+    div[data-testid="stTextInput"] label,
+    div[data-testid="stDateInput"] label,
+    div[data-testid="stSelectbox"] label {
+        font-weight:700;
+        color:#334155;
+        font-size:12px;
+    }
+    div[data-baseweb="input"] {
+        border-radius:8px !important;
+        border:1px solid #CBD5E1 !important;
+    }
+    .row-widget.stButton {
+        margin-top: 0px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -599,186 +632,140 @@ if nav_selection == "patients":
     # HEADER
     # -------------------------------------------------------------------------
     st.markdown("""
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-        </svg>
-        <h2 style="margin:0;">Patient Cohort & Clinical Directory</h2>
+    <div class="patient-header">
+        <div style="color:#2563EB; display:flex; align-items:center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M19 8v6"/>
+                <path d="M22 11h-6"/>
+            </svg>
+        </div>
+        <div>
+            <div style="font-size:18px; font-weight:800; color:#0F172A; line-height:1.2;">Clinical Cohort Management</div>
+            <div style="font-size:11px; color:#64748B; line-height:1.2;">Patient Registry & Subject Tracking</div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
-    # SESSION STATES
+    # LOAD DATA
     # -------------------------------------------------------------------------
-    if "show_new_patient_form" not in st.session_state:
-        st.session_state.show_new_patient_form = False
-    if "generated_patient_id" not in st.session_state:
-        st.session_state.generated_patient_id = f"PAT-{random.randint(10000,99999)}"
-    if "generated_anonymous_code" not in st.session_state:
-        st.session_state.generated_anonymous_code = f"MOX-{random.randint(10000,99999)}"
-
-    # -------------------------------------------------------------------------
-    # FUNCTION LOAD PATIENT DIRECTORY
-    # -------------------------------------------------------------------------
-    def load_patient_directory():
-        try:
-            response = requests.get(
-                f"{BACKEND_URL}/api/v1/patients/",
-                headers=headers,
-                timeout=5
-            )
-            if response.status_code == 200:
-                data = response.json()
-                if data:
-                    return pd.DataFrame(data)
-        except Exception:
-            pass
-        return pd.DataFrame()
+    patients_raw = load_patient_directory()
+    patients_df = normalize_patients(patients_raw)
 
     # =========================================================================
-    # SEARCH VIEW
+    # DIRECTORY VIEW
     # =========================================================================
     if not st.session_state.show_new_patient_form:
-        st.markdown("<br>", unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1, 2.2, 1])
+        search_col, button_col = st.columns([4, 1])
 
-        with col2:
-            search_query = st.text_input("Search patient", placeholder="Search Patient ID, Record Number or Anonymous Code", label_visibility="collapsed")
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("+ New Patient", key="open_new_patient"):
+        with search_col:
+            search_query = st.text_input("Search patient", placeholder="Search Patient ID, Record Number, Institution", label_visibility="collapsed")
+
+        with button_col:
+            if st.button("New Patient", use_container_width=True, key="new_patient_button"):
                 st.session_state.show_new_patient_form = True
                 st.rerun()
 
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        df_patients = load_patient_directory()
+        if not patients_df.empty:
+            filtered_df = patients_df.copy()
+            if search_query:
+                mask = filtered_df.astype(str).apply(lambda row: row.str.contains(search_query, case=False, na=False).any(), axis=1)
+                filtered_df = filtered_df[mask]
 
-        if not df_patients.empty:
-            rename_map = {
-                "patient_code": "Patient ID",
-                "patient_id": "Patient ID",
-                "anonymous_code": "Anonymous Code",
-                "full_name": "Full Name",
-                "record_number": "Record Number",
-                "date_of_birth": "Date of Birth",
-                "dob": "Date of Birth",
-                "gender": "Gender",
-                "institution": "Institution"
-            }
-            df_patients = df_patients.rename(columns={k: v for k, v in rename_map.items() if k in df_patients.columns})
-
-            if search_query.strip():
-                mask = df_patients.astype(str).apply(lambda x: x.str.contains(search_query, case=False, na=False)).any(axis=1)
-                filtered = df_patients[mask]
-
-                if not filtered.empty:
-                    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-                    st.markdown('<div class="card-title-clinical">Search Results</div>', unsafe_allow_html=True)
-                    st.dataframe(filtered, use_container_width=True, hide_index=True)
-                    st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('<div class="patient-card"><div class="patient-card-title">Patient Records Directory</div>', unsafe_allow_html=True)
+            st.dataframe(filtered_df, use_container_width=True, hide_index=True)
+            st.markdown('</div>', unsafe_allow_html=True)
         else:
             st.info("No registered patients available.")
 
     # =========================================================================
-    # NEW PATIENT REGISTRATION VIEW
+    # NEW PATIENT REGISTRATION
     # =========================================================================
     else:
-        if st.button("← Back to Search", key="btn_back_patients"):
+        if st.button("Back to Directory", key="back_patient_directory"):
             st.session_state.show_new_patient_form = False
             st.rerun()
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        left, right = st.columns([1, 1.3], gap="large")
+        left, right = st.columns([1, 1])
 
-        # =====================================================================
-        # PATIENT REGISTRATION CARD
-        # =====================================================================
+        # ---------------------------------------------------------------------
+        # REGISTRATION FORM
+        # ---------------------------------------------------------------------
         with left:
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">Register New Patient</div>', unsafe_allow_html=True)
+            st.markdown('<div class="patient-card"><div class="patient-card-title">Register New Patient</div>', unsafe_allow_html=True)
+            patient_code = st.text_input("Patient ID", value=st.session_state.patient_code_temp, disabled=True)
+            anonymous_code = st.text_input("Anonymous Clinical Code", value=f"MOX-{str(uuid.uuid4())[:6].upper()}", disabled=True)
+            full_name = st.text_input("Full Name")
+            record_number = st.text_input("Record Number")
+            date_birth = st.date_input("Date of Birth")
+            gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+            institution = st.text_input("Institution")
+            clinical_notes = st.text_area("Clinical Notes", height=70)
 
-            if st.session_state.user_role == "cls":
-                st.warning("Restricted Access: Laboratory users cannot enroll patients.")
-            else:
-                patient_id = st.text_input("Patient ID", value=st.session_state.generated_patient_id, disabled=True)
-                if st.button("  Generate New Patient ID", key="generate_patient_id"):
-                    st.session_state.generated_patient_id = f"PAT-{random.randint(10000,99999)}"
-                    st.rerun()
+            if st.button("Save Patient Record", use_container_width=True, key="save_patient"):
+                if not full_name or not record_number or not institution:
+                    st.error("Complete mandatory fields.")
+                else:
+                    payload = {
+                        "patient_code": patient_code,
+                        "demographics": {
+                            "anonymous_code": anonymous_code,
+                            "full_name": full_name,
+                            "record_number": record_number,
+                            "date_of_birth": str(date_birth),
+                            "gender": gender,
+                            "institution": institution
+                        },
+                        "clinical_notes": clinical_notes
+                    }
+                    try:
+                        response = requests.post(f"{BACKEND_URL}/api/v1/patients/", json=payload, headers=headers, timeout=10)
+                        if response.status_code in [200, 201]:
+                            st.success("Patient registered successfully.")
+                            time.sleep(1)
+                            st.session_state.show_new_patient_form = False
+                            st.session_state.patient_code_temp = f"PAT-{datetime.now().year}-{str(uuid.uuid4())[:4].upper()}"
+                            st.rerun()
+                        else:
+                            st.error(response.text)
+                    except Exception:
+                        st.error("Backend unavailable.")
+            st.markdown('</div>', unsafe_allow_html=True)
 
-                anonymous_code = st.text_input("Anonymous Clinical Code", value=st.session_state.generated_anonymous_code, disabled=True)
-                if st.button("Generate Anonymous Code", key="generate_anonymous_code"):
-                    st.session_state.generated_anonymous_code = f"MOX-{random.randint(10000,99999)}"
-                    st.rerun()
-
-                full_name = st.text_input("Full Name", placeholder="Patient legal name")
-                record_number = st.text_input("Record Number", placeholder="Example: REC-2026-0091")
-                date_birth = st.date_input("Date of Birth", min_value=datetime(1920, 1, 1))
-                gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-                institution = st.text_input("Institution", placeholder="Hospital / Laboratory")
-
-                if st.button("Save and Synchronize Patient Record", use_container_width=True, key="save_patient_record"):
-                    required_fields = [full_name, record_number, institution]
-                    if not all(required_fields):
-                        st.error("Missing Data: Complete all mandatory fields.")
-                    else:
-                        payload_patient = {
-                            "patient_code": patient_id,
-                            "demographics": {
-                                "anonymous_code": anonymous_code,
-                                "full_name": full_name,
-                                "record_number": record_number,
-                                "date_of_birth": str(date_birth),
-                                "gender": gender,
-                                "institution": institution
-                            },
-                            "clinical_notes": None
-                        }
-                        try:
-                            response = requests.post(
-                                f"{BACKEND_URL}/api/v1/patients/",
-                                json=payload_patient,
-                                headers=headers,
-                                timeout=5
-                            )
-                            if response.status_code == 200:
-                                st.success(f"Patient {patient_id} successfully registered.")
-                                st.session_state.generated_patient_id = f"PAT-{random.randint(10000,99999)}"
-                                st.session_state.generated_anonymous_code = f"MOX-{random.randint(10000,99999)}"
-                                time.sleep(0.5)
-                                st.rerun()
-                            else:
-                                st.error("Backend rejected patient registration.")
-                        except Exception:
-                            st.error("Backend unavailable.")
-
-            st.markdown("</div>", unsafe_allow_html=True)
-
-        # =====================================================================
-        # PATIENT DIRECTORY TABLE
-        # =====================================================================
+        # ---------------------------------------------------------------------
+        # PATIENT SUMMARY PANEL
+        # ---------------------------------------------------------------------
         with right:
-            st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-            st.markdown('<div class="card-title-clinical">Patient Records</div>', unsafe_allow_html=True)
-
-            df_patients = load_patient_directory()
-
-            if not df_patients.empty:
-                rename_map = {
-                    "patient_code": "Patient ID", "patient_id": "Patient ID",
-                    "anonymous_code": "Anonymous Code", "full_name": "Full Name",
-                    "record_number": "Record Number", "date_of_birth": "Date of Birth",
-                    "gender": "Gender", "institution": "Institution"
-                }
-                df_patients = df_patients.rename(columns={k: v for k, v in rename_map.items() if k in df_patients.columns})
-                display_cols = ["Patient ID", "Anonymous Code", "Record Number", "Gender", "Institution"]
-                display_cols = [c for c in display_cols if c in df_patients.columns]
-
-                st.dataframe(df_patients[display_cols], use_container_width=True, hide_index=True)
+            st.markdown('<div class="patient-card"><div class="patient-card-title">Clinical Cohort Overview</div>', unsafe_allow_html=True)
+            if not patients_df.empty:
+                selected_patient = st.selectbox("Select Patient", patients_df["Patient ID"].tolist())
+                patient_detail = patients_df[patients_df["Patient ID"] == selected_patient].iloc[0]
+                st.markdown(f"""
+                <div style="background:#F8FAFC; border-radius:10px; padding:12px; border:1px solid #E2E8F0;">
+                <p style="margin:0 0 6px 0; font-size:12px;"><b>Patient ID:</b> {patient_detail['Patient ID']}</p>
+                <p style="margin:0 0 6px 0; font-size:12px;"><b>Anonymous Code:</b> {patient_detail['Anonymous Code']}</p>
+                <p style="margin:0 0 6px 0; font-size:12px;"><b>Full Name:</b> {patient_detail['Full Name']}</p>
+                <p style="margin:0 0 6px 0; font-size:12px;"><b>Record Number:</b> {patient_detail['Record Number']}</p>
+                <p style="margin:0 0 6px 0; font-size:12px;"><b>Institution:</b> {patient_detail['Institution']}</p>
+                <p style="margin:0; font-size:12px;"><b>Gender:</b> {patient_detail['Gender']}</p>
+                </div>
+                """, unsafe_allow_html=True)
             else:
-                st.info("No patient records available.")
+                st.caption("Waiting for patient registry data...")
+            st.markdown('</div>', unsafe_allow_html=True)
 
-            st.markdown("</div>", unsafe_allow_html=True)
+    # =========================================================================
+    # MODULE FOOTER
+    # =========================================================================
+    st.markdown("""
+    <div style="margin-top:10px; padding:6px; text-align:center; border-top:1px solid #E2E8F0;">
+    <span style="color:#94A3B8; font-size:11px;">
+    METHYLOX™ Clinical Cohort Management | Patient Registry Synchronization Active | Audit Trace Enabled
+    </span>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ============================================================================
 #   TAB 3: LIMS SAMPLES (CHAIN OF CUSTODY MANAGEMENT) - OPTIMIZED
