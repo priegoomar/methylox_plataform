@@ -444,37 +444,46 @@ elif nav_selection == "dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
 
     # ============================================================
-    # REPORT SUMMARY DATA
+    # ONCO-GENETIC DIAGNOSTIC SUMMARY
     # ============================================================
 
     try:
-        res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/samples/", headers=headers, timeout=5)
-        samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
-    except Exception as e:
-        samples_list = []
-
-    try:
-        total_cases = len(samples_list)
-        positives = 0
-        negatives = 0
-
-        for sample in samples_list:
-            status = sample.get("status", "")
-            if status == "Report Ready":
-                positives += 1
-            elif status in ["Collected", "Sample Received"]:
-                negatives += 1
-
-        in_pipeline = len([
-            s for s in samples_list
-            if s.get("status") not in ["Report Ready", "Collected"]
-        ])
-
+        reports_response = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=10)
+        report_data = reports_response.json() if reports_response.status_code == 200 else []
     except Exception:
-        total_cases = 0
-        positives = 0
-        negatives = 0
-        in_pipeline = 0
+        report_data = []
+
+    total_cases = len(report_data)
+    positives = 0
+    negatives = 0
+
+    for r in report_data:
+        try:
+            score = float(r.get("score", 0))
+            if score >= 0.1000:
+                positives += 1
+            else:
+                negatives += 1
+        except Exception:
+            pass
+
+    st.markdown("""
+    <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:15px; margin-top:20px;">
+    <h4 style="color:#0F172A; font-size:15px; margin-top:0; margin-bottom:10px;">Onco-Genetic Diagnostic Summary</h4>
+    """, unsafe_allow_html=True)
+
+    if total_cases > 0:
+        labels = ["Positive Findings", "Negative Findings"]
+        values = [positives, negatives]
+    else:
+        labels = ["Awaiting Data"]
+        values = [1]
+
+    fig_donut = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.60)])
+    fig_donut.update_layout(height=260, margin=dict(l=0, r=0, t=20, b=20), showlegend=True)
+
+    st.plotly_chart(fig_donut, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # ============================================================
     # QUICK ACTION WORKFLOWS
