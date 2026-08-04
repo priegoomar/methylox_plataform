@@ -674,6 +674,17 @@ if nav_selection == "patients":
             } for p in data if isinstance(p, dict)
         ])
 
+    # SESSION STATES
+    
+    if "show_new_patient_form" not in st.session_state:
+        st.session_state.show_new_patient_form = False
+    
+    if "patient_code_temp" not in st.session_state:
+        st.session_state.patient_code_temp = (
+            f"PAT-{datetime.now().year}-{str(uuid.uuid4())[:4].upper()}"
+        )
+
+
     # -------------------------------------------------------------------------
     # LOAD DATA
     # -------------------------------------------------------------------------
