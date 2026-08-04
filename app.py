@@ -648,6 +648,13 @@ if nav_selection == "patients":
     </div>
     """, unsafe_allow_html=True)
 
+    def load_patient_directory():
+        try:
+            res = requests.get(f"{BACKEND_URL}/api/v1/patients/", headers=headers, timeout=10)
+            if res.status_code == 200: return res.json()
+        except Exception: pass
+        return []
+
     # -------------------------------------------------------------------------
     # LOAD DATA
     # -------------------------------------------------------------------------
