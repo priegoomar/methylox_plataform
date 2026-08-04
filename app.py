@@ -444,6 +444,39 @@ elif nav_selection == "dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
 
     # ============================================================
+    # REPORT SUMMARY DATA
+    # ============================================================
+
+    try:
+        res_s_dash = requests.get(f"{BACKEND_URL}/api/v1/samples/", headers=headers, timeout=5)
+        samples_list = res_s_dash.json() if res_s_dash.status_code == 200 else []
+    except Exception as e:
+        samples_list = []
+
+    try:
+        total_cases = len(samples_list)
+        positives = 0
+        negatives = 0
+
+        for sample in samples_list:
+            status = sample.get("status", "")
+            if status == "Report Ready":
+                positives += 1
+            elif status in ["Collected", "Sample Received"]:
+                negatives += 1
+
+        in_pipeline = len([
+            s for s in samples_list
+            if s.get("status") not in ["Report Ready", "Collected"]
+        ])
+
+    except Exception:
+        total_cases = 0
+        positives = 0
+        negatives = 0
+        in_pipeline = 0
+
+    # ============================================================
     # QUICK ACTION WORKFLOWS
     # ============================================================
 
@@ -849,10 +882,19 @@ elif nav_selection == "lims":
         st.markdown('<div class="card-title-clinical">Sample Inventory</div>', unsafe_allow_html=True)
 
         try:
-            response_samples = requests.get(f"{BACKEND_URL}/api/v1/samples", headers=headers, timeout=5)
-            samples_data = response_samples.json() if response_samples.status_code == 200 else []
-        except Exception:
-            samples_data = []
+            res_s_dash = requests.get(
+                f"{BACKEND_URL}/api/v1/samples/",
+                headers=headers,
+                timeout=5
+            )
+        
+            if res_s_dash.status_code == 200:
+                samples_list = res_s_dash.json()
+            else:
+                samples_list = []
+        
+        except Exception as e:
+            samples_list = []
 
         if samples_data:
             df_samples = pd.DataFrame(samples_data)
