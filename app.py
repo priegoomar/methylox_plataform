@@ -654,6 +654,23 @@ if nav_selection == "patients":
             if res.status_code == 200: return res.json()
         except Exception: pass
         return []
+    def normalize_patients(data):
+    if not data:
+        return pd.DataFrame()
+    if isinstance(data, dict):
+        data = data.get("patients", data.get("data", []))
+    return pd.DataFrame([
+        {
+            "Patient ID": p.get("patient_code", ""),
+            "Anonymous Code": (p.get("demographics") or {}).get("anonymous_code", ""),
+            "Full Name": (p.get("demographics") or {}).get("full_name", ""),
+            "Record Number": (p.get("demographics") or {}).get("record_number", ""),
+            "Date of Birth": (p.get("demographics") or {}).get("date_of_birth", ""),
+            "Gender": (p.get("demographics") or {}).get("gender", ""),
+            "Institution": (p.get("demographics") or {}).get("institution", "")
+        } for p in data if isinstance(p, dict)
+    ])
+    
 
     # -------------------------------------------------------------------------
     # LOAD DATA
