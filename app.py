@@ -542,7 +542,7 @@ Research Laboratory Software Environment<br>
 # ============================================================================
 #   TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT) - OPTIMIZED & ALIGNED
 # ============================================================================
-elif nav_selection == "patients":
+if nav_selection == "patients":
     import random
 
     # -------------------------------------------------------------------------
