@@ -212,7 +212,7 @@ with st.sidebar:
 menu_options = {
     "dashboard": "Dashboard",
     "patients": "Patients",
-    "lims": "LIMS Samples",
+    "lims": "Samples",
     "analysis": "Analysis",
     "reports": "Reports"
 }
@@ -221,7 +221,7 @@ menu_options = {
 if st.session_state.user_role == "admin":
     menu_options.update({
         "users": "Access Control",
-        "settings": "Settings"
+        "settings": "System Settings"
     })
 
 if st.session_state.jwt_access_token:
