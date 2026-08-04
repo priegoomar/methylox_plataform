@@ -344,7 +344,7 @@ elif nav_selection == "dashboard":
     m1, m2, m3, m4 = st.columns(4)
 
     with m1:
-        st.markdown(f"""
+        st.markdown("""
         <div class="metric-card-clinical-new">
         <div class="svg-top-container" style="color:#2563EB;">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -353,12 +353,12 @@ elif nav_selection == "dashboard":
         </svg>
         </div>
         <p class="metric-title-sub-new">Samples Received</p>
-        <p class="metric-num-big-new">{received_today}</p>
+        <p class="metric-num-big-new">{}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """.format(received_today), unsafe_allow_html=True)
 
     with m2:
-        st.markdown(f"""
+        st.markdown("""
         <div class="metric-card-clinical-new">
         <div class="svg-top-container" style="color:#D97706;">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -367,12 +367,12 @@ elif nav_selection == "dashboard":
         </svg>
         </div>
         <p class="metric-title-sub-new">Active Workflow</p>
-        <p class="metric-num-big-new">{in_progress}</p>
+        <p class="metric-num-big-new">{}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """.format(in_progress), unsafe_allow_html=True)
 
     with m3:
-        st.markdown(f"""
+        st.markdown("""
         <div class="metric-card-clinical-new">
         <div class="svg-top-container" style="color:#16A34A;">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -381,12 +381,12 @@ elif nav_selection == "dashboard":
         </svg>
         </div>
         <p class="metric-title-sub-new">Ready Reports</p>
-        <p class="metric-num-big-new">{ready_reports}</p>
+        <p class="metric-num-big-new">{}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """.format(ready_reports), unsafe_allow_html=True)
 
     with m4:
-        st.markdown(f"""
+        st.markdown("""
         <div class="metric-card-clinical-new">
         <div class="svg-top-container" style="color:#6366F1;">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -394,9 +394,9 @@ elif nav_selection == "dashboard":
         </svg>
         </div>
         <p class="metric-title-sub-new">Quality Controls</p>
-        <p class="metric-num-big-new">{qc_rate}%</p>
+        <p class="metric-num-big-new">{}%</p>
         </div>
-        """, unsafe_allow_html=True)
+        """.format(qc_rate), unsafe_allow_html=True)
 
     st.write("")
 
@@ -463,7 +463,7 @@ elif nav_selection == "dashboard":
         """, unsafe_allow_html=True)
 
     # ============================================================
-    # RIGHT COLUMN: LIVE INTERACTIVE DATA STREAM
+    # RIGHT COLUMN: LIVE INTERACTIVE DATA STREAM & ONCO-GENETIC SUMMARY
     # ============================================================
     with col_right:
         st.markdown("""
@@ -484,6 +484,99 @@ elif nav_selection == "dashboard":
         else:
             st.markdown('<p style="color:#94A3B8; font-size:12px; text-align:center; padding:25px;">Awaiting live registry telemetry stream...</p>', unsafe_allow_html=True)
 
+        # ============================================================
+        # ONCO-GENETIC DIAGNOSTIC SUMMARY (DONUT)
+        # ============================================================
+        try:
+            reports_response = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
+            reports_data = reports_response.json() if reports_response.status_code == 200 else []
+        except Exception:
+            reports_data = []
+
+        total_cases = len(reports_data)
+        positive_cases = sum(1 for r in reports_data if float(r.get("score", 0)) >= 0.1000)
+        negative_cases = total_cases - positive_cases
+        workflow_cases = sum(1 for s in samples if s.get("status") not in ["Report Ready"]) if samples else 0
+
+        labels = ["Positive Findings", "Negative Findings", "Active Workflow"]
+        values = [positive_cases, negative_cases, workflow_cases]
+
+        if sum(values) == 0:
+            labels = ["Awaiting Data"]
+            values = [1]
+
+        fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.60)])
+        fig.update_layout(height=230, margin=dict(l=0, r=0, t=10, b=10), showlegend=True, paper_bgcolor="rgba(0,0,0,0)")
+
+        st.markdown("""
+        <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:20px; margin-top:15px;">
+        <p style="font-size:15px; font-weight:700; color:#0F172A; margin:0 0 10px 0;">Onco-Genetic Diagnostic Summary</p>
+        """, unsafe_allow_html=True)
+
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # ============================================================
+    # QUICK CLINICAL WORKFLOWS
+    # ============================================================
+    st.markdown('<p style="font-size:15px; font-weight:700; color:#0F172A; margin-top:25px;">Quick Clinical Workflows</p>', unsafe_allow_html=True)
+
+    q1, q2, q3, q4 = st.columns(4)
+
+    def workflow_button(icon, title, subtitle, key):
+        st.markdown(f"""
+        <div style="background:white; border:1px solid #E2E8F0; border-radius:12px; padding:15px; height:75px; display:flex; align-items:center; gap:12px;">
+        <div style="background:#EFF6FF; color:#2563EB; padding:10px; border-radius:10px;">{icon}</div>
+        <div>
+        <div style="font-size:13px; font-weight:700; color:#0F172A;">{title}</div>
+        <div style="font-size:11px; color:#64748B;">{subtitle}</div>
+        </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with q1:
+        workflow_button("""
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <line x1="19" y1="8" x2="19" y2="14"/>
+        <line x1="22" y1="11" x2="16" y2="11"/>
+        </svg>
+        """, "Enroll Subject", "New Patient Profile", "patient")
+    with q2:
+        workflow_button("""
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+        <line x1="12" y1="22.08" x2="12" y2="12"/>
+        </svg>
+        """, "Asset Intake", "Log LIMS Custody", "sample")
+    with q3:
+        workflow_button("""
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        """, "Start Analysis", "Run Molecular Pipeline", "analysis")
+    with q4:
+        workflow_button("""
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        """, "Dossier Sheet", "Export Medical PDF", "report")
+
+    # ============================================================
+    # LEGAL FOOTER
+    # ============================================================
+    st.markdown("""
+    <div style="text-align:center; padding:20px 0; margin-top:40px; border-top:1px solid #E2E8F0;">
+    <p style="margin:0; font-size:12px; color:#94A3B8;">Copyright (c) 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
 # ============================================================================
 #   TAB 2: PATIENTS (CLINICAL COHORT MANAGEMENT) - OPTIMIZED & ALIGNED
 # ============================================================================
