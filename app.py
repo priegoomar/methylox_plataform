@@ -323,7 +323,6 @@ elif nav_selection == "dashboard":
             </div>
             """, unsafe_allow_html=True)
 
-    st.caption("Nota: el indicador de tasa de control de calidad (QC) se retiró temporalmente — dependía de un endpoint del backend que todavía no existe (`/analysis/telemetry-summary`). Se puede reincorporar en cuanto ese endpoint se defina.")
     st.write("")
 
     col_left, col_right = st.columns([1.45, 1])
