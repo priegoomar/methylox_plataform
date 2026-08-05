@@ -449,11 +449,12 @@ elif nav_selection == "dashboard":
             live_df = pd.DataFrame(samples)
             live_columns = [c for c in ["sample_code", "status"] if c in live_df.columns]
             if live_columns:
-                event_table = st.dataframe(live_df[live_columns].head(5), use_container_width=True, hide_index=True, height=150)
-                selected_rows = event_table.selection.rows if hasattr(event_table, "selection") else []
-                if selected_rows:
-                    index = selected_rows[0]
-                    st.session_state.active_live_sample = live_df.iloc[index].get("sample_code")
+                st.dataframe(
+                    live_df[live_columns],
+                    use_container_width=True,
+                    hide_index=True,
+                    height=150
+                )
         else:
             st.markdown('<p style="color:#94A3B8; font-size:12px; text-align:center; padding:25px;">Awaiting live registry telemetry stream...</p>', unsafe_allow_html=True)
 
