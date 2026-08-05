@@ -511,8 +511,6 @@ elif nav_selection == "patients":
                 st.caption("Sin datos de pacientes todavía.")
             st.markdown('</div>', unsafe_allow_html=True)
 
-    st.caption("Nota de privacidad pendiente: hoy `full_name` y `anonymous_code` viven en el mismo registro — cualquier rol con permiso `patient_read` ve ambos. Si se requiere de-identificación real frente a ciertos roles, esto necesita separarse en el backend.")
-
 # ============================================================================
 # TAB: LIMS SAMPLE MANAGEMENT
 # ============================================================================
@@ -691,15 +689,6 @@ elif nav_selection == "lims":
 elif nav_selection == "analysis":
     st.markdown("<h2 class='welcome-header'>🧬 Sample Analysis</h2>", unsafe_allow_html=True)
     st.markdown('<p class="welcome-caption">Registro y consulta de resultados de análisis molecular.</p>', unsafe_allow_html=True)
-
-    st.info(
-        "Este módulo se reconstruyó para usar los endpoints reales del backend "
-        "(`POST /analysis/`, `GET /analysis/sample/{id}`). La versión anterior llamaba a "
-        "`/lims/samples/pending-evaluation` y `/lims/samples/evaluate/{id}`, que no existen: "
-        "no hay (todavía) un servicio que reciba el CSV crudo del secuenciador y calcule el "
-        "beta-score automáticamente. Este formulario asume que ese cálculo ya se hizo en otro "
-        "paso, y solo registra el resultado final."
-    )
 
     if st.session_state.user_role == "md":
         st.warning("Acceso restringido: el rol clínico (MD) no tiene autorización para registrar análisis computacionales.")
