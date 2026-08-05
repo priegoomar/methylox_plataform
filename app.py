@@ -304,9 +304,9 @@ elif nav_selection == "users":
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ----------------------------------------------------------------------------
+# ============================================================================
 # TAB 1: GENERAL DASHBOARD MATRIX
-# ----------------------------------------------------------------------------
+# ============================================================================
 elif nav_selection == "dashboard":
     st.markdown("""
     <style>
@@ -414,26 +414,26 @@ elif nav_selection == "dashboard":
     # ============================================================
     # LEFT COLUMN: RECENT LABORATORY ACTIVITY TRAIL
     # ============================================================
-with col_left:
-    st.markdown("""
-    <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:24px;">
-    <p style="font-size:15px; font-weight:700; color:#0F172A;">Recent Laboratory Activity Trail</p>
-    </div>
-    """, unsafe_allow_html=True)
-    if samples:
-        activity_df = pd.DataFrame(samples)
-        columns_activity = ["sample_code", "patient_id", "sample_type", "status"]
-        columns_activity = [c for c in columns_activity if c in activity_df.columns]
-        activity_df = activity_df[columns_activity]
-        activity_df = activity_df.rename(columns={
-            "sample_code": "Sample ID",
-            "patient_id": "Patient ID",
-            "sample_type": "Matrix",
-            "status": "Status"
-        })
-        st.dataframe(activity_df.head(5), use_container_width=True, hide_index=True, height=300)
-    else:
-        st.info("No laboratory samples currently registered.")
+    with col_left:
+        st.markdown("""
+        <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:24px;">
+        <p style="font-size:15px; font-weight:700; color:#0F172A;">Recent Laboratory Activity Trail</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if samples:
+            activity_df = pd.DataFrame(samples)
+            columns_activity = ["sample_code", "patient_id", "sample_type", "status"]
+            columns_activity = [c for c in columns_activity if c in activity_df.columns]
+            activity_df = activity_df[columns_activity]
+            activity_df = activity_df.rename(columns={
+                "sample_code": "Sample ID",
+                "patient_id": "Patient ID",
+                "sample_type": "Matrix",
+                "status": "Status"
+            })
+            st.dataframe(activity_df.head(5), use_container_width=True, hide_index=True, height=300)
+        else:
+            st.info("No laboratory samples currently registered.")
 
     # ============================================================
     # RIGHT COLUMN: LIVE INTERACTIVE DATA STREAM & ONCO-GENETIC SUMMARY
