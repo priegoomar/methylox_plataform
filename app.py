@@ -23,6 +23,33 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+st.markdown("""
+<style>
+    /* Estilos globales para botones y recuadros en toda la app */
+    .row-widget.stButton button, div.stButton > button {
+        background-color: #1E293B !important;
+        color: #FFFFFF !important;
+        border: 1px solid #334155 !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+    }
+    .row-widget.stButton button:hover, div.stButton > button:hover {
+        background-color: #0F172A !important;
+        border-color: #475569 !important;
+        color: #FFFFFF !important;
+    }
+    /* Limpieza de tarjetas ejecutivas blancas */
+    .executive-card-white {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        margin-bottom: 20px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # ============================================================================
 # GLOBAL DESIGN SYSTEM
 # ============================================================================
