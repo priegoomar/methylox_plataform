@@ -1024,24 +1024,6 @@ elif nav_selection == "lims":
         st.markdown('</div>', unsafe_allow_html=True)
 
     # =========================================================================
-    # CHAIN OF CUSTODY
-    # =========================================================================
-    st.markdown('<div class="lims-card">', unsafe_allow_html=True)
-    st.markdown('<div class="lims-card-title">Chain of Custody Workflow</div>', unsafe_allow_html=True)
-
-    workflow = ["Sample Collected", "Sample Received", "Pre-Analytical Processing", "Molecular Analysis", "Quality Control Review", "Clinical Review", "Report Ready"]
-
-    for index, step in enumerate(workflow):
-        st.markdown(f"""
-        <div style="display:flex; align-items:center; gap:10px; padding:10px; border-left:3px solid #2563EB; margin-bottom:8px; background:#F8FAFC; border-radius:6px;">
-            <div style="width:22px; height:22px; border-radius:50%; background:#2563EB; color:white; text-align:center; line-height:22px; font-size:11px;">{index+1}</div>
-            <span style="font-size:13px; font-weight:600; color:#0F172A;">{step}</span>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # =========================================================================
     # UPDATE SAMPLE STATUS
     # =========================================================================
     st.markdown('<div class="lims-card">', unsafe_allow_html=True)
