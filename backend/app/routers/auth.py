@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app import models, schemas
 from app.security import create_access_token
-from app.utils.password import hash_password, verify_password
+from app.utils.password import verify_password
 
 
 router = APIRouter(
@@ -14,45 +14,20 @@ router = APIRouter(
     tags=["Authentication"]
 )
 
-# ==========================================
-# CREATE USER
-# ==========================================
-
-@router.post(
-    "/provision-user",
-    response_model=schemas.UserResponse
-)
-def provision_user(
-    user: schemas.UserCreate,
-    db: Session = Depends(get_db)
-):
-    existing_user = (
-        db.query(models.User)
-        .filter(
-            models.User.username == user.username
-        )
-        .first()
-    )
-
-    if existing_user:
-        raise HTTPException(
-            status_code=400,
-            detail="Username already exists"
-        )
-
-    new_user = models.User(
-        username=user.username,
-        email=user.email,
-        full_name=user.full_name,
-        role=user.role,
-        password_hash=hash_password(user.password)
-    )
-
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    return new_user
+# ============================================================================
+# NOTA DE SEGURIDAD (corrección aplicada):
+#
+# Este archivo tenía un endpoint POST /provision-user SIN NINGUNA protección
+# de autenticación ni de rol. Cualquiera con la URL, sin token, podía crear
+# un usuario con role="admin" y tomar control administrativo del sistema.
+#
+# La creación de usuarios ya existe, correctamente protegida con
+# check_admin(), en app/routers/users.py -> POST /api/v1/users/.
+# Por eso ese endpoint se retiró de aquí. El frontend debe apuntar a
+# POST /api/v1/users/ (requiere estar autenticado como admin).
+#
+# Este router ahora solo maneja login, que es lo que le corresponde.
+# ============================================================================
 
 
 # ==========================================
@@ -96,8 +71,7 @@ def login(
             detail="User inactive"
         )
 
-    user.last_login = datetime.utcnow()
-
+    user.last_login = datetime.now(timezone.utc)
     db.commit()
 
     token = create_access_token(
