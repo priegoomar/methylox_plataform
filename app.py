@@ -326,7 +326,7 @@ elif nav_selection == "dashboard":
     # TELEMETRY
     # ============================================================
     try:
-        telemetry_response = requests.get(f"{BACKEND_URL}/api/v1/analysis/telemetry-summary", headers=headers, timeout=10)
+        telemetry_response = requests.get(f"{BACKEND_URL}/analysis/telemetry-summary", headers=headers, timeout=10)
         if telemetry_response.status_code == 200:
             telemetry = telemetry_response.json()
             received_today = telemetry.get("received_today", 0)
@@ -404,7 +404,7 @@ elif nav_selection == "dashboard":
     # RECENT LABORATORY ACTIVITY + LIVE DATA PANEL
     # ============================================================
     try:
-        samples_response = requests.get(f"{BACKEND_URL}/api/v1/samples/", headers=headers, timeout=10)
+        samples_response = requests.get(f"{BACKEND_URL}/samples/", headers=headers, timeout=10)
         samples = samples_response.json() if samples_response.status_code == 200 else []
     except Exception:
         samples = []
@@ -488,7 +488,7 @@ elif nav_selection == "dashboard":
         # ONCO-GENETIC DIAGNOSTIC SUMMARY (DONUT)
         # ============================================================
         try:
-            reports_response = requests.get(f"{BACKEND_URL}/api/v1/analysis/reports-directory", headers=headers, timeout=5)
+            reports_response = requests.get(f"{BACKEND_URL}/analysis/reports-directory", headers=headers, timeout=5)
             reports_data = reports_response.json() if reports_response.status_code == 200 else []
         except Exception:
             reports_data = []
@@ -650,7 +650,7 @@ if nav_selection == "patients":
 
     def load_patient_directory():
         try:
-            res = requests.get(f"{BACKEND_URL}/api/v1/patients/", headers=headers, timeout=10)
+            res = requests.get(f"{BACKEND_URL}/patients/", headers=headers, timeout=10)
             if res.status_code == 200:
                 return res.json()
         except Exception:
@@ -757,12 +757,8 @@ if nav_selection == "patients":
                         },
                         "clinical_notes": clinical_notes
                     }
-                    try:
-                        st.write("BACKEND:", BACKEND_URL)
-                        st.write("ENDPOINT:", f"{BACKEND_URL}/api/v1/patients/")
-                        st.write("PAYLOAD:", payload)
-                                                
-                        response = requests.post(f"{BACKEND_URL}/api/v1/patients/", json=payload, headers=headers, timeout=10)
+                    try:                        
+                        response = requests.post(f"{BACKEND_URL}/patients/", json=payload, headers=headers, timeout=10)
                         if response.status_code in [200, 201]:
                             st.success("Patient registered successfully.")
                             time.sleep(1)
@@ -866,7 +862,7 @@ elif nav_selection == "lims":
     # -------------------------------------------------------------------------
     def load_patients():
         try:
-            response = requests.get(f"{BACKEND_URL}/api/v1/patients/", headers=headers, timeout=10)
+            response = requests.get(f"{BACKEND_URL}/patients/", headers=headers, timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 if isinstance(data, list):
@@ -884,7 +880,7 @@ elif nav_selection == "lims":
         if patient_id: params["patient_id"] = patient_id
         try:
             response = requests.get(
-                f"{BACKEND_URL}/api/v1/samples/",
+                f"{BACKEND_URL}/samples/",
                 params=params, headers=headers, timeout=10
             )
             if response.status_code == 200:
@@ -1024,7 +1020,7 @@ elif nav_selection == "lims":
                 }
 
                 try:
-                    response = requests.post(f"{BACKEND_URL}/api/v1/samples/", json=payload, headers=headers, timeout=10)
+                    response = requests.post(f"{BACKEND_URL}/samples/", json=payload, headers=headers, timeout=10)
                     if response.status_code in [200, 201]:
                         st.success("Sample registered successfully.")
                         st.session_state.show_sample_form = False
@@ -1059,7 +1055,7 @@ elif nav_selection == "lims":
             payload = {"status": new_status}
 
             try:
-                response = requests.patch(f"{BACKEND_URL}/api/v1/samples/{sample_id}", json=payload, headers=headers, timeout=10)
+                response = requests.patch(f"{BACKEND_URL}/samples/{sample_id}", json=payload, headers=headers, timeout=10)
                 if response.status_code == 200:
                     st.success("Workflow status updated.")
                     time.sleep(1)
