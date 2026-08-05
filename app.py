@@ -843,6 +843,20 @@ elif nav_selection == "lims":
     """, unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
+    # ACTION BAR
+    # -------------------------------------------------------------------------
+    
+    if "show_sample_form" not in st.session_state:
+        st.session_state.show_sample_form = False
+    
+    col_btn1, col_btn2 = st.columns([1, 5])
+    
+    with col_btn1:
+        if st.button("+ Register New Sample", use_container_width=True):
+            st.session_state.show_sample_form = True
+            st.rerun()
+
+    # -------------------------------------------------------------------------
     # LOAD PATIENTS
     # -------------------------------------------------------------------------
     def load_patients():
