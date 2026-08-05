@@ -871,6 +871,31 @@ elif nav_selection == "lims":
     def load_samples(status=None, patient_id=None, start_date=None, end_date=None):
         pass
 
+    def load_samples(status=None, patient_id=None, start_date=None, end_date=None):
+    params = {}
+    if status and status != "All": params["status"] = status
+    if patient_id: params["patient_id"] = patient_id
+    try:
+        response = requests.get(
+            f"{BACKEND_URL}/api/v1/samples/",
+            params=params, headers=headers, timeout=10
+        )
+        if response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list): return data
+    except Exception:
+        pass
+    return []
+
+    # -------------------------------------------------------------------------
+    # INITIAL DATA LOAD
+    # -------------------------------------------------------------------------
+    
+    patients_data = load_patients()
+    
+    samples_data = load_samples()
+
+
 
     # -------------------------------------------------------------------------
     # SAMPLE DIRECTORY + DETAILS
