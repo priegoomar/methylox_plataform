@@ -366,11 +366,6 @@ elif nav_selection == "dashboard":
                 st.session_state.nav_selection = target_nav
                 st.rerun()
 
-    st.markdown("""
-    <div style="text-align:center; padding:20px 0; margin-top:30px; border-top:1px solid #E2E8F0;">
-    <p style="margin:0; font-size:12px; color:#94A3B8;">Copyright (c) 2026 METHYLOX Oncology. All rights reserved. SaMD Software Stage Compliance.</p>
-    </div>
-    """, unsafe_allow_html=True)
 
 # ============================================================================
 # TAB: PATIENTS
