@@ -758,6 +758,10 @@ if nav_selection == "patients":
                         "clinical_notes": clinical_notes
                     }
                     try:
+                        st.write("BACKEND:", BACKEND_URL)
+                        st.write("ENDPOINT:", f"{BACKEND_URL}/api/v1/patients/")
+                        st.write("PAYLOAD:", payload)
+                                                
                         response = requests.post(f"{BACKEND_URL}/api/v1/patients/", json=payload, headers=headers, timeout=10)
                         if response.status_code in [200, 201]:
                             st.success("Patient registered successfully.")
