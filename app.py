@@ -766,7 +766,8 @@ if nav_selection == "patients":
                             st.session_state.patient_code_temp = f"PAT-{datetime.now().year}-{str(uuid.uuid4())[:4].upper()}"
                             st.rerun()
                         else:
-                            st.error(response.text)
+                            st.error(f"STATUS CODE: {response.status_code}")
+                            st.write(response.text)
                     except Exception:
                         st.error("Backend unavailable.")
             st.markdown('</div>', unsafe_allow_html=True)
