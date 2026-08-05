@@ -901,6 +901,7 @@ elif nav_selection == "lims":
             # -------------------------------------------------------------
             # LOCAL SEARCH
             # -------------------------------------------------------------
+            search_sample = st.text_input("Search Sample", placeholder="Search by Sample ID, patient ID or status", key="sample_search_box")
             if search_sample:
                 search_mask = df_samples.astype(str).apply(
                     lambda row: row.str.contains(search_sample, case=False, na=False).any(), axis=1
