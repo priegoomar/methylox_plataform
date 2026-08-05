@@ -11,7 +11,11 @@ class UserBase(BaseModel):
     username: str
     email: EmailStr
     full_name: Optional[str] = None
-    role: Optional[str] = "viewer"
+    # CORRECCIÓN: el default era "viewer", pero ese rol no existe en ningún
+    # RoleGuard/PermissionGuard del sistema (los únicos roles reconocidos son
+    # admin/cls/md). Un usuario creado sin especificar rol quedaba con un rol
+    # fantasma que ningún guard reconocía. Ahora el rol es obligatorio.
+    role: str
 
 
 class UserCreate(UserBase):
@@ -28,14 +32,14 @@ class UserStatusUpdate(BaseModel):
     active: bool
 
 
-class LoginRequest(BaseModel):
-    username: str
-    password: str
-
-
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    # CORRECCIÓN: auth.py ya regresaba "role" y "username" en el diccionario
+    # de /login, pero como response_model=Token no los incluía, FastAPI los
+    # descartaba silenciosamente antes de que llegaran al frontend.
+    role: str
+    username: str
 
 
 class PermissionResponse(BaseModel):
