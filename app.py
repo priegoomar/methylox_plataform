@@ -808,15 +808,12 @@ if nav_selection == "patients":
 # TAB 3: LIMS SAMPLE MANAGEMENT
 # ============================================================================
 elif nav_selection == "lims":
-
     import time
     from datetime import date
-
 
     # -------------------------------------------------------------------------
     # CSS MODULE
     # -------------------------------------------------------------------------
-
     st.markdown("""
     <style>
     .lims-header { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
@@ -828,11 +825,9 @@ elif nav_selection == "lims":
     </style>
     """, unsafe_allow_html=True)
 
-
     # -------------------------------------------------------------------------
     # HEADER
     # -------------------------------------------------------------------------
-
     st.markdown("""
     <div class="lims-header">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2">
@@ -847,11 +842,9 @@ elif nav_selection == "lims":
     </div>
     """, unsafe_allow_html=True)
 
-
     # -------------------------------------------------------------------------
     # LOAD PATIENTS
     # -------------------------------------------------------------------------
-
     def load_patients():
         try:
             response = requests.get(f"{BACKEND_URL}/api/v1/patients/", headers=headers, timeout=10)
@@ -863,48 +856,39 @@ elif nav_selection == "lims":
             pass
         return []
 
-
     # -------------------------------------------------------------------------
     # LOAD SAMPLES WITH BACKEND FILTERS
     # -------------------------------------------------------------------------
-    
     def load_samples(status=None, patient_id=None, start_date=None, end_date=None):
-    params = {}
-    if status and status != "All": params["status"] = status
-    if patient_id: params["patient_id"] = patient_id
-    try:
-        response = requests.get(
-            f"{BACKEND_URL}/api/v1/samples/",
-            params=params, headers=headers, timeout=10
-        )
-        if response.status_code == 200:
-            data = response.json()
-            if isinstance(data, list): return data
-    except Exception:
-        pass
-    return []
+        params = {}
+        if status and status != "All": params["status"] = status
+        if patient_id: params["patient_id"] = patient_id
+        try:
+            response = requests.get(
+                f"{BACKEND_URL}/api/v1/samples/",
+                params=params, headers=headers, timeout=10
+            )
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list): return data
+        except Exception:
+            pass
+        return []
 
     # -------------------------------------------------------------------------
     # INITIAL DATA LOAD
     # -------------------------------------------------------------------------
-    
     patients_data = load_patients()
-    
     samples_data = load_samples()
-
-
 
     # -------------------------------------------------------------------------
     # SAMPLE DIRECTORY + DETAILS
     # -------------------------------------------------------------------------
-
     left_panel, right_panel = st.columns([2, 1], gap="medium")
-
 
     # =========================================================================
     # SAMPLE DIRECTORY
     # =========================================================================
-
     with left_panel:
         st.markdown('<div class="lims-card">', unsafe_allow_html=True)
         st.markdown('<div class="lims-card-title">Laboratory Sample Directory</div>', unsafe_allow_html=True)
@@ -951,11 +935,9 @@ elif nav_selection == "lims":
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-
     # =========================================================================
     # SAMPLE DETAILS PANEL
     # =========================================================================
-
     with right_panel:
         st.markdown('<div class="lims-card">', unsafe_allow_html=True)
         st.markdown('<div class="lims-card-title">Sample Intelligence Panel</div>', unsafe_allow_html=True)
@@ -988,11 +970,9 @@ elif nav_selection == "lims":
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-
     # -------------------------------------------------------------------------
     # REGISTER NEW SAMPLE FORM
     # -------------------------------------------------------------------------
-
     if st.session_state.get("show_sample_form", False):
         st.markdown('<div class="lims-card">', unsafe_allow_html=True)
         st.markdown('<div class="lims-card-title">Register New Laboratory Sample</div>', unsafe_allow_html=True)
@@ -1043,11 +1023,9 @@ elif nav_selection == "lims":
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-
     # =========================================================================
     # CHAIN OF CUSTODY
     # =========================================================================
-
     st.markdown('<div class="lims-card">', unsafe_allow_html=True)
     st.markdown('<div class="lims-card-title">Chain of Custody Workflow</div>', unsafe_allow_html=True)
 
@@ -1063,11 +1041,9 @@ elif nav_selection == "lims":
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-
     # =========================================================================
     # UPDATE SAMPLE STATUS
     # =========================================================================
-
     st.markdown('<div class="lims-card">', unsafe_allow_html=True)
     st.markdown('<div class="lims-card-title">Update Sample Workflow Status</div>', unsafe_allow_html=True)
 
