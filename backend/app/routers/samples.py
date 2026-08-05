@@ -79,7 +79,7 @@ def create_sample(
     return new_sample
 
 # ==========================================
-# GET SAMPLES
+# GET SAMPLES WITH FILTERS
 # ==========================================
 
 @router.get(
@@ -88,6 +88,9 @@ def create_sample(
 )
 def get_samples(
     status: str | None = None,
+    patient_id: int | None = None,
+    start_date: datetime | None = None,
+    end_date: datetime | None = None,
     db: Session = Depends(get_db),
     current_user: TokenData = Depends(
         PermissionGuard("sample_read")
@@ -98,6 +101,21 @@ def get_samples(
     if status:
         query = query.filter(
             models.Sample.status == status
+        )
+
+    if patient_id:
+        query = query.filter(
+            models.Sample.patient_id == patient_id
+        )
+
+    if start_date:
+        query = query.filter(
+            models.Sample.collection_date >= start_date
+        )
+
+    if end_date:
+        query = query.filter(
+            models.Sample.collection_date <= end_date
         )
 
     return query.all()
