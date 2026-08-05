@@ -23,38 +23,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.markdown("""
-<style>
-    /* REMOVE default borders and boxes from Streamlit containers */
-    div[data-testid="stVerticalBlock"] > div[data-testid="element-container"] {
-        background-color: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-    /* ELIMINATE leftover white backgrounds and frames in forms and blocks */
-    div.stForm {
-        background-color: transparent !important;
-        border: none !important;
-        padding: 0px !important;
-    }
-
-    /* FORCE buttons to maintain dark/gray corporate tones without weird outlines */
-    .row-widget.stButton button, div.stButton > button {
-        background-color: #1E293B !important;
-        color: #FFFFFF !important;
-        border: 1px solid #334155 !important;
-        border-radius: 8px !important;
-        box-shadow: none !important;
-    }
-    .row-widget.stButton button:hover, div.stButton > button:hover {
-        background-color: #0F172A !important;
-        border-color: #475569 !important;
-        color: #FFFFFF !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
 # ============================================================================
 # GLOBAL DESIGN SYSTEM
 # ============================================================================
