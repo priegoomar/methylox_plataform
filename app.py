@@ -414,53 +414,26 @@ elif nav_selection == "dashboard":
     # ============================================================
     # LEFT COLUMN: RECENT LABORATORY ACTIVITY TRAIL
     # ============================================================
-    with col_left:
-        rows_html = ""
-        if samples:
-            for sample in samples[:5]:
-                status = sample.get("status", "Collected")
-                if status in ["Sample Registered"]:
-                    status_style = "background:#EFF6FF; color:#2563EB;"
-                elif status in ["Pre-Analytical Processing", "Molecular Data Generation", "Analysis Running"]:
-                    status_style = "background:#FFFBEB; color:#D97706;"
-                elif status in ["Quality Control Review", "Clinical Review"]:
-                    status_style = "background:#F5F3FF; color:#7C3AED;"
-                elif status == "Report Ready":
-                    status_style = "background:#F0FDF4; color:#16A34A;"
-                else:
-                    status_style = "background:#F8FAFC; color:#64748B;"
-
-                rows_html += f"""
-                <tr style="border-bottom:1px solid #F1F5F9;">
-                <td style="padding:14px 10px; text-align:center; color:#2563EB; font-weight:700; border:none;">{sample.get('sample_code','--')}</td>
-                <td style="padding:14px 10px; text-align:center; border:none;">{sample.get('patient_id','--')}</td>
-                <td style="padding:14px 10px; text-align:center; border:none;">{sample.get('sample_type','--')}</td>
-                <td style="padding:14px 10px; text-align:center; border:none;">
-                <span style="padding:5px 10px; border-radius:12px; font-size:11px; font-weight:700; {status_style}">{status}</span>
-                </td>
-                </tr>
-                """
-        else:
-            rows_html = '<tr><td colspan="4" style="text-align:center; padding:60px 10px; color:#94A3B8; border:none;">No laboratory samples currently registered.</td></tr>'
-
-        st.markdown(f"""
-        <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:24px; min-height:360px; box-shadow:0 1px 3px rgba(0,0,0,0.03);">
-        <p style="font-size:15px; font-weight:700; color:#0F172A; margin:0 0 15px 0;">Recent Laboratory Activity Trail</p>
-        <table style="width:100%; border-collapse:collapse;">
-        <thead>
-        <tr style="background:#F8FAFC;">
-        <th style="padding:12px; font-size:12px; color:#64748B; border:none;">Sample ID</th>
-        <th style="padding:12px; font-size:12px; color:#64748B; border:none;">Patient ID</th>
-        <th style="padding:12px; font-size:12px; color:#64748B; border:none;">Matrix</th>
-        <th style="padding:12px; font-size:12px; color:#64748B; border:none;">Status</th>
-        </tr>
-        </thead>
-        <tbody>
-        {rows_html}
-        </tbody>
-        </table>
-        </div>
-        """, unsafe_allow_html=True)
+with col_left:
+    st.markdown("""
+    <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; padding:24px;">
+    <p style="font-size:15px; font-weight:700; color:#0F172A;">Recent Laboratory Activity Trail</p>
+    </div>
+    """, unsafe_allow_html=True)
+    if samples:
+        activity_df = pd.DataFrame(samples)
+        columns_activity = ["sample_code", "patient_id", "sample_type", "status"]
+        columns_activity = [c for c in columns_activity if c in activity_df.columns]
+        activity_df = activity_df[columns_activity]
+        activity_df = activity_df.rename(columns={
+            "sample_code": "Sample ID",
+            "patient_id": "Patient ID",
+            "sample_type": "Matrix",
+            "status": "Status"
+        })
+        st.dataframe(activity_df.head(5), use_container_width=True, hide_index=True, height=300)
+    else:
+        st.info("No laboratory samples currently registered.")
 
     # ============================================================
     # RIGHT COLUMN: LIVE INTERACTIVE DATA STREAM & ONCO-GENETIC SUMMARY
