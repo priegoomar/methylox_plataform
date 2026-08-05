@@ -867,10 +867,7 @@ elif nav_selection == "lims":
     # -------------------------------------------------------------------------
     # LOAD SAMPLES WITH BACKEND FILTERS
     # -------------------------------------------------------------------------
-
-    def load_samples(status=None, patient_id=None, start_date=None, end_date=None):
-        pass
-
+    
     def load_samples(status=None, patient_id=None, start_date=None, end_date=None):
     params = {}
     if status and status != "All": params["status"] = status
