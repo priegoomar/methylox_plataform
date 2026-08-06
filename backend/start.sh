@@ -1,13 +1,9 @@
 #!/bin/sh
-echo "================================="
-echo "METHYLOX DATABASE MIGRATION CHECK"
-echo "================================="
+echo "Running Alembic migrations..."
+echo "CURRENT ALEMBIC VERSION:"
 alembic current
-echo "================================="
-echo "MIGRATION HISTORY"
-echo "================================="
-alembic history
-echo "================================="
-echo "STARTING METHYLOX API"
-echo "================================="
+echo "AVAILABLE HEAD:"
+alembic heads
+alembic upgrade head
+echo "Starting METHYLOX API..."
 uvicorn app.main:app --host 0.0.0.0 --port 8000
