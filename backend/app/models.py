@@ -14,16 +14,15 @@ from sqlalchemy.sql import func
 from app.database import Base
 
 
-# ============================================================
-# HOSPITAL / TENANT
-# ============================================================
+# ==========================================================
+# HOSPITAL
+# ==========================================================
 
 class Hospital(Base):
     __tablename__ = "hospitals"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(150), nullable=False)
-    code = Column(String(50), unique=True, nullable=False, index=True)
     active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -32,58 +31,73 @@ class Hospital(Base):
     samples = relationship("Sample", back_populates="hospital")
 
 
-# ============================================================
+# ==========================================================
 # USERS
-# ============================================================
+# ==========================================================
 
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=True, index=True)
     username = Column(String(100), unique=True, nullable=False, index=True)
     email = Column(String(150), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
     full_name = Column(String(150), nullable=True)
-    role = Column(String(50), nullable=False, default="cls")
+    role = Column(String(50), default="viewer")
+    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=True)
     active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     last_login = Column(DateTime(timezone=True), nullable=True)
 
     hospital = relationship("Hospital", back_populates="users")
-    permissions = relationship("UserPermission", foreign_keys="UserPermission.user_id", back_populates="user", cascade="all, delete-orphan")
-    direct_permissions = relationship("Permission", secondary="user_permissions", primaryjoin="User.id==UserPermission.user_id", secondaryjoin="Permission.id==UserPermission.permission_id", viewonly=True)
+    permissions = relationship(
+        "UserPermission",
+        foreign_keys="UserPermission.user_id",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    direct_permissions = relationship(
+        "Permission",
+        secondary="user_permissions",
+        primaryjoin="User.id==UserPermission.user_id",
+        secondaryjoin="Permission.id==UserPermission.permission_id",
+        viewonly=True
+    )
 
 
-# ============================================================
+# ==========================================================
 # PATIENTS
-# ============================================================
+# ==========================================================
 
 class Patient(Base):
     __tablename__ = "patients"
 
     id = Column(Integer, primary_key=True, index=True)
-    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=True, index=True)
     patient_code = Column(String(100), unique=True, nullable=False, index=True)
+    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=True)
     demographics = Column(JSON, nullable=True)
     clinical_notes = Column(Text, nullable=True)
     created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     hospital = relationship("Hospital", back_populates="patients")
-    samples = relationship("Sample", back_populates="patient", cascade="all, delete-orphan")
+    samples = relationship(
+        "Sample",
+        back_populates="patient",
+        cascade="all, delete-orphan"
+    )
 
 
-# ============================================================
-# SAMPLES / LIMS
-# ============================================================
+# ==========================================================
+# SAMPLES
+# ==========================================================
 
 class Sample(Base):
     __tablename__ = "samples"
 
     id = Column(Integer, primary_key=True, index=True)
-    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=True, index=True)
     sample_code = Column(String(100), unique=True, nullable=False, index=True)
+    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=True)
     patient_id = Column(Integer, ForeignKey("patients.id"), nullable=False)
     sample_type = Column(String(100), nullable=False)
     collection_date = Column(DateTime(timezone=True), nullable=True)
@@ -96,18 +110,21 @@ class Sample(Base):
 
     hospital = relationship("Hospital", back_populates="samples")
     patient = relationship("Patient", back_populates="samples")
-    analysis_results = relationship("AnalysisResult", back_populates="sample", cascade="all, delete-orphan")
+    analysis_results = relationship(
+        "AnalysisResult",
+        back_populates="sample",
+        cascade="all, delete-orphan"
+    )
 
 
-# ============================================================
+# ==========================================================
 # ANALYSIS RESULTS
-# ============================================================
+# ==========================================================
 
 class AnalysisResult(Base):
     __tablename__ = "analysis_results"
 
     id = Column(Integer, primary_key=True, index=True)
-    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=True, index=True)
     sample_id = Column(Integer, ForeignKey("samples.id"), nullable=False)
     pipeline_version = Column(String(100), default="METHYLOX Analysis v1.0")
     qc_status = Column(String(50), nullable=True)
@@ -119,9 +136,9 @@ class AnalysisResult(Base):
     sample = relationship("Sample", back_populates="analysis_results")
 
 
-# ============================================================
+# ==========================================================
 # AUDIT
-# ============================================================
+# ==========================================================
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
@@ -135,9 +152,9 @@ class AuditLog(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
-# ============================================================
+# ==========================================================
 # PERMISSIONS
-# ============================================================
+# ==========================================================
 
 class Permission(Base):
     __tablename__ = "permissions"
@@ -148,8 +165,16 @@ class Permission(Base):
     description = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    user_permissions = relationship("UserPermission", back_populates="permission", cascade="all, delete-orphan")
+    user_permissions = relationship(
+        "UserPermission",
+        back_populates="permission",
+        cascade="all, delete-orphan"
+    )
 
+
+# ==========================================================
+# USER PERMISSIONS
+# ==========================================================
 
 class UserPermission(Base):
     __tablename__ = "user_permissions"
@@ -160,6 +185,16 @@ class UserPermission(Base):
     granted_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    user = relationship("User", foreign_keys=[user_id], back_populates="permissions")
-    permission = relationship("Permission", back_populates="user_permissions")
-    granted_by_user = relationship("User", foreign_keys=[granted_by])
+    user = relationship(
+        "User",
+        foreign_keys=[user_id],
+        back_populates="permissions"
+    )
+    permission = relationship(
+        "Permission",
+        back_populates="user_permissions"
+    )
+    granted_by_user = relationship(
+        "User",
+        foreign_keys=[granted_by]
+    )
