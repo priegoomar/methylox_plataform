@@ -16,9 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 
-# Verificación temporal del archivo security.py
-RUN echo "=== SECURITY CHECK ===" && sed -n '1,130p' app/security.py
-
+RUN echo "===== SECURITY FILE =====" && nl -ba app/security.py | sed -n '90,120p'
 COPY alembic ./alembic
 COPY alembic.ini ./alembic.ini
 COPY start.sh ./start.sh
