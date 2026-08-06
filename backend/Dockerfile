@@ -1,4 +1,5 @@
 FROM python:3.10-slim
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
@@ -16,9 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 
-# VERIFICACIÓN TEMPORAL DEL ARCHIVO SECURITY
-RUN echo "========== SECURITY FILE =========="
-RUN nl -ba app/security.py | sed -n '90,120p'
+COPY alembic ./alembic
+COPY alembic.ini ./alembic.ini
 
 RUN mkdir -p static/reports
 
