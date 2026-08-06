@@ -1,7 +1,25 @@
-#!/bin/sh
+from alembic import op
+import sqlalchemy as sa
 
-echo "Running Alembic migrations..."
-alembic upgrade head
+revision = "002_fix_patient_hospital"
+down_revision = "001_add_hospital_isolation"
+branch_labels = None
+depends_on = None
 
-echo "Starting METHYLOX API..."
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+def upgrade():
+    op.add_column(
+        "patients",
+        sa.Column(
+            "hospital_id",
+            sa.Integer(),
+            nullable=True
+        )
+    )
+
+
+def downgrade():
+    op.drop_column(
+        "patients",
+        "hospital_id"
+    )
