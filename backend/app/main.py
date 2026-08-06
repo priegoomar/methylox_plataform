@@ -104,6 +104,23 @@ def debug_patients_columns():
         }
 
 
+@app.get("/api/v1/fix-hospital-column")
+def fix_hospital_column():
+    with engine.begin() as conn:
+        conn.execute(
+            text(
+                """
+                ALTER TABLE patients
+                ADD COLUMN IF NOT EXISTS hospital_id INTEGER
+                """
+            )
+        )
+
+        return {
+            "status": "hospital_id created"
+        }
+
+
 # ==========================================
 # HEALTH CHECK
 # ==========================================
