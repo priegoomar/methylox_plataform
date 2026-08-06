@@ -85,6 +85,29 @@ def debug_columns():
             "columns": [row[0] for row in result]
         }
 
+@app.get("/api/v1/debug/fix-hospital")
+def fix_hospital():
+
+    with engine.connect() as conn:
+
+        conn.execute(text("""
+            ALTER TABLE patients
+            ADD COLUMN IF NOT EXISTS hospital_id INTEGER;
+        """))
+
+        conn.execute(text("""
+            UPDATE patients
+            SET hospital_id = 1
+            WHERE hospital_id IS NULL;
+        """))
+
+        conn.commit()
+
+    return {
+        "status": "OK",
+        "message": "hospital_id column fixed"
+    }
+
 
 # ==========================================
 # HEALTH CHECK
