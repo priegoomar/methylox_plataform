@@ -326,6 +326,14 @@ elif nav_selection == "dashboard":
     st.write("")
 
     col_left, col_right = st.columns([1.45, 1])
+        st.markdown('<div class="section-card"><p class="section-card-title">Live Interactive Data Stream</p>', unsafe_allow_html=True)
+        if samples:
+            live_df = pd.DataFrame(samples)
+            live_cols = [c for c in ["sample_code", "sample_type", "status"] if c in live_df.columns]
+            st.dataframe(live_df[live_cols].tail(5), use_container_width=True, hide_index=True, height=180)
+        else:
+            st.caption("Awaiting laboratory telemetry stream...")
+        st.markdown('</div>', unsafe_allow_html=True)    
 
     with col_left:
         st.markdown('<div class="section-card"><p class="section-card-title">Recent Laboratory Activity Trail</p>', unsafe_allow_html=True)
@@ -336,13 +344,13 @@ elif nav_selection == "dashboard":
                 "sample_code": "Sample ID", "patient_id": "Patient ID",
                 "sample_type": "Matrix", "status": "Status"
             })
-            st.dataframe(activity_df.head(8), use_container_width=True, hide_index=True, height=280)
+            st.dataframe(activity_df.tail(8), use_container_width=True, hide_index=True, height=280)
         else:
             st.info("No hay muestras registradas todavía." if samples_result.ok else "Sin datos disponibles (ver aviso arriba).")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col_right:
-        st.markdown('<div class="section-card"><p class="section-card-title">Distribución por Estado de Flujo</p>', unsafe_allow_html=True)
+        st.markdown('<div class="section-card"><p class="section-card-title">Workflow Status Distribution</p>', unsafe_allow_html=True)
         if samples:
             status_counts = pd.DataFrame(samples)["status"].value_counts()
             fig = go.Figure(data=[go.Pie(labels=status_counts.index.tolist(), values=status_counts.values.tolist(), hole=0.60)])
