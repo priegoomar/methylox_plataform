@@ -1,11 +1,16 @@
 from datetime import datetime, timezone
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from app.database import engine
 from app.models import Base
 from app.routers import auth, patients, samples, analysis, reports, access, users, audit, hospitals
 
 Base.metadata.create_all(bind=engine)
+
+# Auto-patch missing columns in production database safely
+with engine.begin() as conn:
+    conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS hospital_id INTEGER;"))
 
 app = FastAPI(
     title="METHYLOX",
