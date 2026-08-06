@@ -302,14 +302,10 @@ elif nav_selection == "dashboard":
 
     m1, m2, m3, m4 = st.columns(4)
     metric_defs = [
-        (m1, "#2563EB", "Samples Received Today", received_today,
-         '<path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/>'),
-        (m2, "#D97706", "Active Workflow", in_progress,
-         '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'),
-        (m3, "#16A34A", "Ready Reports", ready_reports,
-         '<path d="M6 2h9l3 3v17H6z"/><polyline points="14 2 14 8 20 8"/>'),
-        (m4, "#6366F1", "Total Samples", total_samples,
-         '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
+        (m1, "#2563EB", "Samples Received Today", received_today, '<path d="M10 2v8L4.72 17.55a1 1 0 0 0 .83 1.45h12.9a1 1 0 0 0 .83-1.45L14 10V2Z"/><path d="M14 2h-4"/>'),
+        (m2, "#D97706", "Active Workflow", in_progress, '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'),
+        (m3, "#16A34A", "Ready Reports", ready_reports, '<path d="M6 2h9l3 3v17H6z"/><polyline points="14 2 14 8 20 8"/>'),
+        (m4, "#6366F1", "Total Samples", total_samples, '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
     ]
     for col, color, title, value, svg_path in metric_defs:
         with col:
@@ -326,14 +322,6 @@ elif nav_selection == "dashboard":
     st.write("")
 
     col_left, col_right = st.columns([1.45, 1])
-        st.markdown('<div class="section-card"><p class="section-card-title">Live Interactive Data Stream</p>', unsafe_allow_html=True)
-        if samples:
-            live_df = pd.DataFrame(samples)
-            live_cols = [c for c in ["sample_code", "sample_type", "status"] if c in live_df.columns]
-            st.dataframe(live_df[live_cols].tail(5), use_container_width=True, hide_index=True, height=180)
-        else:
-            st.caption("Awaiting laboratory telemetry stream...")
-        st.markdown('</div>', unsafe_allow_html=True)    
 
     with col_left:
         st.markdown('<div class="section-card"><p class="section-card-title">Recent Laboratory Activity Trail</p>', unsafe_allow_html=True)
@@ -373,7 +361,6 @@ elif nav_selection == "dashboard":
             if st.button(f"{title}\n{subtitle}", key=f"quickbtn_{target_nav}", use_container_width=True):
                 st.session_state.nav_selection = target_nav
                 st.rerun()
-
 
 # ============================================================================
 # TAB: PATIENTS
