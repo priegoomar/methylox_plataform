@@ -1,18 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app import models, schemas
-from app.security import TokenData, PermissionGuard
+from app.models import AuditLog
+from app.security import get_current_user_claims
 
-# Asegúrate de que la variable se llame exactamente 'router'
-router = APIRouter(
-    prefix="/api/v1/audit",
-    tags=["Audit Trail"]
-)
+router = APIRouter()
 
-@router.get("/", response_model=list[schemas.AuditLogResponse])
-def get_audit_logs(
-    db: Session = Depends(get_db),
-    current_user: TokenData = Depends(PermissionGuard("audit_read")) # O el permiso que corresponda
-):
-    return db.query(models.AuditLog).order_by(models.AuditLog.created_at.desc()).all()
+
+@router.get("/")
+def get_audit_logs(db: Session = Depends(get_db), current_user=Depends(get_current_user_claims)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin privileges required")
+
+    return db.query(AuditLog).order_by(AuditLog.created_at.desc()).all()
