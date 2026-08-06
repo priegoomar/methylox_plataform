@@ -9,7 +9,8 @@ router = APIRouter(prefix="/api/v1/samples", tags=["Samples"])
 
 @router.post("/", response_model=schemas.SampleResponse)
 def create_sample(sample: schemas.SampleCreate, db: Session = Depends(get_db), current_user: TokenData = Depends(PermissionGuard("sample_create"))):
-    if db.query(models.Sample).filter(models.Sample.sample_code == sample.sample_code).first():
+    existing = db.query(models.Sample).filter(models.Sample.sample_code == sample.sample_code).first()
+    if existing:
         raise HTTPException(status_code=400, detail="Sample code already exists")
     patient = db.query(models.Patient).filter(models.Patient.id == sample.patient_id, models.Patient.hospital_id == current_user.id_hospital).first()
     if not patient:
