@@ -887,59 +887,100 @@ elif nav_selection == "reports":
 # ============================================================================
 elif nav_selection == "users":
     st.markdown("<h2 class='welcome-header'>Identity Governance</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='welcome-caption'>Provisiona personal autorizado y asigna roles operativos dentro de METHYLOX™.</p>", unsafe_allow_html=True)
+    st.markdown("<p class='welcome-caption'>Provisiona personal autorizado y administra permisos operativos dentro de METHYLOX™.</p>", unsafe_allow_html=True)
 
+    # USER CREATION
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     with st.form("user_provisioning_form", clear_on_submit=True):
         st.markdown("#### Registrar nuevo miembro del personal")
         c1, c2 = st.columns(2)
         with c1:
-            input_username = st.text_input("Username", placeholder="jdoe")
-            input_email = st.text_input("Email", placeholder="doctor@hospital.com")
-            input_full_name = st.text_input("Full Name", placeholder="e.g., Dr. John Doe, MD")
+            input_username = st.text_input("Username")
+            input_email = st.text_input("Email")
+            input_full_name = st.text_input("Full Name")
         with c2:
-            input_password = st.text_input("Temporary Password", type="password", placeholder="••••••••••••")
-            target_role = st.selectbox(
-                "System Role and Permissions",
-                ["admin", "cls", "md"],
-                format_func=lambda x: {"admin": "Administrator", "cls": "Laboratory Scientist (CLS)", "md": "Clinical Doctor (MD)"}[x],
-            )
+            input_password = st.text_input("Temporary Password", type="password")
+            target_role = st.selectbox("System Role", ["admin", "cls", "md"], format_func=lambda x: {"admin": "Administrator", "cls": "Laboratory Scientist", "md": "Clinical Doctor"}[x])
         submit_btn = st.form_submit_button("Activate User & Grant Access")
 
     if submit_btn:
-        if not input_username or not input_email or not input_password or not input_full_name:
-            st.error("Todos los campos de registro son obligatorios.")
+        payload_u = {
+            "username": input_username,
+            "email": input_email,
+            "password": input_password,
+            "full_name": input_full_name,
+            "role": target_role
+        }
+        result = api_post("/users/", json=payload_u)
+        if result.ok:
+            st.success("Usuario creado correctamente.")
+            st.cache_data.clear()
+            st.rerun()
         else:
-            payload_u = {
-                "username": input_username,
-                "email": input_email,
-                "password": input_password,
-                "full_name": input_full_name,
-                "role": target_role,
-            }
-            result = api_post("/users/", json=payload_u)
-            if result.ok:
-                st.success("Cuenta de usuario activada correctamente.")
-                st.cache_data.clear()
-            elif result.status_code == 403:
-                st.error("No tienes permisos de administrador para crear usuarios.")
-            elif result.status_code == 400:
-                st.error(f"No se pudo crear el usuario: {result.error}")
-            else:
-                st.error(f"Error al crear usuario: {result.error}")
+            st.error(result.error)
     st.markdown('</div>', unsafe_allow_html=True)
 
+    # USER DIRECTORY
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
-    st.markdown('<p class="section-card-title">Personal registrado</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-card-title">Registered Personnel</p>', unsafe_allow_html=True)
     users_result = cached_get("/users/", st.session_state.jwt_access_token)
+
     if users_result.ok and users_result.data:
         users_df = pd.DataFrame(users_result.data)
-        cols = [c for c in ["username", "email", "full_name", "role", "active", "last_login"] if c in users_df.columns]
+        cols = [c for c in ["username", "email", "full_name", "role", "active"] if c in users_df.columns]
         st.dataframe(users_df[cols], use_container_width=True, hide_index=True)
     elif users_result.ok:
-        st.info("No hay usuarios registrados todavía.")
+        st.info("No users found.")
     else:
-        st.warning(f"No se pudo cargar la lista de usuarios: {users_result.error}")
+        st.warning(users_result.error)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # PERMISSION MANAGEMENT
+    st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
+    st.markdown('<p class="section-card-title">Permission Management</p>', unsafe_allow_html=True)
+
+    if users_result.ok and users_result.data:
+        user_options = {f"{u['username']} ({u['role']})": u["id"] for u in users_result.data}
+        selected_user_label = st.selectbox("Select Employee", list(user_options.keys()))
+        selected_user_id = user_options[selected_user_label]
+
+        permissions_result = api_get("/access/permissions")
+        current_permissions_result = api_get(f"/access/user/{selected_user_id}")
+        current_permissions = []
+
+        if current_permissions_result.ok:
+            current_permissions = [p["name"] for p in current_permissions_result.data]
+
+        if permissions_result.ok:
+            permission_catalog = permissions_result.data
+            st.markdown("#### Assigned Permissions")
+            st.caption("Selecciona los permisos que deseas otorgar.")
+
+            selected_permissions = []
+            for permission in permission_catalog:
+                checked = st.checkbox(
+                    permission["name"],
+                    value=permission["name"] in current_permissions,
+                    key=f"user_{selected_user_id}_perm_{permission['id']}"
+                )
+                if checked:
+                    selected_permissions.append(permission)
+
+            if st.button("Save Permission Changes", use_container_width=True):
+                desired_names = {p["name"] for p in selected_permissions}
+                current_names = set(current_permissions)
+
+                for permission in permission_catalog:
+                    if permission["name"] in desired_names and permission["name"] not in current_names:
+                        api_post("/access/assign", json={
+                            "user_id": selected_user_id,
+                            "permission_id": permission["id"]
+                        })
+
+                st.success("Permisos actualizados correctamente.")
+                st.cache_data.clear()
+                st.rerun()
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ============================================================================
