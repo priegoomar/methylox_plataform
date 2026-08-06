@@ -1,7 +1,13 @@
 #!/bin/sh
 
-echo "Running Alembic migrations..."
+echo "================================="
+echo "METHYLOX DATABASE MIGRATION"
+echo "================================="
+
 alembic upgrade head
 
-echo "Starting METHYLOX API..."
+echo "================================="
+echo "STARTING METHYLOX API"
+echo "================================="
+
 uvicorn app.main:app --host 0.0.0.0 --port 8000
