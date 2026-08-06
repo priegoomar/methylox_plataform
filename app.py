@@ -338,6 +338,14 @@ elif nav_selection == "dashboard":
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col_right:
+        st.markdown('<div class="section-card"><p class="section-card-title">Live Interactive Data Stream</p>', unsafe_allow_html=True)
+        if samples:
+            live_df = pd.DataFrame(samples)
+            live_cols = [c for c in ["sample_code", "sample_type", "status"] if c in live_df.columns]
+            st.dataframe(live_df[live_cols].tail(5), use_container_width=True, hide_index=True, height=180)
+        else:
+            st.caption("Awaiting laboratory telemetry stream...")
+        st.markdown('</div>', unsafe_allow_html=True)        
         st.markdown('<div class="section-card"><p class="section-card-title">Workflow Status Distribution</p>', unsafe_allow_html=True)
         if samples:
             status_counts = pd.DataFrame(samples)["status"].value_counts()
