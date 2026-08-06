@@ -15,6 +15,8 @@ COPY requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
+COPY app ./app
+RUN echo "SECURITY CHECK" && sed -n '90,120p' app/security.py
 COPY alembic ./alembic
 COPY alembic.ini ./alembic.ini
 COPY start.sh ./start.sh
