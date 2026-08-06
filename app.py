@@ -529,7 +529,7 @@ with st.sidebar:
         st.sidebar.caption("Cannot authenticate or load data until connection is re-established.")
 
     if not st.session_state.jwt_access_token:
-        with st.form("login_form"):
+        with st.form(key="unique_login_form_sidebar"):
             st.markdown('<p style="color:#94A3B8; font-size:12px; font-weight:700;">SECURE AUTHENTICATION</p>', unsafe_allow_html=True)
             username = st.text_input("Username")
             password = st.text_input("Password", type="password")
