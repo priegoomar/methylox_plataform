@@ -1,21 +1,46 @@
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
 from app.database import get_db
 from app import models, schemas
-from app.security import get_current_user_claims, TokenData, PermissionGuard
+from app.security import (
+    TokenData,
+    PermissionGuard
+)
 
-router = APIRouter(prefix="/api/v1/samples", tags=["Samples"])
+
+router = APIRouter(
+    prefix="/api/v1/samples",
+    tags=["Samples"]
+)
+
+
+# ============================================================
+# CREATE SAMPLE
+# ============================================================
 
 @router.post("/", response_model=schemas.SampleResponse)
-def create_sample(sample: schemas.SampleCreate, db: Session = Depends(get_db), current_user: TokenData = Depends(PermissionGuard("sample_create"))):
+def create_sample(
+    sample: schemas.SampleCreate,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(PermissionGuard("sample_create"))
+):
     existing = db.query(models.Sample).filter(models.Sample.sample_code == sample.sample_code).first()
+
     if existing:
         raise HTTPException(status_code=400, detail="Sample code already exists")
-    patient = db.query(models.Patient).filter(models.Patient.id == sample.patient_id, models.Patient.hospital_id == current_user.id_hospital).first()
+
+    patient = db.query(models.Patient).filter(models.Patient.id == sample.patient_id).first()
+
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
+
+    if current_user.role != "admin" and patient.hospital_id != current_user.id_hospital:
+        raise HTTPException(status_code=403, detail="Patient belongs to another hospital")
+
     new_sample = models.Sample(
+        hospital_id=current_user.id_hospital,
         sample_code=sample.sample_code,
         patient_id=sample.patient_id,
         sample_type=sample.sample_type,
@@ -23,91 +48,115 @@ def create_sample(sample: schemas.SampleCreate, db: Session = Depends(get_db), c
         received_date=sample.received_date,
         status=sample.status,
         storage_location=sample.storage_location,
-        created_by=current_user.id_user,
-        hospital_id=current_user.id_hospital,
+        created_by=current_user.id_user
     )
+
     db.add(new_sample)
     db.commit()
     db.refresh(new_sample)
-    initial_movement = models.SampleMovement(
-        sample_id=new_sample.id,
-        previous_status=None,
-        new_status=new_sample.status,
-        performed_by=current_user.id_user,
-    )
-    db.add(initial_movement)
-    db.commit()
+
     audit = models.AuditLog(
         user_id=current_user.id_user,
-        hospital_id=current_user.id_hospital,
         action="CREATE_SAMPLE",
         module="samples",
         entity=new_sample.sample_code,
-        changes={"sample_id": new_sample.id, "sample_code": new_sample.sample_code, "patient_id": new_sample.patient_id},
+        changes={
+            "sample_id": new_sample.id,
+            "hospital_id": current_user.id_hospital
+        }
     )
+
     db.add(audit)
     db.commit()
+
     return new_sample
 
+
+# ============================================================
+# GET SAMPLES WITH HOSPITAL FILTER
+# ============================================================
+
 @router.get("/", response_model=list[schemas.SampleResponse])
-def get_samples(status: str | None = None, patient_id: int | None = None, sample_type: str | None = None, start_date: datetime | None = None, end_date: datetime | None = None, db: Session = Depends(get_db), current_user: TokenData = Depends(PermissionGuard("sample_read"))):
-    query = db.query(models.Sample).filter(models.Sample.hospital_id == current_user.id_hospital)
+def get_samples(
+    status: str | None = None,
+    patient_id: int | None = None,
+    start_date: datetime | None = None,
+    end_date: datetime | None = None,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(PermissionGuard("sample_read"))
+):
+    query = db.query(models.Sample)
+
+    if current_user.role != "admin":
+        query = query.filter(models.Sample.hospital_id == current_user.id_hospital)
+
     if status:
         query = query.filter(models.Sample.status == status)
+
     if patient_id:
         query = query.filter(models.Sample.patient_id == patient_id)
-    if sample_type:
-        query = query.filter(models.Sample.sample_type == sample_type)
+
     if start_date:
         query = query.filter(models.Sample.collection_date >= start_date)
+
     if end_date:
         query = query.filter(models.Sample.collection_date <= end_date)
+
     return query.all()
 
+
+# ============================================================
+# GET SAMPLE BY ID
+# ============================================================
+
 @router.get("/{sample_id}", response_model=schemas.SampleResponse)
-def get_sample(sample_id: int, db: Session = Depends(get_db), current_user: TokenData = Depends(PermissionGuard("sample_read"))):
-    sample = db.query(models.Sample).filter(models.Sample.id == sample_id, models.Sample.hospital_id == current_user.id_hospital).first()
+def get_sample(
+    sample_id: int,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(PermissionGuard("sample_read"))
+):
+    sample = db.query(models.Sample).filter(models.Sample.id == sample_id).first()
+
     if not sample:
         raise HTTPException(status_code=404, detail="Sample not found")
+
+    if current_user.role != "admin" and sample.hospital_id != current_user.id_hospital:
+        raise HTTPException(status_code=403, detail="Hospital access denied")
+
     return sample
+
+
+# ============================================================
+# UPDATE SAMPLE
+# ============================================================
 
 @router.patch("/{sample_id}", response_model=schemas.SampleResponse)
-def update_sample(sample_id: int, update: schemas.SampleUpdate, db: Session = Depends(get_db), current_user: TokenData = Depends(PermissionGuard("sample_update"))):
-    sample = db.query(models.Sample).filter(models.Sample.id == sample_id, models.Sample.hospital_id == current_user.id_hospital).first()
+def update_sample(
+    sample_id: int,
+    update: schemas.SampleUpdate,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(PermissionGuard("sample_update"))
+):
+    sample = db.query(models.Sample).filter(models.Sample.id == sample_id).first()
+
     if not sample:
         raise HTTPException(status_code=404, detail="Sample not found")
-    if update.status is not None:
-        if update.status != sample.status:
-            movement = models.SampleMovement(
-                sample_id=sample.id,
-                previous_status=sample.status,
-                new_status=update.status,
-                performed_by=current_user.id_user,
-            )
-            db.add(movement)
+
+    if current_user.role != "admin" and sample.hospital_id != current_user.id_hospital:
+        raise HTTPException(status_code=403, detail="Hospital access denied")
+
+    if update.status:
         sample.status = update.status
-    if update.storage_location is not None:
+
+    if update.storage_location:
         sample.storage_location = update.storage_location
-    if update.received_date is not None:
+
+    if update.received_date:
         sample.received_date = update.received_date
+
     sample.updated_at = datetime.now(timezone.utc)
+
     db.commit()
     db.refresh(sample)
-    audit = models.AuditLog(
-        user_id=current_user.id_user,
-        hospital_id=current_user.id_hospital,
-        action="UPDATE_SAMPLE",
-        module="samples",
-        entity=sample.sample_code,
-        changes={"status": sample.status, "storage_location": sample.storage_location},
-    )
-    db.add(audit)
-    db.commit()
-    return sample
 
-@router.get("/{sample_id}/movements", response_model=list[schemas.SampleMovementResponse])
-def get_sample_movements(sample_id: int, db: Session = Depends(get_db), current_user: TokenData = Depends(PermissionGuard("sample_read"))):
-    sample = db.query(models.Sample).filter(models.Sample.id == sample_id, models.Sample.hospital_id == current_user.id_hospital).first()
-    if not sample:
-        raise HTTPException(status_code=404, detail="Sample not found")
-    return db.query(models.SampleMovement).filter(models.SampleMovement.sample_id == sample_id).order_by(models.SampleMovement.created_at.asc()).all()
+    return sample
