@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
-from sqlalchemy import text
-from app.database import engine
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+
+from app.database import engine
 
 from app.routers import (
     auth,
@@ -59,68 +60,72 @@ app.include_router(users.router)
 app.include_router(audit.router)
 
 
+# ==========================================
+# DEBUG DATABASE
+# ==========================================
+
 @app.get("/api/v1/debug/database")
 def debug_database():
     with engine.connect() as conn:
-        result = conn.execute(text("""
-            SELECT version_num 
-            FROM alembic_version
-        """))
+        result = conn.execute(
+            text(
+                """
+                SELECT version_num
+                FROM alembic_version
+                """
+            )
+        )
 
         return {
-            "alembic_version": [row[0] for row in result]
+            "alembic_version": [
+                row[0] for row in result
+            ]
         }
 
 
 @app.get("/api/v1/debug/patients-columns")
-def debug_columns():
+def debug_patients_columns():
     with engine.connect() as conn:
-        result = conn.execute(text("""
-            SELECT column_name
-            FROM information_schema.columns
-            WHERE table_name='patients'
-        """))
+        result = conn.execute(
+            text(
+                """
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_name='patients'
+                ORDER BY ordinal_position
+                """
+            )
+        )
 
         return {
-            "columns": [row[0] for row in result]
+            "columns": [
+                row[0] for row in result
+            ]
         }
-
-@app.get("/api/v1/debug/fix-hospital")
-def fix_hospital():
-
-    with engine.connect() as conn:
-
-        conn.execute(text("""
-            ALTER TABLE patients
-            ADD COLUMN IF NOT EXISTS hospital_id INTEGER;
-        """))
-
-        conn.execute(text("""
-            UPDATE patients
-            SET hospital_id = 1
-            WHERE hospital_id IS NULL;
-        """))
-
-        conn.commit()
-
-    return {
-        "status": "OK",
-        "message": "hospital_id column fixed"
-    }
 
 
 # ==========================================
 # HEALTH CHECK
 # ==========================================
 
-@app.get(
-    "/api/v1/health",
-    tags=["System"]
-)
+@app.get("/api/v1/health")
 def health():
     return {
         "status": "ONLINE",
         "system": "METHYLOX",
         "version": "3.0.0",
         "timestamp": datetime.now(timezone.utc)
+    }
+
+
+# ==========================================
+# ROOT
+# ==========================================
+
+@app.get("/")
+def root():
+    return {
+        "system": "METHYLOX",
+        "status": "running",
+        "version": "3.0.0"
     }
