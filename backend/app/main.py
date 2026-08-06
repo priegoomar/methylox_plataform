@@ -1,4 +1,6 @@
 from datetime import datetime, timezone
+from sqlalchemy import text
+from app.database import engine
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -55,6 +57,33 @@ app.include_router(reports.router)
 app.include_router(access.router)
 app.include_router(users.router)
 app.include_router(audit.router)
+
+
+@app.get("/api/v1/debug/database")
+def debug_database():
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT version_num 
+            FROM alembic_version
+        """))
+
+        return {
+            "alembic_version": [row[0] for row in result]
+        }
+
+
+@app.get("/api/v1/debug/patients-columns")
+def debug_columns():
+    with engine.connect() as conn:
+        result = conn.execute(text("""
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name='patients'
+        """))
+
+        return {
+            "columns": [row[0] for row in result]
+        }
 
 
 # ==========================================
