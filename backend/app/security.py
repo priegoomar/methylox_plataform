@@ -1,5 +1,3 @@
-ESTO_ES_UNA_PRUEBA
-print("METHYLOX SECURITYV2")
 from datetime import datetime, timedelta, timezone
 from typing import List
 
@@ -9,9 +7,9 @@ from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app import models
 from app.config import settings
 from app.database import get_db
+from app import models
 
 
 # ==========================================
@@ -43,7 +41,7 @@ class TokenData(BaseModel):
 def create_access_token(data: dict):
     payload = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    payload.update({"exp": expire})
+    payload["exp"] = expire
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
@@ -114,7 +112,7 @@ class PermissionGuard:
         current_user: TokenData = Depends(get_current_user_claims),
         db: Session = Depends(get_db)
     ):
-        # ADMIN BYPASS
+        # Admin bypass
         if current_user.role == "admin":
             return current_user
 
@@ -128,7 +126,7 @@ class PermissionGuard:
             .first()
         )
 
-        if not permission:
+        if permission is None:
             raise HTTPException(
                 status_code=403,
                 detail="Permission denied"
