@@ -4,14 +4,23 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /backend
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 
-RUN echo "========== RENDER SECURITY CHECK =========="
+# VERIFICACIÓN TEMPORAL DEL ARCHIVO SECURITY
+RUN echo "========== SECURITY FILE =========="
 RUN nl -ba app/security.py | sed -n '90,120p'
+
+RUN mkdir -p static/reports
 
 EXPOSE 8000
 
