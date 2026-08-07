@@ -1,14 +1,28 @@
-import os, time, uuid
+import os
+import time
+import uuid
 from datetime import datetime, date
-import pandas as pd, requests, streamlit as st, plotly.graph_objects as go, jwt
+
+import pandas as pd
+import requests
+import streamlit as st
+import plotly.graph_objects as go
+import jwt
 from fpdf import FPDF
 
 # ============================================================================
-# STREAMLIT CONFIGURATION & DESIGN SYSTEM
+# STREAMLIT CONFIGURATION
 # ============================================================================
+st.set_page_config(
+    page_title="METHYLOX™ | Epigenetic Intelligence Platform",
+    page_icon="🧬",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-st.set_page_config(page_title="METHYLOX™ | Epigenetic Intelligence Platform", page_icon="🧬", layout="wide", initial_sidebar_state="expanded")
-
+# ============================================================================
+# GLOBAL DESIGN SYSTEM
+# ============================================================================
 st.markdown("""
 <style>
 .stApp { background-color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -35,50 +49,60 @@ div[data-baseweb="input"]:focus-within { border-color: #2563EB !important; }
 # ============================================================================
 # BACKEND CONNECTION & SESSION STATE
 # ============================================================================
-
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
 
 DEFAULT_SESSION = {
-    "jwt_access_token": None, "operator_display_name": "Guest Operator", "user_role": None,
-    "user_id": None, "permissions": [], "hospital_id": None, "hospital_name": None,
-    "nav_selection": "dashboard", "show_new_patient_form": False, "show_sample_form": False,
-    "patient_code_temp": None, "patient_anon_code_temp": None, "sample_code_temp": None, "login_error": None,
+    "jwt_access_token": None, "operator_display_name": "Guest Operator",
+    "user_role": None, "user_id": None, "permissions": [],
+    "hospital_id": None, "hospital_name": None, "nav_selection": "dashboard",
+    "show_new_patient_form": False, "show_sample_form": False,
+    "patient_code_temp": None, "patient_anon_code_temp": None,
+    "sample_code_temp": None, "login_error": None,
 }
 
 for key, value in DEFAULT_SESSION.items():
-    if key not in st.session_state: st.session_state[key] = value
+    if key not in st.session_state:
+        st.session_state[key] = value
+
 
 def get_auth_headers():
     return {"Authorization": f"Bearer {st.session_state.jwt_access_token}"} if st.session_state.jwt_access_token else {}
 
+
 # ============================================================================
 # API HELPERS
 # ============================================================================
-
 def api_get(path, timeout=10):
     try:
         r = requests.get(f"{BACKEND_URL}{path}", headers=get_auth_headers(), timeout=timeout)
-        if r.status_code == 200: return ApiResult(True, data=r.json() if r.text else {}, status_code=r.status_code)
+        if r.status_code == 200:
+            return ApiResult(True, data=r.json() if r.text else {}, status_code=r.status_code)
         try: detail = r.json()
         except: detail = r.text
         return ApiResult(False, error=detail, status_code=r.status_code)
-    except requests.exceptions.RequestException as e: return ApiResult(False, error=str(e))
+    except requests.exceptions.RequestException as e:
+        return ApiResult(False, error=str(e))
+
 
 def api_post(path, json=None, files=None, timeout=10):
     try:
         r = requests.post(f"{BACKEND_URL}{path}", json=json, files=files, headers=get_auth_headers(), timeout=timeout)
-        if r.status_code in (200, 201): return ApiResult(True, data=r.json() if r.text else {}, status_code=r.status_code)
+        if r.status_code in (200, 201):
+            return ApiResult(True, data=r.json() if r.text else {}, status_code=r.status_code)
         return ApiResult(False, error=r.text, status_code=r.status_code)
-    except requests.exceptions.RequestException as e: return ApiResult(False, error=str(e))
+    except requests.exceptions.RequestException as e:
+        return ApiResult(False, error=str(e))
+
 
 # ============================================================================
 # LOAD PERMISSIONS & BACKEND STATUS
 # ============================================================================
-
 def load_user_permissions():
-    if not st.session_state.user_id: return []
+    if not st.session_state.user_id:
+        return []
     result = api_get(f"/access/user/{st.session_state.user_id}")
     return [p["name"] for p in result.data] if result.ok else []
+
 
 def check_backend_connection():
     try:
@@ -87,21 +111,27 @@ def check_backend_connection():
     except Exception as e:
         return False, {"error": str(e)}
 
+
 backend_status, backend_info = check_backend_connection()
 
 # ============================================================================
-# SIDEBAR AUTHENTICATION & NAVIGATION
+# SIDEBAR AUTHENTICATION
 # ============================================================================
-
 with st.sidebar:
-    st.markdown("""<div style="padding:15px 0px; border-bottom:1px solid #1E293B; margin-bottom:25px;"><h2 style="color:white;">METHYLOX™</h2><p style="color:#38BDF8;">Epigenetic Intelligence Platform</p></div>""", unsafe_allow_html=True)
-    
+    st.markdown("""
+        <div style="padding:15px 0px; border-bottom:1px solid #1E293B; margin-bottom:25px;">
+            <h2 style="color:white;">METHYLOX™</h2>
+            <p style="color:#38BDF8;">Epigenetic Intelligence Platform</p>
+        </div>
+    """, unsafe_allow_html=True)
+
     if backend_status: st.success("Backend Online")
     else: st.error("Backend Offline")
 
     if not st.session_state.jwt_access_token:
         with st.form("login_form"):
-            username, password = st.text_input("Username"), st.text_input("Password", type="password")
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
             login = st.form_submit_button("Authenticate", use_container_width=True)
 
         if login:
@@ -118,8 +148,17 @@ with st.sidebar:
                 st.session_state.permissions = load_user_permissions()
                 st.rerun()
     else:
-        st.markdown(f"""<div style="background:#1E293B; padding:15px; border-radius:10px;"><span style="color:#94A3B8;">USER</span><br><b style="color:white;">{st.session_state.operator_display_name}</b><br><span style="color:#38BDF8;">ROLE: {st.session_state.user_role}</span></div>""", unsafe_allow_html=True)
+        st.markdown(f"""
+            <div style="background:#1E293B; padding:15px; border-radius:10px;">
+                <span style="color:#94A3B8;">USER</span><br>
+                <b style="color:white;">{st.session_state.operator_display_name}</b><br>
+                <span style="color:#38BDF8;">ROLE: {st.session_state.user_role}</span>
+            </div>
+        """, unsafe_allow_html=True)
 
+    # ======================================================
+    # NAVIGATION BY PERMISSIONS
+    # ======================================================
     menu_options = {"dashboard": "Dashboard"}
     permissions = st.session_state.permissions
 
@@ -127,16 +166,20 @@ with st.sidebar:
     if "sample_read" in permissions: menu_options["lims"] = "Samples"
     if "analysis_read" in permissions: menu_options["analysis"] = "Analysis"
     if "report_read" in permissions: menu_options["reports"] = "Reports"
-    if st.session_state.user_role == "admin": menu_options.update({"users": "Access Control", "settings": "Audit Trail"})
 
-    nav_selection = st.radio("Navigation", options=list(menu_options.keys()), format_func=lambda x: menu_options[x], key="nav_selection") if st.session_state.jwt_access_token else "restricted"
+    if st.session_state.user_role == "admin":
+        menu_options.update({"users": "Access Control", "settings": "Audit Trail"})
+
+    nav_selection = st.radio(
+        "Navigation", options=list(menu_options.keys()),
+        format_func=lambda x: menu_options[x], key="nav_selection"
+    ) if st.session_state.jwt_access_token else "restricted"
 
 headers = get_auth_headers()
 
 # ============================================================================
 # PANTALLA SIN SESIÓN
 # ============================================================================
-
 if nav_selection == "restricted":
     st.markdown('<div class="executive-card-white" style="text-align:center; padding:60px 40px; margin-top:40px;">', unsafe_allow_html=True)
     st.markdown("<h2 style='color:#0F172A; font-weight:800; font-size:24px; margin-bottom:10px;'>Acceso restringido</h2>", unsafe_allow_html=True)
