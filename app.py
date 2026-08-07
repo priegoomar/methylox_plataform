@@ -114,6 +114,30 @@ def api_post(path, json=None, files=None, timeout=10):
     except requests.exceptions.RequestException as e:
         return ApiResult(False, error=str(e), status_code=None)
 
+def api_delete(path, timeout=10):
+    try:
+        r = requests.delete(
+            f"{BACKEND_URL}{path}",
+            headers=get_auth_headers(),
+            timeout=timeout
+        )
+        if r.status_code in (200, 204):
+            return ApiResult(
+                True,
+                data=r.json() if r.text else {},
+                status_code=r.status_code
+            )
+        return ApiResult(
+            False,
+            error=r.text,
+            status_code=r.status_code
+        )
+    except requests.exceptions.RequestException as e:
+        return ApiResult(
+            False,
+            error=str(e),
+            status_code=None
+        )
 
 @st.cache_data(ttl=20, show_spinner=False)
 def cached_get(path, _headers_token):
