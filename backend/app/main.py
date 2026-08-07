@@ -1,11 +1,9 @@
 from datetime import datetime, timezone
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.database import engine
-
 from app.routers import (
     auth,
     patients,
@@ -21,7 +19,6 @@ from app.routers import (
 # ==========================================
 # APPLICATION CORE
 # ==========================================
-
 app = FastAPI(
     title="METHYLOX",
     version="3.0.0",
@@ -31,11 +28,6 @@ app = FastAPI(
         "and access control."
     )
 )
-
-
-# ==========================================
-# CORS
-# ==========================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -49,7 +41,6 @@ app.add_middleware(
 # ==========================================
 # ROUTERS
 # ==========================================
-
 app.include_router(auth.router)
 app.include_router(patients.router)
 app.include_router(samples.router)
@@ -63,135 +54,86 @@ app.include_router(audit.router)
 # ==========================================
 # DEBUG DATABASE
 # ==========================================
-
 @app.get("/api/v1/debug/database")
 def debug_database():
     with engine.connect() as conn:
-        result = conn.execute(
-            text(
-                """
-                SELECT version_num
-                FROM alembic_version
-                """
-            )
-        )
-
-        return {
-            "alembic_version": [
-                row[0] for row in result
-            ]
-        }
+        result = conn.execute(text("SELECT version_num FROM alembic_version"))
+        return {"alembic_version": [row[0] for row in result]}
 
 
 @app.get("/api/v1/debug/patients-columns")
 def debug_patients_columns():
-    
+    with engine.connect() as conn:
+        result = conn.execute(
+            text("SELECT column_name FROM information_schema.columns WHERE table_name='patients' ORDER BY ordinal_position")
+        )
+        return {"columns": [row[0] for row in result]}
+
+
 @app.get("/api/v1/debug/samples-columns")
 def debug_samples_columns():
     with engine.connect() as conn:
         result = conn.execute(
-            text(
-                """
-                SELECT column_name
-                FROM information_schema.columns
-                WHERE table_name='samples'
-                ORDER BY ordinal_position
-                """
-            )
+            text("SELECT column_name FROM information_schema.columns WHERE table_name='samples' ORDER BY ordinal_position")
         )
-
-        return {
-            "columns": [
-                row[0] for row in result
-            ]
-        }
-    with engine.connect() as conn:
-        result = conn.execute(
-            text(
-                """
-                SELECT column_name
-                FROM information_schema.columns
-                WHERE table_name='patients'
-                ORDER BY ordinal_position
-                """
-            )
-        )
-
-        return {
-            "columns": [
-                row[0] for row in result
-            ]
-        }
+        return {"columns": [row[0] for row in result]}
 
 
 # ==========================================
 # TEMP FIX USERS HOSPITAL
 # ==========================================
-
 @app.get("/api/v1/debug/fix-users-hospital")
 def fix_users_hospital():
     from app.database import SessionLocal
     from app import models
 
     db = SessionLocal()
-
-    updated = (
-        db.query(models.User)
-        .filter(models.User.hospital_id == None)
-        .update(
-            {
-                models.User.hospital_id: 1
-            }
-        )
-    )
-
+    updated = db.query(models.User).filter(models.User.hospital_id == None).update({models.User.hospital_id: 1})
     db.commit()
     db.close()
+    return {"status": "updated", "users_updated": updated}
 
-    return {
-        "status": "updated",
-        "users_updated": updated
-    }
+
+# ==========================================
+# TEMP FIX ADMIN HOSPITAL
+# ==========================================
+@app.get("/api/v1/debug/fix-admin-hospital")
+def fix_admin_hospital():
+    from app.database import SessionLocal
+    from app import models
+
+    db = SessionLocal()
+    admin = db.query(models.User).filter(models.User.username == "admin@methylox.com").first()
+    if not admin:
+        db.close()
+        return {"error": "Admin not found"}
+
+    admin.hospital_id = 1
+    db.commit()
+    db.refresh(admin)
+    db.close()
+    return {"status": "updated", "username": admin.username, "hospital_id": admin.hospital_id}
 
 
 # ==========================================
 # TEMP FIX PATIENTS HOSPITAL
 # ==========================================
-
 @app.get("/api/v1/debug/fix-patients-hospital")
 def fix_patients_hospital():
     from app.database import SessionLocal
     from app import models
 
     db = SessionLocal()
-
-    updated = (
-        db.query(models.Patient)
-        .filter(models.Patient.hospital_id == None)
-        .update(
-            {
-                models.Patient.hospital_id: 1
-            }
-        )
-    )
-
+    updated = db.query(models.Patient).filter(models.Patient.hospital_id == None).update({models.Patient.hospital_id: 1})
     db.commit()
     db.close()
-
-    return {
-        "status": "updated",
-        "patients_updated": updated
-    }
+    return {"status": "updated", "patients_updated": updated}
 
 
 # ==========================================
-# HEALTH CHECK
+# HEALTH CHECK & ROOT
 # ==========================================
-
-@app.get(
-    "/api/v1/health",
-    tags=["System"]
-)
+@app.get("/api/v1/health", tags=["System"])
 def health():
     return {
         "status": "ONLINE",
@@ -200,10 +142,6 @@ def health():
         "timestamp": datetime.now(timezone.utc)
     }
 
-
-# ==========================================
-# ROOT
-# ==========================================
 
 @app.get("/")
 def root():
