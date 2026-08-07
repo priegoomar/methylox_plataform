@@ -56,12 +56,17 @@ div[data-baseweb="input"]:focus-within { border-color: #2563EB !important; }
 # BACKEND CONNECTION & SESSION STATE
 # ============================================================================
 
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000/api/v1")
+BACKEND_URL = os.getenv(
+    "BACKEND_URL",
+    "http://localhost:8000/api/v1"
+)
 
 DEFAULT_SESSION = {
     "jwt_access_token": None,
     "operator_display_name": "Guest Operator",
     "user_role": None,
+    "user_id": None,
+    "permissions": [],
     "hospital_id": None,
     "hospital_name": None,
     "nav_selection": "dashboard",
@@ -77,182 +82,281 @@ for key, value in DEFAULT_SESSION.items():
     if key not in st.session_state:
         st.session_state[key] = value
 
+
 def get_auth_headers():
     if st.session_state.jwt_access_token:
-        return {"Authorization": f"Bearer {st.session_state.jwt_access_token}"}
+        return {
+            "Authorization":
+            f"Bearer {st.session_state.jwt_access_token}"
+        }
     return {}
 
-headers = get_auth_headers()
 
 # ============================================================================
-# HELPERS DE RED
+# API HELPERS
 # ============================================================================
 
-class ApiResult:
-    def __init__(self, ok, data=None, error=None, status_code=None):
-        self.ok = ok
-        self.data = data if data is not None else []
-        self.error = error
-        self.status_code = status_code
-
-def api_get(path, params=None, timeout=10):
+def api_get(path, timeout=10):
     try:
-        r = requests.get(f"{BACKEND_URL}{path}", headers=get_auth_headers(), params=params, timeout=timeout)
+        r = requests.get(
+            f"{BACKEND_URL}{path}",
+            headers=get_auth_headers(),
+            timeout=timeout
+        )
         if r.status_code == 200:
-            return ApiResult(True, data=r.json(), status_code=200)
+            return ApiResult(
+                True,
+                data=r.json() if r.text else {},
+                status_code=r.status_code
+            )
         try:
-            detail = r.json().get("detail", r.text)
-        except Exception:
+            detail = r.json()
+        except:
             detail = r.text
-        return ApiResult(False, error=detail, status_code=r.status_code)
+
+        return ApiResult(
+            False,
+            error=detail,
+            status_code=r.status_code
+        )
     except requests.exceptions.RequestException as e:
-        return ApiResult(False, error=f"Sin conexión con el backend ({e.__class__.__name__})", status_code=None)
+        return ApiResult(
+            False,
+            error=str(e)
+        )
+
 
 def api_post(path, json=None, files=None, timeout=10):
     try:
-        r = requests.post(f"{BACKEND_URL}{path}", json=json, files=files, headers=get_auth_headers(), timeout=timeout)
+        r = requests.post(
+            f"{BACKEND_URL}{path}",
+            json=json,
+            files=files,
+            headers=get_auth_headers(),
+            timeout=timeout
+        )
         if r.status_code in (200, 201):
-            return ApiResult(True, data=r.json() if r.text else {}, status_code=r.status_code)
-        try:
-            detail = r.json().get("detail", r.text)
-        except Exception:
-            detail = r.text
-        return ApiResult(False, error=detail, status_code=r.status_code)
+            return ApiResult(
+                True,
+                data=r.json()
+                if r.text else {},
+                status_code=r.status_code
+            )
+        return ApiResult(
+            False,
+            error=r.text,
+            status_code=r.status_code
+        )
     except requests.exceptions.RequestException as e:
-        return ApiResult(False, error=f"Sin conexión con el backend ({e.__class__.__name__})", status_code=None)
+        return ApiResult(
+            False,
+            error=str(e)
+        )
 
-def api_patch(path, json=None, timeout=10):
-    try:
-        r = requests.patch(f"{BACKEND_URL}{path}", json=json, headers=get_auth_headers(), timeout=timeout)
-        if r.status_code == 200:
-            return ApiResult(True, data=r.json() if r.text else {}, status_code=200)
-        try:
-            detail = r.json().get("detail", r.text)
-        except Exception:
-            detail = r.text
-        return ApiResult(False, error=detail, status_code=r.status_code)
-    except requests.exceptions.RequestException as e:
-        return ApiResult(False, error=f"Sin conexión con el backend ({e.__class__.__name__})", status_code=None)
-
-@st.cache_data(ttl=20, show_spinner=False)
-def cached_get(path, _headers_token):
-    return api_get(path)
 
 # ============================================================================
-# BACKEND CONNECTIVITY MONITOR
+# LOAD PERMISSIONS
+# ============================================================================
+
+def load_user_permissions():
+    if not st.session_state.user_id:
+        return []
+
+    result = api_get(
+        f"/access/user/{st.session_state.user_id}"
+    )
+
+    if result.ok:
+        return [
+            permission["name"]
+            for permission in result.data
+        ]
+
+    return []
+
+
+# ============================================================================
+# BACKEND STATUS
 # ============================================================================
 
 def check_backend_connection():
     try:
-        r = requests.get(f"{BACKEND_URL}/health", timeout=5)
-        return (True, r.json()) if r.status_code == 200 else (False, {"status": r.status_code})
+        r = requests.get(
+            f"{BACKEND_URL}/health",
+            timeout=5
+        )
+        return (
+            True,
+            r.json()
+        )
     except Exception as e:
-        return False, {"error": str(e)}
+        return (
+            False,
+            {
+                "error": str(e)
+            }
+        )
+
 
 backend_status, backend_info = check_backend_connection()
 
+
 # ============================================================================
-# SIDEBAR: AUTENTICACIÓN Y NAVEGACIÓN
+# SIDEBAR AUTHENTICATION
 # ============================================================================
 
 with st.sidebar:
-    st.markdown("""
-    <div style="padding:15px 0px; border-bottom:1px solid #1E293B; margin-bottom:25px;">
-        <h2 style="color:white; margin:0; font-weight:900;">METHYLOX™</h2>
-        <p style="color:#38BDF8; font-size:12px; margin:0;">Epigenetic Intelligence Platform</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div style="padding:15px 0px;
+        border-bottom:1px solid #1E293B;
+        margin-bottom:25px;">
+
+        <h2 style="color:white;">
+        METHYLOX™
+        </h2>
+
+        <p style="color:#38BDF8;">
+        Epigenetic Intelligence Platform
+        </p>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     if backend_status:
-        st.sidebar.success("Backend Online")
+        st.success(
+            "Backend Online"
+        )
     else:
-        st.sidebar.error("Backend Offline")
-        st.sidebar.caption("No se puede iniciar sesión ni cargar datos hasta reestablecer la conexión.")
+        st.error(
+            "Backend Offline"
+        )
 
     if not st.session_state.jwt_access_token:
         with st.form("login_form"):
-            st.markdown('<p style="color:#94A3B8; font-size:12px; font-weight:700;">SECURE AUTHENTICATION</p>', unsafe_allow_html=True)
-            username = st.text_input("Username")
-            password = st.text_input("Password", type="password")
-            login = st.form_submit_button("Authenticate", use_container_width=True, disabled=not backend_status)
+            username = st.text_input(
+                "Username"
+            )
+            password = st.text_input(
+                "Password",
+                type="password"
+            )
+            login = st.form_submit_button(
+                "Authenticate",
+                use_container_width=True
+            )
 
         if login:
-            if not username or not password:
-                st.session_state.login_error = "Ingresa usuario y contraseña."
-            else:
-                try:
-                    response = requests.post(
-                        f"{BACKEND_URL}/auth/login",
-                        data={"username": username, "password": password},
-                        timeout=8
-                    )
-                    if response.status_code == 200:
-                        data = response.json()
-                        st.session_state.jwt_access_token = data["access_token"]
-                        decoded = jwt.decode(data["access_token"], options={"verify_signature": False})
-                        st.session_state.user_role = decoded.get("role", "cls").lower()
-                        st.session_state.operator_display_name = decoded.get("sub", username)
-                        st.session_state.hospital_id = decoded.get("id_hospital")
-                        st.session_state.hospital_name = None
-                        st.session_state.login_error = None
-                        st.rerun()
-                    elif response.status_code == 401:
-                        st.session_state.login_error = "Usuario o contraseña incorrectos."
-                    elif response.status_code == 403:
-                        st.session_state.login_error = "Usuario inactivo. Contacta a un administrador."
-                    else:
-                        st.session_state.login_error = f"Error inesperado del servidor ({response.status_code})."
-                except requests.exceptions.RequestException:
-                    st.session_state.login_error = "No se pudo conectar con el backend."
+            response = requests.post(
+                f"{BACKEND_URL}/auth/login",
+                data={
+                    "username": username,
+                    "password": password
+                }
+            )
 
-        if st.session_state.login_error:
-            st.sidebar.error(st.session_state.login_error)
+            if response.status_code == 200:
+                data = response.json()
+                token = data["access_token"]
+                st.session_state.jwt_access_token = token
+
+                decoded = jwt.decode(
+                    token,
+                    options={
+                        "verify_signature": False
+                    }
+                )
+
+                st.session_state.user_role = decoded.get(
+                    "role",
+                    "viewer"
+                )
+                st.session_state.user_id = decoded.get(
+                    "id_user"
+                )
+                st.session_state.operator_display_name = decoded.get(
+                    "sub",
+                    username
+                )
+                st.session_state.hospital_id = decoded.get(
+                    "id_hospital"
+                )
+                st.session_state.permissions = (
+                    load_user_permissions()
+                )
+
+                st.rerun()
+
     else:
-        if st.session_state.get("hospital_name") is None and st.session_state.get("hospital_id") is not None:
-            hospital_result = api_get("/hospitals/me")
-            if hospital_result.ok:
-                st.session_state.hospital_name = hospital_result.data.get("name", "—")
-            else:
-                st.session_state.hospital_name = f"ID {st.session_state.hospital_id}"
-
         st.markdown(
             f"""
-            <div style="background:#1E293B; padding:15px; border-radius:10px;">
-            <span style="color:#94A3B8;font-size:11px;">ACTIVE USER</span><br>
-            <b style="color:white;">{st.session_state.operator_display_name}</b><br>
-            <span style="color:#38BDF8;font-size:12px;">ROLE: {(st.session_state.user_role or "").upper()}</span><br>
-            <span style="color:#64748B;font-size:11px;">HOSPITAL: {st.session_state.get("hospital_name") or "—"}</span>
+            <div style="
+            background:#1E293B;
+            padding:15px;
+            border-radius:10px;">
+
+            <span style="color:#94A3B8;">
+            USER
+            </span><br>
+
+            <b style="color:white;">
+            {st.session_state.operator_display_name}
+            </b>
+
+            <br>
+
+            <span style="color:#38BDF8;">
+            ROLE:
+            {st.session_state.user_role}
+            </span>
+
             </div>
             """,
             unsafe_allow_html=True
         )
-        if st.button("Disconnect", use_container_width=True):
-            for key, value in DEFAULT_SESSION.items():
-                st.session_state[key] = value
-            st.cache_data.clear()
-            st.rerun()
 
-    st.sidebar.markdown("---")
+    # ======================================================
+    # NAVIGATION BY PERMISSIONS
+    # ======================================================
 
     menu_options = {
-        "dashboard": "Dashboard",
-        "patients": "Patients",
-        "lims": "Samples",
-        "analysis": "Analysis",
-        "reports": "Reports",
+        "dashboard":
+        "Dashboard"
     }
+
+    permissions = (
+        st.session_state.permissions
+    )
+
+    if "patient_read" in permissions:
+        menu_options["patients"] = "Patients"
+
+    if "sample_read" in permissions:
+        menu_options["lims"] = "Samples"
+
+    if "analysis_read" in permissions:
+        menu_options["analysis"] = "Analysis"
+
+    if "report_read" in permissions:
+        menu_options["reports"] = "Reports"
+
     if st.session_state.user_role == "admin":
         menu_options.update({
-            "users": "Access Control",
-            "settings": "Audit Trail",
+            "users":
+            "Access Control",
+            "settings":
+            "Audit Trail"
         })
 
     if st.session_state.jwt_access_token:
-        nav_selection = st.sidebar.radio(
+        nav_selection = st.radio(
             "Navigation",
             options=list(menu_options.keys()),
-            format_func=lambda x: menu_options[x],
-            key="nav_selection",
+            format_func=lambda x:
+            menu_options[x],
+            key="nav_selection"
         )
     else:
         nav_selection = "restricted"
