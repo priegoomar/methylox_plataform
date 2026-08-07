@@ -9,6 +9,16 @@ depends_on = None
 
 
 def upgrade():
+    # Crear hospital por defecto si no existe
+    op.execute(
+        """
+        INSERT INTO hospitals (id, name, active)
+        VALUES (1, 'Hospital Universitario', true)
+        ON CONFLICT (id) DO NOTHING;
+        """
+    )
+
+    # Crear columna si no existe
     op.add_column(
         "samples",
         sa.Column(
@@ -18,6 +28,7 @@ def upgrade():
         )
     )
 
+    # Crear relación
     op.create_foreign_key(
         "fk_samples_hospital",
         "samples",
@@ -26,14 +37,13 @@ def upgrade():
         ["id"]
     )
 
+    # Copiar hospital desde pacientes
     op.execute(
         """
         UPDATE samples
-        SET hospital_id = (
-            SELECT hospital_id
-            FROM patients
-            WHERE patients.id = samples.patient_id
-        )
+        SET hospital_id = patients.hospital_id
+        FROM patients
+        WHERE samples.patient_id = patients.id;
         """
     )
 
