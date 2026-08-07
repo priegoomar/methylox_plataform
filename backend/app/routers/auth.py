@@ -19,25 +19,44 @@ router = APIRouter(
 # ============================================================
 # LOGIN
 # ============================================================
-
 @router.post("/login", response_model=schemas.Token)
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    user = db.query(models.User).filter(models.User.username == form_data.username).first()
+
+    print("LOGIN ATTEMPT:", form_data.username)
+
+    user = (
+        db.query(models.User)
+        .filter(
+            models.User.username == form_data.username
+        )
+        .first()
+    )
+
 
     if not user:
+        print("USER NOT FOUND")
         raise HTTPException(
             status_code=401,
             detail="Invalid credentials"
         )
 
-    if not verify_password(form_data.password, user.password_hash):
+
+    print("USER FOUND:", user.username)
+
+
+    if not verify_password(
+        form_data.password,
+        user.password_hash
+    ):
+        print("PASSWORD ERROR")
         raise HTTPException(
             status_code=401,
             detail="Invalid credentials"
         )
+
 
     if not user.active:
         raise HTTPException(
@@ -45,8 +64,47 @@ def login(
             detail="User inactive"
         )
 
-    user.last_login = datetime.now(timezone.utc)
-    db.commit()
+
+    try:
+
+        user.last_login = datetime.now(timezone.utc)
+
+        db.commit()
+
+
+        token = create_access_token(
+            {
+                "sub": user.username,
+                "id_user": user.id,
+                "role": user.role,
+                "id_hospital": user.hospital_id
+            }
+        )
+
+
+        print("TOKEN CREATED")
+
+
+        return {
+            "access_token": token,
+            "token_type": "bearer",
+            "role": user.role,
+            "username": user.username,
+            "id_hospital": user.hospital_id
+        }
+
+
+    except Exception as e:
+
+        print("LOGIN ERROR:", str(e))
+
+        db.rollback()
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+
 
 # ============================================================
 # PROVISION USER (ADMIN CREATES USERS)
