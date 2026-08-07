@@ -102,6 +102,19 @@ def debug_patients_columns():
                 row[0] for row in result
             ]
         }
+@app.get("/api/v1/debug/fix-patients-hospital")
+def fix_patients_hospital():
+    with engine.connect() as conn:
+        conn.execute(text("""
+            UPDATE patients
+            SET hospital_id = 1
+            WHERE hospital_id IS NULL
+        """))
+        conn.commit()
+
+    return {
+        "message": "Patients hospital_id updated"
+    }
 
 
 @app.get("/api/v1/fix-hospital-column")
