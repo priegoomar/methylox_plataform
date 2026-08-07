@@ -102,35 +102,28 @@ def debug_patients_columns():
                 row[0] for row in result
             ]
         }
+
+
+# ==========================================
+# FIX OLD PATIENTS WITHOUT HOSPITAL
+# ==========================================
+
 @app.get("/api/v1/debug/fix-patients-hospital")
 def fix_patients_hospital():
-    with engine.connect() as conn:
-        conn.execute(text("""
-            UPDATE patients
-            SET hospital_id = 1
-            WHERE hospital_id IS NULL
-        """))
-        conn.commit()
-
-    return {
-        "message": "Patients hospital_id updated"
-    }
-
-
-@app.get("/api/v1/fix-hospital-column")
-def fix_hospital_column():
     with engine.begin() as conn:
-        conn.execute(
+        result = conn.execute(
             text(
                 """
-                ALTER TABLE patients
-                ADD COLUMN IF NOT EXISTS hospital_id INTEGER
+                UPDATE patients
+                SET hospital_id = 1
+                WHERE hospital_id IS NULL
                 """
             )
         )
 
         return {
-            "status": "hospital_id created"
+            "status": "updated",
+            "patients_updated": result.rowcount
         }
 
 
