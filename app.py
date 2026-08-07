@@ -799,7 +799,7 @@ elif nav_selection == "users":
         st.warning(f"No se pudo cargar la lista de usuarios: {users_result.error}")
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # Create User
+    # Provision New User
     st.markdown('<div class="executive-card-white">', unsafe_allow_html=True)
     st.markdown("<p class='section-card-title'>Provision New User</p>", unsafe_allow_html=True)
 
@@ -821,7 +821,10 @@ elif nav_selection == "users":
         if not all([input_username, input_email, input_full_name, input_password]):
             st.error("Todos los campos son obligatorios.")
         else:
-            payload = {"username": input_username, "email": input_email, "password": input_password, "full_name": input_full_name, "role": target_role}
+            payload = {
+                "username": input_username, "email": input_email, "password": input_password,
+                "full_name": input_full_name, "role": target_role, "hospital_id": st.session_state.hospital_id
+            }
             result = api_post("/auth/provision-user", json=payload)
             if result.ok:
                 st.success("Usuario creado correctamente.")
@@ -859,14 +862,15 @@ elif nav_selection == "users":
             st.info("Este usuario no tiene permisos asignados.")
 
         st.write("")
+        st.markdown("##### Assign Permission")
 
         available_permissions = [p for p in permissions if p.get("name") not in current_permission_names]
         if available_permissions:
             permission_options = {f"{p.get('name')} — {p.get('module')}": p.get("id") for p in available_permissions}
-            selected_permission_label = st.selectbox("Permission to Assign", list(permission_options.keys()), key="assign_permission_select")
+            selected_permission_label = st.selectbox("Permission to Assign", list(permission_options.keys()), key=f"assign_permission_select_{selected_user_id}")
             selected_permission_id = permission_options[selected_permission_label]
 
-            if st.button("Assign Permission", use_container_width=True, key="assign_permission_button"):
+            if st.button("Assign Permission", use_container_width=True, key=f"assign_permission_button_{selected_user_id}"):
                 assign_payload = {"user_id": selected_user_id, "permission_id": selected_permission_id}
                 result = api_post("/access/assign", json=assign_payload)
                 if result.ok:
@@ -878,21 +882,40 @@ elif nav_selection == "users":
         else:
             st.success("Este usuario ya tiene todos los permisos disponibles.")
 
+        st.write("")
+        st.markdown("##### Revoke Permission")
+
         if current_permissions:
             revoke_options = {f"{p.get('name')} — {p.get('module')}": p.get("id") for p in current_permissions}
-            selected_revoke_label = st.selectbox("Permission to Revoke", list(revoke_options.keys()), key="revoke_permission_select")
+            selected_revoke_label = st.selectbox("Permission to Revoke", list(revoke_options.keys()), key=f"revoke_permission_select_{selected_user_id}")
             selected_revoke_permission_id = revoke_options[selected_revoke_label]
 
-            if st.button("Revoke Permission", use_container_width=True, key="revoke_permission_button"):
-                result = api_delete("/access/revoke", timeout=10)
-                if result.ok:
-                    st.success("Permiso revocado correctamente.")
-                    st.cache_data.clear()
-                    st.rerun()
-                else:
-                    st.error(f"No se pudo revocar el permiso: {result.error}")
+            if st.button("Revoke Permission", use_container_width=True, key=f"revoke_permission_button_{selected_user_id}"):
+                try:
+                    response = requests.delete(
+                        f"{BACKEND_URL}/access/revoke",
+                        headers=get_auth_headers(),
+                        params={"user_id": selected_user_id, "permission_id": selected_revoke_permission_id},
+                        timeout=10
+                    )
+                    if response.status_code == 200:
+                        st.success("Permiso revocado correctamente.")
+                        st.cache_data.clear()
+                        st.rerun()
+                    else:
+                        try:
+                            detail = response.json().get("detail", response.text)
+                        except Exception:
+                            detail = response.text
+                        st.error(f"No se pudo revocar el permiso: {detail}")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"Error de conexión con el backend: {e}")
+        else:
+            st.info("Este usuario no tiene permisos para revocar.")
     elif not permissions_result.ok:
         st.warning(f"No se pudieron cargar los permisos: {permissions_result.error}")
+    elif not users_result.ok:
+        st.warning(f"No se pudieron cargar los usuarios: {users_result.error}")
     else:
         st.info("Necesitas tener usuarios y permisos registrados para administrar el acceso.")
 
