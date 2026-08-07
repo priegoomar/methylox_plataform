@@ -150,8 +150,10 @@ with st.sidebar:
         </div>
     """, unsafe_allow_html=True)
 
-    if backend_status: st.success("Backend Online")
-    else: st.error("Backend Offline")
+    if backend_status:
+        st.success("Backend Online")
+    else:
+        st.error("Backend Offline")
 
     if not st.session_state.jwt_access_token:
         with st.form("login_form"):
@@ -160,14 +162,19 @@ with st.sidebar:
             login = st.form_submit_button("Authenticate", use_container_width=True)
 
         if login:
-            response = requests.post(f"{BACKEND_URL}/auth/login", data={"username": username, "password": password})
+            response = requests.post(
+                f"{BACKEND_URL}/auth/login",
+                data={"username": username, "password": password}
+            )
             if response.status_code == 200:
                 data = response.json()
                 token = data["access_token"]
                 st.session_state.jwt_access_token = token
+                
                 decoded = jwt.decode(token, options={"verify_signature": False})
                 st.write("JWT DEBUG")
                 st.write(decoded)
+                
                 st.session_state.user_role = decoded.get("role", "viewer")
                 st.session_state.user_id = decoded.get("id_user")
                 st.session_state.operator_display_name = decoded.get("sub", username)
