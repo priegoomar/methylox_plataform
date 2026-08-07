@@ -85,6 +85,26 @@ def debug_database():
 
 @app.get("/api/v1/debug/patients-columns")
 def debug_patients_columns():
+    
+@app.get("/api/v1/debug/samples-columns")
+def debug_samples_columns():
+    with engine.connect() as conn:
+        result = conn.execute(
+            text(
+                """
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_name='samples'
+                ORDER BY ordinal_position
+                """
+            )
+        )
+
+        return {
+            "columns": [
+                row[0] for row in result
+            ]
+        }
     with engine.connect() as conn:
         result = conn.execute(
             text(
