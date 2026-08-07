@@ -186,6 +186,8 @@ with st.sidebar:
     # ======================================================
     menu_options = {"dashboard": "Dashboard"}
     permissions = st.session_state.permissions
+    st.sidebar.write("DEBUG PERMISSIONS:")
+    st.sidebar.write(permissions)
 
     if "patient_read" in permissions: menu_options["patients"] = "Patients"
     if "sample_read" in permissions: menu_options["lims"] = "Samples"
