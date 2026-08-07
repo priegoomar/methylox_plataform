@@ -40,7 +40,7 @@ def create_sample(
         raise HTTPException(status_code=403, detail="Patient belongs to another hospital")
 
     new_sample = models.Sample(
-        hospital_id=current_user.id_hospital,
+        hospital_id=patient.hospital_id,
         sample_code=sample.sample_code,
         patient_id=sample.patient_id,
         sample_type=sample.sample_type,
