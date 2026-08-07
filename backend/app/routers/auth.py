@@ -48,6 +48,32 @@ def login(
     user.last_login = datetime.now(timezone.utc)
     db.commit()
 
+# ============================================================
+# PROVISION USER (ADMIN CREATES USERS)
+# ============================================================
+
+@router.post("/provision-user", response_model=schemas.UserResponse)
+def provision_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
+    existing_user = db.query(models.User).filter(models.User.username == user_data.username).first()
+    
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
+
+    new_user = models.User(
+        username=user_data.username,
+        email=user_data.email,
+        full_name=user_data.full_name,
+        role=user_data.role,
+        hospital_id=user_data.hospital_id,
+        password_hash=user_data.password_hash,
+        active=True
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
     # ====================================================
     # JWT CON HOSPITAL
     # ====================================================
