@@ -166,6 +166,8 @@ with st.sidebar:
                 token = data["access_token"]
                 st.session_state.jwt_access_token = token
                 decoded = jwt.decode(token, options={"verify_signature": False})
+                st.write("JWT DEBUG")
+                st.write(decoded)
                 st.session_state.user_role = decoded.get("role", "viewer")
                 st.session_state.user_id = decoded.get("id_user")
                 st.session_state.operator_display_name = decoded.get("sub", username)
