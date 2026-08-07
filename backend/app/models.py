@@ -10,14 +10,12 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-
 from app.database import Base
 
 
 # ==========================================================
 # HOSPITAL
 # ==========================================================
-
 class Hospital(Base):
     __tablename__ = "hospitals"
 
@@ -29,12 +27,12 @@ class Hospital(Base):
     users = relationship("User", back_populates="hospital")
     patients = relationship("Patient", back_populates="hospital")
     samples = relationship("Sample", back_populates="hospital")
+    analysis_results = relationship("AnalysisResult", back_populates="hospital")
 
 
 # ==========================================================
 # USERS
 # ==========================================================
-
 class User(Base):
     __tablename__ = "users"
 
@@ -68,7 +66,6 @@ class User(Base):
 # ==========================================================
 # PATIENTS
 # ==========================================================
-
 class Patient(Base):
     __tablename__ = "patients"
 
@@ -81,17 +78,12 @@ class Patient(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     hospital = relationship("Hospital", back_populates="patients")
-    samples = relationship(
-        "Sample",
-        back_populates="patient",
-        cascade="all, delete-orphan"
-    )
+    samples = relationship("Sample", back_populates="patient", cascade="all, delete-orphan")
 
 
 # ==========================================================
 # SAMPLES
 # ==========================================================
-
 class Sample(Base):
     __tablename__ = "samples"
 
@@ -110,21 +102,17 @@ class Sample(Base):
 
     hospital = relationship("Hospital", back_populates="samples")
     patient = relationship("Patient", back_populates="samples")
-    analysis_results = relationship(
-        "AnalysisResult",
-        back_populates="sample",
-        cascade="all, delete-orphan"
-    )
+    analysis_results = relationship("AnalysisResult", back_populates="sample", cascade="all, delete-orphan")
 
 
 # ==========================================================
 # ANALYSIS RESULTS
 # ==========================================================
-
 class AnalysisResult(Base):
     __tablename__ = "analysis_results"
 
     id = Column(Integer, primary_key=True, index=True)
+    hospital_id = Column(Integer, ForeignKey("hospitals.id"), nullable=True)
     sample_id = Column(Integer, ForeignKey("samples.id"), nullable=False)
     pipeline_version = Column(String(100), default="METHYLOX Analysis v1.0")
     qc_status = Column(String(50), nullable=True)
@@ -133,13 +121,13 @@ class AnalysisResult(Base):
     created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+    hospital = relationship("Hospital", back_populates="analysis_results")
     sample = relationship("Sample", back_populates="analysis_results")
 
 
 # ==========================================================
 # AUDIT
 # ==========================================================
-
 class AuditLog(Base):
     __tablename__ = "audit_logs"
 
@@ -155,7 +143,6 @@ class AuditLog(Base):
 # ==========================================================
 # PERMISSIONS
 # ==========================================================
-
 class Permission(Base):
     __tablename__ = "permissions"
 
@@ -165,17 +152,12 @@ class Permission(Base):
     description = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    user_permissions = relationship(
-        "UserPermission",
-        back_populates="permission",
-        cascade="all, delete-orphan"
-    )
+    user_permissions = relationship("UserPermission", back_populates="permission", cascade="all, delete-orphan")
 
 
 # ==========================================================
 # USER PERMISSIONS
 # ==========================================================
-
 class UserPermission(Base):
     __tablename__ = "user_permissions"
 
@@ -185,16 +167,6 @@ class UserPermission(Base):
     granted_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    user = relationship(
-        "User",
-        foreign_keys=[user_id],
-        back_populates="permissions"
-    )
-    permission = relationship(
-        "Permission",
-        back_populates="user_permissions"
-    )
-    granted_by_user = relationship(
-        "User",
-        foreign_keys=[granted_by]
-    )
+    user = relationship("User", foreign_keys=[user_id], back_populates="permissions")
+    permission = relationship("Permission", back_populates="user_permissions")
+    granted_by_user = relationship("User", foreign_keys=[granted_by])
