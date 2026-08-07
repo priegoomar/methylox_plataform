@@ -105,33 +105,73 @@ def debug_patients_columns():
 
 
 # ==========================================
-# FIX OLD PATIENTS WITHOUT HOSPITAL
+# TEMP FIX USERS HOSPITAL
+# ==========================================
+
+@app.get("/api/v1/debug/fix-users-hospital")
+def fix_users_hospital():
+    from app.database import SessionLocal
+    from app import models
+
+    db = SessionLocal()
+
+    updated = (
+        db.query(models.User)
+        .filter(models.User.hospital_id == None)
+        .update(
+            {
+                models.User.hospital_id: 1
+            }
+        )
+    )
+
+    db.commit()
+    db.close()
+
+    return {
+        "status": "updated",
+        "users_updated": updated
+    }
+
+
+# ==========================================
+# TEMP FIX PATIENTS HOSPITAL
 # ==========================================
 
 @app.get("/api/v1/debug/fix-patients-hospital")
 def fix_patients_hospital():
-    with engine.begin() as conn:
-        result = conn.execute(
-            text(
-                """
-                UPDATE patients
-                SET hospital_id = 1
-                WHERE hospital_id IS NULL
-                """
-            )
-        )
+    from app.database import SessionLocal
+    from app import models
 
-        return {
-            "status": "updated",
-            "patients_updated": result.rowcount
-        }
+    db = SessionLocal()
+
+    updated = (
+        db.query(models.Patient)
+        .filter(models.Patient.hospital_id == None)
+        .update(
+            {
+                models.Patient.hospital_id: 1
+            }
+        )
+    )
+
+    db.commit()
+    db.close()
+
+    return {
+        "status": "updated",
+        "patients_updated": updated
+    }
 
 
 # ==========================================
 # HEALTH CHECK
 # ==========================================
 
-@app.get("/api/v1/health")
+@app.get(
+    "/api/v1/health",
+    tags=["System"]
+)
 def health():
     return {
         "status": "ONLINE",
