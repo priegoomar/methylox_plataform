@@ -68,31 +68,56 @@ for key, value in DEFAULT_SESSION.items():
 def get_auth_headers():
     return {"Authorization": f"Bearer {st.session_state.jwt_access_token}"} if st.session_state.jwt_access_token else {}
 
-
 # ============================================================================
 # API HELPERS
 # ============================================================================
-def api_get(path, timeout=10):
+
+class ApiResult:
+    def __init__(self, ok, data=None, error=None, status_code=None):
+        self.ok = ok
+        self.data = data if data is not None else []
+        self.error = error
+        self.status_code = status_code
+
+
+def api_get(path, params=None, timeout=10):
     try:
-        r = requests.get(f"{BACKEND_URL}{path}", headers=get_auth_headers(), timeout=timeout)
+        r = requests.get(
+            f"{BACKEND_URL}{path}",
+            headers=get_auth_headers(),
+            params=params,
+            timeout=timeout
+        )
         if r.status_code == 200:
             return ApiResult(True, data=r.json() if r.text else {}, status_code=r.status_code)
-        try: detail = r.json()
-        except: detail = r.text
+        try:
+            detail = r.json().get("detail", r.text)
+        except:
+            detail = r.text
         return ApiResult(False, error=detail, status_code=r.status_code)
     except requests.exceptions.RequestException as e:
-        return ApiResult(False, error=str(e))
+        return ApiResult(False, error=str(e), status_code=None)
 
 
 def api_post(path, json=None, files=None, timeout=10):
     try:
-        r = requests.post(f"{BACKEND_URL}{path}", json=json, files=files, headers=get_auth_headers(), timeout=timeout)
+        r = requests.post(
+            f"{BACKEND_URL}{path}",
+            json=json,
+            files=files,
+            headers=get_auth_headers(),
+            timeout=timeout
+        )
         if r.status_code in (200, 201):
             return ApiResult(True, data=r.json() if r.text else {}, status_code=r.status_code)
         return ApiResult(False, error=r.text, status_code=r.status_code)
     except requests.exceptions.RequestException as e:
-        return ApiResult(False, error=str(e))
+        return ApiResult(False, error=str(e), status_code=None)
 
+
+@st.cache_data(ttl=20, show_spinner=False)
+def cached_get(path, _headers_token):
+    return api_get(path)
 
 # ============================================================================
 # LOAD PERMISSIONS & BACKEND STATUS
