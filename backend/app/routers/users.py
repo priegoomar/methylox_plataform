@@ -1,298 +1,168 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
-from app.database import get_db
-from app import models, schemas
-from app.security import get_current_user_claims
-from app.utils.password import hash_password
-from app.utils.audit import create_audit_log
-
-
-router = APIRouter(prefix="/api/v1/users", tags=["Users"])
-
+from datetime import datetime
+from typing import Optional, Dict, Any, List
+from pydantic import BaseModel, EmailStr, ConfigDict, Field
 
 # ============================================================
-# SERIALIZE USER
+# HOSPITAL SCHEMAS
 # ============================================================
 
-def serialize_user(user):
-    return {
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "full_name": user.full_name,
-        "role": user.role,
-        "hospital_id": user.hospital_id,
-        "active": user.active,
-        "created_at": user.created_at,
-        "last_login": user.last_login,
-        "permissions": [
-            {
-                "id": p.id,
-                "name": p.name,
-                "module": p.module,
-                "description": p.description
-            }
-            for p in user.direct_permissions
-        ]
-    }
+class HospitalBase(BaseModel):
+    name: str
+    code: str
 
+class HospitalCreate(HospitalBase):
+    pass
+
+class HospitalResponse(HospitalBase):
+    id: int
+    active: bool
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
 
 # ============================================================
-# ADMIN CHECK
+# AUTH / USER SCHEMAS
 # ============================================================
 
-def check_admin(current_user):
-    if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin privileges required"
-        )
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: Optional[str] = None
+    role: str
+    hospital_id: Optional[int] = None
 
+class UserCreate(UserBase):
+    password: str = Field(min_length=8)
 
-# ============================================================
-# HOSPITAL ACCESS CHECK
-# ============================================================
+class UserUpdate(BaseModel):
+    """Datos que un administrador puede modificar de un usuario. hospital_id NO se modifica aquí."""
+    full_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    role: Optional[str] = None
 
-def check_hospital_access(user, current_user):
-    """
-    Ensures that an administrator can only manage
-    users belonging to their own hospital.
-    """
-    if user.hospital_id != current_user.id_hospital:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Hospital access denied"
-        )
+class UserPasswordUpdate(BaseModel):
+    """Cambio administrativo de contraseña."""
+    password: str = Field(min_length=8)
 
+class UserStatusUpdate(BaseModel):
+    active: bool
 
-# ============================================================
-# GET USERS
-# ============================================================
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    role: str
+    username: str
+    id_hospital: Optional[int] = None
 
-@router.get("/")
-def get_users(
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user_claims)
-):
-    check_admin(current_user)
-    users = db.query(models.User).filter(models.User.hospital_id == current_user.id_hospital).all()
-    return [serialize_user(user) for user in users]
+class PermissionResponse(BaseModel):
+    id: int
+    name: str
+    module: str
+    description: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
 
-
-# ============================================================
-# GET USER
-# ============================================================
-
-@router.get("/{user_id}")
-def get_user(
-    user_id: int,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user_claims)
-):
-    check_admin(current_user)
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    check_hospital_access(user, current_user)
-    return serialize_user(user)
-
+class UserResponse(UserBase):
+    id: int
+    active: bool
+    created_at: datetime
+    last_login: Optional[datetime] = None
+    permissions: List[PermissionResponse] = []
+    model_config = ConfigDict(from_attributes=True)
 
 # ============================================================
-# CREATE USER
+# PATIENT SCHEMAS
 # ============================================================
 
-@router.post("/")
-def create_user(
-    payload: schemas.UserCreate,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user_claims)
-):
-    check_admin(current_user)
+class PatientBase(BaseModel):
+    patient_code: str
+    demographics: Optional[Dict[str, Any]] = None
+    clinical_notes: Optional[str] = None
+    hospital_id: Optional[int] = None
 
-    if db.query(models.User).filter(models.User.username == payload.username).first():
-        raise HTTPException(status_code=400, detail="Username already exists")
+class PatientCreate(PatientBase):
+    pass
 
-    if db.query(models.User).filter(models.User.email == payload.email).first():
-        raise HTTPException(status_code=400, detail="Email already exists")
-
-    new_user = models.User(
-        username=payload.username,
-        email=payload.email,
-        full_name=payload.full_name,
-        role=payload.role,
-        hospital_id=current_user.id_hospital,
-        password_hash=hash_password(payload.password),
-        active=True
-    )
-
-    try:
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
-
-        create_audit_log(
-            db=db,
-            user_id=current_user.id_user,
-            action="CREATE_USER",
-            module="users",
-            entity=str(new_user.id),
-            changes={
-                "username": new_user.username,
-                "role": new_user.role,
-                "hospital_id": new_user.hospital_id
-            }
-        )
-
-        return {
-            "message": "User created successfully",
-            "user_id": new_user.id
-        }
-    except Exception:
-        db.rollback()
-        raise HTTPException(status_code=500, detail="Could not create user")
-
+class PatientResponse(PatientBase):
+    id: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
 
 # ============================================================
-# UPDATE USER
+# SAMPLE / LIMS SCHEMAS
 # ============================================================
 
-@router.patch("/{user_id}")
-def update_user(
-    user_id: int,
-    payload: schemas.UserUpdate,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user_claims)
-):
-    check_admin(current_user)
+class SampleBase(BaseModel):
+    sample_code: str
+    patient_id: int
+    sample_type: str
+    collection_date: Optional[datetime] = None
+    received_date: Optional[datetime] = None
+    status: Optional[str] = "Collected"
+    storage_location: Optional[str] = None
+    hospital_id: Optional[int] = None
 
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+class SampleCreate(SampleBase):
+    pass
 
-    check_hospital_access(user, current_user)
-    changes = {}
+class SampleUpdate(BaseModel):
+    status: Optional[str] = None
+    storage_location: Optional[str] = None
+    received_date: Optional[datetime] = None
 
-    if payload.full_name is not None and payload.full_name != user.full_name:
-        changes["full_name"] = {"old": user.full_name, "new": payload.full_name}
-        user.full_name = payload.full_name
-
-    if payload.email is not None and payload.email != user.email:
-        if db.query(models.User).filter(models.User.email == payload.email, models.User.id != user.id).first():
-            raise HTTPException(status_code=400, detail="Email already exists")
-        changes["email"] = {"old": user.email, "new": payload.email}
-        user.email = payload.email
-
-    if payload.role is not None and payload.role != user.role:
-        changes["role"] = {"old": user.role, "new": payload.role}
-        user.role = payload.role
-
-    try:
-        db.commit()
-        db.refresh(user)
-
-        if changes:
-            create_audit_log(
-                db=db,
-                user_id=current_user.id_user,
-                action="UPDATE_USER",
-                module="users",
-                entity=str(user.id),
-                changes=changes
-            )
-
-        return {
-            "message": "User updated successfully",
-            "user": serialize_user(user)
-        }
-    except Exception:
-        db.rollback()
-        raise HTTPException(status_code=500, detail="Could not update user")
-
+class SampleResponse(SampleBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    model_config = ConfigDict(from_attributes=True)
 
 # ============================================================
-# CHANGE PASSWORD
+# ANALYSIS SCHEMAS
 # ============================================================
 
-@router.patch("/{user_id}/password")
-def change_user_password(
-    user_id: int,
-    payload: schemas.UserPasswordUpdate,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user_claims)
-):
-    check_admin(current_user)
+class AnalysisCreate(BaseModel):
+    sample_id: int
+    pipeline_version: Optional[str] = "METHYLOX Analysis v1.0"
+    qc_status: Optional[str] = None
+    metrics: Optional[Dict[str, Any]] = None
+    classification: Optional[str] = None
+    hospital_id: Optional[int] = None
 
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    check_hospital_access(user, current_user)
-    user.password_hash = hash_password(payload.password)
-
-    try:
-        db.commit()
-
-        create_audit_log(
-            db=db,
-            user_id=current_user.id_user,
-            action="CHANGE_PASSWORD",
-            module="users",
-            entity=str(user.id),
-            changes={"username": user.username}
-        )
-
-        return {"message": "Password changed successfully"}
-    except Exception:
-        db.rollback()
-        raise HTTPException(status_code=500, detail="Could not change password")
-
+class AnalysisResponse(AnalysisCreate):
+    id: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
 
 # ============================================================
-# UPDATE STATUS
+# AUDIT SCHEMAS
 # ============================================================
 
-@router.patch("/{user_id}/status")
-def update_user_status(
-    user_id: int,
-    payload: schemas.UserStatusUpdate,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user_claims)
-):
-    check_admin(current_user)
+class AuditLogResponse(BaseModel):
+    id: int
+    user_id: Optional[int]
+    action: str
+    module: str
+    entity: Optional[str]
+    changes: Optional[Dict[str, Any]] = None
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
 
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+# ============================================================
+# ACCESS CONTROL
+# ============================================================
 
-    check_hospital_access(user, current_user)
-    old_status = user.active
+class PermissionCreate(BaseModel):
+    name: str
+    module: str
+    description: Optional[str] = None
 
-    if old_status == payload.active:
-        return {"message": "User status unchanged", "active": user.active}
+class UserPermissionCreate(BaseModel):
+    user_id: int
+    permission_id: int
+    granted_by: Optional[int] = None
 
-    user.active = payload.active
-
-    try:
-        db.commit()
-        db.refresh(user)
-
-        action = "ACTIVATE_USER" if payload.active else "DEACTIVATE_USER"
-
-        create_audit_log(
-            db=db,
-            user_id=current_user.id_user,
-            action=action,
-            module="users",
-            entity=str(user.id),
-            changes={
-                "username": user.username,
-                "old_active": old_status,
-                "new_active": user.active
-            }
-        )
-
-        return {"message": "User status updated", "active": user.active}
-    except Exception:
-        db.rollback()
-        raise HTTPException(status_code=500, detail="Could not update user status")
+class UserPermissionResponse(BaseModel):
+    id: int
+    user_id: int
+    permission_id: int
+    granted_by: Optional[int]
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
