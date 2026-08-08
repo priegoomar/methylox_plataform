@@ -4,16 +4,10 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
-from app.security import (
-    TokenData,
-    PermissionGuard
-)
+from app.security import TokenData, PermissionGuard
 
 
-router = APIRouter(
-    prefix="/api/v1/samples",
-    tags=["Samples"]
-)
+router = APIRouter(prefix="/api/v1/samples", tags=["Samples"])
 
 
 # ============================================================
@@ -27,12 +21,10 @@ def create_sample(
     current_user: TokenData = Depends(PermissionGuard("sample_create"))
 ):
     existing = db.query(models.Sample).filter(models.Sample.sample_code == sample.sample_code).first()
-
     if existing:
         raise HTTPException(status_code=400, detail="Sample code already exists")
 
     patient = db.query(models.Patient).filter(models.Patient.id == sample.patient_id).first()
-
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
 
@@ -51,29 +43,35 @@ def create_sample(
         created_by=current_user.id_user
     )
 
-    db.add(new_sample)
-    db.commit()
-    db.refresh(new_sample)
+    try:
+        db.add(new_sample)
+        db.commit()
+        db.refresh(new_sample)
 
-    audit = models.AuditLog(
-        user_id=current_user.id_user,
-        action="CREATE_SAMPLE",
-        module="samples",
-        entity=new_sample.sample_code,
-        changes={
-            "sample_id": new_sample.id,
-            "hospital_id": current_user.id_hospital
-        }
-    )
+        audit = models.AuditLog(
+            user_id=current_user.id_user,
+            hospital_id=patient.hospital_id,
+            action="CREATE_SAMPLE",
+            module="samples",
+            entity=new_sample.sample_code,
+            changes={
+                "sample_id": new_sample.id,
+                "sample_code": new_sample.sample_code,
+                "patient_id": new_sample.patient_id,
+                "hospital_id": new_sample.hospital_id
+            }
+        )
+        db.add(audit)
+        db.commit()
 
-    db.add(audit)
-    db.commit()
-
-    return new_sample
+        return new_sample
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Could not create sample")
 
 
 # ============================================================
-# GET SAMPLES WITH HOSPITAL FILTER
+# GET ALL SAMPLES
 # ============================================================
 
 @router.get("/", response_model=list[schemas.SampleResponse])
@@ -116,7 +114,6 @@ def get_sample(
     current_user: TokenData = Depends(PermissionGuard("sample_read"))
 ):
     sample = db.query(models.Sample).filter(models.Sample.id == sample_id).first()
-
     if not sample:
         raise HTTPException(status_code=404, detail="Sample not found")
 
@@ -138,25 +135,45 @@ def update_sample(
     current_user: TokenData = Depends(PermissionGuard("sample_update"))
 ):
     sample = db.query(models.Sample).filter(models.Sample.id == sample_id).first()
-
     if not sample:
         raise HTTPException(status_code=404, detail="Sample not found")
 
     if current_user.role != "admin" and sample.hospital_id != current_user.id_hospital:
         raise HTTPException(status_code=403, detail="Hospital access denied")
 
-    if update.status:
+    changes = {}
+
+    if update.status is not None:
+        changes["status"] = update.status
         sample.status = update.status
 
-    if update.storage_location:
+    if update.storage_location is not None:
+        changes["storage_location"] = update.storage_location
         sample.storage_location = update.storage_location
 
-    if update.received_date:
+    if update.received_date is not None:
+        changes["received_date"] = update.received_date.isoformat()
         sample.received_date = update.received_date
 
     sample.updated_at = datetime.now(timezone.utc)
 
-    db.commit()
-    db.refresh(sample)
+    try:
+        db.commit()
+        db.refresh(sample)
 
-    return sample
+        if changes:
+            audit = models.AuditLog(
+                user_id=current_user.id_user,
+                hospital_id=sample.hospital_id,
+                action="UPDATE_SAMPLE",
+                module="samples",
+                entity=sample.sample_code,
+                changes=changes
+            )
+            db.add(audit)
+            db.commit()
+
+        return sample
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Could not update sample")
