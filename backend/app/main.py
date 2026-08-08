@@ -1,4 +1,7 @@
 from datetime import datetime, timezone
+import traceback
+
+import jwt
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,6 +9,7 @@ from sqlalchemy import text
 
 from app.database import engine, SessionLocal
 from app import models
+from app.config import settings
 from app.routers import (
     auth,
     patients,
@@ -17,23 +21,21 @@ from app.routers import (
     audit
 )
 
-# ==========================================
+
+# ============================================================
 # APPLICATION CORE
-# ==========================================
+# ============================================================
 
 app = FastAPI(
     title="METHYLOX",
     version="3.0.0",
-    description=(
-        "METHYLOX molecular intelligence platform "
-        "with LIMS, analysis workflows, reporting "
-        "and access control."
-    )
+    description="METHYLOX molecular intelligence platform with LIMS, analysis workflows, reporting and access control."
 )
 
-# ==========================================
+
+# ============================================================
 # CORS
-# ==========================================
+# ============================================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,93 +45,79 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ==========================================
-# HTTP AUDIT TRAIL MIDDLEWARE
-# ==========================================
-import traceback
+
+# ============================================================
+# HTTP AUDIT TRAIL
+# ============================================================
 
 @app.middleware("http")
 async def audit_http_requests(request: Request, call_next):
-    """
-    Global HTTP audit middleware.
+    ignored_paths = {"/", "/docs", "/redoc", "/openapi.json", "/api/v1/health"}
 
-    Records:
-    - IP address
-    - endpoint
-    - HTTP method
-    - status code
-    - timestamp
+    if request.url.path.startswith("/api/v1/audit"):
+        return await call_next(request)
 
-    Business-level actions such as CREATE_USER,
-    CHANGE_PASSWORD, CREATE_PATIENT, etc.
-    continue to be recorded by their routers.
-    """
+    response = await call_next(request)
 
-    skip_paths = {
-        "/",
-        "/docs",
-        "/redoc",
-        "/openapi.json",
-        "/api/v1/health",
-    }
-
-    response = None
-
-    try:
-        response = await call_next(request)
+    if request.url.path in ignored_paths:
         return response
 
+    client_ip = None
+    try:
+        forwarded_for = request.headers.get("x-forwarded-for")
+        if forwarded_for:
+            client_ip = forwarded_for.split(",")[0].strip()
+        elif request.client:
+            client_ip = request.client.host
+    except Exception:
+        client_ip = None
+
+    user_id = None
+    hospital_id = None
+    try:
+        authorization = request.headers.get("Authorization")
+        if authorization and authorization.startswith("Bearer "):
+            token = authorization.split(" ", 1)[1].strip()
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+            user_id = payload.get("id_user")
+            hospital_id = payload.get("id_hospital")
+    except Exception as e:
+        print("AUDIT JWT WARNING:", str(e))
+
+    db = SessionLocal()
+    try:
+        audit_log = models.AuditLog(
+            user_id=user_id,
+            hospital_id=hospital_id,
+            action="HTTP_REQUEST",
+            module="system",
+            entity=request.url.path,
+            changes={
+                "ip_address": client_ip,
+                "endpoint": request.url.path,
+                "http_method": request.method,
+                "status_code": response.status_code,
+            },
+            ip_address=client_ip,
+            endpoint=request.url.path,
+            http_method=request.method,
+            status_code=response.status_code,
+        )
+        db.add(audit_log)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print("HTTP AUDIT ERROR:", str(e))
+        traceback.print_exc()
     finally:
+        db.close()
 
-        if request.url.path in skip_paths:
-            return response
+    return response
 
-        if response is None:
-            return response
 
-        client_ip = request.client.host if request.client else None
-
-        db = SessionLocal()
-
-        try:
-
-            audit_log = models.AuditLog(
-                user_id=None,
-                hospital_id=None,
-                action="HTTP_REQUEST",
-                module="system",
-                entity=request.url.path,
-                changes={
-                    "ip_address": client_ip,
-                    "endpoint": request.url.path,
-                    "http_method": request.method,
-                    "status_code": response.status_code,
-                },
-                ip_address=client_ip,
-                endpoint=request.url.path,
-                http_method=request.method,
-                status_code=response.status_code,
-            )
-
-            db.add(audit_log)
-            db.commit()
-
-        except Exception as e:
-
-            db.rollback()
-
-            print("===================================")
-            print("AUDIT MIDDLEWARE ERROR")
-            print(str(e))
-            traceback.print_exc()
-            print("===================================")
-
-        finally:
-            db.close()
-
-# ==========================================
+# ============================================================
 # ROUTERS
-# ==========================================
+# ============================================================
 
 app.include_router(auth.router)
 app.include_router(patients.router)
@@ -140,9 +128,10 @@ app.include_router(access.router)
 app.include_router(users.router)
 app.include_router(audit.router)
 
-# ==========================================
-# DEBUG DATABASE
-# ==========================================
+
+# ============================================================
+# DEBUG & UTILITY ENDPOINTS
+# ============================================================
 
 @app.get("/api/v1/debug/database")
 def debug_database():
@@ -150,43 +139,20 @@ def debug_database():
         result = conn.execute(text("SELECT version_num FROM alembic_version"))
         return {"alembic_version": [row[0] for row in result]}
 
-# ==========================================
-# DEBUG PATIENT COLUMNS
-# ==========================================
 
 @app.get("/api/v1/debug/patients-columns")
 def debug_patients_columns():
     with engine.connect() as conn:
-        result = conn.execute(
-            text("""
-                SELECT column_name
-                FROM information_schema.columns
-                WHERE table_name='patients'
-                ORDER BY ordinal_position
-            """)
-        )
+        result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'patients' ORDER BY ordinal_position"))
         return {"columns": [row[0] for row in result]}
 
-# ==========================================
-# DEBUG SAMPLE COLUMNS
-# ==========================================
 
 @app.get("/api/v1/debug/samples-columns")
 def debug_samples_columns():
     with engine.connect() as conn:
-        result = conn.execute(
-            text("""
-                SELECT column_name
-                FROM information_schema.columns
-                WHERE table_name='samples'
-                ORDER BY ordinal_position
-            """)
-        )
+        result = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'samples' ORDER BY ordinal_position"))
         return {"columns": [row[0] for row in result]}
 
-# ==========================================
-# CREATE DEFAULT HOSPITAL
-# ==========================================
 
 @app.get("/api/v1/debug/create-default-hospital")
 def create_default_hospital():
@@ -195,7 +161,6 @@ def create_default_hospital():
         hospital = db.query(models.Hospital).filter(models.Hospital.id == 1).first()
         if hospital:
             return {"status": "already exists", "id": hospital.id}
-
         hospital = models.Hospital(id=1, name="Hospital Universitario")
         db.add(hospital)
         db.commit()
@@ -203,45 +168,32 @@ def create_default_hospital():
     finally:
         db.close()
 
-# ==========================================
-# TEMP FIX USERS HOSPITAL
-# ==========================================
 
 @app.get("/api/v1/debug/fix-users-hospital")
 def fix_users_hospital():
     db = SessionLocal()
     try:
-        updated = (
-            db.query(models.User)
-            .filter(models.User.hospital_id == None)
-            .update({models.User.hospital_id: 1})
-        )
+        updated = db.query(models.User).filter(models.User.hospital_id == None).update({models.User.hospital_id: 1})
         db.commit()
         return {"status": "updated", "users_updated": updated}
     finally:
         db.close()
 
-# ==========================================
-# TEMP FIX PATIENTS HOSPITAL
-# ==========================================
 
 @app.get("/api/v1/debug/fix-patients-hospital")
 def fix_patients_hospital():
     db = SessionLocal()
     try:
-        updated = (
-            db.query(models.Patient)
-            .filter(models.Patient.hospital_id == None)
-            .update({models.Patient.hospital_id: 1})
-        )
+        updated = db.query(models.Patient).filter(models.Patient.hospital_id == None).update({models.Patient.hospital_id: 1})
         db.commit()
         return {"status": "updated", "patients_updated": updated}
     finally:
         db.close()
 
-# ==========================================
-# HEALTH CHECK
-# ==========================================
+
+# ============================================================
+# SYSTEM ENDPOINTS
+# ============================================================
 
 @app.get("/api/v1/health", tags=["System"])
 def health():
@@ -252,9 +204,6 @@ def health():
         "timestamp": datetime.now(timezone.utc)
     }
 
-# ==========================================
-# ROOT
-# ==========================================
 
 @app.get("/")
 def root():
