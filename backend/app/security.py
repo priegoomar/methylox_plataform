@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import List
 
 import jwt
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -39,10 +39,13 @@ class TokenData(BaseModel):
 # ============================================================
 
 def create_access_token(data: dict):
+    """
+    Creates a signed JWT containing the authenticated
+    user's identity and authorization claims.
+    """
     payload = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     payload["exp"] = expire
-
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
@@ -54,9 +57,14 @@ def get_current_user_claims(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ):
+    """
+    Validates the JWT and then validates the user against
+    the current database state.
+    """
     credentials_exception = HTTPException(
-        status_code=401,
-        detail="Invalid authentication credentials"
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid authentication credentials",
+        headers={"WWW-Authenticate": "Bearer"}
     )
 
     try:
@@ -76,29 +84,30 @@ def get_current_user_claims(
             raise credentials_exception
 
         user = db.query(models.User).filter(models.User.id == id_user).first()
-
         if not user:
             raise credentials_exception
 
-        # ----------------------------------------------------
-        # USER MUST REMAIN ACTIVE
-        # ----------------------------------------------------
-        if not user.active:
-            raise HTTPException(status_code=403, detail="User account is inactive")
+        if user.active is not True:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="User account is inactive"
+            )
 
-        # ----------------------------------------------------
-        # TOKEN / DATABASE CONSISTENCY
-        # ----------------------------------------------------
         if user.username != username or user.role != role or user.hospital_id != id_hospital:
             raise credentials_exception
 
-        # ----------------------------------------------------
-        # HOSPITAL MUST BE ACTIVE
-        # ----------------------------------------------------
         if user.hospital_id is not None:
             hospital = db.query(models.Hospital).filter(models.Hospital.id == user.hospital_id).first()
-            if hospital and not hospital.active:
-                raise HTTPException(status_code=403, detail="Hospital account is inactive")
+            if not hospital:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Hospital account not found"
+                )
+            if hospital.active is not True:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Hospital account is inactive"
+                )
 
         return TokenData(
             id_user=user.id,
@@ -110,11 +119,19 @@ def get_current_user_claims(
     except HTTPException:
         raise
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Authentication token expired")
-    except jwt.PyJWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication token expired",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    except jwt.InvalidTokenError:
         raise credentials_exception
-    except Exception:
-        raise credentials_exception
+    except Exception as error:
+        print("AUTHENTICATION ERROR:", str(error))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Authentication service error"
+        )
 
 
 # ============================================================
@@ -127,7 +144,10 @@ class RoleGuard:
 
     def __call__(self, current_user: TokenData = Depends(get_current_user_claims)):
         if current_user.role not in self.allowed_roles:
-            raise HTTPException(status_code=403, detail="Insufficient permissions")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Insufficient permissions"
+            )
         return current_user
 
 
@@ -144,18 +164,15 @@ class PermissionGuard:
         current_user: TokenData = Depends(get_current_user_claims),
         db: Session = Depends(get_db)
     ):
-        # ----------------------------------------------------
-        # ADMIN BYPASS
-        # ----------------------------------------------------
         if current_user.role == "admin":
             return current_user
 
-        # ----------------------------------------------------
-        # DIRECT USER PERMISSION
-        # ----------------------------------------------------
         permission = (
             db.query(models.Permission)
-            .join(models.UserPermission, models.Permission.id == models.UserPermission.permission_id)
+            .join(
+                models.UserPermission,
+                models.Permission.id == models.UserPermission.permission_id
+            )
             .filter(
                 models.UserPermission.user_id == current_user.id_user,
                 models.Permission.name == self.permission_name
@@ -165,7 +182,7 @@ class PermissionGuard:
 
         if permission is None:
             raise HTTPException(
-                status_code=403,
+                status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Permission denied: {self.permission_name}"
             )
 
