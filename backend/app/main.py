@@ -46,6 +46,7 @@ app.add_middleware(
 # ==========================================
 # HTTP AUDIT TRAIL MIDDLEWARE
 # ==========================================
+import traceback
 
 @app.middleware("http")
 async def audit_http_requests(request: Request, call_next):
@@ -60,48 +61,71 @@ async def audit_http_requests(request: Request, call_next):
     - timestamp
 
     Business-level actions such as CREATE_USER,
-    CHANGE_PASSWORD, CREATE_PATIENT, etc. continue
-    to be recorded by their respective routers.
+    CHANGE_PASSWORD, CREATE_PATIENT, etc.
+    continue to be recorded by their routers.
     """
+
     skip_paths = {
-        "/api/v1/audit/",
+        "/",
+        "/docs",
+        "/redoc",
+        "/openapi.json",
         "/api/v1/health",
     }
 
-    should_audit = request.url.path not in skip_paths
-    client_ip = request.client.host if request.client else None
     response = None
 
     try:
         response = await call_next(request)
         return response
+
     finally:
-        if should_audit and response is not None:
-            db = SessionLocal()
-            try:
-                audit_log = models.AuditLog(
-                    user_id=None,
-                    action="HTTP_REQUEST",
-                    module="system",
-                    entity=request.url.path,
-                    changes={
-                        "ip_address": client_ip,
-                        "endpoint": request.url.path,
-                        "http_method": request.method,
-                        "status_code": response.status_code
-                    },
-                    hospital_id=None,
-                    ip_address=client_ip,
-                    endpoint=request.url.path,
-                    http_method=request.method,
-                    status_code=response.status_code
-                )
-                db.add(audit_log)
-                db.commit()
-            except Exception:
-                db.rollback()
-            finally:
-                db.close()
+
+        if request.url.path in skip_paths:
+            return
+
+        if response is None:
+            return
+
+        client_ip = request.client.host if request.client else None
+
+        db = SessionLocal()
+
+        try:
+
+            audit_log = models.AuditLog(
+                user_id=None,
+                hospital_id=None,
+                action="HTTP_REQUEST",
+                module="system",
+                entity=request.url.path,
+                changes={
+                    "ip_address": client_ip,
+                    "endpoint": request.url.path,
+                    "http_method": request.method,
+                    "status_code": response.status_code,
+                },
+                ip_address=client_ip,
+                endpoint=request.url.path,
+                http_method=request.method,
+                status_code=response.status_code,
+            )
+
+            db.add(audit_log)
+            db.commit()
+
+        except Exception as e:
+
+            db.rollback()
+
+            print("===================================")
+            print("AUDIT MIDDLEWARE ERROR")
+            print(str(e))
+            traceback.print_exc()
+            print("===================================")
+
+        finally:
+            db.close()
 
 # ==========================================
 # ROUTERS
