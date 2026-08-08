@@ -1,13 +1,25 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    status
+)
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
-from app.security import create_access_token, RoleGuard, TokenData
-from app.utils.password import verify_password, hash_password
+from app.security import (
+    create_access_token,
+    RoleGuard,
+    TokenData
+)
+from app.utils.password import (
+    verify_password,
+    hash_password
+)
 from app.utils.audit import create_audit_log
 
 
@@ -29,6 +41,7 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
+
     print("LOGIN ATTEMPT:", form_data.username)
 
     user = (
@@ -38,6 +51,16 @@ def login(
         )
         .first()
     )
+
+    if not user:
+        # Also allow login using email.
+        user = (
+            db.query(models.User)
+            .filter(
+                models.User.email == form_data.username
+            )
+            .first()
+        )
 
     if not user:
         print("USER NOT FOUND")
@@ -61,20 +84,45 @@ def login(
         )
 
     # --------------------------------------------------------
-    # ACTIVE USER CHECK
+    # ACTIVE USER
     # --------------------------------------------------------
 
     if not user.active:
         raise HTTPException(
             status_code=403,
-            detail="User inactive"
+            detail="User account is inactive"
         )
+
+    # --------------------------------------------------------
+    # ACTIVE HOSPITAL
+    # --------------------------------------------------------
+
+    if user.hospital_id is not None:
+
+        hospital = (
+            db.query(models.Hospital)
+            .filter(
+                models.Hospital.id == user.hospital_id
+            )
+            .first()
+        )
+
+        if hospital and not hospital.active:
+            raise HTTPException(
+                status_code=403,
+                detail="Hospital account is inactive"
+            )
+
+    # --------------------------------------------------------
+    # LOGIN
+    # --------------------------------------------------------
 
     try:
 
         user.last_login = datetime.now(timezone.utc)
 
         db.commit()
+        db.refresh(user)
 
         token = create_access_token(
             {
@@ -95,9 +143,9 @@ def login(
             "id_hospital": user.hospital_id
         }
 
-    except Exception as e:
+    except Exception as error:
 
-        print("LOGIN ERROR:", str(e))
+        print("LOGIN ERROR:", str(error))
 
         db.rollback()
 
@@ -109,7 +157,7 @@ def login(
 
 # ============================================================
 # PROVISION USER
-# ADMIN CREATES USER INSIDE HIS HOSPITAL
+# ADMIN CREATES USER
 # ============================================================
 
 @router.post(
@@ -124,10 +172,11 @@ def provision_user(
     )
 ):
 
-    print(
-        "PROVISION USER:",
-        user_data.username
-    )
+    if not current_user.id_hospital:
+        raise HTTPException(
+            status_code=400,
+            detail="Administrator has no hospital assigned"
+        )
 
     # --------------------------------------------------------
     # USERNAME
@@ -136,7 +185,8 @@ def provision_user(
     existing_username = (
         db.query(models.User)
         .filter(
-            models.User.username == user_data.username
+            models.User.username
+            == user_data.username
         )
         .first()
     )
@@ -154,7 +204,8 @@ def provision_user(
     existing_email = (
         db.query(models.User)
         .filter(
-            models.User.email == user_data.email
+            models.User.email
+            == user_data.email
         )
         .first()
     )
@@ -174,58 +225,43 @@ def provision_user(
         email=user_data.email,
         full_name=user_data.full_name,
         role=user_data.role,
-
-        # IMPORTANT:
-        # Hospital comes from authenticated admin,
-        # NOT from client request.
         hospital_id=current_user.id_hospital,
-
         password_hash=hash_password(
             user_data.password
         ),
-
         active=True
     )
 
     try:
 
         db.add(new_user)
-
         db.commit()
-
         db.refresh(new_user)
-
-        # ----------------------------------------------------
-        # AUDIT
-        # ----------------------------------------------------
 
         create_audit_log(
             db=db,
             user_id=current_user.id_user,
+            hospital_id=current_user.id_hospital,
             action="CREATE_USER",
             module="users",
             entity=str(new_user.id),
             changes={
                 "username": new_user.username,
+                "email": new_user.email,
                 "role": new_user.role,
                 "hospital_id": new_user.hospital_id
             }
         )
 
-        print(
-            "USER CREATED:",
-            new_user.id
-        )
-
         return new_user
 
-    except Exception as e:
+    except Exception as error:
 
         db.rollback()
 
         print(
             "PROVISION USER ERROR:",
-            str(e)
+            str(error)
         )
 
         raise HTTPException(
