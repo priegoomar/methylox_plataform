@@ -87,12 +87,13 @@ def get_patient(
     db: Session = Depends(get_db),
     current_user: TokenData = Depends(PermissionGuard("patient_read"))
 ):
-    patient = db.query(models.Patient).filter(models.Patient.id == patient_id).first()
+    return db.query(models.Patient).filter(
+        models.Patient.hospital_id == current_user.id_hospital
+    ).all()
+        models.Patient.hospital_id == current_user.id_hospital
+    ).first()
 
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
-
-    if current_user.role != "admin" and patient.hospital_id != current_user.id_hospital:
-        raise HTTPException(status_code=403, detail="Hospital access denied")
 
     return patient
