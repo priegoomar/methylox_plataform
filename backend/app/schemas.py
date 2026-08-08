@@ -1,16 +1,21 @@
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    ConfigDict,
+    Field
+)
 
 
 # ============================================================
-# HOSPITAL SCHEMAS
+# HOSPITAL
 # ============================================================
 
 class HospitalBase(BaseModel):
     name: str
-    code: str
+    code: Optional[str] = None
 
 
 class HospitalCreate(HospitalBase):
@@ -22,11 +27,13 @@ class HospitalResponse(HospitalBase):
     active: bool
     created_at: datetime
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 # ============================================================
-# AUTH / USER SCHEMAS
+# USER
 # ============================================================
 
 class UserBase(BaseModel):
@@ -38,13 +45,19 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str
+    password: str = Field(
+        min_length=8,
+        max_length=128
+    )
 
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     email: Optional[EmailStr] = None
     role: Optional[str] = None
+
+    # Kept for backward compatibility.
+    # Server NEVER trusts this value when updating users.
     hospital_id: Optional[int] = None
 
 
@@ -53,7 +66,10 @@ class UserStatusUpdate(BaseModel):
 
 
 class UserPasswordUpdate(BaseModel):
-    password: str
+    password: str = Field(
+        min_length=8,
+        max_length=128
+    )
 
 
 # ============================================================
@@ -78,8 +94,37 @@ class PermissionResponse(BaseModel):
     module: str
     description: Optional[str] = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
+
+class PermissionCreate(BaseModel):
+    name: str
+    module: str
+    description: Optional[str] = None
+
+
+class UserPermissionCreate(BaseModel):
+    user_id: int
+    permission_id: int
+
+
+class UserPermissionResponse(BaseModel):
+    id: int
+    user_id: int
+    permission_id: int
+    granted_by: Optional[int]
+    created_at: datetime
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+# ============================================================
+# USER RESPONSE
+# ============================================================
 
 class UserResponse(UserBase):
     id: int
@@ -88,11 +133,13 @@ class UserResponse(UserBase):
     last_login: Optional[datetime] = None
     permissions: List[PermissionResponse] = []
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 # ============================================================
-# PATIENT SCHEMAS
+# PATIENTS
 # ============================================================
 
 class PatientBase(BaseModel):
@@ -110,11 +157,13 @@ class PatientResponse(PatientBase):
     id: int
     created_at: datetime
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 # ============================================================
-# SAMPLE / LIMS SCHEMAS
+# SAMPLES / LIMS
 # ============================================================
 
 class SampleBase(BaseModel):
@@ -143,16 +192,20 @@ class SampleResponse(SampleBase):
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 # ============================================================
-# ANALYSIS SCHEMAS
+# ANALYSIS
 # ============================================================
 
 class AnalysisCreate(BaseModel):
     sample_id: int
-    pipeline_version: Optional[str] = "METHYLOX Analysis v1.0"
+    pipeline_version: Optional[str] = (
+        "METHYLOX Analysis v1.0"
+    )
     qc_status: Optional[str] = None
     metrics: Optional[Dict[str, Any]] = None
     classification: Optional[str] = None
@@ -163,46 +216,34 @@ class AnalysisResponse(AnalysisCreate):
     id: int
     created_at: datetime
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 # ============================================================
-# AUDIT SCHEMAS
+# AUDIT TRAIL
 # ============================================================
 
 class AuditLogResponse(BaseModel):
     id: int
-    user_id: Optional[int]
+
+    user_id: Optional[int] = None
+    hospital_id: Optional[int] = None
+
     action: str
     module: str
-    entity: Optional[str]
+    entity: Optional[str] = None
+
     changes: Optional[Dict[str, Any]] = None
+
+    ip_address: Optional[str] = None
+    endpoint: Optional[str] = None
+    http_method: Optional[str] = None
+    status_code: Optional[int] = None
+
     created_at: datetime
 
-    model_config = ConfigDict(from_attributes=True)
-
-
-# ============================================================
-# ACCESS CONTROL
-# ============================================================
-
-class PermissionCreate(BaseModel):
-    name: str
-    module: str
-    description: Optional[str] = None
-
-
-class UserPermissionCreate(BaseModel):
-    user_id: int
-    permission_id: int
-    granted_by: Optional[int] = None
-
-
-class UserPermissionResponse(BaseModel):
-    id: int
-    user_id: int
-    permission_id: int
-    granted_by: Optional[int]
-    created_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True
+    )
