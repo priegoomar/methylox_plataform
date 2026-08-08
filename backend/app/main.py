@@ -82,10 +82,10 @@ async def audit_http_requests(request: Request, call_next):
     finally:
 
         if request.url.path in skip_paths:
-            return
+            return response
 
         if response is None:
-            return
+            return response
 
         client_ip = request.client.host if request.client else None
 
