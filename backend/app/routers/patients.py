@@ -3,17 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app import models, schemas
-from app.security import (
-    TokenData,
-    PermissionGuard,
-    get_current_user_claims
-)
+from app.security import TokenData, PermissionGuard
 
 
-router = APIRouter(
-    prefix="/api/v1/patients",
-    tags=["Patients"]
-)
+router = APIRouter(prefix="/api/v1/patients", tags=["Patients"])
 
 
 # ============================================================
@@ -27,7 +20,6 @@ def create_patient(
     current_user: TokenData = Depends(PermissionGuard("patient_create"))
 ):
     existing = db.query(models.Patient).filter(models.Patient.patient_code == patient.patient_code).first()
-
     if existing:
         raise HTTPException(status_code=400, detail="Patient code already exists")
 
@@ -39,25 +31,26 @@ def create_patient(
         created_by=current_user.id_user
     )
 
-    db.add(new_patient)
-    db.commit()
-    db.refresh(new_patient)
+    try:
+        db.add(new_patient)
+        db.commit()
+        db.refresh(new_patient)
 
-    audit = models.AuditLog(
-        user_id=current_user.id_user,
-        action="CREATE_PATIENT",
-        module="patients",
-        entity=new_patient.patient_code,
-        changes={
-            "patient_id": new_patient.id,
-            "hospital_id": current_user.id_hospital
-        }
-    )
+        audit = models.AuditLog(
+            user_id=current_user.id_user,
+            hospital_id=current_user.id_hospital,
+            action="CREATE_PATIENT",
+            module="patients",
+            entity=new_patient.patient_code,
+            changes={"patient_id": new_patient.id, "hospital_id": current_user.id_hospital}
+        )
+        db.add(audit)
+        db.commit()
 
-    db.add(audit)
-    db.commit()
-
-    return new_patient
+        return new_patient
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Could not create patient: {str(e)}")
 
 
 # ============================================================
@@ -70,10 +63,8 @@ def get_patients(
     current_user: TokenData = Depends(PermissionGuard("patient_read"))
 ):
     query = db.query(models.Patient)
-
     if current_user.role != "admin":
         query = query.filter(models.Patient.hospital_id == current_user.id_hospital)
-
     return query.all()
 
 
@@ -87,13 +78,11 @@ def get_patient(
     db: Session = Depends(get_db),
     current_user: TokenData = Depends(PermissionGuard("patient_read"))
 ):
-    return db.query(models.Patient).filter(
-        models.Patient.hospital_id == current_user.id_hospital
-    ).all()
-        models.Patient.hospital_id == current_user.id_hospital
-    ).first()
-
+    patient = db.query(models.Patient).filter(models.Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
+
+    if current_user.role != "admin" and patient.hospital_id != current_user.id_hospital:
+        raise HTTPException(status_code=403, detail="Hospital access denied")
 
     return patient
