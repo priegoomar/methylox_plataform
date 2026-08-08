@@ -11,31 +11,12 @@ router = APIRouter(prefix="/api/v1/access", tags=["Access Control"])
 
 
 # ============================================================
-# ADMIN CHECK
-# ============================================================
-
-def check_admin(current_user: TokenData):
-    if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin privileges required"
-        )
-
-
-# ============================================================
-# HOSPITAL ACCESS CHECK
+# HOSPITAL ACCESS
 # ============================================================
 
 def check_user_hospital(user, current_user: TokenData):
-    """
-    Prevents an administrator from managing users
-    belonging to another hospital.
-    """
     if user.hospital_id != current_user.id_hospital:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Hospital access denied"
-        )
+        raise HTTPException(status_code=403, detail="Hospital access denied")
 
 
 # ============================================================
@@ -69,15 +50,14 @@ def create_permission(
             action="CREATE_PERMISSION",
             module="access_control",
             entity=str(new_permission.id),
-            changes={
-                "name": new_permission.name,
-                "module": new_permission.module
-            }
+            changes={"name": new_permission.name, "module": new_permission.module}
         )
 
         return new_permission
-    except Exception:
+
+    except Exception as error:
         db.rollback()
+        print("CREATE PERMISSION ERROR:", str(error))
         raise HTTPException(status_code=500, detail="Could not create permission")
 
 
@@ -101,24 +81,23 @@ def assign_permission(
     if not permission:
         raise HTTPException(status_code=404, detail="Permission not found")
 
-    existing_assignment = db.query(models.UserPermission).filter(
+    existing = db.query(models.UserPermission).filter(
         models.UserPermission.user_id == data.user_id,
         models.UserPermission.permission_id == data.permission_id
     ).first()
-
-    if existing_assignment:
+    if existing:
         raise HTTPException(status_code=400, detail="Permission already assigned")
 
-    new_assignment = models.UserPermission(
+    assignment = models.UserPermission(
         user_id=data.user_id,
         permission_id=data.permission_id,
         granted_by=current_user.id_user
     )
 
     try:
-        db.add(new_assignment)
+        db.add(assignment)
         db.commit()
-        db.refresh(new_assignment)
+        db.refresh(assignment)
 
         create_audit_log(
             db=db,
@@ -133,9 +112,11 @@ def assign_permission(
             }
         )
 
-        return new_assignment
-    except Exception:
+        return assignment
+
+    except Exception as error:
         db.rollback()
+        print("ASSIGN PERMISSION ERROR:", str(error))
         raise HTTPException(status_code=500, detail="Could not assign permission")
 
 
@@ -155,9 +136,10 @@ def get_user_permissions(
 
     check_user_hospital(user, current_user)
 
-    permissions = db.query(models.Permission).join(models.UserPermission).filter(
-        models.UserPermission.user_id == user_id
-    ).all()
+    permissions = db.query(models.Permission).join(
+        models.UserPermission,
+        models.Permission.id == models.UserPermission.permission_id
+    ).filter(models.UserPermission.user_id == user_id).all()
 
     return permissions
 
@@ -171,7 +153,10 @@ def get_permissions(
     db: Session = Depends(get_db),
     current_user: TokenData = Depends(RoleGuard(["admin"]))
 ):
-    return db.query(models.Permission).all()
+    return db.query(models.Permission).order_by(
+        models.Permission.module.asc(),
+        models.Permission.name.asc()
+    ).all()
 
 
 # ============================================================
@@ -195,7 +180,6 @@ def revoke_permission(
         models.UserPermission.user_id == user_id,
         models.UserPermission.permission_id == permission_id
     ).first()
-
     if not assignment:
         raise HTTPException(status_code=404, detail="Permission assignment not found")
 
@@ -220,6 +204,8 @@ def revoke_permission(
         )
 
         return {"message": "Permission revoked successfully"}
-    except Exception:
+
+    except Exception as error:
         db.rollback()
+        print("REVOKE PERMISSION ERROR:", str(error))
         raise HTTPException(status_code=500, detail="Could not revoke permission")
