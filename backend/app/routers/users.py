@@ -51,21 +51,33 @@ def check_admin(current_user):
 
 
 # ============================================================
+# HOSPITAL ACCESS CHECK
+# ============================================================
+
+def check_hospital_access(user, current_user):
+    """
+    Ensures that an administrator can only manage
+    users belonging to their own hospital.
+    """
+    if user.hospital_id != current_user.id_hospital:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Hospital access denied"
+        )
+
+
+# ============================================================
 # GET USERS
 # ============================================================
 
 @router.get("/")
 def get_users(
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user_claims)
+    current_user=Depends(get_current_user_claims)
 ):
     check_admin(current_user)
-    query = db.query(models.User)
-
-    if current_user.role != "admin":
-        query = query.filter(models.User.hospital_id == current_user.id_hospital)
-
-    return [serialize_user(u) for u in query.all()]
+    users = db.query(models.User).filter(models.User.hospital_id == current_user.id_hospital).all()
+    return [serialize_user(user) for user in users]
 
 
 # ============================================================
@@ -76,17 +88,13 @@ def get_users(
 def get_user(
     user_id: int,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user_claims)
+    current_user=Depends(get_current_user_claims)
 ):
     check_admin(current_user)
     user = db.query(models.User).filter(models.User.id == user_id).first()
-
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-
-    if current_user.role != "admin" and user.hospital_id != current_user.id_hospital:
-        raise HTTPException(status_code=403, detail="Hospital access denied")
-
+    check_hospital_access(user, current_user)
     return serialize_user(user)
 
 
@@ -98,7 +106,7 @@ def get_user(
 def create_user(
     payload: schemas.UserCreate,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user_claims)
+    current_user=Depends(get_current_user_claims)
 ):
     check_admin(current_user)
 
@@ -118,27 +126,31 @@ def create_user(
         active=True
     )
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    try:
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
 
-    create_audit_log(
-        db=db,
-        user_id=current_user.id_user,
-        action="CREATE_USER",
-        module="users",
-        entity=str(new_user.id),
-        changes={
-            "username": new_user.username,
-            "role": new_user.role,
-            "hospital_id": new_user.hospital_id
+        create_audit_log(
+            db=db,
+            user_id=current_user.id_user,
+            action="CREATE_USER",
+            module="users",
+            entity=str(new_user.id),
+            changes={
+                "username": new_user.username,
+                "role": new_user.role,
+                "hospital_id": new_user.hospital_id
+            }
+        )
+
+        return {
+            "message": "User created successfully",
+            "user_id": new_user.id
         }
-    )
-
-    return {
-        "message": "User created successfully",
-        "user_id": new_user.id
-    }
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Could not create user")
 
 
 # ============================================================
@@ -150,31 +162,90 @@ def update_user(
     user_id: int,
     payload: schemas.UserUpdate,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user_claims)
+    current_user=Depends(get_current_user_claims)
 ):
     check_admin(current_user)
-    user = db.query(models.User).filter(models.User.id == user_id).first()
 
+    user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if user.hospital_id != current_user.id_hospital:
-        raise HTTPException(status_code=403, detail="Hospital access denied")
+    check_hospital_access(user, current_user)
+    changes = {}
 
-    if payload.full_name is not None:
+    if payload.full_name is not None and payload.full_name != user.full_name:
+        changes["full_name"] = {"old": user.full_name, "new": payload.full_name}
         user.full_name = payload.full_name
 
-    if payload.email is not None:
+    if payload.email is not None and payload.email != user.email:
+        if db.query(models.User).filter(models.User.email == payload.email, models.User.id != user.id).first():
+            raise HTTPException(status_code=400, detail="Email already exists")
+        changes["email"] = {"old": user.email, "new": payload.email}
         user.email = payload.email
 
-    if payload.role is not None:
+    if payload.role is not None and payload.role != user.role:
+        changes["role"] = {"old": user.role, "new": payload.role}
         user.role = payload.role
 
-    db.commit()
+    try:
+        db.commit()
+        db.refresh(user)
 
-    return {
-        "message": "User updated successfully"
-    }
+        if changes:
+            create_audit_log(
+                db=db,
+                user_id=current_user.id_user,
+                action="UPDATE_USER",
+                module="users",
+                entity=str(user.id),
+                changes=changes
+            )
+
+        return {
+            "message": "User updated successfully",
+            "user": serialize_user(user)
+        }
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Could not update user")
+
+
+# ============================================================
+# CHANGE PASSWORD
+# ============================================================
+
+@router.patch("/{user_id}/password")
+def change_user_password(
+    user_id: int,
+    payload: schemas.UserPasswordUpdate,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user_claims)
+):
+    check_admin(current_user)
+
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    check_hospital_access(user, current_user)
+    user.password_hash = hash_password(payload.password)
+
+    try:
+        db.commit()
+
+        create_audit_log(
+            db=db,
+            user_id=current_user.id_user,
+            action="CHANGE_PASSWORD",
+            module="users",
+            entity=str(user.id),
+            changes={"username": user.username}
+        )
+
+        return {"message": "Password changed successfully"}
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Could not change password")
 
 
 # ============================================================
@@ -186,21 +257,42 @@ def update_user_status(
     user_id: int,
     payload: schemas.UserStatusUpdate,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user_claims)
+    current_user=Depends(get_current_user_claims)
 ):
     check_admin(current_user)
-    user = db.query(models.User).filter(models.User.id == user_id).first()
 
+    user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if user.hospital_id != current_user.id_hospital:
-        raise HTTPException(status_code=403, detail="Hospital access denied")
+    check_hospital_access(user, current_user)
+    old_status = user.active
+
+    if old_status == payload.active:
+        return {"message": "User status unchanged", "active": user.active}
 
     user.active = payload.active
-    db.commit()
 
-    return {
-        "message": "User status updated",
-        "active": user.active
-    }
+    try:
+        db.commit()
+        db.refresh(user)
+
+        action = "ACTIVATE_USER" if payload.active else "DEACTIVATE_USER"
+
+        create_audit_log(
+            db=db,
+            user_id=current_user.id_user,
+            action=action,
+            module="users",
+            entity=str(user.id),
+            changes={
+                "username": user.username,
+                "old_active": old_status,
+                "new_active": user.active
+            }
+        )
+
+        return {"message": "User status updated", "active": user.active}
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Could not update user status")
