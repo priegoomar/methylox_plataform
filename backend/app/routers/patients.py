@@ -86,3 +86,54 @@ def get_patient(
         raise HTTPException(status_code=403, detail="Hospital access denied")
 
     return patient
+
+# ============================================================
+# UPDATE PATIENT
+# ============================================================
+
+@router.patch("/{patient_id}", response_model=schemas.PatientResponse)
+def update_patient(
+    patient_id: int,
+    payload: schemas.PatientUpdate,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(PermissionGuard("patient_update"))
+):
+    patient = db.query(models.Patient).filter(models.Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    if current_user.role != "admin" and patient.hospital_id != current_user.id_hospital:
+        raise HTTPException(status_code=403, detail="Hospital access denied")
+
+    changes = {}
+
+    if payload.demographics is not None and payload.demographics != patient.demographics:
+        changes["demographics"] = {"old": patient.demographics, "new": payload.demographics}
+        patient.demographics = payload.demographics
+
+    if payload.clinical_notes is not None and payload.clinical_notes != patient.clinical_notes:
+        changes["clinical_notes"] = {"old": patient.clinical_notes, "new": payload.clinical_notes}
+        patient.clinical_notes = payload.clinical_notes
+
+    if not changes:
+        return patient
+
+    try:
+        db.commit()
+        db.refresh(patient)
+
+        audit = models.AuditLog(
+            user_id=current_user.id_user,
+            hospital_id=current_user.id_hospital,
+            action="UPDATE_PATIENT",
+            module="patients",
+            entity=str(patient.id),
+            changes=changes
+        )
+        db.add(audit)
+        db.commit()
+
+        return patient
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Could not update patient: {str(e)}")
