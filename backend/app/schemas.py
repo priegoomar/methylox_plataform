@@ -161,6 +161,16 @@ class PatientResponse(PatientBase):
         from_attributes=True
     )
 
+class PatientCreate(PatientBase): pass
+
+class PatientUpdate(BaseModel):
+    demographics: Optional[Dict[str, Any]] = None
+    clinical_notes: Optional[str] = None
+
+class PatientResponse(PatientBase):
+    id: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
 
 # ============================================================
 # SAMPLES / LIMS
