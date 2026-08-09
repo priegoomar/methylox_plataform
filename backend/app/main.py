@@ -19,6 +19,7 @@ from app.routers import (
     access,
     users,
     audit
+    dashboard
 )
 
 
@@ -191,6 +192,8 @@ app.include_router(reports.router)
 app.include_router(access.router)
 app.include_router(users.router)
 app.include_router(audit.router)
+app.include_router(dashboard.router)
+
 
 
 # ============================================================
