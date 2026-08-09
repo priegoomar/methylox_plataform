@@ -42,22 +42,21 @@ def create_analysis(
         created_by=current_user.id_user
     )
 
-    db.add(new_analysis)
-    db.commit()
-    db.refresh(new_analysis)
-
-    audit = models.AuditLog(
-        user_id=current_user.id_user,
-        action="CREATE_ANALYSIS",
-        module="analysis",
-        entity=str(new_analysis.id),
-        changes={
-            "analysis_id": new_analysis.id,
-            "sample_id": new_analysis.sample_id,
-            "hospital_id": current_user.id_hospital,
-            "classification": new_analysis.classification
-        }
-    )
+audit = models.AuditLog(
+    user_id=current_user.id_user,
+    hospital_id=current_user.id_hospital,
+    action="CREATE_ANALYSIS",
+    module="analysis",
+    entity=str(new_analysis.id),
+    changes={
+        "analysis_id": new_analysis.id,
+        "sample_id": new_analysis.sample_id,
+        "hospital_id": current_user.id_hospital,
+        "classification": new_analysis.classification,
+        "pipeline_version": new_analysis.pipeline_version,
+        "qc_status": new_analysis.qc_status
+    }
+)
 
     db.add(audit)
     db.commit()
