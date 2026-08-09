@@ -18,7 +18,7 @@ from app.routers import (
     reports,
     access,
     users,
-    audit
+    audit,
     dashboard
 )
 
