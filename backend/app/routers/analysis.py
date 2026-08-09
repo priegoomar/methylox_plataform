@@ -20,19 +20,13 @@ def create_analysis(
     current_user: TokenData = Depends(PermissionGuard("analysis_create"))
 ):
     sample = db.query(models.Sample).filter(models.Sample.id == analysis.sample_id).first()
-
     if not sample:
         raise HTTPException(status_code=404, detail="Sample not found")
-
-    # ====================================================
-    # VALIDACIÓN MULTI-HOSPITAL
-    # ====================================================
 
     if current_user.role != "admin" and sample.hospital_id != current_user.id_hospital:
         raise HTTPException(status_code=403, detail="Sample belongs to another hospital")
 
     new_analysis = models.AnalysisResult(
-        # Se asigna automáticamente
         hospital_id=current_user.id_hospital,
         sample_id=analysis.sample_id,
         pipeline_version=analysis.pipeline_version,
@@ -42,26 +36,33 @@ def create_analysis(
         created_by=current_user.id_user
     )
 
-audit = models.AuditLog(
-    user_id=current_user.id_user,
-    hospital_id=current_user.id_hospital,
-    action="CREATE_ANALYSIS",
-    module="analysis",
-    entity=str(new_analysis.id),
-    changes={
-        "analysis_id": new_analysis.id,
-        "sample_id": new_analysis.sample_id,
-        "hospital_id": current_user.id_hospital,
-        "classification": new_analysis.classification,
-        "pipeline_version": new_analysis.pipeline_version,
-        "qc_status": new_analysis.qc_status
-    }
-)
+    try:
+        db.add(new_analysis)
+        db.commit()
+        db.refresh(new_analysis)
 
-    db.add(audit)
-    db.commit()
+        audit = models.AuditLog(
+            user_id=current_user.id_user,
+            hospital_id=current_user.id_hospital,
+            action="CREATE_ANALYSIS",
+            module="analysis",
+            entity=str(new_analysis.id),
+            changes={
+                "analysis_id": new_analysis.id,
+                "sample_id": new_analysis.sample_id,
+                "hospital_id": current_user.id_hospital,
+                "classification": new_analysis.classification,
+                "pipeline_version": new_analysis.pipeline_version,
+                "qc_status": new_analysis.qc_status
+            }
+        )
+        db.add(audit)
+        db.commit()
 
-    return new_analysis
+        return new_analysis
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Could not create analysis: {str(e)}")
 
 
 # ============================================================
@@ -75,11 +76,9 @@ def get_sample_analysis(
     current_user: TokenData = Depends(PermissionGuard("analysis_read"))
 ):
     sample = db.query(models.Sample).filter(models.Sample.id == sample_id).first()
-
     if not sample:
         raise HTTPException(status_code=404, detail="Sample not found")
 
-    # Seguridad hospital
     if current_user.role != "admin" and sample.hospital_id != current_user.id_hospital:
         raise HTTPException(status_code=403, detail="Hospital access denied")
 
